@@ -26,11 +26,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Asciir.h" />
-    <ClInclude Include="src\Asciir\Application.h" />
+    <ClInclude Include="src\Asciir\Terminal.h" />
     <ClInclude Include="src\Asciir\Core.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Asciir\Application.cpp" />
+    <ClCompile Include="src\Asciir\Terminal.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -3,11 +3,11 @@
 
 namespace Asciir
 {
-	class Application
+	class Terminal
 	{
 	public:
-		Application();
-		virtual ~Application();
+		Terminal();
+		virtual ~Terminal();
 
 		void start();
 	};
