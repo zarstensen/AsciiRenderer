@@ -14,8 +14,7 @@ public:
 	}
 };
 
-int main()
+Asciir::Terminal* Asciir::CreateTerminal()
 {
-	Exec* exec = new Exec;
-	exec->start();
+	return new Exec;
 }

@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Asciir.h" />
+    <ClInclude Include="src\Asciir\EntryPoint.h" />
     <ClInclude Include="src\Asciir\Terminal.h" />
     <ClInclude Include="src\Asciir\Core.h" />
   </ItemGroup>

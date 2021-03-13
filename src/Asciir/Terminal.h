@@ -11,4 +11,6 @@ namespace Asciir
 
 		void start();
 	};
+
+	Terminal* CreateTerminal();
 }

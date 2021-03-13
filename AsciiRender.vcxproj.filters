@@ -41,6 +41,9 @@
     <ClInclude Include="src\Asciir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Asciir\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Asciir\Terminal.cpp">
