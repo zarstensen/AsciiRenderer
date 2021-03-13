@@ -18,22 +18,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <None Include="props\boost_x64_debug.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="props\boost_x64_release.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="props\boost_x86_debug.props">
+      <Filter>BoostProps</Filter>
+    </None>
+    <None Include="props\boost_x86_release.props">
+      <Filter>BoostProps</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="boost_x64_release.props">
-      <Filter>BoostProps</Filter>
-    </None>
-    <None Include="boost_x86_debug.props">
-      <Filter>BoostProps</Filter>
-    </None>
-    <None Include="boost_x86_release.props">
-      <Filter>BoostProps</Filter>
-    </None>
-    <None Include="boost_x64_debug.props">
-      <Filter>BoostProps</Filter>
-    </None>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
