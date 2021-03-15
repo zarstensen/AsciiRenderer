@@ -25,13 +25,20 @@
     <None Include="props\boost_x86_release.props" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Asciir\Core\Timing.h" />
+    <ClInclude Include="src\Asciir\Logging\FileLog.h" />
     <ClInclude Include="src\Asciir.h" />
-    <ClInclude Include="src\Asciir\EntryPoint.h" />
-    <ClInclude Include="src\Asciir\Terminal.h" />
-    <ClInclude Include="src\Asciir\Core.h" />
+    <ClInclude Include="src\Asciir\Core\EntryPoint.h" />
+    <ClInclude Include="src\Asciir\Core\Terminal.h" />
+    <ClInclude Include="src\Asciir\Core\Core.h" />
+    <ClInclude Include="src\Asciir\Logging\FileLog.ipp" />
+    <ClInclude Include="src\Asciir\Rendering\AsciiAttributes.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Asciir\Terminal.cpp" />
+    <ClCompile Include="src\Asciir\Core\Timing.cpp" />
+    <ClCompile Include="src\Asciir\Logging\FileLog.cpp" />
+    <ClCompile Include="src\Asciir\Core\Terminal.cpp" />
+    <ClCompile Include="src\Asciir\Rendering\AsciiAttributes.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -116,6 +123,7 @@
       <PreprocessorDefinitions>AR_DEBUG;AR_WIN;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +139,7 @@
       <PreprocessorDefinitions>AR_WIN;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -146,6 +155,7 @@
       <PreprocessorDefinitions>AR_DEBUG;AR_WIN;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,6 +171,7 @@
       <PreprocessorDefinitions>AR_WIN;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -11,6 +11,6 @@
 #include "Asciir/Core/Timing.h"
 // Core
 
-// Logging
 #include "Asciir/Logging/FileLog.h"
-// Logging
+
+#include "Asciir/Rendering/AsciiAttributes.h"

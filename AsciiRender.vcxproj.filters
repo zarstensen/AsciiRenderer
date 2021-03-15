@@ -32,21 +32,42 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Asciir\Terminal.h">
+    <ClInclude Include="src\Asciir\Core\Terminal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Asciir\Core.h">
+    <ClInclude Include="src\Asciir\Core\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Asciir.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Asciir\EntryPoint.h">
+    <ClInclude Include="src\Asciir\Core\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Logging\FileLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Core\Timing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Logging\FileLog.ipp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\AsciiAttributes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Asciir\Terminal.cpp">
+    <ClCompile Include="src\Asciir\Core\Terminal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Logging\FileLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Core\Timing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Rendering\AsciiAttributes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Prototyping", "Prototyping\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AsciiRender", "AsciiRender.vcxproj", "{C4C8233B-F13D-4E3E-8CF4-F9C729B7D7D9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ARLogViewer", "ARLogViewer\ARLogViewer.vcxproj", "{A8AE419D-4995-4776-BFCC-F442CF460ACB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -31,6 +33,14 @@ Global
 		{C4C8233B-F13D-4E3E-8CF4-F9C729B7D7D9}.Release|x64.Build.0 = Release|x64
 		{C4C8233B-F13D-4E3E-8CF4-F9C729B7D7D9}.Release|x86.ActiveCfg = Release|Win32
 		{C4C8233B-F13D-4E3E-8CF4-F9C729B7D7D9}.Release|x86.Build.0 = Release|Win32
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Debug|x64.ActiveCfg = Debug|x64
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Debug|x64.Build.0 = Debug|x64
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Debug|x86.ActiveCfg = Debug|Win32
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Debug|x86.Build.0 = Debug|Win32
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Release|x64.ActiveCfg = Release|x64
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Release|x64.Build.0 = Release|x64
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Release|x86.ActiveCfg = Release|Win32
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
