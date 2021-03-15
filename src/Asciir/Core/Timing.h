@@ -8,6 +8,8 @@ namespace Asciir
 	using duration = std::chrono::steady_clock::duration;
 
 	duration getTime();
+	void sleep(size_t millsec);
+
 	long long convertMilsec(const duration& dur);
 
 }
