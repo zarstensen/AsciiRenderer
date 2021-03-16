@@ -23,12 +23,6 @@ Asciir::Terminal* Asciir::CreateTerminal()
 		Color(255, 255, 0),		// Warning color Yellow
 		Color(255, 0, 50)		// Error color Red
 		});
-	Asciir::FileLog logger("out.log");
-
-	logger.Log(0, "INFO", __LINE__, __FILE__, "hej", "med", 25);
-	logger.Log(1, "IMPORTANT", __LINE__, __FILE__, "hej", "med", 25);
-	logger.Log(2, "WARNING", __LINE__, __FILE__, "hej", "med", 25);
-	logger.Log(3, "ERROR", __LINE__, __FILE__, "hej", "med", 25);
 
 	while (true)
 	{
