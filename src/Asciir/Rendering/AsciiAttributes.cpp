@@ -108,7 +108,7 @@ namespace Asciir
 
 	std::string AsciiAttr::ansiCode() const
 	{
-		size_t size = 3 + (5 + 4 * 3 )* 2;
+		size_t size = 5 + (5 + 4 * 3 )* 2;
 
 		for (size_t i = 0; i < 5; i++)
 		{
@@ -133,6 +133,7 @@ namespace Asciir
 	void AsciiAttr::ansiCode(std::string& dst) const
 	{
 		dst += AR_ANSIS_CSI;
+		dst += "0;";
 
 		if (attributes[BOLD])
 			dst += "1;";
@@ -177,6 +178,7 @@ namespace Asciir
 	void AsciiAttr::ansiCode(std::ostream& stream) const
 	{
 		stream << AR_ANSIS_CSI;
+		stream << "0;";
 
 		if (attributes[BOLD])
 			stream << "1;";
