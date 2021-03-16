@@ -18,14 +18,14 @@ namespace Asciir
 		bool m_save_file;
 
 		template<typename ... T>
-		void async_log(size_t log_level, const char* log_state, size_t line, const char* file, T ... args);
+		void async_log(size_t log_level, const char* log_type, size_t line, const char* file, T ... args);
 
 	public:
 		FileLog(const std::string& log_name, bool save_log = true);
 		~FileLog();
 
 		template<typename ... T>
-		void Log(size_t log_level, const char* log_state, size_t line, const char* file, T ... args);
+		void Log(size_t log_level, const char* log_type, size_t line, const char* file, T ... args);
 	};
 }
 
