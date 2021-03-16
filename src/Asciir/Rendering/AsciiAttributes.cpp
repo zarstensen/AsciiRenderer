@@ -95,7 +95,7 @@ namespace Asciir
 	}
 	void AsciiAttr::clearColor()
 	{
-		m_foreground = Color(255, 255, 255);
+		m_foreground = Color(204, 204, 204);
 		m_background = Color(0, 0, 0);
 	}
 
