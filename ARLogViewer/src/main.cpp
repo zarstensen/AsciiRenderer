@@ -7,9 +7,9 @@ public:
 
 	Asciir::LogViewer logviewer;
 
-	LogTerm()
-		:logviewer("out.log", {
-		Asciir::Color(255, 255, 255),	// Info color White
+	LogTerm(const std::string& log_dir)
+		:logviewer(log_dir, {
+		Asciir::Color(204, 204, 204),// Info color White (Default terminal color)
 		Asciir::Color(0, 255, 100),		// Important color Green
 		Asciir::Color(255, 255, 0),		// Warning color Yellow
 		Asciir::Color(255, 0, 50)		// Error color Red
@@ -17,7 +17,7 @@ public:
 	{
 		while (true)
 		{
-			if (std::filesystem::exists("out.log"))
+			if (std::filesystem::exists(log_dir))
 			{
 				logviewer.open();
 				break;
@@ -37,7 +37,11 @@ public:
 	}
 };
 
-Asciir::Terminal* Asciir::CreateTerminal()
+Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args)
 {
-	return new LogTerm;
+	for (std::string elem : args)
+	{
+		std::cout << elem << '\n';
+	}
+	return new LogTerm("out.log");
 }
