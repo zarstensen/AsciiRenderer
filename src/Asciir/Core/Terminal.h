@@ -1,5 +1,7 @@
 #pragma once
 #include "Core.h"
+#include <vector>
+#include <string>
 
 namespace Asciir
 {
@@ -12,5 +14,5 @@ namespace Asciir
 		void start();
 	};
 
-	Terminal* CreateTerminal();
+	Terminal* CreateTerminal(std::vector<std::string> args);
 }
