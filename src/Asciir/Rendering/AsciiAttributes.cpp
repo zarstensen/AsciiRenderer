@@ -3,7 +3,6 @@
 
 namespace Asciir
 {
-
 	Color::Color()
 		: red(0), green(0), blue(0)
 	{}
@@ -16,7 +15,6 @@ namespace Asciir
 		: red(other.red), green(other.green), blue(other.blue)
 	{}
 
-
 	unsigned short Color::getColor() const
 	{
 		return 2;
@@ -25,7 +23,6 @@ namespace Asciir
 	{
 		return getColor();
 	}
-
 
 	#ifdef AR_WIN
 	AsciiAttr::AsciiAttr()
@@ -39,9 +36,7 @@ namespace Asciir
 	#endif
 	AsciiAttr::~AsciiAttr()
 	{
-		
 	}
-
 
 	void AsciiAttr::setForeground(const Color& color)
 	{
@@ -59,13 +54,12 @@ namespace Asciir
 		m_background = background;
 	}
 
-
 	void AsciiAttr::setBoxed(bool val)
 	{
-		attributes[TOP]	 = val;
+		attributes[TOP] = val;
 		attributes[BOTTOM] = val;
-		attributes[LEFT]	 = val;
-		attributes[RIGHT]  = val;
+		attributes[LEFT] = val;
+		attributes[RIGHT] = val;
 	}
 
 	void AsciiAttr::setLR(bool val)
@@ -80,7 +74,6 @@ namespace Asciir
 		attributes[BOTTOM] = val;
 	}
 
-
 	void AsciiAttr::clear()
 	{
 		clearFormat();
@@ -94,7 +87,7 @@ namespace Asciir
 	void AsciiAttr::clearColor()
 	{
 		setForeground(Color(204, 204, 204));
-		
+
 		setBackground(Color(10, 10, 10));
 	}
 
@@ -103,10 +96,9 @@ namespace Asciir
 		attributes[attribute] = val;
 	}
 
-
 	std::string AsciiAttr::ansiCode() const
 	{
-		size_t size = 3 + (5 + 4 * 3 )* 2;
+		size_t size = 3 + (5 + 4 * 3) * 2;
 
 		#ifdef AR_WIN
 		for (size_t i = 1; i < 5; i++)
@@ -119,7 +111,7 @@ namespace Asciir
 		{
 			size += 2 * attributes[i];
 		}
-		
+
 		for (size_t i = 5; i < 8; i++)
 		{
 			size += 3 * attributes[i];
@@ -164,15 +156,11 @@ namespace Asciir
 		if (attributes[STRIKE])
 			dst += ";3";
 
-		
 		// foreground color
 
-		
-
 		#ifdef AR_WIN
-		if(attributes[BOLD])
+		if (attributes[BOLD])
 		{
-
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
 			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
 			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
@@ -228,11 +216,10 @@ namespace Asciir
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
 		#endif
 
-		
 		// formatting
 		stream << AR_ANSIS_CSI;
 		stream << "0";
-		
+
 		#ifndef AR_WIN
 		if (attributes[BOLD])
 			stream << ";1";
@@ -254,7 +241,6 @@ namespace Asciir
 		#ifdef AR_WIN
 		if (attributes[BOLD])
 		{
-
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
 			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
 			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
@@ -301,24 +287,21 @@ namespace Asciir
 		stream << 'm';
 	}
 
-
 	void AsciiAttr::setTitle(const std::string& name)
 	{
 		std::cout << AR_ANSIS_OSC << "0;" << name << AR_ANSIS_CSI;
 	}
 
-
 	std::pair<short, short> AsciiAttr::terminalSize() const
 	{
 		CONSOLE_SCREEN_BUFFER_INFO console_info;
 		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
-		short width  = console_info.srWindow.Right  - console_info.srWindow.Left + 1;
-		short height = console_info.srWindow.Bottom - console_info.srWindow.Top  + 1;
+		short width = console_info.srWindow.Right - console_info.srWindow.Left + 1;
+		short height = console_info.srWindow.Bottom - console_info.srWindow.Top + 1;
 
 		return { width, height };
 	}
 
-	
 	std::ostream& Asciir::operator<<(std::ostream& stream, const AsciiAttr& other)
 	{
 		other.ansiCode(stream);

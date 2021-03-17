@@ -11,5 +11,4 @@ namespace Asciir
 	void sleep(size_t millsec);
 
 	long long convertMilsec(const duration& dur);
-
 }

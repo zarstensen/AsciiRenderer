@@ -25,7 +25,5 @@ namespace Asciir
 
 		bool hasLogs();
 		bool logLineOut(std::ostream& stream);
-
 	};
 }
-

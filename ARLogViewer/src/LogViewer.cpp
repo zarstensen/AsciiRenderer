@@ -26,7 +26,6 @@ namespace Asciir
 		return (size_t)length;
 	}
 
-
 	void LogViewer::open()
 	{
 		m_log_file.open(m_log_dir);
@@ -36,7 +35,6 @@ namespace Asciir
 	{
 		m_log_file.close();
 	}
-
 
 	bool LogViewer::hasLogs()
 	{
@@ -62,13 +60,13 @@ namespace Asciir
 
 		log.resize(size);
 
-		m_log_file.read(log.data(), size);	
+		m_log_file.read(log.data(), size);
 
 		std::string_view log_view = log;
 
 		// get log level
 		size_t level_indx = log_view.find(']');
-		size_t level = (size_t)std::stoull((std::string)log_view.substr(1, level_indx-1));
+		size_t level = (size_t)std::stoull((std::string)log_view.substr(1, level_indx - 1));
 		level = std::min(level, m_colors.size() - 1);
 
 		size_t time_indx = log_view.find(']', level_indx + 1);
@@ -79,7 +77,7 @@ namespace Asciir
 		std::cout << time_indx << ',' << type_indx << ',' << line_indx << ',' << file_indx << '\n';
 
 		m_log_attributes.setForeground(m_colors[level]);
-		stream << m_log_attributes << log.substr(level_indx+2, time_indx - level_indx);
+		stream << m_log_attributes << log.substr(level_indx + 2, time_indx - level_indx);
 		m_log_attributes.setAttribute(BOLD, true);
 		stream << m_log_attributes << log.substr(time_indx + 3, type_indx - time_indx - 3);
 		m_log_attributes.setAttribute(BOLD, false);

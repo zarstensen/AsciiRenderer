@@ -11,4 +11,3 @@
 
 // windows does not support bold characters. this is accounted for by changing the brightness of the color by AR_BOLD_DIFF
 #define AR_BOLD_DIFF 38
-

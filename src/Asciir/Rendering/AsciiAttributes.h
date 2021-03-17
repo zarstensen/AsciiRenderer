@@ -15,7 +15,6 @@
 
 namespace Asciir
 {
-
 	static constexpr size_t ATTR_COUNT = 8;
 
 	typedef unsigned short ATTRI;
@@ -47,7 +46,6 @@ namespace Asciir
 		unsigned short getColor() const;
 
 		operator unsigned short() const;
-
 	};
 
 	#ifdef AR_WIN
@@ -72,24 +70,22 @@ namespace Asciir
 
 	/*
 	* windows does not support
-	* 
+	*
 	* Blink
 	* Strike
 	* Framed
 	* Encircled
 	* Overlined = Top
-	* 
+	*
 	* only windows supports
-	* 
+	*
 	* Left
 	* Right
 	* Top = Overlined
 	* Bottom
-	* 
+	*
 	* All of the above = Framed
 	*/
-
-	
 
 	class AsciiAttr
 	{
@@ -99,7 +95,6 @@ namespace Asciir
 
 		Color m_foreground;
 		Color m_background;
-
 
 	public:
 		std::array<bool, ATTR_COUNT> attributes;
@@ -116,7 +111,7 @@ namespace Asciir
 		void clearColor();
 
 		void setAttribute(const ATTRI& attribute, bool val);
-		
+
 		#ifdef AR_WIN
 
 		void setBoxed(bool val);
@@ -132,7 +127,6 @@ namespace Asciir
 		void setTitle(const std::string& name);
 
 		std::pair<short, short> terminalSize() const;
-
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const AsciiAttr& other);

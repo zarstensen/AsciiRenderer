@@ -9,11 +9,11 @@ public:
 
 	LogTerm(const std::string& log_dir)
 		:logviewer(log_dir, {
-		Asciir::Color(204, 204, 204),// Info color White (Default terminal color)
+		Asciir::Color(204, 204, 204),	// Info color White (Default terminal color)
 		Asciir::Color(0, 217, 100),		// Important color Green
 		Asciir::Color(217, 217, 0),		// Warning color Yellow
 		Asciir::Color(217, 50, 50)		// Error color Red
-		})
+			})
 	{
 		while (true)
 		{
@@ -44,7 +44,7 @@ Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args)
 	{
 		std::cout << "Cannot take more than one commandline argument!\n";
 		throw std::runtime_error("Cannot take more than one commandline argument!\n");
-	} 
+	}
 	else if (args.size() == 2)
 	{
 		log_dir = args[1];

@@ -18,7 +18,7 @@ namespace Asciir
 		// Seconds have a precission of 2 decimals
 
 		long long milliseconds = convertMilsec(time_since_start);
-		
+
 		long long hours = milliseconds / (1000 * 60 * 60);
 		milliseconds -= hours * 1000 * 60 * 60;
 
