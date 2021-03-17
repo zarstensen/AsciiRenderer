@@ -24,15 +24,15 @@ namespace Asciir
 	static constexpr ATTRI UNDERLINE = 2;
 	static constexpr ATTRI BLINK = 3;
 	static constexpr ATTRI STRIKE = 4;
+	static constexpr ATTRI TOP = 7;
+	static constexpr ATTRI OVERLINED = 7;
+	static constexpr ATTRI BOTTOM = 2;
 	#ifdef AR_WIN
 	static constexpr ATTRI LEFT = 5;
 	static constexpr ATTRI RIGHT = 6;
-	static constexpr ATTRI TOP = 7;
-	static constexpr ATTRI BOTTOM = 2;
 	#else
 	static constexpr ATTRI FRAMED = 5;
 	static constexpr ATTRI ENCIRCLED = 6;
-	static constexpr ATTRI OVERLINED = 7;
 	#endif
 
 	struct Color
