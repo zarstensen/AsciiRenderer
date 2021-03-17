@@ -15,14 +15,15 @@ namespace Asciir
 		duration time_now = getTime();
 		duration time_since_start = time_now - m_log_start;
 
-		long long milliseconds = convertMilsec(time_since_start);
-
 		// Seconds have a precission of 2 decimals
+
+		long long milliseconds = convertMilsec(time_since_start);
+		
 		long long hours = milliseconds / (1000 * 60 * 60);
-		milliseconds -= hours;
+		milliseconds -= hours * 1000 * 60 * 60;
 
 		long long minutes = milliseconds / (1000 * 60);
-		milliseconds -= minutes;
+		milliseconds -= minutes * 1000 * 60;
 
 		float seconds = (float)milliseconds / 10;
 		seconds = round(seconds);
@@ -36,9 +37,9 @@ namespace Asciir
 			std::setw(4) << seconds << "] ";
 
 		// Log the log level, log stat, line and file it occured on
-		tmp_stream << log_type << " on line [" << line << "] in source file [" << file << "]:\n";
+		tmp_stream << '[' << log_type << ']' << " on line [" << line << "] in source file [" << file << "]:\n";
 
-		(tmp_stream << ... << args) << '\n';
+		(tmp_stream << ... << args) << "\n\n";
 
 		tmp_stream.seekg(0, std::ios::end);
 		unsigned int log_size = (unsigned int)tmp_stream.tellg();
@@ -54,7 +55,6 @@ namespace Asciir
 	template<typename ...T>
 	void FileLog::Log(size_t log_level, const char* log_type, size_t line, const char* file, T ...args)
 	{
-
 		auto ret = std::async(std::launch::async, &FileLog::async_log<T...>, this, log_level, log_type, line, file, args...);
 	}
 }
