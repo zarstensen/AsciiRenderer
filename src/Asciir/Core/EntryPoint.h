@@ -8,7 +8,7 @@ extern Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args);
 int main(int argc, char** argv)
 {
 	std::vector<std::string> args(argc);
-	for (size_t i = 0; i < argc; i++)
+	for (int i = 0; i < argc; i++)
 	{
 		args[i] = std::move(argv[i]);
 	}
