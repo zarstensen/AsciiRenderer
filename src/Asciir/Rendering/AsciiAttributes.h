@@ -50,6 +50,9 @@ namespace Asciir
 
 	};
 
+	#ifdef AR_WIN
+	static constexpr WORD DEFAULT_FOREGROUND = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+	#endif
 	/*static const AscColor BLACK(0, 0, 0, 0);
 	static const AscColor BLUE(0, 0, 1, 1);
 	static const AscColor CYAN(0, 1, 1, 1);
