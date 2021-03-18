@@ -41,32 +41,45 @@ namespace Asciir
 
 		Color();
 		Color(unsigned char r, unsigned char g, unsigned char b);
+		Color(unsigned char gray);
 		Color(const Color& other);
+	};
+	
+	typedef Color RGB24;
 
-		unsigned short getColor() const;
+	struct RGB8
+	{
+		unsigned char red, green, blue;
 
-		operator unsigned short() const;
+		RGB8(unsigned char r, unsigned char g, unsigned char b);
+		RGB8();
+
+		Color getColor();
+		operator Color();
+	};
+	
+	struct RGB4
+	{
+		bool red, green, blue, intensity;
+
+		RGB4();
+		RGB4(bool r, bool g, bool b, bool i = false);
+
+		Color getColor();
+		operator Color();
+
 	};
 
-	#ifdef AR_WIN
-	static constexpr WORD DEFAULT_FOREGROUND = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-	#endif
-	/*static const AscColor BLACK(0, 0, 0, 0);
-	static const AscColor BLUE(0, 0, 1, 1);
-	static const AscColor CYAN(0, 1, 1, 1);
-	static const AscColor DARK_BLUE(0, 0, 1, 0);
-	static const AscColor DARK_CYAN(0, 1, 1, 0);
-	static const AscColor DARK_GRAY(0, 0, 0, 1);
-	static const AscColor DARK_GREEN(0, 1, 0, 0);
-	static const AscColor PURPLE(1, 0, 1, 0);
-	static const AscColor DARK_RED(1, 0, 0, 0);
-	static const AscColor ORANGE(1, 1, 0, 0);
-	static const AscColor GRAY(1, 1, 1, 0);
-	static const AscColor GREEN(0, 1, 0, 1);
-	static const AscColor MAGENTA(1, 0, 1, 1);
-	static const AscColor RED(1, 0, 0, 1);
-	static const AscColor WHITE(1, 1, 1, 1);
-	static const AscColor YELLOW(1, 1, 0, 1);*/
+	struct GRAY8
+	{
+		unsigned char gray;
+
+		GRAY8(unsigned char g);
+		GRAY8();
+
+		Color getColor();
+		operator Color();
+	};
 
 	/*
 	* windows does not support

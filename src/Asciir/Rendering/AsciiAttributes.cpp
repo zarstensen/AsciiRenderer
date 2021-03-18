@@ -1,4 +1,5 @@
 #include "AsciiAttributes.h"
+#include "RenderConsts.h"
 #include <iostream>
 
 namespace Asciir
@@ -11,18 +12,167 @@ namespace Asciir
 		: red(r), green(g), blue(b)
 	{}
 
+	Color::Color(unsigned char gray)
+		: red(gray), green(gray), blue(gray)
+	{}
+
 	Color::Color(const Color& other)
 		: red(other.red), green(other.green), blue(other.blue)
 	{}
 
-	unsigned short Color::getColor() const
+
+
+
+	RGB8::RGB8(unsigned char r, unsigned char g, unsigned char b)
 	{
-		return 2;
+		red = r;
+		green = g;
+		blue = b;
+
+		#ifdef AR_DEBUG
+		if (red < 6)
+		{
+			throw std::runtime_error("Red color value must be less than 6, not '" + std::to_string(red) + "'");
+		}
+		if (green < 6)
+		{
+			throw std::runtime_error("Green color value must be less than 6, not '" + std::to_string(green) + "'");
+		}
+		if (blue < 6)
+		{
+			throw std::runtime_error("Blue color value must be less than 6, not '" + std::to_string(blue) + "'");
+		}
+		#endif
 	}
-	Color::operator unsigned short() const
+
+	RGB8::RGB8()
+		: red(0), green(0), blue(0)
+	{}
+
+	Color RGB8::getColor()
+	{
+		#ifdef AR_DEBUG
+		if (red > 5)
+		{
+			throw std::runtime_error("Red color value must be less than 6, not '" + std::to_string(red) + "'");
+		}
+		if (green > 5)
+		{
+			throw std::runtime_error("Green color value must be less than 6, not '" + std::to_string(green) + "'");
+		}
+		if (blue > 5)
+		{
+			throw std::runtime_error("Blue color value must be less than 6, not '" + std::to_string(blue) + "'");
+		}
+		#endif
+
+
+
+		return Color(CGRADIENT16[red], CGRADIENT16[green], CGRADIENT16[blue]);
+	}
+
+	RGB8::operator Color()
 	{
 		return getColor();
 	}
+
+	GRAY8::GRAY8(unsigned char g)
+		: gray(g)
+	{
+		#ifdef AR_DEBUG
+		if (gray < 24)
+		{
+			throw std::runtime_error("Gray value must be less than 24, not '" + std::to_string(gray) + "'");
+		}
+		#endif
+	}
+
+	GRAY8::GRAY8()
+		: gray(0)
+	{}
+
+	Color GRAY8::getColor()
+	{
+		#ifdef AR_DEBUG
+		if (gray < 24)
+		{
+			throw std::runtime_error("Gray value must be less than 24, not '" + std::to_string(gray) + "'");
+		}
+		#endif
+		
+		return 8 + gray * 10;
+	}
+
+	GRAY8::operator Color()
+	{
+		return getColor();
+	}
+
+	RGB4::RGB4()
+		: red(0), green(0), blue(0), intensity(0)
+	{}
+
+	RGB4::RGB4(bool r, bool g, bool b, bool i)
+		: red(r), green(g), blue(b), intensity(i)
+	{}
+
+	// determine the RGB values of 4 bit color system. The colors are platform dependent
+	Color RGB4::getColor()
+	{
+		switch ((unsigned char)red | (unsigned char)green << 1 | (unsigned char)blue << 2 | (unsigned char)intensity << 3)
+		{
+			case IS_BLACK:
+				return BLACK8;
+				break;
+			case IS_RED:
+				return RED8;
+				break;
+			case IS_GREEN:
+				return GREEN8;
+				break;
+			case IS_BLUE:
+				return BLUE8;
+				break;
+			case IS_YELLOW:
+				return YELLOW8;
+				break;
+			case IS_MAGENTA:
+				return MAGENTA8;
+				break;
+			case IS_CYAN:
+				return CYAN8;
+				break;
+			case IS_IBLACK:
+				return IBLACK8;
+				break;
+			case IS_IRED:
+				return IRED8;
+				break;
+			case IS_IGREEN:
+				return IGREEN8;
+				break;
+			case IS_IBLUE:
+				return IBLUE8;
+				break;
+			case IS_IYELLOW:
+				return IYELLOW8;
+				break;
+			case IS_IMAGENTA:
+				return IMAGENTA8;
+				break;
+			case IS_ICYAN:
+				return ICYAN8;
+				break;
+		}
+		
+	}
+
+	RGB4::operator Color()
+	{
+		return getColor();
+	}
+
+
 
 	#ifdef AR_WIN
 	AsciiAttr::AsciiAttr()
