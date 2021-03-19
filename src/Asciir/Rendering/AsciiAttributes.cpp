@@ -1,6 +1,7 @@
 #include "AsciiAttributes.h"
 #include "RenderConsts.h"
 #include <iostream>
+#include <assert.h>
 
 namespace Asciir
 {
@@ -163,6 +164,9 @@ namespace Asciir
 			case IS_ICYAN:
 				return ICYAN8;
 				break;
+			default:
+				assert("Invalid color");
+				return NULL;
 		}
 		
 	}
