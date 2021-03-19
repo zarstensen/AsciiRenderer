@@ -7,6 +7,10 @@ extern Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args);
 
 int main(int argc, char** argv)
 {
+	std::filesystem::create_directories(Asciir::CORE_LOG_DIR.parent_path());
+	std::filesystem::create_directories(Asciir::CLIENT_LOG_DIR.parent_path());
+	Asciir::Log::Init();
+	
 	std::vector<std::string> args(argc);
 	for (int i = 0; i < argc; i++)
 	{
