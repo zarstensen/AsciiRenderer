@@ -30,6 +30,7 @@
     <None Include="props\boost_x86_release.props">
       <Filter>BoostProps</Filter>
     </None>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Asciir\Core\Terminal.h">
@@ -56,6 +57,15 @@
     <ClInclude Include="src\Asciir\Rendering\AsciiAttributes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\RenderConsts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Logging\Log.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Logging\Log.ipp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Asciir\Core\Terminal.cpp">
@@ -68,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Asciir\Rendering\AsciiAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Logging\Log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
