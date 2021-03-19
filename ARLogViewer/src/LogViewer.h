@@ -18,6 +18,7 @@ namespace Asciir
 		LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors);
 		~LogViewer();
 
+		size_t pos();
 		size_t size();
 
 		void open();
@@ -25,5 +26,7 @@ namespace Asciir
 
 		bool hasLogs();
 		bool logLineOut(std::ostream& stream);
+
+		void reset(std::ostream& stream);
 	};
 }

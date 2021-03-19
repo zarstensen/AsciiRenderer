@@ -1,7 +1,5 @@
 #include "LogViewer.h"
 #include <limits>
-#undef max
-#undef min
 
 namespace Asciir
 {
@@ -14,11 +12,16 @@ namespace Asciir
 		close();
 	}
 
+	size_t LogViewer::pos()
+	{
+		return m_pos;
+	}
+
 	size_t LogViewer::size()
 	{
 		std::streampos tmp_pos = m_log_file.tellg();
 		m_log_file.seekg(0, std::ios::beg);
-		m_log_file.ignore(std::numeric_limits<std::streamsize>::max());
+		m_log_file.ignore((std::numeric_limits<std::streamsize>::max)());
 		std::streamsize length = m_log_file.gcount();
 		m_log_file.clear();
 		m_log_file.seekg(tmp_pos, std::ios::beg);
@@ -67,27 +70,34 @@ namespace Asciir
 		// get log level
 		size_t level_indx = log_view.find(']');
 		size_t level = (size_t)std::stoull((std::string)log_view.substr(1, level_indx - 1));
-		level = std::min(level, m_colors.size() - 1);
+		level = (std::min)(level, m_colors.size() - 1);
 
 		size_t time_indx = log_view.find(']', level_indx + 1);
-		size_t type_indx = log_view.find(']', time_indx + 1);
+		size_t source_indx = log_view.find(']', time_indx + 1);
+		size_t type_indx = log_view.find(']', source_indx + 1);
 		size_t line_indx = log_view.find(']', type_indx + 1);
 		size_t file_indx = log_view.find(']', line_indx + 1);
 
 		m_log_attributes.setForeground(m_colors[level]);
-		stream << m_log_attributes << log.substr(level_indx + 2, time_indx - level_indx);
-		
-		m_log_attributes.setAttribute(BOLD, true);
-		stream << m_log_attributes << log.substr(time_indx + 3, type_indx - time_indx - 3);
-		m_log_attributes.setAttribute(BOLD, false);
-		
-		stream << m_log_attributes << log.substr(type_indx + 1);
-		
+		stream << m_log_attributes << log.substr(level_indx + 1, time_indx - level_indx);
+
+		stream << log.substr(time_indx + 1, source_indx - time_indx) << ": ";
+		stream << log.substr(file_indx + 3);
+
 		m_log_attributes.clear();
 		stream << m_log_attributes;
 
 		m_pos += 6 + (size_t)size;
 
 		return true;
+	}
+
+	void LogViewer::reset(std::ostream& stream)
+	{
+		stream.clear();
+
+		m_pos = 0;
+		m_log_file.seekg(std::ios::beg);
+		
 	}
 }
