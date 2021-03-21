@@ -1,8 +1,6 @@
 #pragma once
 
 #include <Asciir/Rendering/AsciiAttributes.h>
-#include <filesystem>
-#include <fstream>
 
 namespace Asciir
 {

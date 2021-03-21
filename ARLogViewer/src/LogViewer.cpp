@@ -1,3 +1,4 @@
+#include <pch/arpch.h>
 #include "LogViewer.h"
 #include <limits>
 
@@ -5,7 +6,9 @@ namespace Asciir
 {
 	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors)
 		: m_log_dir(log_dir), m_colors(colors)
-	{}
+	{
+		m_log_attributes.setTitle("LogViewer");
+	}
 
 	LogViewer::~LogViewer()
 	{
@@ -46,6 +49,7 @@ namespace Asciir
 
 	bool LogViewer::logLineOut(std::ostream& stream)
 	{
+		std::cout << "HAS LINE\n\n";
 		size_t tmp_pos = m_pos;
 		std::string log;
 
@@ -54,16 +58,23 @@ namespace Asciir
 			return false;
 		}
 
+		std::streampos fail_pos = m_log_file.tellg();
 		m_log_file.ignore(1);
 
-		unsigned int size;
-		m_log_file.read((char*)&size, sizeof(unsigned int));
+		unsigned int l_size;
+		m_log_file.read((char*)&l_size, sizeof(unsigned int));
+
+		if (l_size > size())
+		{
+			m_log_file.seekg(fail_pos);
+			return false;
+		}
 
 		m_log_file.ignore(1);
 
-		log.resize(size);
+		log.resize(l_size);
 
-		m_log_file.read(log.data(), size);
+		m_log_file.read(log.data(), l_size);
 
 		std::string_view log_view = log;
 
@@ -87,7 +98,7 @@ namespace Asciir
 		m_log_attributes.clear();
 		stream << m_log_attributes;
 
-		m_pos += 6 + (size_t)size;
+		m_pos += 6 + (size_t)l_size;
 
 		return true;
 	}

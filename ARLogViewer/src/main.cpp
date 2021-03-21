@@ -6,6 +6,7 @@ class LogTerm : public Asciir::Terminal
 public:
 
 	Asciir::LogViewer logviewer;
+	std::string m_log_dir;
 
 	LogTerm(const std::string& log_dir)
 		:logviewer(log_dir, {
@@ -14,11 +15,20 @@ public:
 		Asciir::YELLOW8,	// Warning color Yellow
 		Asciir::IYELLOW8,	// Critical color Orange
 		Asciir::IRED8		// Error color Red
-			})
+			}),
+		m_log_dir(log_dir)
+	{}
+
+	~LogTerm()
+	{
+		logviewer.close();
+	}
+
+	void start()
 	{
 		while (true)
 		{
-			if (std::filesystem::exists(log_dir))
+			if (std::filesystem::exists(m_log_dir))
 			{
 				logviewer.open();
 				break;
@@ -30,13 +40,11 @@ public:
 			if (logviewer.hasLogs())
 				logviewer.logLineOut(std::cout);
 			else if (logviewer.pos() > logviewer.size())
+			{
 				logviewer.reset(std::cout);
+				std::cout << "\x1b[2J\x1b[H";
+			}
 		}
-	}
-
-	~LogTerm()
-	{
-		logviewer.close();
 	}
 };
 

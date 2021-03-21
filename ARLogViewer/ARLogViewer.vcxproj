@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -111,7 +111,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -128,7 +128,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -145,7 +145,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -159,11 +159,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="LogFormatter.h" />
     <ClInclude Include="src\LogViewer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LogFormatter.cpp" />
     <ClCompile Include="src\LogViewer.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
