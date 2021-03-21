@@ -26,6 +26,11 @@
     <None Include="props\boost_x86_release.props" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\pch\arpch.h" />
+    <ClInclude Include="src\Asciir\Event\Event.h" />
+    <ClInclude Include="src\Asciir\Event\KeyEvent.h" />
+    <ClInclude Include="src\Asciir\Event\MouseEvent.h" />
+    <ClInclude Include="src\Asciir\Event\TerminalEvent.h" />
     <ClInclude Include="src\Asciir\Logging\Log.h" />
     <ClInclude Include="src\Asciir\Core\Timing.h" />
     <ClInclude Include="src\Asciir\Logging\FileLog.h" />
@@ -39,6 +44,12 @@
     <ClInclude Include="src\Asciir\Rendering\RenderConsts.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\pch\arpch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Asciir\Logging\Log.cpp" />
     <ClCompile Include="src\Asciir\Core\Timing.cpp" />
     <ClCompile Include="src\Asciir\Logging\FileLog.cpp" />
@@ -127,9 +138,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>arpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,9 +157,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>arpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -161,9 +176,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>arpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -178,9 +195,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Asciir\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>arpch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
