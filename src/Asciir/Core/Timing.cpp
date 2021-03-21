@@ -1,5 +1,5 @@
+#include "arpch.h"
 #include "Timing.h"
-#include <thread>
 
 namespace Asciir
 {

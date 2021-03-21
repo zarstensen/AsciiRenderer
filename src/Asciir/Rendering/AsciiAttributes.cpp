@@ -1,7 +1,6 @@
+#include "arpch.h"
 #include "AsciiAttributes.h"
 #include "RenderConsts.h"
-#include <iostream>
-#include <assert.h>
 
 namespace Asciir
 {
@@ -120,7 +119,7 @@ namespace Asciir
 	// determine the RGB values of 4 bit color system. The colors are platform dependent
 	Color RGB4::getColor()
 	{
-		switch ((unsigned char)red | (unsigned char)green << 1 | (unsigned char)blue << 2 | (unsigned char)intensity << 3)
+		switch (BIT_SHL(0, red) | BIT_SHL(1, green) | BIT_SHL(2, blue) | BIT_SHL(intensity, 3))
 		{
 			case IS_BLACK:
 				return BLACK8;
@@ -282,7 +281,8 @@ namespace Asciir
 
 	void AsciiAttr::ansiCode(std::string& dst) const
 	{
-		#ifdef AR_WIN
+		// disabled because it causes a large overhead
+		#if 0
 		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
 			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
@@ -308,7 +308,7 @@ namespace Asciir
 			dst += ";5";
 
 		if (attributes[STRIKE])
-			dst += ";3";
+			dst += ";9";
 
 		// foreground color
 
@@ -363,7 +363,8 @@ namespace Asciir
 
 	void AsciiAttr::ansiCode(std::ostream& stream) const
 	{
-		#ifdef AR_WIN
+		
+		#if 0
 		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
 			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]

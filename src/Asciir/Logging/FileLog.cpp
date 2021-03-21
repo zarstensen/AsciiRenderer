@@ -1,11 +1,13 @@
+#include "arpch.h"
 #include "FileLog.h"
-#include <filesystem>
 
 namespace Asciir
 {
-	FileLog::FileLog(const std::string& log_name, bool save_file)
-		: m_log_file(log_name), m_log_start(getTime()), m_name(log_name), m_save_file(save_file), is_open(true)
-	{}
+	FileLog::FileLog(const std::string& log_name, bool save_file, bool append_logs)
+		: m_log_start(getTime()), m_name(log_name), m_save_file(save_file), is_open(true)
+	{
+		open(log_name, save_file, append_logs);
+	}
 
 	FileLog::FileLog()
 		: m_log_start(getTime()), m_save_file(false), is_open(false)
@@ -19,7 +21,7 @@ namespace Asciir
 		}
 	}
 
-	void FileLog::open(const std::string& log_name, bool save_file)
+	void FileLog::open(const std::string& log_name, bool save_file, bool append_logs)
 	{
 		#ifdef AR_DEBUG
 		if (is_open)
@@ -30,7 +32,10 @@ namespace Asciir
 
 		is_open = true;
 
-		m_log_file.open(log_name);
+		if (append_logs)
+			m_log_file.open(log_name, std::ios::app);
+		else
+			m_log_file.open(log_name);
 		m_name = log_name;
 		m_save_file = save_file;
 	}
