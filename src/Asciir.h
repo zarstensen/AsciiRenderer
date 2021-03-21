@@ -1,5 +1,7 @@
 #pragma once
 
+#include "pch/arpch.h"
+
 // Core
 #include "Asciir/Core/Core.h"
 #include "Asciir/Core/Terminal.h"

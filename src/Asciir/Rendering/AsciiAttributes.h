@@ -1,17 +1,6 @@
 #pragma once
 
-#ifdef AR_WIN
-#include <Windows.h>
-#else
-#include <sys/ioctl>
-#include <unistd>
-#endif
-
-#include "../Core/Core.h"
-#include <tuple>
-#include <string>
-#include <array>
-#include <iostream>
+#include "Asciir/Core/Core.h"
 
 namespace Asciir
 {
