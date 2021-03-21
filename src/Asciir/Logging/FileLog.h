@@ -1,11 +1,7 @@
 #pragma once
 
-#include "../Core/Core.h"
-#include "../Core/Timing.h"
-#include <fstream>
-#include <chrono>
-#include <future>
-#include <iomanip>
+#include "Asciir/Core/Core.h"
+#include "Asciir/Core/Timing.h"
 
 namespace Asciir
 {
@@ -23,10 +19,10 @@ namespace Asciir
 
 	public:
 		FileLog();
-		FileLog(const std::string& log_name, bool save_log = true);
+		FileLog(const std::string& log_name, bool save_log = true, bool append_logs = false);
 		~FileLog();
 
-		void open(const std::string& log_name, bool save_log = true);
+		void open(const std::string& log_name, bool save_log = true, bool append_logs = false);
 		void close();
 
 		template<typename ... T>

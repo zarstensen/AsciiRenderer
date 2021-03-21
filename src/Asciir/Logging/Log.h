@@ -1,7 +1,6 @@
 #pragma once
 
 #include "FileLog.h"
-#include <filesystem>
 
 
 namespace Asciir
@@ -14,7 +13,7 @@ namespace Asciir
 		inline static FileLog s_core_log_out;
 		inline static FileLog s_client_log_out;
 	public:
-		static void Init();
+		static void Init(bool save_core, bool save_client, bool append_logs);
 
 		template<typename ... T>
 		inline static void coreInfo(size_t line, const char* file, T ... args);
@@ -48,11 +47,11 @@ namespace Asciir
 #define AR_CORE_ERR(...)	::Asciir::Log::coreError(__LINE__, __FILE__, __VA_ARGS__)
 
 // Client macros
-#define AR_INFO(...)		::Asciir::Log::coreInfo(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_NOTIFY(...)		::Asciir::Log::coreNotify(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_WARN(...)		::Asciir::Log::coreWarning(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_CRIT(...)		::Asciir::Log::coreCritical(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_ERR(...)			::Asciir::Log::coreError(__LINE__, __FILE__, __VA_ARGS__)
+#define AR_INFO(...)		::Asciir::Log::clientInfo(__LINE__, __FILE__, __VA_ARGS__)
+#define AR_NOTIFY(...)		::Asciir::Log::clientNotify(__LINE__, __FILE__, __VA_ARGS__)
+#define AR_WARN(...)		::Asciir::Log::clientWarning(__LINE__, __FILE__, __VA_ARGS__)
+#define AR_CRIT(...)		::Asciir::Log::clientCritical(__LINE__, __FILE__, __VA_ARGS__)
+#define AR_ERR(...)			::Asciir::Log::clientError(__LINE__, __FILE__, __VA_ARGS__)
 
 
 #include "Log.ipp"

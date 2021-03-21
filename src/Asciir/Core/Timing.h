@@ -1,7 +1,5 @@
 #pragma once
 
-#include <chrono>
-
 namespace Asciir
 {
 	using clock = std::chrono::steady_clock;

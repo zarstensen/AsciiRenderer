@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <future>
-
 namespace Asciir
 {
 	template<typename ...T>
