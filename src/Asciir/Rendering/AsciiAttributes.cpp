@@ -20,7 +20,30 @@ namespace Asciir
 		: red(other.red), green(other.green), blue(other.blue)
 	{}
 
-
+	bool Color::operator==(const Color& other)
+	{
+		return red == other.red && green == other.green && blue == other.blue;
+	}
+	bool Color::operator!=(const Color& other)
+	{
+		return !operator==(other);
+	}
+	bool Color::operator<(const Color& other)
+	{
+		return (red + green + blue) / 3 < (other.red + other.green + other.blue) / 3;
+	}
+	bool Color::operator>(const Color& other)
+	{
+		return (red + green + blue) / 3 > (other.red + other.green + other.blue) / 3;
+	}
+	bool Color::operator<=(const Color& other)
+	{
+		return (red + green + blue) / 3 <= (other.red + other.green + other.blue) / 3;
+	}
+	bool Color::operator>=(const Color& other)
+	{
+		return (red + green + blue) / 3 >= (other.red + other.green + other.blue) / 3;
+	}
 
 
 	RGB8::RGB8(unsigned char r, unsigned char g, unsigned char b)
@@ -196,9 +219,19 @@ namespace Asciir
 		m_foreground = color;
 	}
 
+	Color AsciiAttr::getForeground()
+	{
+		return m_foreground;
+	}
+
 	void AsciiAttr::setBackground(const Color& color)
 	{
 		m_background = color;
+	}
+
+	Color AsciiAttr::getBackground()
+	{
+		return m_background;
 	}
 
 	void AsciiAttr::setColor(const Color& foreground, const Color& background)
@@ -299,7 +332,7 @@ namespace Asciir
 		#endif
 
 		if (attributes[ITALIC])
-			dst += "3;";
+			dst += ";3";
 
 		if (attributes[UNDERLINE])
 			dst += ";4";
