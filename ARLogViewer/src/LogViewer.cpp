@@ -49,7 +49,6 @@ namespace Asciir
 
 	bool LogViewer::logLineOut(std::ostream& stream)
 	{
-		std::cout << "HAS LINE\n\n";
 		size_t tmp_pos = m_pos;
 		std::string log;
 

@@ -1,7 +1,7 @@
 #include <Asciir.h>
 #include "LogViewer.h"
 
-class LogTerm : public Asciir::Terminal
+class LogTerm : public Asciir::AREngine
 {
 public:
 
@@ -24,7 +24,7 @@ public:
 		logviewer.close();
 	}
 
-	void start()
+	void start() override
 	{
 		while (true)
 		{
@@ -42,13 +42,13 @@ public:
 			else if (logviewer.pos() > logviewer.size())
 			{
 				logviewer.reset(std::cout);
-				std::cout << "\x1b[2J\x1b[H";
+				std::cout << "\x1b[H\x1b[3J";
 			}
 		}
 	}
 };
 
-Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args)
+Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args)
 {
 	std::string log_dir = AR_CORE_LOG_DIR;
 	if (args.size() > 2)
