@@ -33,7 +33,7 @@
     <None Include="cpp.hint" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Asciir\Core\Terminal.h">
+    <ClInclude Include="src\Asciir\Core\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Asciir\Core\Core.h">
@@ -81,9 +81,27 @@
     <ClInclude Include="src\pch\arpch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Asciir\Core\Terminal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\TerminalRender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\Vertices.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\Matrix.ipp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\Lines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Asciir\Core\Terminal.cpp">
+    <ClCompile Include="src\Asciir\Core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Asciir\Logging\FileLog.cpp">
@@ -99,6 +117,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\pch\arpch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Core\Terminal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Rendering\TerminalRender.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Rendering\Vertices.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Rendering\Lines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

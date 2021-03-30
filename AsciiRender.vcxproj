@@ -26,6 +26,8 @@
     <None Include="props\boost_x86_release.props" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Asciir\Rendering\Lines.h" />
+    <ClInclude Include="src\Asciir\Rendering\Matrix.h" />
     <ClInclude Include="src\pch\arpch.h" />
     <ClInclude Include="src\Asciir\Event\Event.h" />
     <ClInclude Include="src\Asciir\Event\KeyEvent.h" />
@@ -36,14 +38,19 @@
     <ClInclude Include="src\Asciir\Logging\FileLog.h" />
     <ClInclude Include="src\Asciir.h" />
     <ClInclude Include="src\Asciir\Core\EntryPoint.h" />
-    <ClInclude Include="src\Asciir\Core\Terminal.h" />
+    <ClInclude Include="src\Asciir\Core\Engine.h" />
     <ClInclude Include="src\Asciir\Core\Core.h" />
     <ClInclude Include="src\Asciir\Logging\FileLog.ipp" />
     <ClInclude Include="src\Asciir\Logging\Log.ipp" />
     <ClInclude Include="src\Asciir\Rendering\AsciiAttributes.h" />
     <ClInclude Include="src\Asciir\Rendering\RenderConsts.h" />
+    <ClInclude Include="src\Asciir\Core\Terminal.h" />
+    <ClInclude Include="src\Asciir\Rendering\TerminalRender.h" />
+    <ClInclude Include="src\Asciir\Rendering\Vertices.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Asciir\Rendering\Matrix.ipp" />
+    <ClCompile Include="src\Asciir\Rendering\Lines.cpp" />
     <ClCompile Include="src\pch\arpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -53,8 +60,11 @@
     <ClCompile Include="src\Asciir\Logging\Log.cpp" />
     <ClCompile Include="src\Asciir\Core\Timing.cpp" />
     <ClCompile Include="src\Asciir\Logging\FileLog.cpp" />
-    <ClCompile Include="src\Asciir\Core\Terminal.cpp" />
+    <ClCompile Include="src\Asciir\Core\Engine.cpp" />
     <ClCompile Include="src\Asciir\Rendering\AsciiAttributes.cpp" />
+    <ClCompile Include="src\Asciir\Core\Terminal.cpp" />
+    <ClCompile Include="src\Asciir\Rendering\TerminalRender.cpp" />
+    <ClCompile Include="src\Asciir\Rendering\Vertices.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
