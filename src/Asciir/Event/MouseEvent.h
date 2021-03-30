@@ -15,12 +15,9 @@ namespace Asciir
 
 	public:
 
-		int getMouseCode()
-		{
-			return m_mouseCode;
-		}
+		int getMouseCode() const { return m_mouseCode; }
 
-		EVENT_CATEGORY_DEFINE(CategoryInput| CategoryMouse)
+		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 
 	};
 
@@ -35,18 +32,36 @@ namespace Asciir
 
 	public:
 
+		bool isPressed() const { return m_pressed; }
+
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "MouseReleased: " << getMouseCode() << ',' << isPressed();
+
+			return msg.str();
+		}
+
 		EVENT_TYPE_DEFINE(MousePressed)
 	};
 
 	class MouseReleasedEvent : public MouseKeyEvent
 	{
 	protected:
-
-	protected:
 		MouseReleasedEvent(int mouseCode)
 			: MouseKeyEvent(mouseCode) {}
 
 	public:
+
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "MouseReleased: " << getMouseCode();
+
+			return msg.str();
+		}
 
 		EVENT_TYPE_DEFINE(MouseReleased)
 	};
@@ -61,14 +76,23 @@ namespace Asciir
 			: m_xpos(xpos), m_ypos(ypos), m_xdiff(xdiff), m_ydiff(ydiff)
 		{}
 
-		unsigned int getX() { return m_xpos; }
-		unsigned int getY() { return m_ypos; }
-		unsigned int getXDiff() { return m_xdiff; }
-		unsigned int getYDiff() { return m_ydiff; }
+		unsigned int getX() const { return m_xpos; }
+		unsigned int getY() const { return m_ypos; }
+		unsigned int getXDiff() const { return m_xdiff; }
+		unsigned int getYDiff() const { return m_ydiff; }
+
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "MouseMoved: " << getX() << ',' << getY() << ':' << getXDiff() << ',' << getYDiff();
+			
+			return msg.str();
+		}
 
 		EVENT_TYPE_DEFINE(MouseMoved)
 
-		EVENT_CATEGORY_DEFINE(CategoryInput, CategoryMouse)
+		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
 
 	class MouseScrolledEvent : public Event
@@ -80,11 +104,20 @@ namespace Asciir
 			: m_xoff(xpos), m_yoff(ypos)
 		{}
 
-		unsigned int getXOff() { return m_xoff; }
-		unsigned int getYOff() { return m_yoff; }
+		float getXOff() const { return m_xoff; }
+		float getYOff() const { return m_yoff; }
+
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "MouseScrolled: " << getXOff() << ',' << getYOff();
+
+			return msg.str();
+		}
 
 		EVENT_TYPE_DEFINE(MouseMoved)
 
-		EVENT_CATEGORY_DEFINE(CategoryInput, CategoryMouse)
+		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
 }

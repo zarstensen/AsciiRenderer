@@ -4,33 +4,45 @@
 
 namespace Asciir
 {
-	class TerminalCloseEvent : public Event
+	class TerminalClosedEvent : public Event
 	{
-		TerminalCloseEvent() {}
+		TerminalClosedEvent() {}
 
 		EVENT_CATEGORY_DEFINE(CategoryGame)
-		EVENT_TYPE_DEFINE(TerminalClose)
+		EVENT_TYPE_DEFINE(TerminalClosed)
 	};
 
-	class TerminalResizeEvent : public Event
+	class TerminalResizedEvent : public Event
 	{
 	protected:
 		unsigned int m_width, m_height;
 	public:
-		TerminalResizeEvent(unsigned int width, unsigned int height)
+		TerminalResizedEvent(unsigned int width, unsigned int height)
 			: m_width(width), m_height(height)
 		{}
 
+		unsigned int getWidth() const { return m_width; }
+		unsigned int getHeight() const { return m_height; }
+
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "TerminalResized: " << getWidth() << ',' << getHeight();
+
+			return msg.str();
+		}
+
 		EVENT_CATEGORY_DEFINE(CategoryGame)
-		EVENT_TYPE_DEFINE(TerminalResize)
+		EVENT_TYPE_DEFINE(TerminalResized)
 	};
 
-	class TerminalFocusEvent: public Event
+	class TerminalFocusedEvent: public Event
 	{
-		TerminalFocusEvent() {}
+		TerminalFocusedEvent() {}
 
 		EVENT_CATEGORY_DEFINE(CategoryGame)
-		EVENT_TYPE_DEFINE(TerminalFocus)
+		EVENT_TYPE_DEFINE(TerminalFocused)
 	};
 
 	class TerminalLostFocusEvent : public Event

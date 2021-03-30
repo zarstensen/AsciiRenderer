@@ -7,7 +7,7 @@ namespace Asciir
 	enum class EventType
 	{
 		None,
-		TerminalClose, TerminalResize, TerminalFocus, TerminalLostFocus, CursorMoved,
+		TerminalClosed, TerminalResized, TerminalFocused, TerminalLostFocus, CursorMoved,
 		GameTick, GameUpdate, GameRender,
 		KeyPressed, KeyReleased,
 		MousePressed, MouseReleased, MouseMoved, MouseScrolled
