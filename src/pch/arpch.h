@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include <filesystem>
+#include <type_traits>
 
 #include <iostream>
 #include <string>
@@ -20,6 +21,8 @@
 
 #ifdef AR_WIN
 #include <Windows.h>
+#undef min
+#undef max
 #else
 #include <sys/ioctl>
 #include <unistd>
