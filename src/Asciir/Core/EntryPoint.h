@@ -3,7 +3,7 @@
 #ifdef AR_WIN
 
 // Define this function in your program and return a heap allocated class derived from Asciir::Terminal
-extern Asciir::Terminal* Asciir::CreateTerminal(std::vector<std::string> args);
+extern Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args);
 
 int main(int argc, char** argv)
 {
@@ -32,9 +32,9 @@ int main(int argc, char** argv)
 		args[i] = std::move(argv[i]);
 	}
 
-	Asciir::Terminal* terminal = Asciir::CreateTerminal(std::move(args));
-	terminal->start();
-	delete terminal;
+	Asciir::AREngine* engine = Asciir::CreateEngine(std::move(args));
+	engine->start();
+	delete engine;
 }
 
 #endif
