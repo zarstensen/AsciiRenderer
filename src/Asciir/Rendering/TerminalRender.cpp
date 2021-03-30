@@ -60,6 +60,15 @@ namespace Asciir
 						}
 
 					}
+
+					LineSegment lsegment(vertices[vertices.size() - 1], vertices[0]);
+
+					if (lsegment.intersects({ x, line }))
+					{
+						was_inside = true;
+						is_inside = !is_inside;
+					}
+
 					if (is_inside || was_inside)
 					{
 						was_inside = false;
@@ -150,5 +159,9 @@ namespace Asciir
 	float TerminalRender::getSlope(const arVertex& a, const arVertex& b)
 	{
 		return float(a.y - b.y) / float(a.x - b.x);
+	}
+	void TerminalRender::drawLine(const arVertex& a, const arVertex& b)
+	{
+		drawVertices({ a, b }, DrawMode::Line);
 	}
 }
