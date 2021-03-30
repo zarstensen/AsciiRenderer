@@ -13,7 +13,7 @@ namespace Asciir
 		std::this_thread::sleep_for(std::chrono::milliseconds(millsec));
 	}
 
-	long long convertMilsec(const duration& dur)
+	long long castMilli(const duration& dur)
 	{
 		return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
 	}
