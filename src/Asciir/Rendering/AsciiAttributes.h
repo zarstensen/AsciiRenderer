@@ -24,6 +24,8 @@ namespace Asciir
 	static constexpr ATTRI ENCIRCLED = 6;
 	#endif
 
+	static constexpr size_t ATTR_MAX_SIZE = 48;
+
 	struct Color
 	{
 		unsigned char red, green, blue;
@@ -32,6 +34,13 @@ namespace Asciir
 		Color(unsigned char r, unsigned char g, unsigned char b);
 		Color(unsigned char gray);
 		Color(const Color& other);
+
+		bool operator==(const Color& other);
+		bool operator!=(const Color& other);
+		bool operator<(const Color& other);
+		bool operator>(const Color& other);
+		bool operator<=(const Color& other);
+		bool operator>=(const Color& other);
 	};
 	
 	typedef Color RGB24;
@@ -105,7 +114,9 @@ namespace Asciir
 		~AsciiAttr();
 
 		void setForeground(const Color& color);
+		Color getForeground();
 		void setBackground(const Color& color);
+		Color getBackground();
 		void setColor(const Color& foreground, const Color& background);
 
 		void clear();
