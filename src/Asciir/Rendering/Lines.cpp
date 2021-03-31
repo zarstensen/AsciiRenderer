@@ -49,7 +49,7 @@ namespace Asciir
 		arVertex dvert = { b.x - a.x , b.y - a.y };
 
 		float slope = float(dvert.x) / float(dvert.y);
-		return slope * y + a.x;
+		return TInt(slope * y + a.x);
 	}
 
 	TInt LineSegment::getY(TInt x)
@@ -57,7 +57,7 @@ namespace Asciir
 		arVertex dvert = { b.x - a.x , b.y - a.y };
 
 		float slope = float(dvert.y) / float(dvert.x);
-		return slope * x + a.y;
+		return TInt(slope * x + a.y);
 	}
 
 	bool LineSegment::intersects(arVertex point)

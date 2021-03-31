@@ -5,8 +5,9 @@
 
 namespace Asciir
 {
-	TerminalRender::TerminalRender()
+	TerminalRender::TerminalRender(size_t buffer_size)
 	{
+		m_buffer.reserve(buffer_size);
 		update();
 	}
 
@@ -79,6 +80,11 @@ namespace Asciir
 
 		}
 	}
+	
+	void TerminalRender::drawLine(const arVertex& a, const arVertex& b)
+	{
+		drawVertices({ a, b }, DrawMode::Line);
+	}
 
 	void TerminalRender::setTile(const arVertex& pos, Tile tile)
 	{
@@ -109,18 +115,21 @@ namespace Asciir
 		return m_tiles[pos.x + m_tiles.size().x * (m_tiles.size().y - pos.y - 1)];
 	}
 
+	void TerminalRender::resize(arVertex size)
+	{
+		pushBuffer("\x1b[?25l\x1b[8;" + std::to_string(size.y) + ';' + std::to_string(size.x) + 't');
+
+		m_tiles.resize({ size.x, size.y });
+	}
+
 	void TerminalRender::update()
 	{
 		auto [width, height] = m_terminal.terminalSize();
-		m_buffer.clear();
 
 		if (width != m_tiles.size().x || height != m_tiles.size().y)
 		{
-			fwrite("\x1b[?25l", 1, 6, stderr);
+			pushBuffer("\x1b[?25l");
 			m_tiles.resize({ width, height });
-			// width + 1 because of newline
-			// +3 because of \x1b[H to go to the top left of terminal
-			m_buffer.reserve(3 + (width + 1) * height * ATTR_MAX_SIZE);
 		}
 	}
 
@@ -128,7 +137,7 @@ namespace Asciir
 	{
 		update();
 
-		m_buffer += "\x1b[H";
+		pushBuffer("\x1b[H");
 
 		for (TInt y = 0; y < m_tiles.size().y; y++)
 		{
@@ -137,31 +146,59 @@ namespace Asciir
 				if (m_tiles[{x, y}].color != m_terminal.getBackground())
 				{
 					m_terminal.setBackground(m_tiles[{x, y}].color);
-					m_terminal.ansiCode(m_buffer);
+					m_terminal.ansiCode<TerminalRender>(*this);
 				}
 
 				m_tiles[{x, y}] = Tile();
-				m_buffer += ' ';
+				pushBuffer(' ');
 			}
 
 			if(y < m_tiles.size().y - 1)
-				m_buffer += '\n';
+				pushBuffer('\n');
 		}
 
-		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stderr);
+		flushBuffer();
 	}
 
-	arVertex Asciir::TerminalRender::size()
+	arVertex TerminalRender::size()
 	{
 		return m_tiles.size();
 	}
 
-	float TerminalRender::getSlope(const arVertex& a, const arVertex& b)
+	void TerminalRender::pushBuffer(char c)
 	{
-		return float(a.y - b.y) / float(a.x - b.x);
+		if (m_buffer.size() + 1 > m_buffer.capacity())
+			flushBuffer();
+
+		m_buffer += c;
 	}
-	void TerminalRender::drawLine(const arVertex& a, const arVertex& b)
+
+	void TerminalRender::pushBuffer(const std::string& data)
 	{
-		drawVertices({ a, b }, DrawMode::Line);
+		if (data.size() + m_buffer.size() > m_buffer.capacity())
+			flushBuffer();
+		
+		if (data.size() > m_buffer.capacity())
+			fwrite(data.c_str(), 1, data.size(), stderr);
+
+		m_buffer += data;
+	}
+
+	void TerminalRender::flushBuffer()
+	{
+		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stderr);
+		m_buffer.clear();
+	}
+
+	TerminalRender& TerminalRender::operator<<(const std::string& data)
+	{
+		pushBuffer(data);
+		return *this;
+	}
+
+	TerminalRender& TerminalRender::operator<<(char data)
+	{
+		pushBuffer(data);
+		return *this;
 	}
 }
