@@ -6,21 +6,11 @@ namespace Asciir
 	arVertex::arVertex(TInt x, TInt y)
 	: x(x), y(y) {}
 
-	TInt& arVertex::coord(bool index)
-	{
-		if (index)
-			return x;
-		else
-			return y;
-	}
+	arVertex::arVertex(const arBigVertex& derived)
+		: x(derived.x), y(derived.y/2) {}
 
-	TInt arVertex::coord(bool index) const
-	{
-		if (index)
-			return x;
-		else
-			return y;
-	}
+	arVertex::arVertex(const arSmallVertex& derived)
+		: x(derived.x / 2), y(derived.y) {}
 
 	std::ostream& operator<<(std::ostream& stream, const arVertex& vert)
 	{
@@ -39,5 +29,21 @@ namespace Asciir
 
 		return stream;
 	}
+
+	arBigVertex::arBigVertex(TInt x, TInt y)
+		:arVertex(x, y)
+	{
+	}
+
+	arBigVertex::arBigVertex(const arVertex& base)
+		: arVertex(base) {
+		std::cout << "TEST\n";
+	}
+
+	arSmallVertex::arSmallVertex(TInt x, TInt y)
+		: arVertex(x, y) {}
+
+	arSmallVertex::arSmallVertex(const arVertex& base)
+		: arVertex(base) {}
 
 }

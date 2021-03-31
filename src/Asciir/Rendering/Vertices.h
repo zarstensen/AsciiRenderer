@@ -4,6 +4,10 @@
 
 namespace Asciir
 {
+
+	struct arBigVertex;
+	struct arSmallVertex;
+
 	struct arVertex
 	{
 		TInt x = 0;
@@ -11,9 +15,22 @@ namespace Asciir
 
 		arVertex() = default;
 		arVertex(TInt x, TInt y);
+		arVertex(const arBigVertex& derived);
+		arVertex(const arSmallVertex& derived);
+	};
+	
+	struct arBigVertex: public arVertex
+	{
+		arBigVertex() = default;
+		arBigVertex(TInt x, TInt y);
+		arBigVertex(const arVertex& base);
+	};
 
-		TInt& coord(bool index);
-		TInt coord(bool index) const;
+	struct arSmallVertex : public arVertex
+	{
+		arSmallVertex() = default;
+		arSmallVertex(TInt x, TInt y);
+		arSmallVertex(const arVertex& base);
 	};
 
 	typedef std::vector<arVertex> arVertices;
