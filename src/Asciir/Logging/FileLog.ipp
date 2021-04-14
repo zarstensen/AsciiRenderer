@@ -3,7 +3,7 @@
 namespace Asciir
 {
 	template<typename ...T>
-	void FileLog::async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, T ...args)
+	void FileLog::async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ...args)
 	{
 		std::lock_guard<std::mutex> lock(m_log_file_mutex);
 		m_log_file << '[';
@@ -50,8 +50,8 @@ namespace Asciir
 	}
 
 	template<typename ...T>
-	void FileLog::Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, T ...args)
+	void FileLog::Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ...args)
 	{
-		auto ret = std::async(std::launch::async, &FileLog::async_log<T...>, this, log_level, log_source, log_type, line, file, args...);
+		auto ret = std::async(std::launch::async, &FileLog::async_log<T...>, this, log_level, log_source, log_type, line, file, std::cref<T...>(args...));
 	}
 }

@@ -15,7 +15,7 @@ namespace Asciir
 		bool is_open;
 
 		template<typename ... T>
-		void async_log(size_t log_level, const char* log_cource, const char* log_type, size_t line, const char* file, T ... args);
+		void async_log(size_t log_level, const char* log_cource, const char* log_type, size_t line, const char* file, const T& ... args);
 
 	public:
 		FileLog();
@@ -26,7 +26,7 @@ namespace Asciir
 		void close();
 
 		template<typename ... T>
-		void Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, T ... args);
+		void Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ... args);
 	};
 }
 

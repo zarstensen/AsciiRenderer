@@ -16,7 +16,7 @@ namespace Asciir
 		static void Init(bool save_core, bool save_client, bool append_logs);
 
 		template<typename ... T>
-		inline static void coreInfo(size_t line, const char* file, T ... args);
+		inline static void coreInfo(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
 		inline static void coreNotify(size_t line, const char* file, T ... args);
 		template<typename ... T>
@@ -39,19 +39,82 @@ namespace Asciir
 	};
 }
 
+
 // Core macros
+
+#ifndef AR_CORE_VERBOSITY
+#define AR_CORE_VERBOSITY 4
+#endif
+
+#if AR_CORE_VERBOSITY >= 4
 #define AR_CORE_INFO(...)	::Asciir::Log::coreInfo(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CORE_INFO(...)	__VA_ARGS__
+#endif
+
+#if AR_CORE_VERBOSITY >= 3
 #define AR_CORE_NOTIFY(...) ::Asciir::Log::coreNotify(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CORE_NOTIFY(...)	__VA_ARGS__
+#endif
+
+#if AR_CORE_VERBOSITY >= 2
 #define AR_CORE_WARN(...)	::Asciir::Log::coreWarning(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CORE_WARN(...)	__VA_ARGS__
+#endif
+
+
+#if AR_CORE_VERBOSITY >= 1
 #define AR_CORE_CRIT(...)	::Asciir::Log::coreCritical(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CORE_CRIT(...)	__VA_ARGS__
+#endif
+
+#if AR_CORE_VERBOSITY >= 0
 #define AR_CORE_ERR(...)	::Asciir::Log::coreError(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CORE_ERR(...)	__VA_ARGS__
+#endif
+
+
 
 // Client macros
-#define AR_INFO(...)		::Asciir::Log::clientInfo(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_NOTIFY(...)		::Asciir::Log::clientNotify(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_WARN(...)		::Asciir::Log::clientWarning(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_CRIT(...)		::Asciir::Log::clientCritical(__LINE__, __FILE__, __VA_ARGS__)
-#define AR_ERR(...)			::Asciir::Log::clientError(__LINE__, __FILE__, __VA_ARGS__)
+
+#ifndef AR_CLIENT_VERBOSITY
+#define AR_CLIENT_VERBOSITY 4
+#endif
+
+#if AR_CLIENT_VERBOSITY >= 4
+#define AR_INFO(...)	::Asciir::Log::clientInfo(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_INFO(...)	__VA_ARGS__
+#endif
+
+#if AR_CLIENT_VERBOSITY >= 3
+#define AR_NOTIFY(...) ::Asciir::Log::clientNotify(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_NOTIFY(...)	__VA_ARGS__
+#endif
+
+#if AR_CLIENT_VERBOSITY >= 2
+#define AR_WARN(...)	::Asciir::Log::clientWarning(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_WARN(...)	__VA_ARGS__
+#endif
+
+
+#if AR_CLIENT_VERBOSITY >= 1
+#define AR_CRIT(...)	::Asciir::Log::clientCritical(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_CRIT(...)	__VA_ARGS__
+#endif
+
+#if AR_CLIENT_VERBOSITY >= 0
+#define AR_ERR(...)	::Asciir::Log::clientError(__LINE__, __FILE__, __VA_ARGS__)
+#else
+#define AR_ERR(...)	__VA_ARGS__
+#endif
 
 
 #include "Log.ipp"

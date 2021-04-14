@@ -3,7 +3,7 @@
 namespace Asciir
 {
 	template<typename ... T>
-	inline static void Log::coreInfo(size_t line, const char* file, T ... args)
+	inline static void Log::coreInfo(size_t line, const char* file, const T& ... args)
 	{
 		s_core_log_out.Log(0, "CORE", "INFO", line, file, args...);
 	}
