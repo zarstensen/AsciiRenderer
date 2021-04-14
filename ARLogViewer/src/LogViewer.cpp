@@ -22,13 +22,13 @@ namespace Asciir
 
 	size_t LogViewer::size()
 	{
-		std::streampos tmp_pos = m_log_file.tellg();
+		/*std::streampos tmp_pos = m_log_file.tellg();
 		m_log_file.seekg(0, std::ios::beg);
 		m_log_file.ignore((std::numeric_limits<std::streamsize>::max)());
 		std::streamsize length = m_log_file.gcount();
 		m_log_file.clear();
-		m_log_file.seekg(tmp_pos, std::ios::beg);
-
+		m_log_file.seekg(tmp_pos, std::ios::beg);*/
+		size_t length = std::filesystem::file_size(m_log_dir);
 		return (size_t)length;
 	}
 
@@ -52,7 +52,7 @@ namespace Asciir
 		size_t tmp_pos = m_pos;
 		std::string log;
 
-		if (tmp_pos >= size())
+		if (tmp_pos + 1 + sizeof(unsigned int) >= size())
 		{
 			return false;
 		}
@@ -65,7 +65,8 @@ namespace Asciir
 
 		if (l_size > size())
 		{
-			m_log_file.seekg(fail_pos);
+			m_log_file.clear();
+			m_log_file.seekg(fail_pos, std::ios::beg);
 			return false;
 		}
 

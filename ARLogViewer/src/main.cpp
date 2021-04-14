@@ -24,7 +24,7 @@ public:
 		logviewer.close();
 	}
 
-	void start() override
+	void start()
 	{
 		while (true)
 		{
@@ -42,7 +42,7 @@ public:
 			else if (logviewer.pos() > logviewer.size())
 			{
 				logviewer.reset(std::cout);
-				std::cout << "\x1b[H\x1b[3J";
+				std::cout << "\x1b[2J\x1b[H";
 			}
 		}
 	}
