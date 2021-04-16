@@ -20,27 +20,27 @@ namespace Asciir
 		: red(other.red), green(other.green), blue(other.blue)
 	{}
 
-	bool Color::operator==(const Color& other)
+	bool Color::operator==(const Color& other) const
 	{
 		return red == other.red && green == other.green && blue == other.blue;
 	}
-	bool Color::operator!=(const Color& other)
+	bool Color::operator!=(const Color& other) const
 	{
 		return !operator==(other);
 	}
-	bool Color::operator<(const Color& other)
+	bool Color::operator<(const Color& other) const
 	{
 		return (red + green + blue) / 3 < (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator>(const Color& other)
+	bool Color::operator>(const Color& other) const
 	{
 		return (red + green + blue) / 3 > (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator<=(const Color& other)
+	bool Color::operator<=(const Color& other) const
 	{
 		return (red + green + blue) / 3 <= (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator>=(const Color& other)
+	bool Color::operator>=(const Color& other) const
 	{
 		return (red + green + blue) / 3 >= (other.red + other.green + other.blue) / 3;
 	}
@@ -198,21 +198,9 @@ namespace Asciir
 		return getColor();
 	}
 
+	// constructor is platform dependent
 
-
-	#ifdef AR_WIN
-	AsciiAttr::AsciiAttr()
-		: m_hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
-	{
-		DWORD dwMode = 0;
-		GetConsoleMode(m_hConsole, &dwMode);
-		SetConsoleMode(m_hConsole, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
-		clearColor();
-	}
-	#endif
-	AsciiAttr::~AsciiAttr()
-	{
-	}
+	AsciiAttr::~AsciiAttr() {}
 
 	void AsciiAttr::setForeground(const Color& color)
 	{
@@ -264,17 +252,21 @@ namespace Asciir
 	{
 		clearFormat();
 		clearColor();
+		m_cleared = true;
 	}
+
 	void AsciiAttr::clearFormat()
 	{
 		memset(attributes.data(), false, ATTR_COUNT);
-		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND);
 	}
+	
 	void AsciiAttr::clearColor()
 	{
-		setForeground(Color(204, 204, 204));
+		setForeground(WHITE8);
+		m_last_foreground = getForeground();
 
-		setBackground(Color(10, 10, 10));
+		setBackground(BLACK8);
+		m_last_background = getBackground();
 	}
 
 	void AsciiAttr::setAttribute(const ATTRI& attribute, bool val)
@@ -282,215 +274,12 @@ namespace Asciir
 		attributes[attribute] = val;
 	}
 
-	std::string AsciiAttr::ansiCode() const
-	{
-		size_t size = 3 + (5 + 4 * 3) * 2;
-
-		#ifdef AR_WIN
-		for (size_t i = 1; i < 5; i++)
-		{
-			size += 2 * attributes[i];
-		}
-
-		#else
-		for (size_t i = 0; i < 5; i++)
-		{
-			size += 2 * attributes[i];
-		}
-
-		for (size_t i = 5; i < 8; i++)
-		{
-			size += 3 * attributes[i];
-		}
-		#endif
-
-		std::string escseq;
-		escseq.reserve(size);
-
-		ansiCode(escseq);
-
-		return escseq;
-	}
-
-	void AsciiAttr::ansiCode(std::string& dst) const
-	{
-		// disabled because it causes a large overhead
-		#if 0
-		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
-			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
-			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
-			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
-		#endif
-
-		// formatting
-		dst += AR_ANSIS_CSI;
-		dst += "0";
-
-		#ifndef AR_WIN
-		if (attributes[BOLD])
-			dst += ";1";
-		#endif
-
-		if (attributes[ITALIC])
-			dst += ";3";
-
-		if (attributes[UNDERLINE])
-			dst += ";4";
-
-		if (attributes[BLINK])
-			dst += ";5";
-
-		if (attributes[STRIKE])
-			dst += ";9";
-
-		// foreground color
-
-		#ifdef AR_WIN
-		if (attributes[BOLD])
-		{
-			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
-			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
-			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
-
-			red = red > m_foreground.red ? red : 255;
-			green = green > m_foreground.green ? green : 255;
-			blue = blue > m_foreground.blue ? blue : 255;
-
-			dst += ";38;2;";
-			dst += std::to_string(red);
-			dst += ";";
-			dst += std::to_string(green);
-			dst += ";";
-			dst += std::to_string(blue);
-			dst += ";";
-		}
-		else
-		{
-			dst += ";38;2;";
-			dst += std::to_string(m_foreground.red);
-			dst += ";";
-			dst += std::to_string(m_foreground.green);
-			dst += ";";
-			dst += std::to_string(m_foreground.blue);
-			dst += ";";
-		}
-		#else
-		dst += ";38;2;";
-		dst += std::to_string(m_foreground.red);
-		dst += ";";
-		dst += std::to_string(m_foreground.green);
-		dst += ";";
-		dst += std::to_string(m_foreground.blue);
-		dst += ";";
-		#endif
-
-		// background color
-		dst += "48;2;";
-		dst += std::to_string(m_background.red);
-		dst += ";";
-		dst += std::to_string(m_background.green);
-		dst += ";";
-		dst += std::to_string(m_background.blue);
-		dst += 'm';
-	}
-
-	void AsciiAttr::ansiCode(std::ostream& stream) const
-	{
-		
-		#if 0
-		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
-			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
-			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
-			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
-		#endif
-
-		// formatting
-		stream << AR_ANSIS_CSI;
-		stream << "0";
-
-		#ifndef AR_WIN
-		if (attributes[BOLD])
-			stream << ";1";
-		#endif
-
-		if (attributes[ITALIC])
-			stream << ";3";
-
-		if (attributes[UNDERLINE])
-			stream << ";4";
-
-		if (attributes[BLINK])
-			stream << ";5";
-
-		if (attributes[STRIKE])
-			stream << ";3";
-
-		// foreground color
-		#ifdef AR_WIN
-		if (attributes[BOLD])
-		{
-			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
-			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
-			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
-
-			red = red > m_foreground.red ? red : 255;
-			green = green > m_foreground.green ? green : 255;
-			blue = blue > m_foreground.blue ? blue : 255;
-
-			stream << ";38;2;";
-			stream << std::to_string(red);
-			stream << ";";
-			stream << std::to_string(green);
-			stream << ";";
-			stream << std::to_string(blue);
-			stream << ";";
-		}
-		else
-		{
-			stream << ";38;2;";
-			stream << std::to_string(m_foreground.red);
-			stream << ";";
-			stream << std::to_string(m_foreground.green);
-			stream << ";";
-			stream << std::to_string(m_foreground.blue);
-			stream << ";";
-		}
-		#else
-		stream << ";38;2;";
-		stream << std::to_string(m_foreground.red);
-		stream << ";";
-		stream << std::to_string(m_foreground.green);
-		stream << ";";
-		stream << std::to_string(m_foreground.blue);
-		stream << ";";
-		#endif
-
-		// background color
-		stream << "48;2;";
-		stream << std::to_string(m_background.red);
-		stream << ';';
-		stream << std::to_string(m_background.green);
-		stream << ';';
-		stream << std::to_string(m_background.blue);
-		stream << 'm';
-	}
-
 	void AsciiAttr::setTitle(const std::string& name)
 	{
 		std::cout << AR_ANSIS_OSC << "0;" << name << AR_ANSIS_CSI;
 	}
 
-	std::pair<short, short> AsciiAttr::terminalSize() const
-	{
-		CONSOLE_SCREEN_BUFFER_INFO console_info;
-		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
-		short width = console_info.srWindow.Right - console_info.srWindow.Left + 1;
-		short height = console_info.srWindow.Bottom - console_info.srWindow.Top + 1;
-
-		return { width, height };
-	}
-
-	std::ostream& Asciir::operator<<(std::ostream& stream, const AsciiAttr& other)
+	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other)
 	{
 		other.ansiCode(stream);
 		return stream;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
+#include "Vertices.h"
 
 namespace Asciir
 {
@@ -35,12 +36,12 @@ namespace Asciir
 		Color(unsigned char gray);
 		Color(const Color& other);
 
-		bool operator==(const Color& other);
-		bool operator!=(const Color& other);
-		bool operator<(const Color& other);
-		bool operator>(const Color& other);
-		bool operator<=(const Color& other);
-		bool operator>=(const Color& other);
+		bool operator==(const Color& other) const;
+		bool operator!=(const Color& other) const;
+		bool operator<(const Color& other) const;
+		bool operator>(const Color& other) const;
+		bool operator<=(const Color& other) const;
+		bool operator>=(const Color& other) const;
 	};
 	
 	typedef Color RGB24;
@@ -107,6 +108,10 @@ namespace Asciir
 		Color m_foreground;
 		Color m_background;
 
+		Color m_last_foreground;
+		Color m_last_background;
+		std::array<bool, ATTR_COUNT> last_attributes;
+
 	public:
 		std::array<bool, ATTR_COUNT> attributes;
 
@@ -135,12 +140,23 @@ namespace Asciir
 
 		std::string ansiCode() const;
 		void ansiCode(std::string& dst) const;
-		void ansiCode(std::ostream& stream) const;
-
+		template<typename TStream>
+		void ansiCode(TStream& stream, bool is_newline = false);
+		
 		void setTitle(const std::string& name);
 
-		std::pair<short, short> terminalSize() const;
+		TermVert terminalPos() const;
+		TermVert terminalSize() const;
+		TermVert maxTerminalSize() const;
+	private:
+		bool m_cleared = true;
 	};
 
-	std::ostream& operator<<(std::ostream& stream, const AsciiAttr& other);
+	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other);
 }
+
+#ifdef AR_WIN
+#include "Asciir/Platform/Windows/Rendering/WindowsARAttributes.ipp"
+#elif AR_LINUX
+#include "Asciir/Platform/Linux/Rendering/LinuxARAttributes.ipp"
+#endif
