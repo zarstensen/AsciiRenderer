@@ -69,23 +69,21 @@ namespace Asciir
 	class MouseMovedEvent: public Event
 	{
 	protected:
-		unsigned int m_xpos, m_ypos;
-		unsigned int m_xdiff, m_ydiff;
+		Coord m_pos;
+		Coord m_diff;
 	public:
-		MouseMovedEvent(unsigned int xpos, unsigned int ypos, unsigned int xdiff, unsigned int ydiff)
-			: m_xpos(xpos), m_ypos(ypos), m_xdiff(xdiff), m_ydiff(ydiff)
+		MouseMovedEvent(Coord pos, Coord diff)
+			: m_pos(pos), m_diff(diff)
 		{}
 
-		unsigned int getX() const { return m_xpos; }
-		unsigned int getY() const { return m_ypos; }
-		unsigned int getXDiff() const { return m_xdiff; }
-		unsigned int getYDiff() const { return m_ydiff; }
+		Coord getPos() const { return m_pos; }
+		Coord getDiff() const { return m_diff; }
 
 		virtual std::string toString() const override
 		{
 			std::stringstream msg;
 
-			msg << "MouseMoved: " << getX() << ',' << getY() << ':' << getXDiff() << ',' << getYDiff();
+			msg << "MouseMoved: " << getPos() << ':' << getDiff();
 			
 			return msg.str();
 		}
@@ -98,20 +96,19 @@ namespace Asciir
 	class MouseScrolledEvent : public Event
 	{
 	protected:
-		float m_xoff, m_yoff;
+		RealVertex m_off;
 	public:
-		MouseScrolledEvent(float xpos, float ypos)
-			: m_xoff(xpos), m_yoff(ypos)
+		MouseScrolledEvent(RealVertex off)
+			: m_off(off)
 		{}
 
-		float getXOff() const { return m_xoff; }
-		float getYOff() const { return m_yoff; }
+		RealVertex getOff() const { return m_off; }
 
 		virtual std::string toString() const override
 		{
 			std::stringstream msg;
 
-			msg << "MouseScrolled: " << getXOff() << ',' << getYOff();
+			msg << "MouseScrolled: " << getOff();
 
 			return msg.str();
 		}

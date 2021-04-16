@@ -14,10 +14,8 @@ namespace Asciir
 			:m_keyCode(keyCode)
 		{}
 
-		int getKeyCode()
-		{
-			return m_keyCode;
-		}
+		int getKeyCode() const { return m_keyCode; }
+
 
 	public:
 		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)

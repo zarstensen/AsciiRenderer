@@ -15,13 +15,12 @@ namespace Asciir
 	
 	typedef int EventCategory;
 
-	EventCategory CategoryNone =	0;
-	EventCategory CategoryGame =	BIT_SHL(0);
-	EventCategory CategoryInput =	BIT_SHL(1);
-	EventCategory CategoryKeyboard =BIT_SHL(2);
-	EventCategory CategoryMouse =	BIT_SHL(3);
-	EventCategory CategoryCursor =	BIT_SHL(4);
-
+	constexpr EventCategory CategoryNone =		0;
+	constexpr EventCategory CategoryGame =		BIT_SHL(0);
+	constexpr EventCategory CategoryInput =		BIT_SHL(1);
+	constexpr EventCategory CategoryKeyboard =	BIT_SHL(2);
+	constexpr EventCategory CategoryMouse =		BIT_SHL(3);
+	constexpr EventCategory CategoryCursor =	BIT_SHL(4);
 
 
 	class Event
@@ -41,6 +40,7 @@ namespace Asciir
 		}
 	};
 
+	// Handles an event's callbacks
 	class EventHandler
 	{
 		template<typename T>
@@ -52,12 +52,13 @@ namespace Asciir
 			: m_event(input_event)
 		{}
 
+		// only calls the callback if the callback type is the same as the target event.
 		template<typename T, std::enable_if_t<std::is_same_v<T, Event>, bool> = 0>
 		bool handle(EventFp<T> funcp)
 		{
 			if (m_event.getType() == T::getStaticType())
 			{
-				m_event.m_handled = funcp(*(T*)&m_event);
+				m_event.m_handled = funcp(static_cast<T&>(m_event));
 				return true;
 			}
 			return false;
