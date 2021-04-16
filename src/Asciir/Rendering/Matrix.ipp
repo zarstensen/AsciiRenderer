@@ -3,19 +3,23 @@
 namespace Asciir
 {
 	template<typename T>
-	Matrix<T>::Matrix(arVertex size)
+	Matrix<T>::Matrix()
+		: m_data(nullptr), m_size({0, 0}) {}
+
+	template<typename T>
+	Matrix<T>::Matrix(arVertex<size_t> size)
 	{
 		resize(size);
 	}
 
 	template<typename T>
-	T& Matrix<T>::at(arVertex coord)
+	T& Matrix<T>::at(arVertex<size_t> coord)
 	{
 		return m_data[coord.x + coord.y * m_size.x];
 	}
 
 	template<typename T>
-	T Matrix<T>::at(arVertex coord) const
+	T Matrix<T>::at(arVertex<size_t> coord) const
 	{
 		return m_data[coord.x + coord.y * m_size.x];
 	}
@@ -33,16 +37,16 @@ namespace Asciir
 	}
 
 	template<typename T>
-	arVertex Matrix<T>::size() const
+	arVertex<size_t> Matrix<T>::size() const
 	{
 		return m_size;
 	}
 
 	template<typename T>
-	void Matrix<T>::resize(arVertex size)
+	void Matrix<T>::resize(arVertex<size_t> size)
 	{
 		T* tmp_ptr = new T[size.x * size.y];
-		memset(tmp_ptr, NULL, size.x * size.y * sizeof(T));
+		std::fill(tmp_ptr, tmp_ptr + size.x * size.y, T());
 
 		size_t cpy_amount = std::min(size.x, m_size.x) * sizeof(T);
 		size_t loop_amount = std::min(size.y, m_size.y);
@@ -60,13 +64,13 @@ namespace Asciir
 
 
 	template<typename T>
-	T& Matrix<T>::operator[](arVertex coord)
+	T& Matrix<T>::operator[](arVertex<size_t> coord)
 	{
 		return at(coord);
 	}
 
 	template<typename T>
-	T Matrix<T>::operator[](arVertex coord) const
+	T Matrix<T>::operator[](arVertex<size_t> coord) const
 	{
 		return at(coord);
 	}

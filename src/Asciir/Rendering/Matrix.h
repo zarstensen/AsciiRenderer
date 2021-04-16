@@ -9,25 +9,26 @@ namespace Asciir
 	{
 	protected:
 		T* m_data;
-		arVertex m_size;
+		arVertex<size_t> m_size;
 
 
 	public:
 
-		Matrix(arVertex size = { 0, 0 });
+		Matrix();
+		Matrix(arVertex<size_t> size);
 
-		T& at(arVertex coord);
-		T at(arVertex coord) const;
+		T& at(arVertex<size_t> coord);
+		T at(arVertex<size_t> coord) const;
 
 		T& at(size_t index);
 		T at(size_t index) const;
 
-		arVertex size() const;
+		arVertex<size_t> size() const;
 
-		void resize(arVertex size);
+		void resize(arVertex<size_t> size);
 
-		T& operator[](arVertex coord);
-		T operator[](arVertex coord) const;
+		T& operator[](arVertex<size_t> coord);
+		T operator[](arVertex<size_t> coord) const;
 
 		T& operator[](size_t indx);
 		T operator[](size_t indx) const;

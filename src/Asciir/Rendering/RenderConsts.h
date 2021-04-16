@@ -50,6 +50,7 @@ namespace Asciir
 	static const auto IMAGENTA8 = Color(180, 0, 158);
 	static const auto ICYAN8 = Color(97, 214, 214);
 	static const auto IWHITE8 = Color(242, 242, 242);
+
 	#else
 	static const auto BLACK8 = Color(12, 12, 12);
 	static const auto RED8 = Color(197, 15, 31);
@@ -67,5 +68,8 @@ namespace Asciir
 	static const auto IMAGENTA8 = Color(180, 0, 158);
 	static const auto ICYAN8 = Color(97, 214, 214);
 	static const auto IWHITE8 = Color(242, 242, 242);
+
 	#endif
+
+	
 }

@@ -1,24 +1,24 @@
 #pragma once
 
-#include "Asciir/Rendering/Vertices.h"
+#include "Vertices.h"
 
 namespace Asciir
 {
 	struct LineSegment
 	{
-		arVertex a, b;
+		TermVert a, b;
 
 		LineSegment() = default;
-		LineSegment(arVertex a, arVertex b);
+		LineSegment(TermVert a, TermVert b);
 
 		TInt length();
 
-		arVertex at(TInt pos);
+		TermVert at(TInt pos);
 
 		TInt getX(TInt y);
 		TInt getY(TInt x);
 
-		bool intersects(arVertex point);
+		bool intersects(TermVert point);
 	};
 
 }
