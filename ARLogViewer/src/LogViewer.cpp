@@ -22,12 +22,6 @@ namespace Asciir
 
 	size_t LogViewer::size()
 	{
-		/*std::streampos tmp_pos = m_log_file.tellg();
-		m_log_file.seekg(0, std::ios::beg);
-		m_log_file.ignore((std::numeric_limits<std::streamsize>::max)());
-		std::streamsize length = m_log_file.gcount();
-		m_log_file.clear();
-		m_log_file.seekg(tmp_pos, std::ios::beg);*/
 		size_t length = std::filesystem::file_size(m_log_dir);
 		return (size_t)length;
 	}
