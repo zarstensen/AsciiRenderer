@@ -2,6 +2,8 @@
 
 #include "Event.h"
 
+// Events related to the terminal.
+
 namespace Asciir
 {
 	class TerminalClosedEvent : public Event
@@ -16,13 +18,16 @@ namespace Asciir
 	{
 	protected:
 		unsigned int m_width, m_height;
+		bool m_client;
 	public:
-		TerminalResizedEvent(unsigned int width, unsigned int height)
-			: m_width(width), m_height(height)
+		TerminalResizedEvent(unsigned int width, unsigned int height, bool by_client)
+			: m_width(width), m_height(height), m_client(by_client)
 		{}
 
 		unsigned int getWidth() const { return m_width; }
 		unsigned int getHeight() const { return m_height; }
+
+		bool client() { return m_client; }
 
 		virtual std::string toString() const override
 		{
