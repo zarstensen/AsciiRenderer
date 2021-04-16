@@ -3,12 +3,12 @@
 
 namespace Asciir
 {
-	LineSegment::LineSegment(arVertex a, arVertex b)
+	LineSegment::LineSegment(TermVert a, TermVert b)
 		: a(a), b(b) {}
 
 	TInt LineSegment::length()
 	{
-		arVertex dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = { b.x - a.x , b.y - a.y };
 
 		if (std::abs(dvert.x) >= std::abs(dvert.y))
 			return std::abs(dvert.x);	
@@ -16,9 +16,9 @@ namespace Asciir
 			return std::abs(dvert.y);
 	}
 
-	arVertex LineSegment::at(TInt pos)
+	TermVert LineSegment::at(TInt pos)
 	{
-		arVertex dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = { b.x - a.x , b.y - a.y };
 
 		// slope inbetween 1 and -1
 		if (std::abs(dvert.x) >= std::abs(dvert.y))
@@ -46,7 +46,7 @@ namespace Asciir
 	// TODO: fix this
 	TInt LineSegment::getX(TInt y)
 	{
-		arVertex dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = { b.x - a.x , b.y - a.y };
 
 		float slope = float(dvert.x) / float(dvert.y);
 		return TInt(slope * y + a.x);
@@ -54,16 +54,16 @@ namespace Asciir
 
 	TInt LineSegment::getY(TInt x)
 	{
-		arVertex dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = { b.x - a.x , b.y - a.y };
 
 		float slope = float(dvert.y) / float(dvert.x);
 		return TInt(slope * x + a.y);
 	}
 
-	bool LineSegment::intersects(arVertex point)
+	bool LineSegment::intersects(TermVert point)
 	{
-		arVertex vec_a = { b.x - a.x, b.y - a.y };
-		arVertex vec_b = { b.x - point.x, b.y - point.y };
+		TermVert vec_a = { (TInt)std::abs(b.x - a.x),		(TInt)std::abs(b.y - a.y) };
+		TermVert vec_b = { (TInt)std::abs(b.x - point.x),	(TInt)std::abs(b.y - point.y) };
 
 		// return false if point is not inside line bounding box
 		if (vec_a.x > vec_b.x && vec_b.x < NULL || vec_a.y > vec_b.y && vec_b.y < NULL)
@@ -73,7 +73,23 @@ namespace Asciir
 		if (vec_b.x == NULL && vec_b.y == NULL)
 			return true;
 
+		if (vec_a.y == 0 && vec_b.y == 0)
+			return true;
+		else if (vec_a.y == 0 || vec_b.y == 0)
+			return false;
+
+		if (vec_a.x == 0 && vec_b.x == 0)
+			return true;
+		else if (vec_a.x == 0 || vec_b.x == 0)
+			return false;
+
 		// check if the two vectors are parallel
-		return std::abs(vec_a.x * vec_b.y) == std::abs(vec_b.x * vec_a.y);
+
+		double a_coeff =  double(vec_a.y) / vec_a.x;
+
+		double b_coeff = double(vec_b.y) / vec_b.x;
+		double next_b_coeff = double(vec_b.y) / (vec_b.x + 1);
+
+		return next_b_coeff < a_coeff &&  b_coeff >= a_coeff;
 	}
 }
