@@ -43,6 +43,7 @@ namespace Asciir
 
 	bool LogViewer::logLineOut(std::ostream& stream)
 	{
+		m_log_attributes.clear();
 		size_t tmp_pos = m_pos;
 		std::string log;
 
@@ -76,6 +77,7 @@ namespace Asciir
 		size_t level_indx = log_view.find(']');
 		size_t level = (size_t)std::stoull((std::string)log_view.substr(1, level_indx - 1));
 		level = (std::min)(level, m_colors.size() - 1);
+		std::cout << level;
 
 		size_t time_indx = log_view.find(']', level_indx + 1);
 		size_t source_indx = log_view.find(']', time_indx + 1);
