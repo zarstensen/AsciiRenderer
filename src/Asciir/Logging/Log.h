@@ -116,5 +116,5 @@ namespace Asciir
 #define AR_ERR(...)	__VA_ARGS__
 #endif
 
-
 #include "Log.ipp"
+#include "ErrLog.ipp"

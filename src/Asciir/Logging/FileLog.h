@@ -15,7 +15,7 @@ namespace Asciir
 		bool is_open;
 
 		template<typename ... T>
-		void async_log(size_t log_level, const char* log_cource, const char* log_type, size_t line, const char* file, const T& ... args);
+		void async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, std::tuple<const T& ...>& args);
 
 	public:
 		FileLog();
@@ -27,6 +27,13 @@ namespace Asciir
 
 		template<typename ... T>
 		void Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ... args);
+
+	private:
+		template<size_t I = 0, typename ... T, std::enable_if_t<I == sizeof...(T), bool> = 0>
+		void write_tuple(std::stringstream& sstream, std::tuple<const T&...>&){}
+
+		template<size_t I = 0, typename ... T, std::enable_if_t<I < sizeof...(T), bool> = 0>
+			void write_tuple(std::stringstream& sstream, std::tuple<const T&...>& data) { sstream << std::get<I>(data) << ' '; write_tuple<I + 1, T...>(sstream, data); }
 	};
 }
 

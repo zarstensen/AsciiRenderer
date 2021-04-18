@@ -2,8 +2,9 @@
 
 namespace Asciir
 {
+
 	template<typename ...T>
-	void FileLog::async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ...args)
+	void FileLog::async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, std::tuple<const T& ...>& args)
 	{
 		std::lock_guard<std::mutex> lock(m_log_file_mutex);
 		m_log_file << '[';
@@ -37,7 +38,9 @@ namespace Asciir
 		// Log the log level, log stat, line and file it occured on
 		tmp_stream << '[' << log_source << ']' << '[' << log_type << ']' << " on line [" << line << "] in source file [" << file << "]:\n";
 
-		(tmp_stream << ... << args) << "\n\n";
+		write_tuple(tmp_stream, args);
+
+		tmp_stream << "\n\n";
 
 		tmp_stream.seekg(0, std::ios::end);
 		unsigned int log_size = (unsigned int)tmp_stream.tellg();
@@ -52,6 +55,7 @@ namespace Asciir
 	template<typename ...T>
 	void FileLog::Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ...args)
 	{
-		auto ret = std::async(std::launch::async, &FileLog::async_log<T...>, this, log_level, log_source, log_type, line, file, std::cref<T...>(args...));
+		std::tuple<const T&...> data(args...);
+		auto ret = std::async(std::launch::async, &FileLog::async_log<T...>, this, log_level, log_source, log_type, line, file, std::ref(data));
 	}
 }
