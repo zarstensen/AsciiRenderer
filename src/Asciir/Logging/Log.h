@@ -5,37 +5,43 @@
 
 namespace Asciir
 {
-	static const std::filesystem::path CORE_LOG_DIR = AR_CORE_LOG_DIR;
-	static const std::filesystem::path CLIENT_LOG_DIR = AR_CLIENT_LOG_DIR;
+	static std::string CORE_LOG_DIR = AR_CORE_LOG_DIR;
+	static std::string CLIENT_LOG_DIR = AR_CLIENT_LOG_DIR;
 	
 	class Log
 	{
 		inline static FileLog s_core_log_out;
 		inline static FileLog s_client_log_out;
 	public:
-		static void Init(bool save_core, bool save_client, bool append_logs);
+		static void init(bool save_core, bool save_client, bool append_logs);
+
+		static void setCoreLogDir(const std::string& dir);
+		static void setClientLogDir(const std::string& dir);
+		
+		static const FileLog& getCoreLog();
+		static const FileLog& getClientLog();
 
 		template<typename ... T>
 		inline static void coreInfo(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void coreNotify(size_t line, const char* file, T ... args);
+		inline static void coreNotify(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void coreWarning(size_t line, const char* file, T ... args);
+		inline static void coreWarning(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void coreCritical(size_t line, const char* file, T ... args);
+		inline static void coreCritical(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void coreError(size_t line, const char* file, T ... args);
+		inline static void coreError(size_t line, const char* file, const T& ... args);
 
 		template<typename ... T>
-		inline static void clientInfo(size_t line, const char* file, T ... args);
+		inline static void clientInfo(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void clientNotify(size_t line, const char* file, T ... args);
+		inline static void clientNotify(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void clientWarning(size_t line, const char* file, T ... args);
+		inline static void clientWarning(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void clientCritical(size_t line, const char* file, T ... args);
+		inline static void clientCritical(size_t line, const char* file, const T& ... args);
 		template<typename ... T>
-		inline static void clientError(size_t line, const char* file, T ... args);
+		inline static void clientError(size_t line, const char* file, const T& ... args);
 	};
 }
 
