@@ -22,8 +22,8 @@ namespace Asciir
 
 	size_t LogViewer::size()
 	{
-		size_t length = std::filesystem::file_size(m_log_dir);
-		return (size_t)length;
+		size_t length = (size_t) std::filesystem::file_size(m_log_dir);
+		return length;
 	}
 
 	void LogViewer::open()

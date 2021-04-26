@@ -94,7 +94,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -103,7 +103,16 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WinInputHooks.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -111,7 +120,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -122,13 +131,22 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>WinInputHooks.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -137,7 +155,16 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\</AdditionalLibraryDirectories>
+      <AdditionalDependencies>WinInputHooks.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,7 +172,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CORE_VERBOSITY=0;AR_LOG_APPEND;AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -156,7 +183,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>WinInputHooks.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\</AdditionalLibraryDirectories>
     </Link>
+    <PreBuildEvent>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\LogViewer.h" />
@@ -168,6 +204,9 @@
   <ItemGroup>
     <ProjectReference Include="..\AsciiRender.vcxproj">
       <Project>{c4c8233b-f13d-4e3e-8cf4-f9c729b7d7d9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\modules\WinInputHooks\WinInputHooks.vcxproj">
+      <Project>{d063416f-567e-4500-92ae-3f793c9e9414}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
