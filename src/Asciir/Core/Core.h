@@ -4,6 +4,18 @@
 #error Only windows is currently supported
 #endif
 
+#if defined(DEBUG) || defined(_DEBUG) && !defined(AR_DEBUG)
+#define AR_DEBUG
+#endif
+
+#ifndef AR_CLIENT_LOG_DIR
+#define AR_CLIENT_LOG_DIR "./logs/client_log.log"
+#endif
+
+#ifndef AR_CORE_LOG_DIR
+#define AR_CORE_LOG_DIR "./logs/core_log.log"
+#endif
+
 namespace Asciir
 {
 	typedef short TInt;
@@ -13,4 +25,11 @@ namespace Asciir
 	{
 		return a << x;
 	}
+
+	constexpr int SIG_CTRL_C = SIGINT;
+	#ifdef AR_WIN
+	constexpr int SIG_CMD_CLOSE = SIGBREAK;
+	#else
+	constexpr int SIG_CMD_CLOSE = SIGHUP;
+	#endif
 }
