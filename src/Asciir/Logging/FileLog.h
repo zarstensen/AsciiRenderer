@@ -25,6 +25,9 @@ namespace Asciir
 		void open(const std::string& log_name, bool save_log = true, bool append_logs = false);
 		void close();
 
+		const std::string& getName() const;
+		std::string getDir() const;
+
 		template<typename ... T>
 		void Log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, const T& ... args);
 

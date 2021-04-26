@@ -59,4 +59,15 @@ namespace Asciir
 		}
 	}
 
+	const std::string& FileLog::getName() const
+	{
+		return m_name;
+	}
+
+	std::string FileLog::getDir() const
+	{
+		std::filesystem::path dir = m_name;
+		return dir.parent_path().string();
+	}
+
 }
