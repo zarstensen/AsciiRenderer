@@ -1,0 +1,3 @@
+LIBRARY WinInputHooks
+EXPORT
+	WinKeyboardCallback @1
