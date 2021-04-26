@@ -1,4 +1,5 @@
 #include "Vertices.h"
+#include <iostream>
 
 namespace Asciir
 {
@@ -13,6 +14,11 @@ namespace Asciir
 	template<typename T>
 	arVertex<T>::arVertex(const arSmallVertex<T>& derived)
 		: x(derived.x / 2), y(derived.y) {}
+
+	#ifdef AR_WIN
+	template<typename T>
+	arVertex<T>::arVertex(POINT p) :x((T)p.x), y((T)p.y) {}
+	#endif
 
 	template<typename T>
 	arVertex<T> arVertex<T>::operator+(const arVertex<T>& other) const
@@ -80,11 +86,18 @@ namespace Asciir
 		y %= other.y;
 	}
 
+	template<typename T>
+	template<typename TOther>
+	inline bool arVertex<T>::operator==(const arVertex<TOther>& other) const
+	{
+		return x == (T)other.x && y == (T)other.y;
+	}
+
 
 	template<typename T>
 	template<typename TOther>
 	arVertex<T>::arVertex(const arVertex<TOther>& other)
-		:x(T(x)), y(T(y)) {}
+		:x(T(other.x)), y(T(other.y)) {}
 
 	template<typename T>
 	std::ostream& operator<<(std::ostream& stream, const arVertex<T>& vert)

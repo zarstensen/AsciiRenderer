@@ -22,6 +22,10 @@ namespace Asciir
 		arVertex(const arSmallVertex<T>& derived);
 		template<typename TOther>
 		arVertex(const arVertex<TOther>& other);
+		
+		#ifdef AR_WIN
+		arVertex(POINT p);
+		#endif
 
 		arVertex<T> operator+(const arVertex<T>& other) const;
 		arVertex<T> operator-(const arVertex<T>& other) const;
@@ -34,6 +38,9 @@ namespace Asciir
 		void operator*=(const arVertex<T>& other);
 		void operator/=(const arVertex<T>& other);
 		void operator%=(const arVertex<T>& other);
+
+		template<typename TOther>
+		bool operator==(const arVertex<TOther>& other) const;
 	};
 
 	template<typename T>
@@ -85,3 +92,4 @@ namespace Asciir
 
 }
 
+#include "Vertices.ipp"
