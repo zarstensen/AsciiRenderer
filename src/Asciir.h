@@ -2,11 +2,14 @@
 
 #include "pch/arpch.h"
 
+#include "Asciir/Platform/PlatformMacros.h"
+
 // Core
 #include "Asciir/Core/Core.h"
 #include "Asciir/Core/Engine.h"
 #include "Asciir/Core/Terminal.h"
 #include "Asciir/Core/Timing.h"
+#include "Asciir/Core/Layer.h"
 // Core
 
 #include "Asciir/Logging/Log.h"
@@ -18,8 +21,9 @@
 
 #include "Asciir/Rendering/TerminalRender.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
-#include "Asciir/Rendering/RenderConsts.h"
+#include "Asciir/Rendering/Vertices.h"
 
+#include "Asciir/Rendering/RenderConsts.h"
 
 // Entry point
 #include "Asciir/Core/EntryPoint.h"

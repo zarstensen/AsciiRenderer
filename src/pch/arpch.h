@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Asciir/Platform/PlatformMacros.h"
+
 #include <functional>
 #include <memory>
 #include <algorithm>
@@ -18,6 +20,7 @@
 #include <array>
 #include <tuple>
 #include <assert.h>
+#include <signal.h>
 
 #ifdef AR_WIN
 #include <Windows.h>
