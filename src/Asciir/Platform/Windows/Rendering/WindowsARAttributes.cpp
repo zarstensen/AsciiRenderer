@@ -97,13 +97,13 @@ namespace Asciir
 		dst += 'm';
 	}
 
-	TermVert AsciiAttr::terminalPos() const
+	Coord AsciiAttr::terminalPos() const
 	{
 		CONSOLE_SCREEN_BUFFER_INFO console_info;
 		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
 
-		TInt x = console_info.srWindow.Top;
-		TInt y = console_info.srWindow.Left;
+		long long x = console_info.srWindow.Top;
+		long long y = console_info.srWindow.Left;
 
 		return { x, y };
 	}
