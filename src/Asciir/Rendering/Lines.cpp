@@ -10,6 +10,7 @@ namespace Asciir
 	{
 		TermVert dvert = { b.x - a.x , b.y - a.y };
 
+		// return height if height is greater than width, otherwise return width
 		if (std::abs(dvert.x) >= std::abs(dvert.y))
 			return std::abs(dvert.x);	
 		else
@@ -43,7 +44,6 @@ namespace Asciir
 		}
 	}
 
-	// TODO: fix this
 	TInt LineSegment::getX(TInt y)
 	{
 		TermVert dvert = { b.x - a.x , b.y - a.y };
