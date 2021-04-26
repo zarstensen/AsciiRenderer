@@ -145,7 +145,7 @@ namespace Asciir
 		
 		void setTitle(const std::string& name);
 
-		TermVert terminalPos() const;
+		Coord terminalPos() const;
 		TermVert terminalSize() const;
 		TermVert maxTerminalSize() const;
 	private:
