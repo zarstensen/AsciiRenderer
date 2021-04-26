@@ -1,17 +1,33 @@
-#include "arpch.h"
+﻿#include "arpch.h"
 #include "TerminalRender.h"
 #include "Lines.h"
-#include "Asciir/Logging/Log.h"
+#include "Log.h"
 
 namespace Asciir
 {
-	TerminalRender::TerminalRender(size_t buffer_size)
+	TerminalRender::TerminalRender(const std::string& title, size_t buffer_size)
+		: m_title(title)
 	{
 		m_buffer.reserve(buffer_size);
 		update();
 	}
 
-	void TerminalRender::drawVertices(const arVertices& vertices, DrawMode mode)
+	void TerminalRender::color(Color color)
+	{
+		m_tile_state.color = color;
+	}
+
+	void TerminalRender::backgroundColor(Color color)
+	{
+		m_tile_state.background_color = color;
+	}
+
+	void TerminalRender::symbol(char symbol)
+	{
+		m_tile_state.symbol = symbol;
+	}
+
+	void TerminalRender::drawVertices(const TermVerts& vertices, DrawMode mode)
 	{
 		if (mode == DrawMode::Line)
 		{
@@ -22,19 +38,19 @@ namespace Asciir
 
 				for (TInt i = 0; i <= line.length(); i++)
 				{
-					setTile(line.at(i), Tile(255));
+					drawTile(line.at(i));
 				}
 			}
 		}
 		else if (mode == DrawMode::Filled)
 		{
-			// use a scan line algorithm to draw the polygon
+			// use a scan line algorithm to fill the polygon
 			TInt miny = SHRT_MAX;
 			TInt maxy = 0;
 			TInt minx = SHRT_MAX;
 			TInt maxx = 0;
 
-			for (arVertex vert : vertices)
+			for (TermVert vert : vertices)
 			{
 				miny = std::min(vert.y, miny);
 				maxy = std::max(vert.y, maxy);
@@ -73,7 +89,7 @@ namespace Asciir
 					if (is_inside || was_inside)
 					{
 						was_inside = false;
-						setTile({ x, line }, Tile(255));
+						drawTile({ x, line });
 					}
 				}
 			}
@@ -81,30 +97,43 @@ namespace Asciir
 		}
 	}
 	
-	void TerminalRender::drawLine(const arVertex& a, const arVertex& b)
+	void TerminalRender::drawLine(const TermVert& a, const TermVert& b)
 	{
 		drawVertices({ a, b }, DrawMode::Line);
 	}
 
-	void TerminalRender::setTile(const arVertex& pos, Tile tile)
+	void TerminalRender::setState(Tile tile)
+	{
+		m_tile_state = tile;
+	}
+
+	Tile& TerminalRender::getState()
+	{
+		return m_tile_state;
+	}
+
+	Tile TerminalRender::getState() const
+	{
+		return m_tile_state;
+	}
+
+	void TerminalRender::drawTile(const TermVert& pos)
 	{
 
-		#ifdef AR_DEBUG
-		if (pos.x > size().x || pos.y > size().y)
+		if (pos.x >= size().x || pos.y >= size().y)
 		{
 			std::stringstream msg;
 			msg << "Position " << pos << " is out of bounds. Bounds " << size();
 			throw std::runtime_error(msg.str());
 		}
-		#endif
 
-		m_tiles[pos.x + m_tiles.size().x * (m_tiles.size().y - pos.y - 1)] = tile;
+		m_tiles[pos.x + m_tiles.size().x * pos.y] = m_tile_state;
 	}
 
-	Tile& TerminalRender::getTile(const arVertex& pos)
+	Tile& TerminalRender::getTile(const TermVert& pos)
 	{
 		#ifdef AR_DEBUG
-		if (pos.x > size().x || pos.y > size().y)
+		if (pos.x >= size().x || pos.y >= size().y)
 		{
 			std::stringstream msg;
 			msg << "Position " << pos << " is out of bounds. Bounds " << size();
@@ -115,54 +144,122 @@ namespace Asciir
 		return m_tiles[pos.x + m_tiles.size().x * (m_tiles.size().y - pos.y - 1)];
 	}
 
-	void TerminalRender::resize(arVertex size)
+	void TerminalRender::setTitle(const std::string& title)
 	{
-		pushBuffer("\x1b[?25l\x1b[8;" + std::to_string(size.y) + ';' + std::to_string(size.x) + 't');
-
-		m_tiles.resize({ size.x, size.y });
+		m_title = title;
+		m_should_rename = true;
 	}
 
-	void TerminalRender::update()
+	std::string TerminalRender::getTitle() const
 	{
-		auto [width, height] = m_terminal.terminalSize();
+		return m_title;
+	}
 
-		if (width != m_tiles.size().x || height != m_tiles.size().y)
+	void TerminalRender::resize(TermVert size)
+	{
+
+		#ifdef AR_DEBUG
+		if (size.x > maxSize().x || size.y > maxSize().y)
+		{
+			std::stringstream msg;
+			msg << "Size " << size << " is too large. Max terminal size is " << maxSize();
+			throw std::runtime_error(msg.str());
+		}
+		#endif
+
+		m_should_resize = true;
+		m_tiles.resize(size);
+	}
+
+	TRUpdateInfo TerminalRender::update()
+	{
+
+		TRUpdateInfo r_info;
+
+		TermVert size = m_terminal_out.terminalSize();
+		Coord pos = m_terminal_out.terminalPos();
+
+		if (m_should_resize)
+		{
+			m_should_resize = false;
+			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(m_tiles.size().y) + ';' + std::to_string(m_tiles.size().x) + 't';
+			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
+
+			pushBuffer("\x1b[?25l");
+
+			r_info.new_size = true;
+		}
+		else if (size.x != m_tiles.size().x || size.y != m_tiles.size().y)
 		{
 			pushBuffer("\x1b[?25l");
-			m_tiles.resize({ width, height });
+			m_tiles.resize(size);
+
+			r_info.new_size = true;
 		}
+
+		if (m_pos.x != pos.x || m_pos.y != pos.y)
+		{
+			m_pos = pos;
+			r_info.new_pos = true;
+		}
+
+		if (m_should_rename)
+		{
+			m_terminal_out.setTitle(m_title);
+			m_should_rename = false;
+			r_info.new_name = true;
+		}
+
+		return r_info;
 	}
 
-	void TerminalRender::draw()
+	TRUpdateInfo TerminalRender::draw()
 	{
-		update();
+		TRUpdateInfo r_info = update();
 
 		pushBuffer("\x1b[H");
 
-		for (TInt y = 0; y < m_tiles.size().y; y++)
-		{
-			for (TInt x = 0; x < m_tiles.size().x; x++)
-			{
-				if (m_tiles[{x, y}].color != m_terminal.getBackground())
-				{
-					m_terminal.setBackground(m_tiles[{x, y}].color);
-					m_terminal.ansiCode<TerminalRender>(*this);
-				}
+		m_terminal_out.clear();
 
-				m_tiles[{x, y}] = Tile();
-				pushBuffer(' ');
+		for (TInt y = 0; (size_t) y < m_tiles.size().y; y++)
+		{
+			for (TInt x = 0; (size_t) x < m_tiles.size().x; x++)
+			{
+				Tile& tile = m_tiles[TermVert(x, y)];
+				m_terminal_out.setForeground(tile.color);
+				m_terminal_out.setBackground(tile.background_color);
+				m_terminal_out.ansiCode<TerminalRender>(*this, x == 0);
+
+				pushBuffer(tile.symbol);
+				tile = Tile();
 			}
 
-			if(y < m_tiles.size().y - 1)
+			if((size_t) y < m_tiles.size().y - 1)
 				pushBuffer('\n');
 		}
 
 		flushBuffer();
+
+		return r_info;
 	}
 
-	arVertex TerminalRender::size()
+	TermVert TerminalRender::size() const
 	{
 		return m_tiles.size();
+	}
+	
+	TermVert TerminalRender::maxSize() const
+	{
+		
+		return m_terminal_out.maxTerminalSize();
+	}
+
+	Coord TerminalRender::pos() const
+	{
+		WINDOWPLACEMENT placement;
+		GetWindowPlacement(GetConsoleWindow(), &placement);
+
+		return { placement.rcNormalPosition.left, placement.rcNormalPosition.top };
 	}
 
 	void TerminalRender::pushBuffer(char c)
@@ -173,21 +270,27 @@ namespace Asciir
 		m_buffer += c;
 	}
 
+
 	void TerminalRender::pushBuffer(const std::string& data)
 	{
 		if (data.size() + m_buffer.size() > m_buffer.capacity())
 			flushBuffer();
 		
 		if (data.size() > m_buffer.capacity())
-			fwrite(data.c_str(), 1, data.size(), stderr);
+			fwrite(data.c_str(), 1, data.size(), stdout);
 
 		m_buffer += data;
 	}
 
 	void TerminalRender::flushBuffer()
 	{
-		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stderr);
+		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
 		m_buffer.clear();
+	}
+
+	std::array<bool, ATTR_COUNT>& TerminalRender::attributes()
+	{
+		return m_terminal_out.attributes;
 	}
 
 	TerminalRender& TerminalRender::operator<<(const std::string& data)
