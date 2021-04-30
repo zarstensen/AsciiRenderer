@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AsciiRender", "AsciiRender.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ARLogViewer", "ARLogViewer\ARLogViewer.vcxproj", "{A8AE419D-4995-4776-BFCC-F442CF460ACB}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0F2C6B23-6A53-4AB9-A443-E466511DCA46}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -44,6 +46,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A8AE419D-4995-4776-BFCC-F442CF460ACB} = {0F2C6B23-6A53-4AB9-A443-E466511DCA46}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C938E20C-8E80-4325-B4D6-2004DAD0796B}

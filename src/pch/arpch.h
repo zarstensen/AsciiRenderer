@@ -19,6 +19,7 @@
 #include <vector>
 #include <array>
 #include <tuple>
+#include <variant>
 #include <assert.h>
 #include <signal.h>
 

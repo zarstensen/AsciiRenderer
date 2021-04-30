@@ -156,7 +156,7 @@ namespace Asciir
 }
 
 #ifdef AR_WIN
-#include "Asciir/Platform/Windows/Rendering/WindowsARAttributes.ipp"
+#include "Asciir/Platform/Windows/WindowsARAttributes.ipp"
 #elif AR_LINUX
-#include "Asciir/Platform/Linux/Rendering/LinuxARAttributes.ipp"
+#include "Asciir/Platform/Linux/LinuxARAttributes.ipp"
 #endif

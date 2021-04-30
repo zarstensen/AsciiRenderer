@@ -15,6 +15,9 @@
 #include "Asciir/Logging/Log.h"
 #include "Asciir/Logging/FileLog.h"
 
+#include "Asciir/Input/Input.h"
+#include "Asciir/Input/KeyCodes.h"
+
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"

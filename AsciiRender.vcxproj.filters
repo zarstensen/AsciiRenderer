@@ -99,6 +99,42 @@
     <ClInclude Include="src\Asciir\Rendering\Lines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\Windows\WindowsARAttributes.ipp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\Linux\Rendering\LinuxARAttributes.ipp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\Windows\WindowsTerminal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Logging\ErrLog.ipp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Rendering\Vertices.ipp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Input\Input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\Windows\WinInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Core\Layer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Core\LayerStack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\PlatformMacros.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Input\KeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Asciir\Platform\Windows\KeyCodeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Asciir\Core\Engine.cpp">
@@ -125,10 +161,28 @@
     <ClCompile Include="src\Asciir\Rendering\TerminalRender.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Asciir\Rendering\Vertices.cpp">
+    <ClCompile Include="src\Asciir\Rendering\Lines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Asciir\Rendering\Lines.cpp">
+    <ClCompile Include="src\Asciir\Platform\Windows\WindowsARAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Platform\Linux\Rendering\LinuxARAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Platform\Windows\WindowsTerminal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Platform\Windows\WinInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Core\Layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Core\LayerStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Asciir\Platform\Windows\KeyCodeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

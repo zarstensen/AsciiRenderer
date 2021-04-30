@@ -26,6 +26,17 @@
     <None Include="props\boost_x86_release.props" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Asciir\Core\LayerStack.h" />
+    <ClInclude Include="src\Asciir\Core\Layer.h" />
+    <ClInclude Include="src\Asciir\Input\Input.h" />
+    <ClInclude Include="src\Asciir\Input\KeyCodes.h" />
+    <ClInclude Include="src\Asciir\Logging\ErrLog.ipp" />
+    <ClInclude Include="src\Asciir\Platform\Linux\Rendering\LinuxARAttributes.ipp" />
+    <ClInclude Include="src\Asciir\Platform\PlatformMacros.h" />
+    <ClInclude Include="src\Asciir\Platform\Windows\KeyCodeMap.h" />
+    <ClInclude Include="src\Asciir\Platform\Windows\WindowsTerminal.h" />
+    <ClInclude Include="src\Asciir\Platform\Windows\WinInput.h" />
+    <ClInclude Include="src\Asciir\Platform\Windows\WindowsARAttributes.ipp" />
     <ClInclude Include="src\Asciir\Rendering\Lines.h" />
     <ClInclude Include="src\Asciir\Rendering\Matrix.h" />
     <ClInclude Include="src\pch\arpch.h" />
@@ -49,7 +60,14 @@
     <ClInclude Include="src\Asciir\Rendering\Vertices.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Asciir\Core\LayerStack.cpp" />
+    <ClCompile Include="src\Asciir\Core\Layer.cpp" />
+    <ClCompile Include="src\Asciir\Platform\Windows\KeyCodeMap.cpp" />
+    <ClCompile Include="src\Asciir\Platform\Windows\WinInput.cpp" />
     <ClInclude Include="src\Asciir\Rendering\Matrix.ipp" />
+    <ClCompile Include="src\Asciir\Platform\Linux\Rendering\LinuxARAttributes.cpp" />
+    <ClCompile Include="src\Asciir\Platform\Windows\WindowsTerminal.cpp" />
+    <ClCompile Include="src\Asciir\Platform\Windows\WindowsARAttributes.cpp" />
     <ClCompile Include="src\Asciir\Rendering\Lines.cpp" />
     <ClCompile Include="src\pch\arpch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -64,7 +82,7 @@
     <ClCompile Include="src\Asciir\Rendering\AsciiAttributes.cpp" />
     <ClCompile Include="src\Asciir\Core\Terminal.cpp" />
     <ClCompile Include="src\Asciir\Rendering\TerminalRender.cpp" />
-    <ClCompile Include="src\Asciir\Rendering\Vertices.cpp" />
+    <ClInclude Include="src\Asciir\Rendering\Vertices.ipp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -146,9 +164,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src\Asciir\Logging;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -165,9 +183,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src\Asciir\Logging;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -184,9 +203,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;AR_DEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_DEBUG</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src\Asciir\Logging;$(SolutionDir)src;</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -196,6 +215,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -203,9 +223,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>AR_CLIENT_LOG_DIR=R"($(SolutionDir)logs\client_log.log)";AR_CORE_LOG_DIR=R"($(SolutionDir)logs\core_log.log)";AR_WIN;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\pch;$(SolutionDir)src\Asciir\Logging;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -217,6 +238,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib />
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
