@@ -22,13 +22,4 @@ namespace Asciir
 
 
 	Coord getMousePos();
-
-	
-	// if AR_DETECT_KEY_ON_FRAME is not defined a key pressed will also be detected between engine updates.
-	#if AR_DETECT_KEY_ON_FRAME
-	static constexpr short async_key_check = 0x0001;
-	#else
-	static constexpr short async_key_check = 0x8000;
-	#endif
-
 }
