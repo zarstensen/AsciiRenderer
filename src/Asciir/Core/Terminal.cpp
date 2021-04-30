@@ -3,7 +3,7 @@
 #include "Asciir\Logging\Log.h"
 
 #ifdef AR_WIN
-#include "Asciir/Platform/Windows/Core/WindowsTerminal.h"
+#include "Asciir/Platform/Windows/WindowsTerminal.h"
 #endif
 
 namespace Asciir
@@ -32,7 +32,7 @@ namespace Asciir
 
 	TermVert Terminal::getSize() const
 	{
-		return m_terminal_render.size();
+		return m_terminal_render.termSize();
 	}
 
 	Coord Terminal::getPos() const
@@ -40,7 +40,7 @@ namespace Asciir
 		return m_terminal_render.pos();
 	}
 
-	const TerminalRender* const Terminal::getRender()
+	TerminalRender* const Terminal::getRenderer()
 	{
 		return &m_terminal_render;
 	}

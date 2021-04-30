@@ -32,10 +32,11 @@ namespace Asciir
 
 		virtual void onStart() = 0;
 		virtual void onUpdate() = 0;
+		virtual void updateInput() = 0;
 
 		TermVert getSize() const;
 		Coord getPos() const;
-		const TerminalRender* const getRender();
+		TerminalRender* const getRenderer();
 
 		virtual void setEventCallback(const EventCallbackFp& callback) = 0;
 
