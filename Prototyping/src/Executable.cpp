@@ -1,47 +1,46 @@
 ﻿#include <Asciir.h>
-#include <iostream>
-#include <Windows.h>
-#include <wchar.h>
-#include <sstream>
+using namespace Asciir;
 
-class Exec : public Asciir::Terminal
+class ExampleLayer : public Asciir::Layer
+{
+	Asciir::Coord pos = { 1, 0 };
+
+	void onUpdate() final
+	{
+		if (Input::isKeyDown(Key::W))
+			pos.y--;
+
+		if (Input::isKeyDown(Key::S))
+			pos.y++;
+
+		if (Input::isKeyDown(Key::A))
+			pos.x--;
+
+		if (Input::isKeyDown(Key::D))
+			pos.x++;
+
+		AREngine::getEngine()->getTerminal()->getRenderer()->color({255, 0, 0
+	});
+		AREngine::getEngine()->getTerminal()->getRenderer()->symbol(219);
+		AREngine::getEngine()->getTerminal()->getRenderer()->drawTile(pos);
+	}
+};
+
+class Exec : public Asciir::AREngine
 {
 public:
 	Exec()
 	{
-
+		PushLayer(new ExampleLayer);
 	}
 
-	~Exec()
-	{
-
-	}
+	~Exec() {}
 };
 
-#include <chrono>
+using namespace Asciir;
 
-Asciir::Terminal* Asciir::CreateTerminal()
+Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args)
 {
-	AsciiAttr terminal;
-
-	Asciir::FileLog log("out.txt");
-
-	std::ios_base::sync_with_stdio(false);
-	std::cin.tie(0);
-	
-	terminal.setTitle("Colors");
-	terminal.setColor(Color(255, 155, 0), Color(100, 100, 100));
-	terminal.setAttribute(Asciir::BOLD, true);
-	terminal.setBoxed(true);
-
-	std::cout << terminal << "Hello";
-
-	terminal.clear();
-	terminal.ansiCode(std::cout);
-	
-	//log.Log(3, "ERROR", __LINE__, __FILE__, "Hey my name is bo and my age is ", 25);
-
-	std::cin.get();
-
 	return new Exec;
 }
+
