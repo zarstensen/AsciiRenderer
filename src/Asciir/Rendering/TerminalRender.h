@@ -55,9 +55,11 @@ namespace Asciir
 		void resize(TermVert size);
 
 		TRUpdateInfo update();
-		TRUpdateInfo draw();
+		void draw();
+		TRUpdateInfo render();
 
-		TermVert size() const;
+		TermVert termSize() const;
+		TermVert drawSize() const;
 		TermVert maxSize() const;
 
 		Coord pos() const;

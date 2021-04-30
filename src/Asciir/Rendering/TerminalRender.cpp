@@ -119,13 +119,14 @@ namespace Asciir
 
 	void TerminalRender::drawTile(const TermVert& pos)
 	{
-
-		if (pos.x >= size().x || pos.y >= size().y)
+		#ifdef AR_DEBUG
+		if (pos.x >= drawSize().x || pos.x < 0 || pos.y >= drawSize().y || pos.y < 0)
 		{
 			std::stringstream msg;
-			msg << "Position " << pos << " is out of bounds. Bounds " << size();
+			msg << "Position " << pos << " is out of bounds. Bounds " << drawSize();
 			throw std::runtime_error(msg.str());
 		}
+		#endif
 
 		m_tiles[pos.x + m_tiles.size().x * pos.y] = m_tile_state;
 	}
@@ -133,10 +134,10 @@ namespace Asciir
 	Tile& TerminalRender::getTile(const TermVert& pos)
 	{
 		#ifdef AR_DEBUG
-		if (pos.x >= size().x || pos.y >= size().y)
+		if (pos.x >= drawSize().x || pos.x < 0 || pos.y >= drawSize().y || pos.y < 0)
 		{
 			std::stringstream msg;
-			msg << "Position " << pos << " is out of bounds. Bounds " << size();
+			msg << "Position " << pos << " is out of bounds. Bounds " << drawSize();
 			throw std::runtime_error(msg.str());
 		}
 		#endif
@@ -159,10 +160,10 @@ namespace Asciir
 	{
 
 		#ifdef AR_DEBUG
-		if (size.x > maxSize().x || size.y > maxSize().y)
+		if (size.x > maxSize().x || size.x < 0 || size.y > maxSize().y ||size.y < 0)
 		{
 			std::stringstream msg;
-			msg << "Size " << size << " is too large. Max terminal size is " << maxSize();
+			msg << "Size " << size << " is too large or negative. Max terminal size is " << maxSize();
 			throw std::runtime_error(msg.str());
 		}
 		#endif
@@ -213,10 +214,8 @@ namespace Asciir
 		return r_info;
 	}
 
-	TRUpdateInfo TerminalRender::draw()
+	void TerminalRender::draw()
 	{
-		TRUpdateInfo r_info = update();
-
 		pushBuffer("\x1b[H");
 
 		m_terminal_out.clear();
@@ -239,11 +238,22 @@ namespace Asciir
 		}
 
 		flushBuffer();
+	}
+
+	TRUpdateInfo TerminalRender::render()
+	{
+		TRUpdateInfo r_info = update();
+		draw();
 
 		return r_info;
 	}
 
-	TermVert TerminalRender::size() const
+	TermVert TerminalRender::termSize() const
+	{
+		return m_terminal_out.terminalSize();
+	}
+
+	TermVert TerminalRender::drawSize() const
 	{
 		return m_tiles.size();
 	}
@@ -256,7 +266,7 @@ namespace Asciir
 
 	Coord TerminalRender::pos() const
 	{
-		WINDOWPLACEMENT placement;
+		WINDOWPLACEMENT placement = WINDOWPLACEMENT();
 		GetWindowPlacement(GetConsoleWindow(), &placement);
 
 		return { placement.rcNormalPosition.left, placement.rcNormalPosition.top };
