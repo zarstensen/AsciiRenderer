@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "Engine.h"
+#include "Asciir/Input/Input.h"
 #include "Asciir/Logging/Log.h"
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
@@ -30,6 +31,76 @@ namespace Asciir
 	{
 		while (m_running)
 		{
+
+			m_terminal->updateInput();
+
+			// terminal event handling
+			if (Input::isTerminalMoved())
+			{
+				auto e = Input::getTerminalMovedEvent();
+				onEvent(e);
+			}
+
+			if (Input::isTerminalResized())
+			{
+				auto e = Input::getTerminalResizedEvent();
+				onEvent(e);
+			}
+
+
+			// key event handling
+
+			// loop over all key codes except UNDEFINED (0)
+			for (int code = 1; code < KEY_CODE_COUNT; code++)
+			{
+				if (Input::isKeyToggled((Key)code) || Input::isKeyPressed((Key)code))
+				{
+					// if key is not toggled it must be pressed
+					auto e = std::get<KeyPressedEvent>(Input::getKeyEvent((Key)code));
+					onEvent(e);
+				}
+				else if (Input::isKeyUntoggled((Key)code))
+				{
+					// if key is not toggled it must be pressed
+					auto e = std::get<KeyReleasedEvent>(Input::getKeyEvent((Key)code));
+					onEvent(e);
+				}
+			}
+
+
+			// mouse events
+			
+			// mouse key events
+			
+			// loop over all mouse codes except UNDEFINED (0)
+			for (int code = 1; code < MOUSE_CODE_COUNT; code++)
+			{
+				// skip control break processing code
+				if (code == 0x03) code++;
+
+				if (Input::isMouseToggled((MouseKey)code))
+				{
+					// if key is not toggled it must be pressed
+					auto e = std::get<MousePressedEvent>(Input::getMouseKeyEvent((MouseKey)code));
+					onEvent(e);
+				} 
+				else if (Input::isMouseUntoggled((MouseKey)code))
+				{
+					// if key is not toggled it must be pressed
+					auto e = std::get<MouseReleasedEvent>(Input::getMouseKeyEvent((MouseKey)code));
+					onEvent(e);
+				}
+
+			}
+
+			// mouse move events
+			
+			if (Input::isMouseMoved())
+			{
+				auto e = Input::getMouseMovedEvent();
+				onEvent(e);
+			}
+
 			for (Layer* layer: m_layerStack)
 				layer->onUpdate();
 
@@ -53,6 +124,7 @@ namespace Asciir
 
 	void AREngine::PushLayer(Layer* layer)
 	{
+		layer->onAdd();
 		m_layerStack.PushLayer(layer);
 	}
 

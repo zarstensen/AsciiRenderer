@@ -26,6 +26,11 @@ namespace Asciir
 		return a << x;
 	}
 
+	constexpr int CHECK_BIT(long long x, int bit)
+	{
+		return (x >> bit) & 1U;
+	}
+
 	constexpr int SIG_CTRL_C = SIGINT;
 	#ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;
