@@ -31,9 +31,9 @@ namespace Asciir
 		tmp_stream << '[' << log_level << ']';
 
 		tmp_stream << std::setfill('0') << '[' <<
-			std::setw(2) << hours << "::" <<
-			std::setw(2) << minutes << "::" <<
-			std::setw(4) << seconds << ']';
+			std::setfill('0') << std::setw(2) << hours << "::" <<
+			std::setfill('0') << std::setw(2) << minutes << "::" <<
+			std::setfill('0') << std::setw(5) << seconds << ']';
 
 		// Log the log level, log stat, line and file it occured on
 		tmp_stream << '[' << log_source << ']' << '[' << log_type << ']' << " on line [" << line << "] in source file [" << file << "]:\n";
