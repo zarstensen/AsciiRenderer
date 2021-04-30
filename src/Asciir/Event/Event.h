@@ -2,12 +2,20 @@
 
 #include "Asciir/Core/Core.h"
 
+/*
+*	Events are passed to onEvent functions in the engine, terminal and all of the layers.
+*	They function like callbacks but are only called once per engine update
+*	due to keyboard and mouse callbacks not being possible with the windows api
+*	in console applications without global hooks.
+*	onEvent functions are always called before update functions.
+*/
+
 namespace Asciir
 {
 	enum class EventType
 	{
 		None,
-		TerminalClosed, TerminalResized, TerminalFocused, TerminalLostFocus, CursorMoved,
+		TerminalClosed, TerminalResized, TerminalMoved, TerminalFocused, TerminalLostFocus, CursorMoved,
 		GameTick, GameUpdate, GameRender,
 		KeyPressed, KeyReleased,
 		MousePressed, MouseReleased, MouseMoved, MouseScrolled
@@ -16,18 +24,17 @@ namespace Asciir
 	typedef int EventCategory;
 
 	constexpr EventCategory CategoryNone =		0;
-	constexpr EventCategory CategoryGame =		BIT_SHL(0);
+	constexpr EventCategory CategoryTerminal =		BIT_SHL(0);
 	constexpr EventCategory CategoryInput =		BIT_SHL(1);
 	constexpr EventCategory CategoryKeyboard =	BIT_SHL(2);
 	constexpr EventCategory CategoryMouse =		BIT_SHL(3);
 	constexpr EventCategory CategoryCursor =	BIT_SHL(4);
 
-
 	class Event
 	{
-	protected:
-		bool m_handled = false;
 	public:
+		
+		bool handled = false;
 		virtual EventType getType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual EventCategory getCategory() const = 0;
@@ -53,12 +60,12 @@ namespace Asciir
 		{}
 
 		// only calls the callback if the callback type is the same as the target event.
-		template<typename T, std::enable_if_t<std::is_same_v<T, Event>, bool> = 0>
+		template<typename T>
 		bool handle(EventFp<T> funcp)
 		{
 			if (m_event.getType() == T::getStaticType())
 			{
-				m_event.m_handled = funcp(static_cast<T&>(m_event));
+				m_event.handled = funcp(static_cast<T&>(m_event));
 				return true;
 			}
 			return false;
@@ -71,10 +78,11 @@ namespace Asciir
 
 	#define EVENT_CATEGORY_DEFINE(category) virtual EventCategory getCategory() const override{ return category; }
 
-	std::ostream& operator<<(std::ostream& stream, const Event& e)
+	inline std::ostream& operator<<(std::ostream& stream, const Event& e)
 	{
 		stream << e.toString();
 		return stream;
 	}
 
+	#define AR_BIND_EVENT_CALLBACK(e) std::bind(&AREngine::e, this, std::placeholders::_1)
 }

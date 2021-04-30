@@ -1,20 +1,21 @@
 #pragma once
 
 #include "Event.h"
+#include "Asciir/Input/KeyCodes.h"
 
 namespace Asciir
 {
 	class KeyEvent : public Event
 	{
 	protected:
-		int m_keyCode;
+		Key m_keycode;
 
 	protected:
-		KeyEvent(int keyCode)
-			:m_keyCode(keyCode)
+		KeyEvent(Key keycode)
+			:m_keycode(keycode)
 		{}
 
-		int getKeyCode() const { return m_keyCode; }
+		Key getKeyCode() const { return m_keycode; }
 
 
 	public:
@@ -25,14 +26,14 @@ namespace Asciir
 	{
 		bool m_repeat;
 	public:
-		KeyPressedEvent(int keyCode, bool repeat)
-			: KeyEvent(keyCode), m_repeat(repeat) {}
+		KeyPressedEvent(Key keycode, bool repeat)
+			: KeyEvent(keycode), m_repeat(repeat) {}
 
-		std::string toString()
+		std::string toString() const override
 		{
 			std::stringstream stream;
 
-			stream << "KeyPressedEvent: \nCode: " << m_keyCode << ", Pressed: " << m_repeat;
+			stream << "KeyPressedEvent: \nCode: " << (int)m_keycode << ", Pressed: " << m_repeat;
 
 			return stream.str();
 		}
@@ -43,18 +44,18 @@ namespace Asciir
 	class KeyReleasedEvent : public KeyEvent
 	{
 	public:
-		KeyReleasedEvent(int keyCode)
-			: KeyEvent(keyCode) {}
+		KeyReleasedEvent(Key keycode)
+			: KeyEvent(keycode) {}
 
-		std::string toString()
+		std::string toString() const override
 		{
 			std::stringstream stream;
 
-			stream << "KeyReleasedEvent: \nCode: " << m_keyCode;
+			stream << "KeyReleasedEvent: \nCode: " << (int)m_keycode;
 
 			return stream.str();
 		}
 
-		EVENT_TYPE_DEFINE(KeyPressed)
+		EVENT_TYPE_DEFINE(KeyReleased)
 	};
 }

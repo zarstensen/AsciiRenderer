@@ -4,18 +4,21 @@
 
 namespace Asciir
 {
+
+	class Input;
+
 	class MouseKeyEvent: public Event
 	{
 	protected:
-		int m_mouseCode;
+		MouseKey m_mousecode;
 
 	protected:
-		MouseKeyEvent(int mouseCode)
-			: m_mouseCode(mouseCode) {}
+		MouseKeyEvent(MouseKey mousecode)
+			: m_mousecode(mousecode) {}
 
 	public:
 
-		int getMouseCode() const { return m_mouseCode; }
+		MouseKey getMouseCode() const { return m_mousecode; }
 
 		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 
@@ -23,22 +26,18 @@ namespace Asciir
 
 	class MousePressedEvent : public MouseKeyEvent
 	{
+		friend Input;
 	protected:
-		bool m_pressed;
-
-	protected:
-		MousePressedEvent(int mouseCode, bool pressed)
-			: MouseKeyEvent(mouseCode), m_pressed(pressed) {}
+		MousePressedEvent(MouseKey mousecode)
+			: MouseKeyEvent(mousecode) {}
 
 	public:
-
-		bool isPressed() const { return m_pressed; }
 
 		virtual std::string toString() const override
 		{
 			std::stringstream msg;
 
-			msg << "MouseReleased: " << getMouseCode() << ',' << isPressed();
+			msg << "MousePressed: " << (int)m_mousecode;
 
 			return msg.str();
 		}
@@ -48,9 +47,10 @@ namespace Asciir
 
 	class MouseReleasedEvent : public MouseKeyEvent
 	{
+		friend Input;
 	protected:
-		MouseReleasedEvent(int mouseCode)
-			: MouseKeyEvent(mouseCode) {}
+		MouseReleasedEvent(MouseKey mousecode)
+			: MouseKeyEvent(mousecode) {}
 
 	public:
 
@@ -58,7 +58,7 @@ namespace Asciir
 		{
 			std::stringstream msg;
 
-			msg << "MouseReleased: " << getMouseCode();
+			msg << "MouseReleased: " << (int) m_mousecode;
 
 			return msg.str();
 		}
@@ -113,7 +113,7 @@ namespace Asciir
 			return msg.str();
 		}
 
-		EVENT_TYPE_DEFINE(MouseMoved)
+		EVENT_TYPE_DEFINE(MouseScrolled)
 
 		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
