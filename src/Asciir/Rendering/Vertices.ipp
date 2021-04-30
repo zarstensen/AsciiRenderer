@@ -96,6 +96,13 @@ namespace Asciir
 
 	template<typename T>
 	template<typename TOther>
+	inline bool arVertex<T>::operator!=(const arVertex<TOther>& other) const
+	{
+		return !operator==(other);
+	}
+
+	template<typename T>
+	template<typename TOther>
 	arVertex<T>::arVertex(const arVertex<TOther>& other)
 		:x(T(other.x)), y(T(other.y)) {}
 

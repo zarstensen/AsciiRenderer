@@ -4,7 +4,7 @@ namespace Asciir
 {
 	template<typename T>
 	Matrix<T>::Matrix()
-		: m_data(nullptr), m_size({0, 0}) {}
+		: m_data(nullptr), m_size(0, 0) {}
 
 	template<typename T>
 	Matrix<T>::Matrix(arVertex<size_t> size)

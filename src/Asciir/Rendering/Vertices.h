@@ -41,6 +41,9 @@ namespace Asciir
 
 		template<typename TOther>
 		bool operator==(const arVertex<TOther>& other) const;
+
+		template<typename TOther>
+		bool operator!=(const arVertex<TOther>& other) const;
 	};
 
 	template<typename T>
