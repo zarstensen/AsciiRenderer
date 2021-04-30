@@ -111,7 +111,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -139,7 +140,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -163,7 +165,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -191,7 +194,8 @@
       </Command>
     </PreBuildEvent>
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)bin\$(Configuration)-$(Platform)\WinInputHooks\WinInputHooks.dll $(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\WinInputHooks.dll</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -204,9 +208,6 @@
   <ItemGroup>
     <ProjectReference Include="..\AsciiRender.vcxproj">
       <Project>{c4c8233b-f13d-4e3e-8cf4-f9c729b7d7d9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\modules\WinInputHooks\WinInputHooks.vcxproj">
-      <Project>{d063416f-567e-4500-92ae-3f793c9e9414}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
