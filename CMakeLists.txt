@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 Project(Asciir)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -103,6 +103,10 @@ message(SEND_ERROR "Platform not supported")
 endif()
 
 add_library(${PROJECT_NAME} STATIC
+    src/Asciir.h
+    src/pch/arpch.h
+    src/pch/arpch.cpp
+
     ${HEADER_DIR_CORE}
     ${SRC_DIR_CORE}
 
@@ -140,7 +144,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG>)
+target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
 message(STATUS ${CMAKE_BINARY_DIR})
 
