@@ -151,6 +151,10 @@ set_target_properties(${PROJECT_NAME}
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/Release-${ARCH}
 )
 
+# Eigen 3
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/modules/eigen)
+
 if(LOG_VIEWER)
 add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
 endif()
