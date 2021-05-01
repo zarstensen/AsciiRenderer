@@ -24,7 +24,9 @@
 
 #include "Asciir/Rendering/TerminalRender.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
-#include "Asciir/Rendering/Vertices.h"
+#include "Asciir/Math/Vertices.h"
+#include "Asciir/Math/Matrix.h"
+#include "Asciir/Math/Lines.h"
 
 #include "Asciir/Rendering/RenderConsts.h"
 

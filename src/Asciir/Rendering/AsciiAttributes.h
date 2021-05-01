@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
-#include "Vertices.h"
+#include "Asciir/Math/Vertices.h"
 
 namespace Asciir
 {

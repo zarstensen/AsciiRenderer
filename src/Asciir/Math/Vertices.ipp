@@ -50,6 +50,36 @@ namespace Asciir
 		return { x % other.x, y % other.y };
 	}
 
+	template<typename T>
+	arVertex<T> arVertex<T>::operator+(const T& other) const
+	{
+		return { x + other, y + other };
+	}
+
+	template<typename T>
+	arVertex<T> arVertex<T>::operator-(const T& other) const
+	{
+		return { x - other, y - other };
+	}
+
+	template<typename T>
+	arVertex<T> arVertex<T>::operator*(const T& other) const
+	{
+		return { x * other, y * other };
+	}
+
+	template<typename T>
+	arVertex<T> arVertex<T>::operator/(const T& other) const
+	{
+		return { x / other, y / other };
+	}
+
+	template<typename T>
+	arVertex<T> arVertex<T>::operator%(const T& other) const
+	{
+		return { x % other, y % other };
+	}
+
 
 	template<typename T>
 	void arVertex<T>::operator+=(const arVertex<T>& other)
@@ -85,6 +115,43 @@ namespace Asciir
 		x %= other.x;
 		y %= other.y;
 	}
+
+	template<typename T>
+	void arVertex<T>::operator+=(const T& other)
+	{
+		x += other;
+		y += other;
+	}
+
+	template<typename T>
+	void arVertex<T>::operator-=(const T& other)
+	{
+		x -= other;
+		y -= other;
+	}
+
+	template<typename T>
+	void arVertex<T>::operator*=(const T& other)
+	{
+		x *= other;
+		y *= other;
+	}
+
+	template<typename T>
+	void arVertex<T>::operator/=(const T& other)
+	{
+		x /= other;
+		y /= other;
+	}
+
+	template<typename T>
+	void arVertex<T>::operator%=(const T& other)
+	{
+		x %= other;
+		y %= other;
+	}
+
+
 
 	template<typename T>
 	template<typename TOther>
