@@ -2,6 +2,8 @@
 
 #include "Asciir/Platform/PlatformMacros.h"
 
+#include <Eigen/Eigen>
+
 #include <functional>
 #include <memory>
 #include <algorithm>

@@ -224,7 +224,7 @@ namespace Asciir
 		{
 			for (TInt x = 0; (size_t) x < m_tiles.size().x; x++)
 			{
-				Tile& tile = m_tiles[TermVert(x, y)];
+				Tile& tile = m_tiles.get(TermVert(x, y));
 				m_terminal_out.setForeground(tile.color);
 				m_terminal_out.setBackground(tile.background_color);
 				m_terminal_out.ansiCode<TerminalRender>(*this, x == 0);
@@ -255,7 +255,7 @@ namespace Asciir
 
 	TermVert TerminalRender::drawSize() const
 	{
-		return m_tiles.size();
+		return static_cast<TermVert>(m_tiles.size());
 	}
 	
 	TermVert TerminalRender::maxSize() const

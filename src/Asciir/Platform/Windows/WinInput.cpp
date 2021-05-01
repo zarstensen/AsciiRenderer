@@ -104,7 +104,7 @@ namespace Asciir
 
 	MouseMovedEvent Input::getMouseMovedEvent()
 	{
-		return MouseMovedEvent(getMousePos(), getMousePos() - s_last_mouse_pos);
+		return MouseMovedEvent(getMousePos(), (Coord)(getMousePos() - s_last_mouse_pos).eval());
 	}
 
 	TerminalMovedEvent Input::getTerminalMovedEvent()

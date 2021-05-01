@@ -30,7 +30,7 @@ namespace Asciir
 	class TerminalRender
 	{
 	protected:
-		Matrix<Tile> m_tiles;
+		arMatrix<Tile> m_tiles;
 		Coord m_pos;
 		Tile m_tile_state = Tile();
 		std::string m_title;

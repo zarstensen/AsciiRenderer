@@ -1,106 +1,52 @@
+#pragma once
+
 #include "Matrix.h"
+#include "Asciir/Logging/Log.h"
 
 namespace Asciir
 {
 	template<typename T>
-	Matrix<T>::Matrix()
-		: m_data(nullptr), m_size(0, 0) {}
+	template<typename TOther>
+	arMatrix<T>::arMatrix(const arMatrix<TOther>& other)
+		: Eigen::MatrixX<T>((Eigen::MatrixX<T>)other) {}
 
 	template<typename T>
-	Matrix<T>::Matrix(arVertex<size_t> size)
+	arMatrix<T> arMatrix<T>::operator=(const arMatrix<T>& other)
 	{
-		resize(size);
+		return arMatrix<T>(other);
+	}
+	
+	template<typename T>
+	Size2D arMatrix<T>::size() const
+	{
+
+		size_t height = (size_t)Eigen::MatrixX<T>::cols();
+		size_t width = (size_t)Eigen::MatrixX<T>::rows();
+
+		AR_ASSERT_MSG(width >= 0 && height >= 0, "Invalid coords: ", width, ',', height);
+
+		return { width, height };
+	}
+	
+	template<typename T>
+	void arMatrix<T>::resize(Size2D size)
+	{
+		Eigen::MatrixX<T>::conservativeResize(size.x, size.y);
 	}
 
 	template<typename T>
-	T& Matrix<T>::at(arVertex<size_t> coord)
+	T& arMatrix<T>::operator[](size_t indx)
 	{
-		return m_data[coord.x + coord.y * m_size.x];
+		return Eigen::MatrixX<T>::operator()(indx);
 	}
 
 	template<typename T>
-	T Matrix<T>::at(arVertex<size_t> coord) const
+	T& arMatrix<T>::get(Size2D coord)
 	{
-		return m_data[coord.x + coord.y * m_size.x];
+
+		AR_ASSERT_MSG(coord.x < size().x && coord.y < size().y, "Invalid coord: ", coord);
+
+		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
 	}
 
-	template<typename T>
-	T& Matrix<T>::at(size_t indx)
-	{
-		return m_data[indx];
-	}
-
-	template<typename T>
-	T Matrix<T>::at(size_t indx) const
-	{
-		return m_data[indx];
-	}
-
-	template<typename T>
-	arVertex<size_t> Matrix<T>::size() const
-	{
-		return m_size;
-	}
-
-	template<typename T>
-	void Matrix<T>::resize(arVertex<size_t> size)
-	{
-		T* tmp_ptr = new T[size.x * size.y];
-		std::fill(tmp_ptr, tmp_ptr + size.x * size.y, T());
-
-		size_t cpy_amount = std::min(size.x, m_size.x) * sizeof(T);
-		size_t loop_amount = std::min(size.y, m_size.y);
-
-		for (size_t i = 0; i < loop_amount; i++)
-		{
-			memcpy(tmp_ptr + size.x * i, m_data + m_size.x * i, cpy_amount);
-		}
-
-		m_size = size;
-		std::swap(m_data, tmp_ptr);
-
-		delete[] tmp_ptr;
-	}
-
-
-	template<typename T>
-	T& Matrix<T>::operator[](arVertex<size_t> coord)
-	{
-		return at(coord);
-	}
-
-	template<typename T>
-	T Matrix<T>::operator[](arVertex<size_t> coord) const
-	{
-		return at(coord);
-	}
-
-	template<typename T>
-	T& Matrix<T>::operator[](size_t indx)
-	{
-		return at(indx);
-	}
-
-	template<typename T>
-	T Matrix<T>::operator[](size_t indx) const
-	{
-		return at(indx);
-	}
-
-
-	template<typename T>
-	std::ostream& operator<<(std::ostream& stream, const Matrix<T>& mat)
-	{
-		for (size_t i = 0; i < mat.size().x * mat.size().y; i++)
-		{
-			stream << mat.at(i);
-
-			if (i % mat.size().x == mat.size().x - 1)
-				stream << '\n';
-			else
-				stream << ',';
-		}
-
-		return stream;
-	}
 }
