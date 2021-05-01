@@ -10,8 +10,8 @@ set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
 set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 # options
-option(LOG_VIEWER "builds an executable to view log files" ON)
-option(PROTOTYPING "build example project" OFF)
+option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
+option(ASCIIR_EXAMPLES "build example projects" OFF)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 set(ARCH "x64")
@@ -159,10 +159,10 @@ set_target_properties(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/modules/eigen)
 
-if(LOG_VIEWER)
+if(ASCIIR_LOG_VIEWER)
 add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
 endif()
 
-if(PROTOTYPING)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Prototyping Prototyping)
+if(ASCIIR_EXAMPLES)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
 endif()

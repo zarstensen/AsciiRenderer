@@ -7,22 +7,24 @@ class ExampleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		if (Input::isKeyDown(Key::W))
+		if (Input::isKeyDown(Key::W) || Input::isKeyDown(Key::UP))
 			pos.y--;
 
-		if (Input::isKeyDown(Key::S))
+		if (Input::isKeyDown(Key::S) || Input::isKeyDown(Key::DOWN))
 			pos.y++;
 
-		if (Input::isKeyDown(Key::A))
+		if (Input::isKeyDown(Key::A) || Input::isKeyDown(Key::LEFT))
 			pos.x--;
 
-		if (Input::isKeyDown(Key::D))
+		if (Input::isKeyDown(Key::D) || Input::isKeyDown(Key::RIGHT))
 			pos.x++;
 
 		AREngine::getEngine()->getTerminal()->getRenderer()->color({255, 0, 0
 	});
 		AREngine::getEngine()->getTerminal()->getRenderer()->symbol(219);
 		AREngine::getEngine()->getTerminal()->getRenderer()->drawTile(pos);
+
+		sleep(1000 / 60);
 	}
 };
 
@@ -36,8 +38,6 @@ public:
 
 	~Exec() {}
 };
-
-using namespace Asciir;
 
 Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args)
 {

@@ -5,4 +5,4 @@ The game engine part is being built with the help of the [game engine series by 
 > ###### *example of what it can currently do*
 > <img src="Resources/AREarlyExample.gif" width=450 height=450>
 > 
-> #### the source code for this example is in the Prototyping project
+> #### the source code for this example is in the BasicInputExample project

@@ -1,4 +1,4 @@
-project(Prototyping)
+project(BasicInputExample)
 
 set(INCLUDE_FILES
     
