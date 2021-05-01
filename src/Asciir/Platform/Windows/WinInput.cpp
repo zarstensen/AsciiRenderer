@@ -3,7 +3,7 @@
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
 #include "WindowsTerminal.h"
-#include "Log.h"
+#include "Asciir/Logging/Log.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir

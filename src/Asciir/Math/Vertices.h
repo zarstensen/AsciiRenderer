@@ -33,11 +33,23 @@ namespace Asciir
 		arVertex<T> operator/(const arVertex<T>& other) const;
 		arVertex<T> operator%(const arVertex<T>& other) const;
 
+		arVertex<T> operator+(const T& other) const;
+		arVertex<T> operator-(const T& other) const;
+		arVertex<T> operator*(const T& other) const;
+		arVertex<T> operator/(const T& other) const;
+		arVertex<T> operator%(const T& other) const;
+
 		void operator+=(const arVertex<T>& other);
 		void operator-=(const arVertex<T>& other);
 		void operator*=(const arVertex<T>& other);
 		void operator/=(const arVertex<T>& other);
 		void operator%=(const arVertex<T>& other);
+
+		void operator+=(const T& other);
+		void operator-=(const T& other);
+		void operator*=(const T& other);
+		void operator/=(const T& other);
+		void operator%=(const T& other);
 
 		template<typename TOther>
 		bool operator==(const arVertex<TOther>& other) const;

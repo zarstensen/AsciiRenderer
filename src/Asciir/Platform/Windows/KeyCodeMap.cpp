@@ -1,6 +1,6 @@
 #include "arpch.h"
 #include "KeyCodeMap.h"
-#include "Log.h"
+#include "Asciir/Logging/Log.h"
 
 namespace Asciir
 {

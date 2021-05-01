@@ -1,8 +1,8 @@
 #pragma once
 
 #include "AsciiAttributes.h"
-#include "Vertices.h"
-#include "Matrix.h"
+#include "Asciir/Math/Vertices.h"
+#include "Asciir/Math/Matrix.h"
 
 namespace Asciir
 {

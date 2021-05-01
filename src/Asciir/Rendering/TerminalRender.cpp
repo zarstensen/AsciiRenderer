@@ -1,7 +1,7 @@
 ﻿#include "arpch.h"
 #include "TerminalRender.h"
-#include "Lines.h"
-#include "Log.h"
+#include "Asciir/Math/Lines.h"
+#include "Asciir/Logging/Log.h"
 
 namespace Asciir
 {

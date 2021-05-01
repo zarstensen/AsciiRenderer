@@ -21,6 +21,8 @@ CMakeLists.txt
 # Build results
 bin/
 int/
+lib/
+[Bb]uild/
 logs/
 */*.log
 [Dd]ebug/

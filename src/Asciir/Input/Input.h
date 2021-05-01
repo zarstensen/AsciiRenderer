@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
-#include "Asciir/Rendering/Vertices.h"
+#include "Asciir/Math/Vertices.h"
 #include "Asciir/Core/Terminal.h"
 
 #ifdef AR_WIN

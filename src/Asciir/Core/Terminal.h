@@ -2,7 +2,7 @@
 
 #include "Asciir/Event/Event.h"
 #include "Asciir/Rendering/TerminalRender.h"
-#include "Asciir/Rendering/Vertices.h"
+#include "Asciir/Math/Vertices.h"
 
 namespace Asciir
 {
