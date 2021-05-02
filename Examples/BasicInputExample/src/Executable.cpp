@@ -19,8 +19,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Input::isKeyDown(Key::D) || Input::isKeyDown(Key::RIGHT))
 			pos.x++;
 
-		AREngine::getEngine()->getTerminal()->getRenderer()->color({255, 0, 0
-	});
+		AREngine::getEngine()->getTerminal()->getRenderer()->color({255, 0, 0});
 		AREngine::getEngine()->getTerminal()->getRenderer()->symbol(219);
 		AREngine::getEngine()->getTerminal()->getRenderer()->drawTile(pos);
 

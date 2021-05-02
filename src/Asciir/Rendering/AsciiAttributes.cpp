@@ -1,6 +1,7 @@
 #include "arpch.h"
 #include "AsciiAttributes.h"
 #include "RenderConsts.h"
+#include "Asciir/Logging/Log.h"
 
 namespace Asciir
 {
@@ -52,20 +53,9 @@ namespace Asciir
 		green = g;
 		blue = b;
 
-		#ifdef AR_DEBUG
-		if (red < 6)
-		{
-			throw std::runtime_error("Red color value must be less than 6, not '" + std::to_string(red) + "'");
-		}
-		if (green < 6)
-		{
-			throw std::runtime_error("Green color value must be less than 6, not '" + std::to_string(green) + "'");
-		}
-		if (blue < 6)
-		{
-			throw std::runtime_error("Blue color value must be less than 6, not '" + std::to_string(blue) + "'");
-		}
-		#endif
+		AR_ASSERT_MSG(red < 6, "Red color value must be less than 6. value: ", red);
+		AR_ASSERT_MSG(green < 6, "Green color value must be less than 6. value: ", green);
+		AR_ASSERT_MSG(blue < 6, "Blue color value must be less than 6. value: ", blue);
 	}
 
 	RGB8::RGB8()
@@ -74,23 +64,6 @@ namespace Asciir
 
 	Color RGB8::getColor()
 	{
-		#ifdef AR_DEBUG
-		if (red > 5)
-		{
-			throw std::runtime_error("Red color value must be less than 6, not '" + std::to_string(red) + "'");
-		}
-		if (green > 5)
-		{
-			throw std::runtime_error("Green color value must be less than 6, not '" + std::to_string(green) + "'");
-		}
-		if (blue > 5)
-		{
-			throw std::runtime_error("Blue color value must be less than 6, not '" + std::to_string(blue) + "'");
-		}
-		#endif
-
-
-
 		return Color(CGRADIENT16[red], CGRADIENT16[green], CGRADIENT16[blue]);
 	}
 
@@ -102,12 +75,7 @@ namespace Asciir
 	GRAY8::GRAY8(unsigned char g)
 		: gray(g)
 	{
-		#ifdef AR_DEBUG
-		if (gray < 24)
-		{
-			throw std::runtime_error("Gray value must be less than 24, not '" + std::to_string(gray) + "'");
-		}
-		#endif
+		AR_ASSERT_MSG(gray < 24, "Gray value must be less than 24. value: ", gray);
 	}
 
 	GRAY8::GRAY8()
@@ -116,13 +84,7 @@ namespace Asciir
 
 	Color GRAY8::getColor()
 	{
-		#ifdef AR_DEBUG
-		if (gray < 24)
-		{
-			throw std::runtime_error("Gray value must be less than 24, not '" + std::to_string(gray) + "'");
-		}
-		#endif
-		
+		// converts gray color from range (0-23) to an 8 bit value (8-238)
 		return 8 + gray * 10;
 	}
 
@@ -187,7 +149,7 @@ namespace Asciir
 				return ICYAN8;
 				break;
 			default:
-				assert("Invalid color");
+				AR_ASSERT_MSG(false, "Invalid color");
 				return NULL;
 		}
 		

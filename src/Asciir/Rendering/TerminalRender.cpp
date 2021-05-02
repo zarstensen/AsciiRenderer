@@ -119,28 +119,16 @@ namespace Asciir
 
 	void TerminalRender::drawTile(const TermVert& pos)
 	{
-		#ifdef AR_DEBUG
-		if (pos.x >= drawSize().x || pos.x < 0 || pos.y >= drawSize().y || pos.y < 0)
-		{
-			std::stringstream msg;
-			msg << "Position " << pos << " is out of bounds. Bounds " << drawSize();
-			throw std::runtime_error(msg.str());
-		}
-		#endif
+		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
+					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		m_tiles[pos.x + m_tiles.size().x * pos.y] = m_tile_state;
 	}
 
 	Tile& TerminalRender::getTile(const TermVert& pos)
 	{
-		#ifdef AR_DEBUG
-		if (pos.x >= drawSize().x || pos.x < 0 || pos.y >= drawSize().y || pos.y < 0)
-		{
-			std::stringstream msg;
-			msg << "Position " << pos << " is out of bounds. Bounds " << drawSize();
-			throw std::runtime_error(msg.str());
-		}
-		#endif
+		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		return m_tiles[pos.x + m_tiles.size().x * (m_tiles.size().y - pos.y - 1)];
 	}
@@ -158,15 +146,8 @@ namespace Asciir
 
 	void TerminalRender::resize(TermVert size)
 	{
-
-		#ifdef AR_DEBUG
-		if (size.x > maxSize().x || size.x < 0 || size.y > maxSize().y ||size.y < 0)
-		{
-			std::stringstream msg;
-			msg << "Size " << size << " is too large or negative. Max terminal size is " << maxSize();
-			throw std::runtime_error(msg.str());
-		}
-		#endif
+		AR_ASSERT_MSG(size.x < maxSize().x&& size.x > 0 && size.y < maxSize().y&& size.y > 0,
+			          "Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
 		m_tiles.resize(size);
