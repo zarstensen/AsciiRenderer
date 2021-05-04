@@ -26,6 +26,7 @@
 #include "Asciir/Rendering/AsciiAttributes.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Matrix.h"
+#include "Asciir/Math/Tensor.h"
 #include "Asciir/Math/Lines.h"
 
 #include "Asciir/Rendering/RenderConsts.h"
