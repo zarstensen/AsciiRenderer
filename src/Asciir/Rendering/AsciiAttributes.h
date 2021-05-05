@@ -112,6 +112,9 @@ namespace Asciir
 		Color m_last_background;
 		std::array<bool, ATTR_COUNT> last_attributes;
 
+		TermVert m_pos;
+		bool m_should_move = false;
+
 	public:
 		std::array<bool, ATTR_COUNT> attributes;
 
@@ -130,6 +133,8 @@ namespace Asciir
 
 		void setAttribute(const ATTRI& attribute, bool val);
 
+		void move(TermVert pos);
+
 		#ifdef AR_WIN
 
 		void setBoxed(bool val);
@@ -138,8 +143,8 @@ namespace Asciir
 
 		#endif
 
-		std::string ansiCode() const;
-		void ansiCode(std::string& dst) const;
+		std::string ansiCode();
+		void ansiCode(std::string& dst);
 		template<typename TStream>
 		void ansiCode(TStream& stream, bool is_newline = false);
 		

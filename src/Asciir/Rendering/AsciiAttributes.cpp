@@ -236,6 +236,12 @@ namespace Asciir
 		attributes[attribute] = val;
 	}
 
+	void AsciiAttr::move(TermVert pos)
+	{
+		m_pos = pos;
+		m_should_move = true;
+	}
+
 	void AsciiAttr::setTitle(const std::string& name)
 	{
 		std::cout << AR_ANSIS_OSC << "0;" << name << AR_ANSIS_CSI;

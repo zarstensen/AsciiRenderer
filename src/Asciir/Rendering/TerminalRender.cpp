@@ -161,13 +161,14 @@ namespace Asciir
 		TermVert size = m_terminal_out.terminalSize();
 		Coord pos = m_terminal_out.terminalPos();
 
+		// \x1b[?25l = hide cursor
+		// the cursor will have to be rehidden every time the terminal gets resized
+
 		if (m_should_resize)
 		{
 			m_should_resize = false;
 			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(m_tiles.size().y) + ';' + std::to_string(m_tiles.size().x) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
-
-			pushBuffer("\x1b[?25l");
 
 			r_info.new_size = true;
 		}

@@ -7,13 +7,14 @@ namespace Asciir
 	AsciiAttr::AsciiAttr()
 		: m_hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 	{
+		// enable ansi code support
 		DWORD dwMode = 0;
 		GetConsoleMode(m_hConsole, &dwMode);
 		SetConsoleMode(m_hConsole, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
 		clearColor();
 	}
 
-	std::string AsciiAttr::ansiCode() const
+	std::string AsciiAttr::ansiCode()
 	{
 		size_t size = 3 + (5 + 4 * 3) * 2;
 
@@ -30,7 +31,7 @@ namespace Asciir
 		return escseq;
 	}
 
-	void AsciiAttr::ansiCode(std::string& dst) const
+	void AsciiAttr::ansiCode(std::string& dst)
 	{
 		// disabled because it causes a large overhead
 		#if 0
@@ -39,6 +40,16 @@ namespace Asciir
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
 		#endif
+
+		// cursor
+
+		if (m_should_move)
+		{
+			dst += AR_ANSIS_CSI;
+			dst += std::to_string(m_pos.x + 1) + ',' + std::to_string(m_pos.y + 1) + 'H';
+
+			m_should_move = false;
+		}
 
 		// formatting
 		dst += AR_ANSIS_CSI;
