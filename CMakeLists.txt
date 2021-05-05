@@ -61,12 +61,14 @@ set(SRC_DIR_MATH
     src/Asciir/Math/lines.cpp
     src/Asciir/Math/Vertices.ipp
     src/Asciir/Math/Matrix.ipp
+    src/Asciir/Math/Tensor.ipp
 )
 
 set(HEADER_DIR_MATH
     src/Asciir/Math/lines.h
     src/Asciir/Math/Vertices.h
     src/Asciir/Math/Matrix.h
+    src/Asciir/Math/Tensor.h
 )
 
 set(SRC_DIR_RENDERING
