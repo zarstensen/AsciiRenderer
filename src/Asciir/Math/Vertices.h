@@ -19,11 +19,8 @@ namespace Asciir
 		arVertex(const Eigen::Vector<T, n>& vec);
 		
 		// constructors for eigen generic expressions
-
 		template<typename TOther>
-		arVertex(const Eigen::EigenBase<TOther>& other);
-		template<typename TOther>
-		arVertex(const Eigen::ReturnByValue<TOther>& other);
+		arVertex(const Eigen::MatrixBase<TOther>& other);
 
 		template<typename TOther>
 		arVertex<T, n>& operator=(const arVertex<TOther, n>& other);
@@ -62,9 +59,9 @@ namespace Asciir
 	template<typename T>
 	struct arVertex3D: public arVertex<T, 3>
 	{
-		T& x = arVertex<T, 2>::operator[](0);
-		T& y = arVertex<T, 2>::operator[](1);
-		T& z = arVertex<T, 2>::operator[](2);
+		T& x = arVertex<T, 3>::operator[](0);
+		T& y = arVertex<T, 3>::operator[](1);
+		T& z = arVertex<T, 3>::operator[](2);
 
 		using arVertex<T, 3>::arVertex;
 

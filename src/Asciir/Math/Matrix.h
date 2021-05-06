@@ -20,9 +20,7 @@ namespace Asciir
 		// constructor for eigen generic expressions
 
 		template<typename TOther>
-		arMatrix(const Eigen::EigenBase<TOther>& other);
-		template<typename TOther>
-		arMatrix(const Eigen::ReturnByValue<TOther>& other);
+		arMatrix(const Eigen::MatrixBase<TOther>& other);
 
 		Size2D size() const;
 

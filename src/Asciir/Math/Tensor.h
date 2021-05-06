@@ -15,19 +15,21 @@ namespace Asciir
 		arTensor3D(Size3D size);
 
 		template<typename TOther>
-		arTensor3D(const Eigen::EigenBase<TOther>& other);
-		template<typename TOther>
-		arTensor3D(const Eigen::ReturnByValue<TOther>& other);
+		arTensor3D(const Eigen::MatrixBase<TOther>& other);
 
-		Size3D size();
+		Size3D size() const;
 		void resize(Size3D size);
 
 		T& operator()(size_t x, size_t y, size_t z);
 		T& operator()(Size3D index);
+		T& operator()(Size2D index) = delete;
+
+		T& get(Size3D index);
+		T& get(size_t x, size_t y, size_t z);
+		T& get(Size2D index) = delete;
 
 	protected:
 		size_t m_width;
-
 	};
 }
 

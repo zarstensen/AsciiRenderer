@@ -12,13 +12,8 @@ namespace Asciir
 
 	template<typename T>
 	template<typename TOther>
-	arMatrix<T>::arMatrix(const Eigen::EigenBase<TOther>& other)
-		: Eigen::MatrixX<T>(other) {}
-
-	template<typename T>
-	template<typename TOther>
-	arMatrix<T>::arMatrix(const Eigen::ReturnByValue<TOther>& other)
-		: Eigen::MatrixX<T>(other) {}
+	arMatrix<T>::arMatrix(const Eigen::MatrixBase<TOther>& other)
+		: Eigen::MatrixX<T>(other.cast<T>()) {}
 
 	template<typename T>
 	arMatrix<T> arMatrix<T>::operator=(const arMatrix<T>& other)
