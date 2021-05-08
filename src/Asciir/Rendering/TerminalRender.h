@@ -3,6 +3,7 @@
 #include "AsciiAttributes.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Matrix.h"
+#include "Asciir/Math/Tensor.h"
 
 namespace Asciir
 {
@@ -18,6 +19,16 @@ namespace Asciir
 		Color background_color = BLACK8;
 		Color color = WHITE8;
 		char symbol = ' ';
+
+		bool operator==(Tile other)
+		{
+			return background_color == other.background_color && color == other.color && symbol == other.symbol;
+		}
+
+		bool operator!=(Tile other)
+		{
+			return !(*this == other);
+		}
 	};
 
 	struct TRUpdateInfo
@@ -30,7 +41,7 @@ namespace Asciir
 	class TerminalRender
 	{
 	protected:
-		arMatrix<Tile> m_tiles;
+		arTensor3D<Tile> m_tiles;
 		Coord m_pos;
 		Tile m_tile_state = Tile();
 		std::string m_title;
@@ -44,6 +55,9 @@ namespace Asciir
 
 		void drawVertices(const TermVerts& vertices, DrawMode mode = DrawMode::Line);
 		void drawLine(const TermVert& a, const TermVert& b);
+
+		void clearTerminal();
+
 		void setState(Tile tile);
 		Tile getState() const;
 		Tile& getState();

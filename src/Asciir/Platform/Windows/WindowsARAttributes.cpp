@@ -43,13 +43,7 @@ namespace Asciir
 
 		// cursor
 
-		if (m_should_move)
-		{
-			dst += AR_ANSIS_CSI;
-			dst += std::to_string(m_pos.x + 1) + ',' + std::to_string(m_pos.y + 1) + 'H';
-
-			m_should_move = false;
-		}
+		moveCode(dst);
 
 		// formatting
 		dst += AR_ANSIS_CSI;
@@ -106,6 +100,17 @@ namespace Asciir
 		dst += ";";
 		dst += std::to_string(m_background.blue);
 		dst += 'm';
+	}
+
+	void AsciiAttr::moveCode(std::string& dst)
+	{
+		if (m_should_move)
+		{
+			dst += AR_ANSIS_CSI;
+			dst += std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H';
+
+			m_should_move = false;
+		}
 	}
 
 	Coord AsciiAttr::terminalPos() const

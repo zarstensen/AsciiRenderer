@@ -10,7 +10,7 @@ namespace Asciir
 	template<typename T>
 	struct arTensor3D : arMatrix<T>
 	{
-		arTensor3D() = default;
+		arTensor3D() : m_width(1) {};
 		arTensor3D(size_t w, size_t h, size_t d);
 		arTensor3D(Size3D size);
 

@@ -50,7 +50,7 @@ namespace Asciir
 			TInt minx = SHRT_MAX;
 			TInt maxx = 0;
 
-			for (TermVert vert : vertices)
+			for (const TermVert& vert : vertices)
 			{
 				miny = std::min(vert.y, miny);
 				maxy = std::max(vert.y, maxy);
@@ -102,6 +102,11 @@ namespace Asciir
 		drawVertices({ a, b }, DrawMode::Line);
 	}
 
+	void TerminalRender::clearTerminal()
+	{
+		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(Tile());
+	}
+
 	void TerminalRender::setState(Tile tile)
 	{
 		m_tile_state = tile;
@@ -122,15 +127,15 @@ namespace Asciir
 		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles[pos.x + m_tiles.size().x * pos.y] = m_tile_state;
+		m_tiles(0, pos.x, pos.y) = m_tile_state;
 	}
 
 	Tile& TerminalRender::getTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
-		return m_tiles[pos.x + m_tiles.size().x * (m_tiles.size().y - pos.y - 1)];
+		return m_tiles(0, pos.x, pos.y);
 	}
 
 	void TerminalRender::setTitle(const std::string& title)
@@ -150,7 +155,7 @@ namespace Asciir
 			          "Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
-		m_tiles.resize(size);
+		m_tiles.resize({ 2, (size_t) size.x, (size_t) size.y });
 	}
 
 	TRUpdateInfo TerminalRender::update()
@@ -163,19 +168,18 @@ namespace Asciir
 
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
-
 		if (m_should_resize)
 		{
 			m_should_resize = false;
-			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(m_tiles.size().y) + ';' + std::to_string(m_tiles.size().x) + 't';
+			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
 			r_info.new_size = true;
 		}
-		else if (size.x != m_tiles.size().x || size.y != m_tiles.size().y)
+		else if (size.x != drawSize().x || size.y != drawSize().y)
 		{
 			pushBuffer("\x1b[?25l");
-			m_tiles.resize(size);
+			m_tiles.resize({ 2, (size_t)size.x, (size_t)size.y });
 
 			r_info.new_size = true;
 		}
@@ -198,28 +202,50 @@ namespace Asciir
 
 	void TerminalRender::draw()
 	{
-		pushBuffer("\x1b[H");
-
 		m_terminal_out.clear();
 
-		for (TInt y = 0; (size_t) y < m_tiles.size().y; y++)
+		bool skipped_tile = false;
+
+		m_terminal_out.move({ 0, 0 });
+		m_terminal_out.moveCode(*this);
+		
+		for (TInt y = 0; (size_t) y < drawSize().y; y++)
 		{
-			for (TInt x = 0; (size_t) x < m_tiles.size().x; x++)
+			for (TInt x = 0; (size_t) x < drawSize().x; x++)
 			{
-				Tile& tile = m_tiles.get(TermVert(x, y));
-				m_terminal_out.setForeground(tile.color);
-				m_terminal_out.setBackground(tile.background_color);
+				Tile& new_tile = m_tiles(0, x, y );
+				Tile& old_tile = m_tiles(1, x, y );
+
+				if (new_tile == old_tile)
+				{
+					skipped_tile = true;
+					continue;
+				}
+
+				if (skipped_tile)
+				{
+					skipped_tile = false;
+					m_terminal_out.move({ x, y });
+				}
+
+				m_terminal_out.setForeground(new_tile.color);
+				m_terminal_out.setBackground(new_tile.background_color);
 				m_terminal_out.ansiCode<TerminalRender>(*this, x == 0);
 
-				pushBuffer(tile.symbol);
-				tile = Tile();
+				pushBuffer(new_tile.symbol);
 			}
 
-			if((size_t) y < m_tiles.size().y - 1)
+			if((size_t) y < (size_t) drawSize().y - 1 && !skipped_tile)
 				pushBuffer('\n');
 		}
 
 		flushBuffer();
+
+		// copy current tiles into the back of the tile tensor so it can be compared next draw call
+
+		auto tile_block = m_tiles.block(0, 0, drawSize().x, drawSize().y);
+		m_tiles.block(m_tiles.size().y, 0, drawSize().x, drawSize().y) = tile_block;
+
 	}
 
 	TRUpdateInfo TerminalRender::render()
@@ -237,7 +263,8 @@ namespace Asciir
 
 	TermVert TerminalRender::drawSize() const
 	{
-		return static_cast<TermVert>(m_tiles.size());
+		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
+		return {m_tiles.size().y, m_tiles.size().z};
 	}
 	
 	TermVert TerminalRender::maxSize() const

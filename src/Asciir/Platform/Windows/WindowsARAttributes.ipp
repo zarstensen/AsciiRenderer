@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asciir/Rendering/RenderConsts.h"
+#include "Asciir/Rendering/AsciiAttributes.h"
 
 namespace Asciir
 {
@@ -37,16 +38,8 @@ namespace Asciir
 
 		if (!has_changed)
 			return;
-
 		// cursor
-
-		if (m_should_move)
-		{
-			stream << AR_ANSIS_CSI;
-			stream << m_pos.x + 1 << ',' << m_pos.y + 1 << 'H';
-
-			m_should_move = false;
-		}
+		moveCode(stream);
 
 		// formatting
 		stream << AR_ANSIS_CSI;
@@ -117,6 +110,18 @@ namespace Asciir
 		m_last_background = m_background;
 
 		m_cleared = false;
+	}
+	
+	template<typename TStream>
+	void AsciiAttr::moveCode(TStream& stream)
+	{
+		if (m_should_move)
+		{
+			stream << AR_ANSIS_CSI;
+			stream << std::to_string( m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'H';
+
+			m_should_move = false;
+		}
 	}
 }
 

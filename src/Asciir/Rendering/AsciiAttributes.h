@@ -148,6 +148,10 @@ namespace Asciir
 		template<typename TStream>
 		void ansiCode(TStream& stream, bool is_newline = false);
 		
+		void moveCode(std::string& dst);
+		template<typename TStream>
+		void moveCode(TStream& stream);
+
 		void setTitle(const std::string& name);
 
 		Coord terminalPos() const;
