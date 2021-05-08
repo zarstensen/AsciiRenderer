@@ -38,6 +38,16 @@ namespace Asciir
 		if (!has_changed)
 			return;
 
+		// cursor
+
+		if (m_should_move)
+		{
+			stream << AR_ANSIS_CSI;
+			stream << m_pos.x + 1 << ',' << m_pos.y + 1 << 'H';
+
+			m_should_move = false;
+		}
+
 		// formatting
 		stream << AR_ANSIS_CSI;
 
