@@ -31,6 +31,8 @@ namespace Asciir
 		}
 	};
 
+	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
+
 	struct TRUpdateInfo
 	{
 		bool new_size = false;
@@ -57,6 +59,7 @@ namespace Asciir
 		void drawLine(const TermVert& a, const TermVert& b);
 
 		void clearTerminal();
+		void clearTiles();
 
 		void setState(Tile tile);
 		Tile getState() const;

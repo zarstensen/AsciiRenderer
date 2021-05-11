@@ -107,6 +107,11 @@ namespace Asciir
 		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(Tile());
 	}
 
+	void TerminalRender::clearTiles()
+	{
+		m_tiles.fill(Tile());
+	}
+
 	void TerminalRender::setState(Tile tile)
 	{
 		m_tile_state = tile;
@@ -174,12 +179,18 @@ namespace Asciir
 			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
+			// reset stored tiles from last update
+			clearTiles();
+
 			r_info.new_size = true;
 		}
 		else if (size.x != drawSize().x || size.y != drawSize().y)
 		{
 			pushBuffer("\x1b[?25l");
 			m_tiles.resize({ 2, (size_t)size.x, (size_t)size.y });
+
+			// reset stored tiles from last update
+			clearTiles();
 
 			r_info.new_size = true;
 		}
@@ -239,13 +250,13 @@ namespace Asciir
 				pushBuffer('\n');
 		}
 
-		flushBuffer();
+		m_terminal_out.move({ drawSize().x - 1, drawSize().y - 1 });
+		m_terminal_out.moveCode(*this);
 
-		// copy current tiles into the back of the tile tensor so it can be compared next draw call
+		flushBuffer();
 
 		auto tile_block = m_tiles.block(0, 0, drawSize().x, drawSize().y);
 		m_tiles.block(m_tiles.size().y, 0, drawSize().x, drawSize().y) = tile_block;
-
 	}
 
 	TRUpdateInfo TerminalRender::render()
@@ -322,5 +333,11 @@ namespace Asciir
 	{
 		pushBuffer(data);
 		return *this;
+	}
+	
+	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
+	{
+		stream << (int)tile.symbol;
+		return stream;
 	}
 }
