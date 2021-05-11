@@ -107,8 +107,25 @@ set(HEADER_DIR_PLATFORM
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
 )
-else()
-message(SEND_ERROR "Platform not supported")
+elseif(MACOS)
+set(SRC_DIR_PLATFORM
+    # core
+    src/Asciir/Platform/Macos/MacTerminal.cpp
+    src/Asciir/Platform/Macos/MacInput.cpp
+    src/Asciir/Platform/Macos/KeyCodeMap.cpp
+
+    # rendering
+    src/Asciir/Platform/Windows/MacARAttributes.cpp
+    src/Asciir/Platform/Windows/MacARAttributes.ipp
+)
+
+set(HEADER_DIR_PLATFORM
+    # core
+    src/Asciir/Platform/Macos/MacTerminal.h
+    src/Asciir/Platform/Macos/MacInput.h
+    src/Asciir/Platform/Macos/KeyCodeMap.h
+)
+
 endif()
 
 add_library(${PROJECT_NAME} STATIC
