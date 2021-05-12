@@ -1,10 +1,9 @@
 #include "arpch.h"
 #include "Terminal.h"
-#include "Asciir\Logging\Log.h"
-
-#ifdef AR_WIN
-#include "Asciir/Platform/Windows/WindowsTerminal.h"
-#endif
+#include "Asciir/Core/Engine.h"
+#include "Asciir/Logging/Log.h"
+#include "Asciir/Input/Input.h"
+#include "Asciir/Event/TerminalEvent.h"
 
 namespace Asciir
 {
@@ -16,18 +15,35 @@ namespace Asciir
 
 	std::unique_ptr<Terminal> Terminal::create(const TerminalProps& props)
 	{
-		#ifdef AR_WIN
-		return std::make_unique<WindowsTerminal>(props);
-		#else
-		assert((false, "Platform not supported"));
-		#endif
+		return std::make_unique<Terminal>(props);
 	}
-
-	
 	
 	void Terminal::onStart()
 	{
-		AR_INFO("Started engine");
+		// Terminal close callbacks
+		signal(SIG_CTRL_C, onCloseSignal);
+		signal(SIG_CMD_CLOSE, onCloseSignal);
+	}
+
+	void Terminal::onUpdate()
+	{
+		m_terminal_render.draw();
+	}
+	
+	void Terminal::updateInput()
+	{
+		Input::update(m_terminal_render.update());
+	}
+	
+	void onCloseSignal(int signal)
+	{
+		TerminalClosedEvent event(signal);
+		AREngine::getEngine()->getTerminal()->EventCallback(event);
+	}
+	
+	TerminalRender* const Terminal::getRenderer()
+	{
+		return &m_terminal_render;
 	}
 
 	TermVert Terminal::getSize() const
@@ -40,8 +56,14 @@ namespace Asciir
 		return m_terminal_render.pos();
 	}
 
-	TerminalRender* const Terminal::getRenderer()
+	void Terminal::setEventCallback(const EventCallbackFp& callback)
 	{
-		return &m_terminal_render;
+		m_event_callback = callback;
 	}
+
+	void Terminal::EventCallback(Event& e)
+	{
+		m_event_callback(e);
+	}
+
 }

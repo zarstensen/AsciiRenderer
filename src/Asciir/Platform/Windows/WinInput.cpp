@@ -2,7 +2,7 @@
 #include "WinInput.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
-#include "WindowsTerminal.h"
+#include "Asciir/Core/Terminal.h"
 #include "Asciir/Logging/Log.h"
 #include "KeyCodeMap.h"
 
@@ -11,9 +11,6 @@ namespace Asciir
 	Coord Input::s_last_mouse_pos, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size;
 	TRUpdateInfo Input::s_info;
-
-	// key and mouse functions currently use the same code
-	// but this will be changed when custom keycodes are added
 
 	bool Input::isKeyDown(Key keycode)
 	{

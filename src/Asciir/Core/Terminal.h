@@ -26,19 +26,20 @@ namespace Asciir
 
 
 		Terminal(const TerminalProps& props = TerminalProps());
-		virtual ~Terminal() = default;
+		~Terminal() = default;
 
 		static std::unique_ptr<Terminal> create(const TerminalProps& props = TerminalProps());
 
-		virtual void onStart() = 0;
-		virtual void onUpdate() = 0;
-		virtual void updateInput() = 0;
+		void onStart();
+		void onUpdate();
+		void updateInput();
 
 		TermVert getSize() const;
 		Coord getPos() const;
 		TerminalRender* const getRenderer();
 
-		virtual void setEventCallback(const EventCallbackFp& callback) = 0;
+		void EventCallback(Event& e);
+		void setEventCallback(const EventCallbackFp& callback);
 
 	protected:
 		TerminalRender m_terminal_render;
@@ -46,4 +47,6 @@ namespace Asciir
 		EventCallbackFp m_event_callback;
 
 	};
+
+	void onCloseSignal(int signal);
 }

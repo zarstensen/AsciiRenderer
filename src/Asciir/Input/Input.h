@@ -4,10 +4,6 @@
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Core/Terminal.h"
 
-#ifdef AR_WIN
-#include "Asciir/Platform/Windows/WindowsTerminal.h"
-#endif
-
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
@@ -24,10 +20,6 @@ namespace Asciir
 	{
 
 		friend Terminal;
-
-		#ifdef AR_WIN
-		friend WindowsTerminal;
-		#endif
 
 	protected:
 		static Coord s_last_mouse_pos;
