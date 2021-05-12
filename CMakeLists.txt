@@ -52,7 +52,14 @@ set(HEADER_DIR_CORE
     src/Asciir/Core/LayerStack.h 
     src/Asciir/Core/Terminal.h 
     src/Asciir/Core/Timing.h 
-) 
+)
+
+set(HEADER_DIR_EVENT
+    src/Asciir/Event/Event.h
+    src/Asciir/Event/KeyEvent.h
+    src/Asciir/Event/MouseEvent.h
+    src/Asciir/Event/TerminalEvent.h
+)
 
 set(SRC_DIR_LOGGING
     src/Asciir/Logging/FileLog.cpp 
@@ -122,6 +129,8 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_CORE}
     ${SRC_DIR_CORE}
 
+    ${HEADER_DIR_EVENT}
+
     ${HEADER_DIR_LOGGING}
     ${SRC_DIR_LOGGING}
 
@@ -133,12 +142,12 @@ add_library(${PROJECT_NAME} STATIC
 
     ${SRC_DIR_PLATFORM}
     ${HEADER_DIR_PLATFORM}
-
-    
 )
 
 source_group("core/header"        FILES ${HEADER_DIR_CORE})
 source_group("core/src"           FILES ${SRC_DIR_CORE})
+
+source_group("event/header"       FILES ${HEADER_DIR_EVENT})
 
 source_group("logging/header"     FILES ${HEADER_DIR_LOGGING})
 source_group("logging/src"        FILES ${SRC_DIR_LOGGING})
