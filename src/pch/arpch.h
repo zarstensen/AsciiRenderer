@@ -12,6 +12,7 @@
 #include <chrono>
 #include <filesystem>
 #include <type_traits>
+#include <limits.h>
 
 #include <iostream>
 #include <string>
@@ -32,4 +33,5 @@
 #else
 #include <sys/ioctl>
 #include <unistd>
+#include <ncurses.h>
 #endif

@@ -15,8 +15,6 @@ set(CMAKE_CXX_FLAGS_INLINEDEBUG     "${CMAKE_CXX_FLAGS_DEBUG} /Ob2" CACHE STRING
 set(CMAKE_EXE_FLAGS_INLINEDEBUG     "${CMAKE_EXE_FLAGS_DEBUG}" CACHE STRING "" FORCE)
 set(CMAKE_LINKER_FLAGS_INLINEDEBUG  "${CMAKE_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
 
-
-
 endif()
 
 # options
@@ -68,14 +66,14 @@ set(HEADER_DIR_LOGGING
 )
 
 set(SRC_DIR_MATH
-    src/Asciir/Math/lines.cpp
+    src/Asciir/Math/Lines.cpp
     src/Asciir/Math/Vertices.ipp
     src/Asciir/Math/Matrix.ipp
     src/Asciir/Math/Tensor.ipp
 )
 
 set(HEADER_DIR_MATH
-    src/Asciir/Math/lines.h
+    src/Asciir/Math/Lines.h
     src/Asciir/Math/Vertices.h
     src/Asciir/Math/Matrix.h
     src/Asciir/Math/Tensor.h
@@ -93,6 +91,7 @@ set(HEADER_DIR_RENDERING
 )
 
 if(WIN32)
+
 set(SRC_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WindowsTerminal.cpp
@@ -110,6 +109,27 @@ set(HEADER_DIR_PLATFORM
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
 )
+
+elseif(UNIX)
+
+set(SRC_DIR_PLATFORM
+    # core
+    src/Asciir/Platform/Unix/UnixTerminal.cpp
+    src/Asciir/Platform/Unix/UnixInput.cpp
+    src/Asciir/Platform/Unix/KeyCodeMap.cpp
+
+    # rendering
+    src/Asciir/Platform/Unix/UnixARAttributes.cpp
+    src/Asciir/Platform/Unix/UnixARAttributes.ipp
+)
+
+set(HEADER_DIR_PLATFORM
+    # core
+    src/Asciir/Platform/Unix/UnixTerminal.h
+    src/Asciir/Platform/Unix/UnixInput.h
+    src/Asciir/Platform/Unix/KeyCodeMap.h
+)
+
 else()
 message(SEND_ERROR "Platform not supported")
 endif()
@@ -158,7 +178,11 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
-message(STATUS ${CMAKE_BINARY_DIR})
+if(${UNIX})
+find_package(Curses REQUIRED)
+include_directories(${CURSES_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})
+endif()
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES

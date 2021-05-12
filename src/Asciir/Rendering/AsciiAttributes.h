@@ -105,6 +105,10 @@ namespace Asciir
 		HANDLE m_hConsole;
 		#endif
 
+		#ifdef AR_LINUX
+		WINDOW* m_window;
+		#endif
+
 		Color m_foreground;
 		Color m_background;
 
