@@ -3,11 +3,10 @@ using namespace Asciir;
 
 class ExampleLayer : public Asciir::Layer
 {
-	Asciir::TermVert pos = { 20, 20 };
+	Asciir::TermVert pos = { 10, 10 };
 
 	void onUpdate() final
 	{
-
 		AREngine::getEngine()->getTerminal()->getRenderer()->clearTerminal();
 
 		if (Input::isKeyDown(Key::W) || Input::isKeyDown(Key::UP))
@@ -20,11 +19,19 @@ class ExampleLayer : public Asciir::Layer
 			pos.x--;
 
 		if (Input::isKeyDown(Key::D) || Input::isKeyDown(Key::RIGHT))
-			pos.x++; 
+			pos.x++;
 
-		AREngine::getEngine()->getTerminal()->getRenderer()->color({(unsigned char)rand(), (unsigned char)rand(), (unsigned char)rand()});
-		AREngine::getEngine()->getTerminal()->getRenderer()->symbol(219U);
-		AREngine::getEngine()->getTerminal()->getRenderer()->drawTile(pos);
+		TerminalRender* renderer = AREngine::getEngine()->getTerminal()->getRenderer();
+
+		renderer->symbol((char)219);
+
+		renderer->color({0, 0, 155});
+		renderer->backgroundColor({ 0, 0, 155 });
+		renderer->drawVertices({ {0, 0}, {0, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, 0} }, DrawMode::Filled);
+
+		renderer->symbol((char)219);
+		renderer->color({ (u_char)rand(), (u_char)rand(), (u_char)rand() });
+		renderer->drawTile(pos);
 
 		sleep(1000 / 60);
 	}

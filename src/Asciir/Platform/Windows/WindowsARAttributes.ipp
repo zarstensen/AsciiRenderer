@@ -65,6 +65,7 @@ namespace Asciir
 			stream << ";29";
 
 		// foreground color
+		// background color needs to be updated if the foreground color is changed
 		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
 		{
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
@@ -81,7 +82,13 @@ namespace Asciir
 			stream << std::to_string(green);
 			stream << ";";
 			stream << std::to_string(blue);
-			stream << ";";
+
+			stream << ";48;2;";
+			stream << std::to_string(m_background.red);
+			stream << ';';
+			stream << std::to_string(m_background.green);
+			stream << ';';
+			stream << std::to_string(m_background.blue);
 		}
 		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
 		{
@@ -91,12 +98,18 @@ namespace Asciir
 			stream << std::to_string(m_foreground.green);
 			stream << ";";
 			stream << std::to_string(m_foreground.blue);
-		}
 
-		// background color
-		if (m_background != m_last_background || m_cleared || is_newline)
+			stream << ";48;2;";
+			stream << std::to_string(m_background.red);
+			stream << ';';
+			stream << std::to_string(m_background.green);
+			stream << ';';
+			stream << std::to_string(m_background.blue);
+		}
+		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
-			stream << "48;2;";
+			// only background color
+			stream << ";48;2;";
 			stream << std::to_string(m_background.red);
 			stream << ';';
 			stream << std::to_string(m_background.green);
@@ -118,7 +131,7 @@ namespace Asciir
 		if (m_should_move)
 		{
 			stream << AR_ANSIS_CSI;
-			stream << std::to_string( m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'H';
+			stream << std::to_string( m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'f';
 
 			m_should_move = false;
 		}
