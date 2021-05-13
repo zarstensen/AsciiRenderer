@@ -102,7 +102,6 @@ set(HEADER_DIR_RENDERING
 if(WIN32)
 set(SRC_DIR_PLATFORM
     # core
-    src/Asciir/Platform/Windows/WindowsTerminal.cpp
     src/Asciir/Platform/Windows/WinInput.cpp
     src/Asciir/Platform/Windows/KeyCodeMap.cpp
 
@@ -113,7 +112,6 @@ set(SRC_DIR_PLATFORM
 
 set(HEADER_DIR_PLATFORM
     # core
-    src/Asciir/Platform/Windows/WindowsTerminal.h
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
 )
