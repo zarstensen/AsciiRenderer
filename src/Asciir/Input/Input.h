@@ -49,6 +49,8 @@ namespace Asciir
 		static bool isTerminalMoved();
 		static bool isTerminalResized();
 
+		static bool isFocused();
+
 		static std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> getKeyEvent(Key keycode);
 
 		static std::variant<std::monostate, MousePressedEvent, MouseReleasedEvent> getMouseKeyEvent(MouseKey keycode);

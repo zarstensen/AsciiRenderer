@@ -14,57 +14,57 @@ namespace Asciir
 
 	bool Input::isKeyDown(Key keycode)
 	{
-		return WIN_KEY_MAP[keyCodeToWin(keycode)].is_down;
+		return WIN_KEY_MAP[keyCodeToWin(keycode)].is_down && isFocused();
 	}
 
 	bool Input::isKeyUp(Key keycode)
 	{
-		return !WIN_KEY_MAP[keyCodeToWin(keycode)].is_down;
+		return !WIN_KEY_MAP[keyCodeToWin(keycode)].is_down && isFocused();
 	}
 
 	bool Input::isKeyPressed(Key keycode)
 	{
 		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
-		return castMilli(getTime() - key_data.time_since_down) > AR_KEY_PRESSED_TIMEOUT && key_data.is_down;
+		return castMilli(getTime() - key_data.time_since_down) > AR_KEY_PRESSED_TIMEOUT && key_data.is_down && isFocused();
 	}
 
 	bool Input::isKeyToggled(Key keycode)
 	{
 		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
-		return key_data.is_toggled && key_data.is_down;
+		return key_data.is_toggled && key_data.is_down && isFocused();
 	}
 
 	bool Input::isKeyUntoggled(Key keycode)
 	{
 		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
-		return key_data.is_toggled && !key_data.is_down;
-  	}
+		return key_data.is_toggled && !key_data.is_down && isFocused();
+	}
 
 	bool Input::isMouseDown(MouseKey keycode)
 	{
-		return WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down;
+		return WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down && isFocused();
 	}
 
 	bool Input::isMouseUp(MouseKey keycode)
 	{
-		return !WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down;
+		return !WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down && isFocused();
 	}
 
 	bool Input::isMouseToggled(MouseKey keycode)
 	{
 		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
-		return mouse_data.is_toggled && mouse_data.is_down;
+		return mouse_data.is_toggled && mouse_data.is_down && isFocused();
 	}
 
 	bool Input::isMouseUntoggled(MouseKey keycode)
 	{
 		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
-		return mouse_data.is_toggled && !mouse_data.is_down;
+		return mouse_data.is_toggled && !mouse_data.is_down && isFocused();
 	}
 
 	bool Input::isMouseMoved()
 	{
-		return getMousePos() != s_last_mouse_pos;
+		return getMousePos() != s_last_mouse_pos && isFocused();
 	}
 
 	bool Input::isTerminalMoved()
@@ -77,13 +77,18 @@ namespace Asciir
 		return AREngine::getEngine()->getTerminal()->getSize() != s_last_size;
 	}
 
+	bool Input::isFocused()
+	{
+		return GetForegroundWindow() == GetConsoleWindow();
+	}
+
 	std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> Input::getKeyEvent(Key keycode)
 	{
 		if (isKeyDown(keycode))
 			return KeyPressedEvent(keycode, isKeyPressed(keycode));
 		else if (isKeyUp(keycode))
 			return KeyReleasedEvent(keycode);
-		AR_ASSERT_MSG(false, "Key was neither pressed or released");
+		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
 
@@ -95,7 +100,7 @@ namespace Asciir
 			return MousePressedEvent(keycode);
 		else if (isMouseUp(keycode))
 			return MouseReleasedEvent(keycode);
-		AR_ASSERT_MSG(false, "Key was neither pressed or released");
+		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
 
