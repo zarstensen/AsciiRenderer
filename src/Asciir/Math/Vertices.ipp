@@ -26,7 +26,7 @@ namespace Asciir
 	template<typename T, size_t n>
 	template<typename TOther>
 	arVertex<T, n>::arVertex(const Eigen::MatrixBase<TOther>& other)
-		: arVertex(other.cast<T>()) {}
+		: arVertex(other.template cast<T>()) {}
 
 	template<typename T>
 	arVertex2D<T>::arVertex2D()

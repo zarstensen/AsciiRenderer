@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Asciir/Core/core.h"
+#include "Asciir/Core/Core.h"
 #include <Eigen/Eigen>
 
 namespace Asciir

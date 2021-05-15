@@ -14,7 +14,7 @@ namespace Asciir
 {
 	enum class EventType
 	{
-		None,
+		NoneType,
 		TerminalClosed, TerminalResized, TerminalMoved, TerminalFocused, TerminalLostFocus, CursorMoved,
 		GameTick, GameUpdate, GameRender,
 		KeyPressed, KeyReleased,
@@ -72,7 +72,7 @@ namespace Asciir
 		}
 	};
 
-	#define EVENT_TYPE_DEFINE(type) static EventType getStaticType() { return EventType::##type; }\
+	#define EVENT_TYPE_DEFINE(type) static EventType getStaticType() { return EventType::type; }\
 										virtual EventType getType() const override { return getStaticType(); } \
 										virtual const char* getName() const override { return #type; }
 

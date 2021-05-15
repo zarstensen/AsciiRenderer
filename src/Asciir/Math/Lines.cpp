@@ -66,11 +66,11 @@ namespace Asciir
 		TermVert vec_b = { (TInt)std::abs(b.x - point.x),	(TInt)std::abs(b.y - point.y) };
 
 		// return false if point is not inside line bounding box
-		if (vec_a.x > vec_b.x && vec_b.x < NULL || vec_a.y > vec_b.y && vec_b.y < NULL)
+		if (vec_a.x > vec_b.x && vec_b.x < 0 || vec_a.y > vec_b.y && vec_b.y < 0)
 			return false;
 		
 		// return true if vec_b is a null vector
-		if (vec_b.x == NULL && vec_b.y == NULL)
+		if (vec_b.x == 0 && vec_b.y == 0)
 			return true;
 
 		if (vec_a.y == 0 && vec_b.y == 0)
