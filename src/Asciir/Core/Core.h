@@ -1,9 +1,5 @@
 #pragma once
 
-#ifndef AR_WIN
-#error Only windows is currently supported
-#endif
-
 #if defined(DEBUG) || defined(_DEBUG) && !defined(AR_DEBUG)
 #define AR_DEBUG
 #endif

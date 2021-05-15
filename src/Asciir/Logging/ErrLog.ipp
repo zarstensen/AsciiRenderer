@@ -2,6 +2,10 @@
 
 
 #ifdef AR_WIN
+#define AR_DEBUG_BREAK __debugbreak()
+#else
+#define AR_DEBUG_BREAK
+#endif
 
 #define AR_JOIN_NAME_HELPER(a, b) a##b
 #define AR_JOIN_NAME(a, b) AR_JOIN_NAME_HELPER(a, b)
@@ -32,16 +36,14 @@ assert(false);\
 #define AR_WIN_ASSERT(x)
 #endif
 
-#endif
-
 #ifdef AR_DEBUG
-#define AR_VERIFY(x) auto AR_JOIN_NAME(ret_val, __LINE__) = x; if(!AR_JOIN_NAME(ret_val, __LINE__)) {AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__);__debugbreak();}
+#define AR_VERIFY(x) auto AR_JOIN_NAME(ret_val, __LINE__) = x; if(!AR_JOIN_NAME(ret_val, __LINE__)) {AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;}
 #else
 #define AR_VERIFY(x) x;
 #endif
 
 #ifdef AR_DEBUG
-#define AR_VERIFY_ASGM(var, x) auto AR_JOIN_NAME(ret_val, __LINE__) = x; if(!AR_JOIN_NAME(ret_val, __LINE__)) {AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__);__debugbreak();} var = AR_JOIN_NAME(ret_val, __LINE__)
+#define AR_VERIFY_ASGM(var, x) auto AR_JOIN_NAME(ret_val, __LINE__) = x; if(!AR_JOIN_NAME(ret_val, __LINE__)) {AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;} var = AR_JOIN_NAME(ret_val, __LINE__)
 #else
 #define AR_VERIFY_ASGM(var, x) var = x
 #endif
@@ -53,7 +55,7 @@ assert(false);\
 #endif
 
 #ifdef AR_DEBUG
-#define AR_ASSERT_MSG(x, ...) if(!(x)) {AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__);__debugbreak();assert(false);}
+#define AR_ASSERT_MSG(x, ...) if(!(x)) {AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;assert(false);}
 #else
 #define AR_ASSERT_MSG(x, ...)
 #endif
