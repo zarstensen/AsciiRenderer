@@ -69,7 +69,7 @@ namespace Asciir
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 
-		AsciiAttr* const getTerminalOut();
+		AsciiAttr* const getAttrHandler();
 
 		void resize(TermVert size);
 
@@ -90,7 +90,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT>& attributes();
 
 	protected:
-		AsciiAttr m_terminal_out;
+		AsciiAttr m_attr_handler;
 		std::string m_buffer;
 		bool m_should_resize = false;
 		bool m_should_rename = true;

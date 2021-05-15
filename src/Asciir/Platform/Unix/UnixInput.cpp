@@ -139,10 +139,10 @@ namespace Asciir
 		}
 
 		// update keyboard_state with events from X11
-		AsciiAttr* term_out = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut();
-		Display* display = term_out->m_display;
-		Window window = term_out->m_window;
-		Window focus_window = term_out->m_focus_win;
+		AsciiAttr* h_attr = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler();
+		Display* display = h_attr->m_display;
+		Window window = h_attr->m_window;
+		Window focus_window = h_attr->m_focus_win;
 
 
 
@@ -215,8 +215,8 @@ namespace Asciir
 
 	Coord Input::getMousePos()
 	{
-		Display* x_display = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut()->m_display;
-		Window x_win = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut()->m_window;
+		Display* x_display = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_display;
+		Window x_win = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_window;
 		Window r_win, c_win;
 		int r_x, r_y, w_x, w_y;
 		unsigned int mask_return;
