@@ -496,7 +496,7 @@ namespace Asciir
             break;
         }
         
-        return XKeysymToKeycode(AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut()->m_display, unix_xk);
+        return XKeysymToKeycode(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_display, unix_xk);
     }
 
     int mouseCodeToUnix(MouseKey code)
