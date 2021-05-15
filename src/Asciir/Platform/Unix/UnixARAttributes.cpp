@@ -1,18 +1,33 @@
 #include "arpch.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
+#include "Asciir/Logging/Log.h"
 
 #ifdef AR_LINUX
 namespace Asciir
 {
 	AsciiAttr::AsciiAttr()
 	{
-		m_window = initsrc();
+		// X11 initialization
+
+		m_display = XOpenDisplay(NULL);
+		m_window = DefaultRootWindow(m_display);
+		int revert;
+
+		XGetInputFocus(m_display, &m_focus_win, &revert);
+		XSelectInput(m_display, m_focus_win, KeyPressMask | KeyReleaseMask | FocusChangeMask);
+
+		// disable echo
+		termios term;
+		tcgetattr(STDIN_FILENO, &term);
+		term.c_lflag |= ~ECHO;
+		tcsetattr(STDIN_FILENO, TCSANOW, &term);
+
 		clearColor();
 	}
 
 	AsciiAttr::~AsciiAttr()
 	{
-		endwin();
+		XCloseDisplay(m_display);
 	}
 
 	std::string AsciiAttr::ansiCode()
@@ -91,21 +106,27 @@ namespace Asciir
 	Coord AsciiAttr::terminalPos() const
 	{
 		Coord pos;
+		XWindowAttributes win_info;
 
-		getxy(m_window, pos.x, pos.y);
+		XGetWindowAttributes(m_display, m_window, &win_info);
 
-		return pos;
+		return { win_info.x, win_info.y };
 	}
 
 	TermVert AsciiAttr::terminalSize() const
 	{
-		return {COLS, LINES};
+		winsize size;
+
+		ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+		
+		return TermVert(size.ws_col, size.ws_row);
 	}
 
 	TermVert AsciiAttr::maxTerminalSize() const
 	{
-		// no limits for maximum terminal size on unix systems
-		return { std::numeric_limits<TInt>::max, std::numeric_limits<TInt>::max };
+		// no limits for maximum terminal size on unix systems (?)
+		constexpr TInt max_int = std::numeric_limits<TInt>::max();
+		return TermVert(max_int, max_int);
 	}
 }
 #endif

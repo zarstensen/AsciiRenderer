@@ -14,6 +14,8 @@ namespace Asciir
 		clearColor();
 	}
 
+	AsciiAttr::~AsciiAttr() {}
+
 	std::string AsciiAttr::ansiCode()
 	{
 		size_t size = 3 + (5 + 4 * 3) * 2;

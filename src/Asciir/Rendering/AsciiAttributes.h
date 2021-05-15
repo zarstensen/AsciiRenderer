@@ -99,15 +99,14 @@ namespace Asciir
 	* All of the above = Framed
 	*/
 
+	class Input;
+
 	class AsciiAttr
 	{
-		#ifdef AR_WIN
-		HANDLE m_hConsole;
-		#endif
+		
+		friend Input;
 
-		#ifdef AR_LINUX
-		WINDOW* m_window;
-		#endif
+		
 
 		Color m_foreground;
 		Color m_background;
@@ -120,6 +119,17 @@ namespace Asciir
 		bool m_should_move = false;
 
 	public:
+
+		#ifdef AR_WIN
+		HANDLE m_hConsole;
+		#endif
+
+		#ifdef AR_LINUX
+		Display* m_display;
+		Window m_window;
+		Window m_focus_win;
+		#endif
+
 		std::array<bool, ATTR_COUNT> attributes;
 
 		AsciiAttr();
@@ -170,6 +180,6 @@ namespace Asciir
 
 #ifdef AR_WIN
 #include "Asciir/Platform/Windows/WindowsARAttributes.ipp"
-#elif AR_LINUX
-#include "Asciir/Platform/Linux/LinuxARAttributes.ipp"
+#elif defined AR_LINUX
+#include "Asciir/Platform/Unix/UnixARAttributes.ipp"
 #endif
