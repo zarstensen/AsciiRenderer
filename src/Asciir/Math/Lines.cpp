@@ -63,7 +63,7 @@ namespace Asciir
 	bool LineSegment::intersects(TermVert point)
 	{
 		TermVert vec_a = { (TInt)std::abs(b.x - a.x),		(TInt)std::abs(b.y - a.y) };
-		TermVert vec_b = { (TInt)std::abs(b.x - point.x),	(TInt)std::abs(b.y - point.y) };
+		TermVert vec_b = { a.x < point.x ? (TInt)std::abs(b.x - point.x) : (TInt)std::abs(a.x - point.x), a.x < point.x ? (TInt)std::abs(b.y - point.y) : (TInt)std::abs(a.y - point.y) };
 
 		// return false if point is not inside line bounding box
 		if (vec_a.x > vec_b.x && vec_b.x < 0 || vec_a.y > vec_b.y && vec_b.y < 0)
