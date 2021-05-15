@@ -62,6 +62,7 @@ namespace Asciir
 
 	protected:
 		static void update(TRUpdateInfo info);
+		static Coord getMousePos();
 	};
 
 }

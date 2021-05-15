@@ -69,6 +69,8 @@ namespace Asciir
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 
+		AsciiAttr* const getTerminalOut();
+
 		void resize(TermVert size);
 
 		TRUpdateInfo update();

@@ -1,7 +1,5 @@
 #pragma once
 
-#ifdef AR_WIN
-
 // Define this function in your program and return a heap allocated class derived from Asciir::Terminal
 
 namespace Asciir
@@ -37,5 +35,3 @@ int main(int argc, char** argv)
 	Asciir::AREngine::getEngine()->start();
 	delete Asciir::AREngine::getEngine();
 }
-
-#endif

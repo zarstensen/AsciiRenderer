@@ -13,7 +13,7 @@ namespace Asciir
 	template<typename T>
 	template<typename TOther>
 	arTensor3D<T>::arTensor3D(const Eigen::MatrixBase<TOther>& other)
-		: arMatrix<T>(other.cast<T>()) {}
+		: arMatrix<T>(other.template cast<T>()) {}
 
 	template<typename T>
 	Size3D arTensor3D<T>::size() const

@@ -150,7 +150,7 @@ namespace Asciir
 				break;
 			default:
 				AR_ASSERT_MSG(false, "Invalid color");
-				return NULL;
+				return {};
 		}
 		
 	}
@@ -160,9 +160,7 @@ namespace Asciir
 		return getColor();
 	}
 
-	// constructor is platform dependent
-
-	AsciiAttr::~AsciiAttr() {}
+	// constructor and destructor is platform dependent
 
 	void AsciiAttr::setForeground(const Color& color)
 	{
@@ -190,6 +188,8 @@ namespace Asciir
 		m_background = background;
 	}
 
+	#ifdef AR_WIN
+	
 	void AsciiAttr::setBoxed(bool val)
 	{
 		attributes[TOP] = val;
@@ -209,6 +209,8 @@ namespace Asciir
 		attributes[TOP] = val;
 		attributes[BOTTOM] = val;
 	}
+	
+	#endif
 
 	void AsciiAttr::clear()
 	{
@@ -244,7 +246,7 @@ namespace Asciir
 
 	void AsciiAttr::setTitle(const std::string& name)
 	{
-		std::cout << AR_ANSIS_OSC << "0;" << name << AR_ANSIS_CSI;
+		std::cout << AR_ANSIS_OSC << "0;" << name << '\a';
 	}
 
 	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other)

@@ -12,6 +12,7 @@
 #include <chrono>
 #include <filesystem>
 #include <type_traits>
+#include <limits.h>
 
 #include <iostream>
 #include <string>
@@ -30,6 +31,13 @@
 #undef min
 #undef max
 #else
-#include <sys/ioctl>
-#include <unistd>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+
+// for terminal size
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+#include <termios.h>
+
 #endif

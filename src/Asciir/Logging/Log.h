@@ -22,26 +22,64 @@ namespace Asciir
 		static const FileLog& getClientLog();
 
 		template<typename ... T>
-		inline static void coreInfo(size_t line, const char* file, const T& ... args);
-		template<typename ... T>
-		inline static void coreNotify(size_t line, const char* file, const T& ... args);
-		template<typename ... T>
-		inline static void coreWarning(size_t line, const char* file, const T& ... args);
-		template<typename ... T>
-		inline static void coreCritical(size_t line, const char* file, const T& ... args);
-		template<typename ... T>
-		inline static void coreError(size_t line, const char* file, const T& ... args);
+		inline static void coreInfo(size_t line, const char* file, const T& ... args)
+		{
+			s_core_log_out.Log(0, "CORE", "INFO", line, file, args...);
+		}
 
 		template<typename ... T>
-		inline static void clientInfo(size_t line, const char* file, const T& ... args);
+		inline static void coreNotify(size_t line, const char* file, const T& ... args)
+		{
+			s_core_log_out.Log(1, "CORE", "NOTIFY", line, file, args...);
+		}
+
 		template<typename ... T>
-		inline static void clientNotify(size_t line, const char* file, const T& ... args);
+		inline static void coreWarning(size_t line, const char* file, const T& ... args)
+		{
+			s_core_log_out.Log(2, "CORE", "WARNING", line, file, args...);
+		}
+
 		template<typename ... T>
-		inline static void clientWarning(size_t line, const char* file, const T& ... args);
+		inline static void coreCritical(size_t line, const char* file, const T& ... args)
+		{
+			s_core_log_out.Log(3, "CORE", "CRITICAL", line, file, args...);
+		}
+
 		template<typename ... T>
-		inline static void clientCritical(size_t line, const char* file, const T& ... args);
+		inline static void coreError(size_t line, const char* file, const T& ... args)
+		{
+			s_core_log_out.Log(4, "CORE", "ERROR", line, file, args...);
+		}
+
 		template<typename ... T>
-		inline static void clientError(size_t line, const char* file, const T& ... args);
+		inline static void clientInfo(size_t line, const char* file, const T& ... args)
+		{
+			s_client_log_out.Log(0, "CLIENT", "INFO", line, file, args...);
+		}
+
+		template<typename ... T>
+		inline static void clientNotify(size_t line, const char* file, const T& ... args)
+		{
+			s_client_log_out.Log(1, "CLIENT", "NOTIFY", line, file, args...);
+		}
+
+		template<typename ... T>
+		inline static void clientWarning(size_t line, const char* file, const T& ... args)
+		{
+			s_client_log_out.Log(2, "CLIENT", "WARNING", line, file, args...);
+		}
+
+		template<typename ... T>
+		inline static void clientCritical(size_t line, const char* file, const T& ... args)
+		{
+			s_client_log_out.Log(3, "CLIENT", "CRITICAL", line, file, args...);
+		}
+	
+		template<typename ... T>
+		inline static void clientError(size_t line, const char* file, const T& ... args)
+		{
+			s_client_log_out.Log(4, "CLIENT", "ERROR", line, file, args...);
+		}
 	};
 }
 
@@ -122,5 +160,4 @@ namespace Asciir
 #define AR_ERR(...)	__VA_ARGS__
 #endif
 
-#include "Log.ipp"
 #include "ErrLog.ipp"

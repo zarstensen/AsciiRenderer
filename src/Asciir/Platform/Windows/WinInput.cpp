@@ -170,7 +170,7 @@ namespace Asciir
 
 	}
 
-	Coord getMousePos()
+	Coord Input::getMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));

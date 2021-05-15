@@ -20,7 +20,7 @@ namespace Asciir
 
 	void AREngine::start()
 	{
-
+		AR_CORE_INFO("Started engine");
 		m_terminal->onStart();
 		m_running = true;
 		run();
@@ -29,9 +29,9 @@ namespace Asciir
 	// main loop
 	void AREngine::run()
 	{
+		AR_CORE_INFO("Running engine");
 		while (m_running)
 		{
-
 			m_terminal->updateInput();
 
 			// terminal event handling
@@ -46,7 +46,6 @@ namespace Asciir
 				auto e = Input::getTerminalResizedEvent();
 				onEvent(e);
 			}
-
 
 			// key event handling
 
@@ -66,7 +65,6 @@ namespace Asciir
 					onEvent(e);
 				}
 			}
-
 
 			// mouse events
 			
