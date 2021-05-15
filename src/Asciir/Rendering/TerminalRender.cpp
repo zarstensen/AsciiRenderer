@@ -154,6 +154,11 @@ namespace Asciir
 		return m_title;
 	}
 
+	AsciiAttr* const TerminalRender::getTerminalOut()
+	{
+		return &m_terminal_out;
+	}
+
 	void TerminalRender::resize(TermVert size)
 	{
 		AR_ASSERT_MSG(size.x < maxSize().x&& size.x > 0 && size.y < maxSize().y&& size.y > 0,
@@ -286,10 +291,7 @@ namespace Asciir
 
 	Coord TerminalRender::pos() const
 	{
-		WINDOWPLACEMENT placement = WINDOWPLACEMENT();
-		GetWindowPlacement(GetConsoleWindow(), &placement);
-
-		return { placement.rcNormalPosition.left, placement.rcNormalPosition.top };
+		return m_terminal_out.terminalPos();
 	}
 
 	void TerminalRender::pushBuffer(char c)
