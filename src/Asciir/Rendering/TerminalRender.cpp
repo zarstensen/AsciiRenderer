@@ -102,9 +102,9 @@ namespace Asciir
 		drawVertices({ a, b }, DrawMode::Line);
 	}
 
-	void TerminalRender::clearTerminal()
+	void TerminalRender::clearTerminal(Tile clear_tile)
 	{
-		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(Tile());
+		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(clear_tile);
 	}
 
 	void TerminalRender::clearTiles()

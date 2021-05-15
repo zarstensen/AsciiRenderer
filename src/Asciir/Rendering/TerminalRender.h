@@ -58,7 +58,7 @@ namespace Asciir
 		void drawVertices(const TermVerts& vertices, DrawMode mode = DrawMode::Line);
 		void drawLine(const TermVert& a, const TermVert& b);
 
-		void clearTerminal();
+		void clearTerminal(Tile clear_tile = Tile());
 		void clearTiles();
 
 		void setState(Tile tile);

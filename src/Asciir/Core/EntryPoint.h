@@ -4,7 +4,7 @@
 
 namespace Asciir
 {
-	extern AREngine* CreateEngine(std::vector<std::string> args);
+	extern AREngine* createEngine(std::vector<std::string> args);
 }
 
 int main(int argc, char** argv)
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 		args[i] = std::move(argv[i]);
 	}
 	
-	Asciir::AREngine::create(Asciir::CreateEngine(std::move(args)));
+	Asciir::AREngine::create(Asciir::createEngine(std::move(args)));
 	Asciir::AREngine::getEngine()->start();
 	delete Asciir::AREngine::getEngine();
 }

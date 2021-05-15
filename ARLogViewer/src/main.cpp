@@ -48,7 +48,7 @@ public:
 	}
 };
 
-Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args)
+Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 {
 	std::string log_dir = AR_CORE_LOG_DIR;
 	if (args.size() > 2)

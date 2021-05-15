@@ -47,7 +47,7 @@ public:
 	~Exec() {}
 };
 
-Asciir::AREngine* Asciir::CreateEngine(std::vector<std::string> args)
+Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 {
 	return new Exec;
 }

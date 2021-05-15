@@ -8,9 +8,6 @@
 
 namespace Asciir
 {
-	
-
-
 	class AREngine
 	{
 	protected:
@@ -44,5 +41,5 @@ namespace Asciir
 		static AREngine* i_engine;
 	};
 
-	AREngine* CreateEngine(std::vector<std::string> args);
+	AREngine* createEngine(std::vector<std::string> args);
 }
