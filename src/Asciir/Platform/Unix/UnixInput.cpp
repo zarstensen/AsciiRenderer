@@ -1,5 +1,5 @@
 #include "arpch.h"
-#include "WinInput.h"
+#include "UnixInput.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
 #include "Asciir/Core/Terminal.h"
@@ -12,53 +12,56 @@ namespace Asciir
 	TermVert Input::s_last_size;
 	TRUpdateInfo Input::s_info;
 
+	// key and mouse functions currently use the same code
+	// but this will be changed when custom keycodes are added
+
 	bool Input::isKeyDown(Key keycode)
 	{
-		return WIN_KEY_MAP[keyCodeToWin(keycode)].is_down;
+		return UNIX_KEY_MAP[keyCodeToUnix(keycode)].is_down;
 	}
 
 	bool Input::isKeyUp(Key keycode)
 	{
-		return !WIN_KEY_MAP[keyCodeToWin(keycode)].is_down;
+		return !UNIX_KEY_MAP[keyCodeToUnix(keycode)].is_down;
 	}
 
 	bool Input::isKeyPressed(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
+		KeyInputData& key_data = UNIX_KEY_MAP[keyCodeToUnix(keycode)];
 		return castMilli(getTime() - key_data.time_since_down) > AR_KEY_PRESSED_TIMEOUT && key_data.is_down;
 	}
 
 	bool Input::isKeyToggled(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
+		KeyInputData& key_data = UNIX_KEY_MAP[keyCodeToUnix(keycode)];
 		return key_data.is_toggled && key_data.is_down;
 	}
 
 	bool Input::isKeyUntoggled(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
+		KeyInputData& key_data = UNIX_KEY_MAP[keyCodeToUnix(keycode)];
 		return key_data.is_toggled && !key_data.is_down;
   	}
 
 	bool Input::isMouseDown(MouseKey keycode)
 	{
-		return WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down;
+		return UNIX_KEY_MAP[mouseCodeToUnix(keycode)].is_down;
 	}
 
 	bool Input::isMouseUp(MouseKey keycode)
 	{
-		return !WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down;
+		return !UNIX_KEY_MAP[mouseCodeToUnix(keycode)].is_down;
 	}
 
 	bool Input::isMouseToggled(MouseKey keycode)
 	{
-		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
+		KeyInputData mouse_data = UNIX_KEY_MAP[mouseCodeToUnix(keycode)];
 		return mouse_data.is_toggled && mouse_data.is_down;
 	}
 
 	bool Input::isMouseUntoggled(MouseKey keycode)
 	{
-		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
+		KeyInputData mouse_data = UNIX_KEY_MAP[mouseCodeToUnix(keycode)];
 		return mouse_data.is_toggled && !mouse_data.is_down;
 	}
 
@@ -126,20 +129,65 @@ namespace Asciir
 		s_last_size = AREngine::getEngine()->getTerminal()->getSize();
 
 		constexpr int ks_len = 256;
-		SHORT keyboard_state[ks_len];
+		std::array<XEvent, ks_len> keyboard_state;
 
-		// fill keyboard_state with data from GetAsyncKeyState
-		for (int i = 0; i < ks_len; i++)
-			keyboard_state[i] = GetAsyncKeyState(i);
+		// fill keyboard_state with previous key states
+
+		for(int i = 0; i < ks_len; i++)
+		{
+			keyboard_state[i] = XEvent{LASTEvent};
+		}
+
+		// update keyboard_state with events from X11
+		AsciiAttr* term_out = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut();
+		Display* display = term_out->m_display;
+		Window window = term_out->m_window;
+		Window focus_window = term_out->m_focus_win;
+
+
+
+		while(XPending(display))
+		{
+			XEvent event;
+			XNextEvent(display, &event);
+
+			switch(event.type)
+			{
+				case FocusOut:
+				{
+					int revert;
+
+					if (focus_window != window)
+                		XSelectInput(display, focus_window, NoEventMask);
+
+           			XGetInputFocus(display, &focus_window, &revert);
+
+            		if (focus_window == PointerRoot)
+                		focus_window = window;
+
+            		XSelectInput(display, focus_window, KeyPressMask | KeyReleaseMask | FocusChangeMask);
+				}
+
+				default:
+					keyboard_state[event.xkey.keycode] = event;
+
+			}
+
+			Window r_win, c_win;
+			int r_x, r_y, w_x, w_y;
+			unsigned int return_mask;
+
+        	XQueryPointer(display, window, &r_win, &c_win, &r_x, &r_y, &w_x, &w_y, &return_mask);
+		}
 
 		for (int i = 0; i < ks_len; i++)
 		{
 
- 			KeyInputData& key_data = WIN_KEY_MAP[i];
-			SHORT key = keyboard_state[i];
+ 			KeyInputData& key_data = UNIX_KEY_MAP[i];
+			XEvent key_event = keyboard_state[i];
 
 			// only set toggled to true if it was not pressed before
-			if (CHECK_BIT(key, 15) && !key_data.is_down)
+			if (key_event.type == KeyPress && !key_data.is_down)
 			{
 				key_data.is_toggled = true;
 				key_data.time_since_down = getTime();
@@ -150,11 +198,11 @@ namespace Asciir
 			}
 
 
-			if (CHECK_BIT(key, 15))
+			if (key_event.type == KeyPress)
 			{
 				key_data.is_down = true;
 			}
-			else if (!CHECK_BIT(key, 15) && key_data.is_down)
+			else if (key_event.type == KeyRelease && key_data.is_down)
 			{
 				key_data.is_down = false;
 				key_data.is_toggled = true;
@@ -167,8 +215,14 @@ namespace Asciir
 
 	Coord Input::getMousePos()
 	{
-		POINT pos;
-		AR_WIN_VERIFY(GetCursorPos(&pos));
-		return pos;
+		Display* x_display = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut()->m_display;
+		Window x_win = AREngine::getEngine()->getTerminal()->getRenderer()->getTerminalOut()->m_window;
+		Window r_win, c_win;
+		int r_x, r_y, w_x, w_y;
+		unsigned int mask_return;
+
+		AR_VERIFY(XQueryPointer(x_display, x_win, &r_win, &c_win, &r_x, &r_y, &w_x, &w_y, &mask_return));
+
+		return { r_x, r_y };
 	}
 }
