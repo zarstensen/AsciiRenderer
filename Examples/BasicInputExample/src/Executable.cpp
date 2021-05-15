@@ -1,5 +1,4 @@
 ﻿#include <Asciir.h>
-using namespace Asciir;
 
 class ExampleLayer : public Asciir::Layer
 {
@@ -7,33 +6,33 @@ class ExampleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		AREngine::getEngine()->getTerminal()->getRenderer()->clearTerminal();
+		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->clearTerminal();
 
-		if (Input::isKeyDown(Key::W) || Input::isKeyDown(Key::UP))
+		if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
 			pos.y--;
 
-		if (Input::isKeyDown(Key::S) || Input::isKeyDown(Key::DOWN))
+		if (Asciir::Input::isKeyDown(Asciir::Key::S) || Asciir::Input::isKeyDown(Asciir::Key::DOWN))
 			pos.y++;
 
-		if (Input::isKeyDown(Key::A) || Input::isKeyDown(Key::LEFT))
+		if (Asciir::Input::isKeyDown(Asciir::Key::A) || Asciir::Input::isKeyDown(Asciir::Key::LEFT))
 			pos.x--;
 
-		if (Input::isKeyDown(Key::D) || Input::isKeyDown(Key::RIGHT))
+		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x++;
 
-		TerminalRender* renderer = AREngine::getEngine()->getTerminal()->getRenderer();
+		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal()->getRenderer();
 
 		renderer->symbol((char)219);
 
 		renderer->color({0, 0, 155});
 		renderer->backgroundColor({ 0, 0, 155 });
-		renderer->drawVertices({ {0, 0}, {0, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, 0} }, DrawMode::Filled);
+		renderer->drawVertices({ {0, 0}, {0, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, 0} }, Asciir::DrawMode::Filled);
 
 		renderer->symbol((char)219);
 		renderer->color({ (u_char)rand(), (u_char)rand(), (u_char)rand() });
 		renderer->drawTile(pos);
 
-		sleep(1000 / 60);
+		Asciir::sleep(1000 / 60);
 	}
 };
 
