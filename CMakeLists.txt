@@ -63,8 +63,7 @@ set(SRC_DIR_LOGGING
     src/Asciir/Logging/FileLog.cpp 
     src/Asciir/Logging/FileLog.ipp
     src/Asciir/Logging/ErrLog.ipp  
-    src/Asciir/Logging/Log.cpp 
-    src/Asciir/Logging/Log.ipp 
+    src/Asciir/Logging/Log.cpp
 )
 
 set(HEADER_DIR_LOGGING
@@ -119,7 +118,6 @@ elseif(UNIX)
 
 set(SRC_DIR_PLATFORM
     # core
-    src/Asciir/Platform/Unix/UnixTerminal.cpp
     src/Asciir/Platform/Unix/UnixInput.cpp
     src/Asciir/Platform/Unix/KeyCodeMap.cpp
 
@@ -130,7 +128,6 @@ set(SRC_DIR_PLATFORM
 
 set(HEADER_DIR_PLATFORM
     # core
-    src/Asciir/Platform/Unix/UnixTerminal.h
     src/Asciir/Platform/Unix/UnixInput.h
     src/Asciir/Platform/Unix/KeyCodeMap.h
 )
@@ -186,9 +183,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
 if(${UNIX})
-find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})
+find_package(X11 REQUIRED)
+include_directories(${X11_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES})
+
+find_package(Threads REQUIRED)
+include_directories(${THREADS_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
 endif()
 
 set_target_properties(${PROJECT_NAME}
