@@ -168,7 +168,7 @@ namespace Asciir
 			          "Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
-		m_tiles.resize(Size3D({ (size_t) 2, (size_t) size.x, (size_t) size.y }));
+		m_tiles.resize({ (size_t) 2, (size_t) size.x, (size_t) size.y });
 	}
 
 	TRUpdateInfo TerminalRender::update()
