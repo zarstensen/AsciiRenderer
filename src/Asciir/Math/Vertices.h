@@ -67,7 +67,7 @@ namespace Asciir
 		using arVertex<T, 3>::arVertex;
 
 		arVertex3D();
-		arVertex3D(const T& x, const T& y, const &T z);
+		arVertex3D(const T& x, const T& y, const T& z);
 
 		// copy constructor
 		arVertex3D(const arVertex3D<T>& other);
@@ -94,8 +94,6 @@ namespace Asciir
 		template<typename TOther>
 		arVertices(const Eigen::MatrixBase<TOther>& other);
 
-		/*arVertices<T, d>& operator=(const arVertices<T, d>& other);*/
-
 		arVertices<T, d> offset(const arVertex<T, d>& vec);
 
 		using Eigen::VectorX<arVertex<T, d>>::operator[];
@@ -114,8 +112,6 @@ namespace Asciir
 
 		template<typename TOther>
 		s_arVertices(const Eigen::MatrixBase<TOther>& other);
-
-		s_arVertices<T, d, n>& operator=(const s_arVertices<T, d, n>&other);
 
 		s_arVertices<T, d, n> offset(const arVertex<T, d>&vec);
 

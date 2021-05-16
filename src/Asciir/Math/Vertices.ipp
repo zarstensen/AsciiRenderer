@@ -123,13 +123,6 @@ namespace Asciir
 	arVertices<T, d>::arVertices(const std::initializer_list<arVertex<T, d>>& other)
 		: Eigen::VectorX<arVertex<T, d>>{ other } {}
 
-	/*template<typename T, size_t d>
-	arVertices<T, d>& arVertices<T, d>::operator=(const arVertices<T, d>& other)
-	{
-		*this = other;
-		return *this;
-	}*/
-
 	template<typename T, size_t d>
 	arVertices<T, d> arVertices<T, d>::offset(const arVertex<T, d>& vec)
 	{
@@ -157,18 +150,11 @@ namespace Asciir
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
 	s_arVertices<T, d, n>::s_arVertices(const Eigen::MatrixBase<TOther>& other)
-		: s_arVertices<T, d>(other.template cast<T>()) {}
+		: s_arVertices<T, d, n>(other.template cast<T>()) {}
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n>::s_arVertices(const std::initializer_list<arVertex<T, d>>& other)
 		: Eigen::Vector<arVertex<T, d>, n>{ other } {}
-
-	template<typename T, size_t d, size_t n>
-	s_arVertices<T, d, n>& s_arVertices<T, d, n>::operator=(const s_arVertices<T, d, n>& other)
-	{
-		*this = other;
-		return *this;
-	}
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n> s_arVertices<T, d, n>::offset(const arVertex<T, d>& vec)
