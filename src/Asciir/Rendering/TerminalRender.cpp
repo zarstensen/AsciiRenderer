@@ -35,10 +35,13 @@ namespace Asciir
 			for (size_t i = 0; i < vertices.size() - 1; i++)
 			{
 				LineSegment line(vertices[i], vertices[i+1]);
+				
+				TInt length = line.length();
 
-				for (TInt i = 0; i <= line.length(); i++)
+				for (TInt j = 0; j <= length; j++)
 				{
-					drawTile(line.at(i));
+					auto point = line.at(j);
+					drawTile(point);
 				}
 			}
 		}
@@ -69,8 +72,8 @@ namespace Asciir
 					for (size_t verti = 0; verti < vertices.size() - 1; verti++)
 					{
 						LineSegment lsegment(vertices[verti], vertices[verti + 1]);
-
-						if (lsegment.intersects({x, line}))
+						bool intersects = lsegment.intersects({ x, line });
+						if (intersects)
 						{
 							was_inside = true;
 							is_inside = !is_inside;
@@ -129,7 +132,7 @@ namespace Asciir
 
 	void TerminalRender::drawTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		m_tiles(0, pos.x, pos.y) = m_tile_state;
@@ -161,11 +164,11 @@ namespace Asciir
 
 	void TerminalRender::resize(TermVert size)
 	{
-		AR_ASSERT_MSG(size.x < maxSize().x&& size.x > 0 && size.y < maxSize().y&& size.y > 0,
+		AR_ASSERT_MSG(size.x <= maxSize().x && size.x > 0 && size.y <= maxSize().y && size.y > 0,
 			          "Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
-		m_tiles.resize({ 2, (size_t) size.x, (size_t) size.y });
+		m_tiles.resize(Size3D({ (size_t) 2, (size_t) size.x, (size_t) size.y }));
 	}
 
 	TRUpdateInfo TerminalRender::update()
@@ -280,7 +283,7 @@ namespace Asciir
 	TermVert TerminalRender::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return {m_tiles.size().y, m_tiles.size().z};
+		return { (TInt) m_tiles.size().y, (TInt) m_tiles.size().z};
 	}
 	
 	TermVert TerminalRender::maxSize() const

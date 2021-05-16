@@ -11,7 +11,7 @@ namespace Asciir
 	{
 
 		using Eigen::MatrixX<T>::MatrixX;
-		
+
 		arMatrix(Size2D size);
 
 		template<typename TOther>

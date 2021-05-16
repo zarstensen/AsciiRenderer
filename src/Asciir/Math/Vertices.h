@@ -9,10 +9,6 @@ namespace Asciir
 	template<typename T, size_t n>
 	struct arVertex : public Eigen::Vector<T, n>
 	{
-	protected:
-		using Eigen::Vector<T, n>::Vector;
-	public:
-
 		arVertex() = default;
 		template<typename TOther>
 		arVertex(const arVertex<TOther, n>& other);
@@ -42,8 +38,12 @@ namespace Asciir
 		using arVertex<T, 2>::arVertex;
 
 		arVertex2D();
-		arVertex2D(const T& x, const T& y);
+		arVertex2D(T x, T y);
 
+		// copy constructor
+		arVertex2D(const arVertex2D<T>& other);
+		
+		// cast constructor
 		template<typename TOther>
 		arVertex2D(const arVertex2D<TOther>& other);
 
@@ -54,6 +54,7 @@ namespace Asciir
 		operator POINT();
 		#endif
 	};
+
 
 	// exposes index 0, 1 and 2 as member variables x, y and z
 	template<typename T>
@@ -66,7 +67,12 @@ namespace Asciir
 		using arVertex<T, 3>::arVertex;
 
 		arVertex3D();
-		arVertex3D(const T& x, const T& y, const T& z);
+		arVertex3D(T x, T y, T z);
+
+		// copy constructor
+		arVertex3D(const arVertex3D<T>& other);
+
+		// cast constructor
 		template<typename TOther>
 		arVertex3D(const arVertex3D<TOther>& other);
 
@@ -74,20 +80,57 @@ namespace Asciir
 
 	};
 	
+	// wrapper for Eigen VectorX with arVertex as the data type
+	template<typename T, size_t d>
+	struct arVertices : public Eigen::VectorX<arVertex<T, d>>
+	{
+		arVertices() = default;
+
+		template<typename TOther>
+		arVertices(const arVertices<TOther, d>& other);
+		arVertices(const Eigen::VectorX<arVertex<T, d>>& other);
+		arVertices(const std::initializer_list<arVertex<T, d>>& other);
+
+		template<typename TOther>
+		arVertices(const Eigen::MatrixBase<TOther>& other);
+
+		/*arVertices<T, d>& operator=(const arVertices<T, d>& other);*/
+
+		arVertices<T, d> offset(const arVertex<T, d>& vec);
+
+		using Eigen::VectorX<arVertex<T, d>>::operator[];
+		using Eigen::VectorX<arVertex<T, d>>::operator();
+	};
+	
+	template<typename T, size_t d, size_t n>
+	struct s_arVertices : public Eigen::Vector<arVertex<T, d>, n>
+	{
+		s_arVertices() = default;
+
+		template<typename TOther>
+		s_arVertices(const s_arVertices<TOther, d, n>&other);
+		s_arVertices(const Eigen::Vector<arVertex<T, d>, n>&other);
+		s_arVertices(const std::initializer_list<arVertex<T, d>>& other);
+
+		template<typename TOther>
+		s_arVertices(const Eigen::MatrixBase<TOther>& other);
+
+		s_arVertices<T, d, n>& operator=(const s_arVertices<T, d, n>&other);
+
+		s_arVertices<T, d, n> offset(const arVertex<T, d>&vec);
+
+		using Eigen::VectorX<arVertex<T, d>>::operator[];
+		using Eigen::VectorX<arVertex<T, d>>::operator();
+	};
+
 	// typedef for arVertex
 	// s_ = static size arVertex
-
-	template<typename T, size_t n>
-	using arVertices = std::vector<arVertex<T, n>>;
 
 	template<typename T>
 	using arVertices2D = arVertices<T, 2>;
 
 	template<typename T>
 	using arVertices3D = arVertices<T, 3>;
-	
-	template<typename T, size_t n_arr, size_t n_vert>
-	using s_arVertices = std::array<arVertex<T, n_vert>, n_arr>;
 
 	template<typename T, size_t n>
 	using s_arVertices2D = s_arVertices<T, n, 2>;

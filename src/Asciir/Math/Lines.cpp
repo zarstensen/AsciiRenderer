@@ -8,7 +8,7 @@ namespace Asciir
 
 	TInt LineSegment::length()
 	{
-		TermVert dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = b - a;
 
 		// return height if height is greater than width, otherwise return width
 		if (std::abs(dvert.x) >= std::abs(dvert.y))
@@ -19,7 +19,7 @@ namespace Asciir
 
 	TermVert LineSegment::at(TInt pos)
 	{
-		TermVert dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = b - a;
 
 		// slope inbetween 1 and -1
 		if (std::abs(dvert.x) >= std::abs(dvert.y))
@@ -38,15 +38,15 @@ namespace Asciir
 
 			// flip points if a is under b
 			if (dvert.y > 0)
-				return { TInt(a.x + std::round(float(pos) * slope)), a.y + pos };
+				return { TInt( a.x + std::round(float(pos) * slope)),	a.y + pos };
 			else
-				return { TInt(b.x + std::round(((float)pos) * slope)), b.y + pos };
+				return { TInt(b.x + std::round(((float)pos) * slope)),	b.y + pos };
 		}
 	}
 
 	TInt LineSegment::getX(TInt y)
 	{
-		TermVert dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = b - a;
 
 		float slope = float(dvert.x) / float(dvert.y);
 		return TInt(slope * y + a.x);
@@ -54,7 +54,7 @@ namespace Asciir
 
 	TInt LineSegment::getY(TInt x)
 	{
-		TermVert dvert = { b.x - a.x , b.y - a.y };
+		TermVert dvert = b - a;
 
 		float slope = float(dvert.y) / float(dvert.x);
 		return TInt(slope * x + a.y);
