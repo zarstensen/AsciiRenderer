@@ -26,7 +26,7 @@ class ExampleLayer : public Asciir::Layer
 
 		renderer->color({0, 0, 155});
 		renderer->backgroundColor({ 0, 0, 155 });
-		renderer->drawVertices({ {0, 0}, {0, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, renderer->drawSize().y - 1}, {renderer->drawSize().x - 1, 0} }, Asciir::DrawMode::Filled);
+		renderer->drawVertices({ Asciir::TermVert(0, 0), Asciir::TermVert(0, renderer->drawSize().y - 1), Asciir::TermVert(renderer->drawSize().x - 1, renderer->drawSize().y - 1), Asciir::TermVert(renderer->drawSize().x - 1, 0) }, Asciir::DrawMode::Filled);
 
 		renderer->symbol((char)219);
 		renderer->color({ (u_char)rand(), (u_char)rand(), (u_char)rand() });

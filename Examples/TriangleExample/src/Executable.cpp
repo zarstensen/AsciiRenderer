@@ -5,7 +5,7 @@ class TriangleLayer : public Asciir::Layer
 
 	Asciir::TermVerts triangle_verts = Asciir::TermVerts({ Asciir::TermVert(20, 40), Asciir::TermVert(80, 40), Asciir::TermVert(50, 10) });
 
-	size_t pos = 0;
+	Asciir::TInt pos = 0;
 	bool forward = true;
 
 	void onUpdate() final

@@ -25,14 +25,14 @@ namespace Asciir
 	template<typename T, size_t n>
 	template<typename TOther>
 	arVertex<T, n>::arVertex(const Eigen::MatrixBase<TOther>& other)
-		: arVertex(other.template cast<T>()) {}
+		: arVertex(other.eval().template cast<T>()) {}
 
 	template<typename T>
 	arVertex2D<T>::arVertex2D()
 		: arVertex2D(0, 0) {}
 
 	template<typename T>
-	arVertex2D<T>::arVertex2D(const T& x, const T& y)
+	arVertex2D<T>::arVertex2D(T x, T y)
 	{
 		this->x = x;
 		this->y = y;
@@ -75,7 +75,7 @@ namespace Asciir
 		: arVertex3D(0, 0, 0) {}
 
 	template<typename T>
-	arVertex3D<T>::arVertex3D(const T& x, const T& y, const T& z)
+	arVertex3D<T>::arVertex3D(T x, T y, T z)
 	{
 		this->x = x;
 		this->y = y;
@@ -117,7 +117,7 @@ namespace Asciir
 	template<typename T, size_t d>
 	template<typename TOther>
 	arVertices<T, d>::arVertices(const Eigen::MatrixBase<TOther>& other)
-		: arVertices<T, d>(other.template cast<T>()) {}
+		: arVertices<T, d>(other.eval().template cast<T>()) {}
 
 	template<typename T, size_t d>
 	arVertices<T, d>::arVertices(const std::initializer_list<arVertex<T, d>>& other)
@@ -150,7 +150,7 @@ namespace Asciir
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
 	s_arVertices<T, d, n>::s_arVertices(const Eigen::MatrixBase<TOther>& other)
-		: s_arVertices<T, d, n>(other.template cast<T>()) {}
+		: s_arVertices<T, d, n>(other.eval().template cast<T>()) {}
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n>::s_arVertices(const std::initializer_list<arVertex<T, d>>& other)

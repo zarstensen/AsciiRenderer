@@ -32,7 +32,7 @@ namespace Asciir
 		if (mode == DrawMode::Line)
 		{
 			// loop over vertices in pairs and draw lines between them
-			for (size_t i = 0; i < vertices.size() - 1; i++)
+			for (size_t i = 0; i < (size_t) vertices.size() - 1; i++)
 			{
 				LineSegment line(vertices[i], vertices[i+1]);
 				
@@ -69,7 +69,7 @@ namespace Asciir
 
 				for (TInt x = minx; x < maxx + 1; x++)
 				{
-					for (size_t verti = 0; verti < vertices.size() - 1; verti++)
+					for (size_t verti = 0; verti < (size_t) vertices.size() - 1; verti++)
 					{
 						LineSegment lsegment(vertices[verti], vertices[verti + 1]);
 						bool intersects = lsegment.intersects({ x, line });
