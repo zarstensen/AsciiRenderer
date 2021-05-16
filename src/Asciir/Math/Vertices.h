@@ -38,7 +38,7 @@ namespace Asciir
 		using arVertex<T, 2>::arVertex;
 
 		arVertex2D();
-		arVertex2D(T x, T y);
+		arVertex2D(const T& x, const T& y);
 
 		// copy constructor
 		arVertex2D(const arVertex2D<T>& other);
@@ -67,7 +67,7 @@ namespace Asciir
 		using arVertex<T, 3>::arVertex;
 
 		arVertex3D();
-		arVertex3D(T x, T y, T z);
+		arVertex3D(const T& x, const T& y, const &T z);
 
 		// copy constructor
 		arVertex3D(const arVertex3D<T>& other);
