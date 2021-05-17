@@ -28,9 +28,9 @@ namespace Asciir
 
 			// flip points if a is to the left of b
 			if (dvert.x > 0)
-				return { a.x + pos, TInt(a.y + std::round(((float)pos) * slope)) };
+				return { TInt(a.x + pos), TInt(a.y + std::round(((float)pos) * slope)) };
 			else
-				return { b.x + pos, TInt(b.y + std::round(((float)pos) * slope)) };
+				return { TInt(b.x + pos), TInt(b.y + std::round(((float)pos) * slope)) };
 		}
 		else
 		{
@@ -38,9 +38,9 @@ namespace Asciir
 
 			// flip points if a is under b
 			if (dvert.y > 0)
-				return { TInt( a.x + std::round(float(pos) * slope)),	a.y + pos };
+				return { TInt( a.x + std::round(float(pos) * slope)),	TInt(a.y + pos) };
 			else
-				return { TInt(b.x + std::round(((float)pos) * slope)),	b.y + pos };
+				return { TInt(b.x + std::round(((float)pos) * slope)),	TInt(b.y + pos) };
 		}
 	}
 
