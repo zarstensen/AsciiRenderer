@@ -2,7 +2,6 @@
 #include "Asciir/Rendering/AsciiAttributes.h"
 #include "Asciir/Logging/Log.h"
 
-#ifdef AR_LINUX
 namespace Asciir
 {
 	AsciiAttr::AsciiAttr()
@@ -129,4 +128,3 @@ namespace Asciir
 		return TermVert(max_int, max_int);
 	}
 }
-#endif

@@ -1,7 +1,6 @@
 #include "arpch.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 
-#ifdef AR_WIN
 namespace Asciir
 {
 	AsciiAttr::AsciiAttr()
@@ -143,4 +142,3 @@ namespace Asciir
 		return { max_size.X, max_size.Y };
 	}
 }
-#endif

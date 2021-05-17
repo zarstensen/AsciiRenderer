@@ -148,6 +148,8 @@ add_library(${PROJECT_NAME} STATIC
     src/pch/arpch.h
     src/pch/arpch.cpp
 
+    src/Asciir/Platform/PlatformMacros.h
+
     ${HEADER_DIR_CORE}
     ${SRC_DIR_CORE}
 
@@ -183,6 +185,8 @@ source_group("math/src"           FILES ${SRC_DIR_MATH})
 
 source_group("rendering/header"   FILES ${HEADER_DIR_RENDERING})
 source_group("rendering/src"      FILES ${SRC_DIR_RENDERING})
+
+source_group("platform/"           FILES src/Asciir/Platform/PlatformMacros.h)
 
 if(WIN32)
 source_group("platform/windows/header"  FILES ${HEADER_DIR_PLATFORM})

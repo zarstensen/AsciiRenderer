@@ -124,7 +124,7 @@ namespace Asciir
 		HANDLE m_hConsole;
 		#endif
 
-		#ifdef AR_LINUX
+		#ifdef AR_UNIX
 		Display* m_display;
 		Window m_window;
 		Window m_focus_win;
@@ -180,6 +180,6 @@ namespace Asciir
 
 #ifdef AR_WIN
 #include "Asciir/Platform/Windows/WindowsARAttributes.ipp"
-#elif defined AR_LINUX
+#elif defined AR_UNIX
 #include "Asciir/Platform/Unix/UnixARAttributes.ipp"
 #endif
