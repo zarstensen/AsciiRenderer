@@ -112,13 +112,15 @@ set(SRC_DIR_PLATFORM
 
     # rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.cpp
-    src/Asciir/Platform/Windows/WindowsARAttributes.ipp
 )
 
 set(HEADER_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
+    
+    #rendering
+    src/Asciir/Platform/Windows/WindowsARAttributes.h
 )
 
 elseif(UNIX)
@@ -137,6 +139,9 @@ set(HEADER_DIR_PLATFORM
     # core
     src/Asciir/Platform/Unix/UnixInput.h
     src/Asciir/Platform/Unix/KeyCodeMap.h
+
+    #rendering
+    src/Asciir/Platform/Unix/UnixARAttributes.h
 )
 
 else()

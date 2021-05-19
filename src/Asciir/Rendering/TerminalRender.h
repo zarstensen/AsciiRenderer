@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AsciiAttributes.h"
+#include "RenderConsts.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Matrix.h"
 #include "Asciir/Math/Tensor.h"
@@ -90,7 +91,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT>& attributes();
 
 	protected:
-		AsciiAttr m_attr_handler;
+		std::unique_ptr<AsciiAttr> m_attr_handler;
 		std::string m_buffer;
 		bool m_should_resize = false;
 		bool m_should_rename = true;

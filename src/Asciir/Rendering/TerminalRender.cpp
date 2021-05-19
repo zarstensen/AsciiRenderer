@@ -3,11 +3,24 @@
 #include "Asciir/Math/Lines.h"
 #include "Asciir/Logging/Log.h"
 
+#ifdef AR_WIN
+#include "Asciir/Platform/Windows/WindowsARAttributes.h"
+#elif defined AR_UNIX
+#include "Asciir/Platform/Windows/UnixARAttributes.h"
+#endif
+
 namespace Asciir
 {
 	TerminalRender::TerminalRender(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
+
+		#ifdef AR_WIN
+		m_attr_handler = std::make_unique<WinARAttr>();
+		#elif defined AR_UNIX
+		#error "TODO implement unix"
+		#endif
+
 		m_buffer.reserve(buffer_size);
 		update();
 	}
@@ -159,7 +172,7 @@ namespace Asciir
 
 	AsciiAttr* const TerminalRender::getAttrHandler()
 	{
-		return &m_attr_handler;
+		return m_attr_handler;
 	}
 
 	void TerminalRender::resize(TermVert size)
