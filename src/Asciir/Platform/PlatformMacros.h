@@ -9,8 +9,8 @@
 		#define AR_WIN_32
 	#endif
 
-#elif __unix__
-
+#elif __unix__ or __APPLE__ or __linux__
+	
 	#define AR_UNIX
 	
 	#if __APPLE__
