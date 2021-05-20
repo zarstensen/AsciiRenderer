@@ -6,7 +6,7 @@
 #ifdef AR_WIN
 #include "Asciir/Platform/Windows/WindowsARAttributes.h"
 #elif defined AR_UNIX
-#include "Asciir/Platform/Windows/UnixARAttributes.h"
+#include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
 namespace Asciir
