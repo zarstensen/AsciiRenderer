@@ -2,7 +2,7 @@
 #include "UnixInput.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
-#include "Asciir/Core/terminal.h"
+#include "Asciir/Core/Terminal.h"
 #include "Asciir/Logging/Log.h"
 #include "UnixARAttributes.h"
 #include "KeyCodeMap.h"
