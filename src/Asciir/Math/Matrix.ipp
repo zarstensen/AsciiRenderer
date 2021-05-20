@@ -96,4 +96,8 @@ namespace Asciir
 		return Eigen::Matrix<T, w, h>::operator()(coord.x, coord.y);
 	}
 
+	template<typename T>
+	Asciir::arVector<T>::arVector(size_t size)
+		: arMatrix<T>({ size, 1 }) {}
+
 }
