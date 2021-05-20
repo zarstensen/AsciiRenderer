@@ -18,7 +18,7 @@ namespace Asciir
 		#ifdef AR_WIN
 		m_attr_handler = std::make_unique<WinARAttr>();
 		#elif defined AR_UNIX
-		#error "TODO implement unix"
+		m_attr_handler = std::make_unique<UnixARAttr>();
 		#endif
 
 		m_buffer.reserve(buffer_size);
