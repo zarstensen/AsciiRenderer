@@ -2,8 +2,9 @@
 #include "UnixInput.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
-#include "Asciir/Core/Terminal.h"
+#include "Asciir/Core/terminal.h"
 #include "Asciir/Logging/Log.h"
+#include "UnixARAttributes.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir
@@ -139,10 +140,10 @@ namespace Asciir
 		}
 
 		// update keyboard_state with events from X11
-		AsciiAttr* h_attr = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler();
-		Display* display = h_attr->m_display;
-		Window window = h_attr->m_window;
-		Window focus_window = h_attr->m_focus_win;
+		UnixARAttribute& h_attr = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler();
+		Display* display = h_attr.m_display;
+		Window window = h_attr.m_window;
+		Window focus_window = h_attr.m_focus_win;
 
 
 
@@ -215,8 +216,8 @@ namespace Asciir
 
 	Coord Input::getMousePos()
 	{
-		Display* x_display = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_display;
-		Window x_win = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_window;
+		Display* x_display = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler().m_display;
+		Window x_win = AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler().m_window;
 		Window r_win, c_win;
 		int r_x, r_y, w_x, w_y;
 		unsigned int mask_return;

@@ -119,12 +119,6 @@ namespace Asciir
 
 	public:
 
-		#ifdef AR_UNIX
-		Display* m_display;
-		Window m_window;
-		Window m_focus_win;
-		#endif
-
 		std::array<bool, ATTR_COUNT> attributes;
 
 		AsciiAttr() = default;

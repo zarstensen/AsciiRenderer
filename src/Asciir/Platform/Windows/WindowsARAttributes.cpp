@@ -115,7 +115,7 @@ namespace Asciir
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
 		#endif
 
-		// if nothing is change do not modify the stream
+		// if nothing has changed do not modify the stream
 		bool has_changed = false;
 		for (size_t i = 0; i < ATTR_COUNT; i++)
 			if (attributes[i] != last_attributes[i])
