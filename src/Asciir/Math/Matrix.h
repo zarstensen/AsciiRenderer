@@ -64,11 +64,11 @@ namespace Asciir
 	struct arVector : public arMatrix<T>
 	{
 		using arMatrix<T>::arMatrix;
-		arMatrix(Size2D size) = delete;
+		arMatrix<T>::arMatrix(Size2D size) = delete;
 
 		arVector(size_t size);
 
-		T& get(Size2D coord) = delete;
+		T& arMatrix<T>::get(Size2D coord) = delete;
 
 	};
 
@@ -77,7 +77,7 @@ namespace Asciir
 	{
 		using s_arMatrix<T, n, 1>::arMatrix;
 
-		T& get(Size2D coord) = delete;
+		T& arMatrix<T>::get(Size2D coord) = delete;
 	};
 
 	// typedef / using / variables for Eigen::Matrix
