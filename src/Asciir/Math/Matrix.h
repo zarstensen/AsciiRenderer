@@ -58,28 +58,6 @@ namespace Asciir
 		T& get(Size2D coord);
 	};
 
-
-	// wrapper for arMatrix that only has one dimension instead of two
-	template<typename T>
-	struct arVector : public arMatrix<T>
-	{
-		using arMatrix<T>::arMatrix;
-		arMatrix<T>::arMatrix(Size2D size) = delete;
-
-		arVector(size_t size);
-
-		T& arMatrix<T>::get(Size2D coord) = delete;
-
-	};
-
-	template<typename T, size_t n>
-	struct s_arVector : public s_arMatrix<T, n, 1>
-	{
-		using s_arMatrix<T, n, 1>::arMatrix;
-
-		T& arMatrix<T>::get(Size2D coord) = delete;
-	};
-
 	// typedef / using / variables for Eigen::Matrix
 	// s_ = static size
 
