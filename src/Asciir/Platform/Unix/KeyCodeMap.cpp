@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "KeyCodeMap.h"
+#include "UnixARAttributes.h"
 #include "Asciir/Logging/Log.h"
 #include "Asciir/Core/Engine.h"
 
