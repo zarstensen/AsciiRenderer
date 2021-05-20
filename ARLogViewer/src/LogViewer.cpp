@@ -7,7 +7,14 @@ namespace Asciir
 	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors)
 		: m_log_dir(log_dir), m_colors(colors)
 	{
-		m_log_attributes.setTitle("LogViewer");
+
+		#ifdef AR_WIN
+		m_log_attributes = std::make_unique<WinARAttr>();
+		#elif defined(AR_UNIX)
+		m_log_attributes = std::make_unique<UnixARAttr>();
+		#endif
+
+		m_log_attributes->setTitle("LogViewer");
 	}
 
 	LogViewer::~LogViewer()
@@ -43,7 +50,7 @@ namespace Asciir
 
 	bool LogViewer::logLineOut(std::ostream& stream)
 	{
-		m_log_attributes.clear();
+		m_log_attributes->clear();
 		size_t tmp_pos = m_pos;
 		std::string log;
 
@@ -85,13 +92,13 @@ namespace Asciir
 		size_t line_indx = log_view.find(']', type_indx + 1);
 		size_t file_indx = log_view.find(']', line_indx + 1);
 
-		m_log_attributes.setForeground(m_colors[level]);
+		m_log_attributes->setForeground(m_colors[level]);
 		stream << m_log_attributes << log.substr(level_indx + 1, time_indx - level_indx);
 
 		stream << log.substr(time_indx + 1, source_indx - time_indx) << ": ";
 		stream << log.substr(file_indx + 3);
 
-		m_log_attributes.clear();
+		m_log_attributes->clear();
 		stream << m_log_attributes;
 
 		m_pos += 6 + (size_t)l_size;
