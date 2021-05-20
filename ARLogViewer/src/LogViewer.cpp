@@ -93,13 +93,13 @@ namespace Asciir
 		size_t file_indx = log_view.find(']', line_indx + 1);
 
 		m_log_attributes->setForeground(m_colors[level]);
-		stream << m_log_attributes << log.substr(level_indx + 1, time_indx - level_indx);
+		stream << *m_log_attributes << log.substr(level_indx + 1, time_indx - level_indx);
 
 		stream << log.substr(time_indx + 1, source_indx - time_indx) << ": ";
 		stream << log.substr(file_indx + 3);
 
 		m_log_attributes->clear();
-		stream << m_log_attributes;
+		stream << *m_log_attributes;
 
 		m_pos += 6 + (size_t)l_size;
 
