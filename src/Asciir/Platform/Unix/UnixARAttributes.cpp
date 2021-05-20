@@ -1,4 +1,5 @@
 #include "arpch.h"
+#include "UnixARAttributes.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 #include "Asciir/Logging/Log.h"
 
