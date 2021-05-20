@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "AsciiAttributes.h"
+#include "TerminalRender.h"
 #include "RenderConsts.h"
 #include "Asciir/Logging/Log.h"
 
@@ -162,6 +163,8 @@ namespace Asciir
 
 	// constructor and destructor is platform dependent
 
+	AsciiAttr::~AsciiAttr() {}
+
 	void AsciiAttr::setForeground(const Color& color)
 	{
 		m_foreground = color;
@@ -270,8 +273,8 @@ namespace Asciir
 	{
 		if (m_should_move)
 		{
-			dst << AR_ANSIS_CSI;
-			dst << std::to_string(m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'H';
+			dst.pushBuffer(AR_ANSIS_CSI);
+			dst.pushBuffer(std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H');
 
 			m_should_move = false;
 		}

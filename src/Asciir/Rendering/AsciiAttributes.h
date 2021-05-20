@@ -128,7 +128,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT> attributes;
 
 		AsciiAttr() = default;
-		virtual ~AsciiAttr() = 0;
+		virtual ~AsciiAttr();
 
 		void setForeground(const Color& color);
 		Color getForeground();

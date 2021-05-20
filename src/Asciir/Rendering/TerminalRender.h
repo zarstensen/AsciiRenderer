@@ -70,7 +70,7 @@ namespace Asciir
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 
-		AsciiAttr* const getAttrHandler();
+		AsciiAttr& getAttrHandler();
 
 		void resize(TermVert size);
 
@@ -97,9 +97,6 @@ namespace Asciir
 		bool m_should_rename = true;
 
 		friend AsciiAttr;
-
-		TerminalRender& operator<<(const std::string& data);
-		TerminalRender& operator<<(char data);
 	};
 	
 }

@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "WindowsARAttributes.h"
+#include "Asciir/Rendering/TerminalRender.h"
 #include "Asciir/Rendering/RenderConsts.h"
 
 namespace Asciir
@@ -233,7 +234,7 @@ namespace Asciir
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
 		#endif
 
-		// if nothing is change do not modify the stream
+		// if nothing has changed do not modify the stream
 		bool has_changed = false;
 		for (size_t i = 0; i < ATTR_COUNT; i++)
 			if (attributes[i] != last_attributes[i])
@@ -259,27 +260,27 @@ namespace Asciir
 		moveCode(dst);
 
 		// formatting
-		dst << AR_ANSIS_CSI;
+		dst.pushBuffer(AR_ANSIS_CSI);
 
 		if (attributes[ITALIC] && (!last_attributes[ITALIC] || m_cleared))
-			dst << ";3";
+			dst.pushBuffer(";3");
 		else if (!attributes[ITALIC] && (last_attributes[ITALIC] || m_cleared))
-			dst << ";23";
+			dst.pushBuffer(";23");
 
 		if (attributes[UNDERLINE] && (!last_attributes[UNDERLINE] || m_cleared))
-			dst << ";4";
+			dst.pushBuffer(";4");
 		else if (!attributes[UNDERLINE] && (last_attributes[UNDERLINE] || m_cleared))
-			dst << ";24";
+			dst.pushBuffer(";24");
 
 		if (attributes[BLINK] && (!last_attributes[BLINK] || m_cleared))
-			dst << ";5";
+			dst.pushBuffer(";5");
 		else if (!attributes[BLINK] && (last_attributes[BLINK] || m_cleared))
-			dst << ";25";
+			dst.pushBuffer(";25");
 
 		if (attributes[STRIKE] && (!last_attributes[STRIKE] || m_cleared))
-			dst << ";9";
+			dst.pushBuffer(";9");
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
-			dst << ";29";
+			dst.pushBuffer(";29");
 
 		// foreground color
 		// background color needs to be updated if the foreground color is changed
@@ -293,48 +294,48 @@ namespace Asciir
 			green = green > m_foreground.green ? green : 255;
 			blue = blue > m_foreground.blue ? blue : 255;
 
-			dst << ";38;2;";
-			dst << std::to_string(red);
-			dst << ";";
-			dst << std::to_string(green);
-			dst << ";";
-			dst << std::to_string(blue);
+			dst.pushBuffer(";38;2;");
+			dst.pushBuffer(std::to_string(red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(blue));
 
-			dst << ";48;2;";
-			dst << std::to_string(m_background.red);
-			dst << ';';
-			dst << std::to_string(m_background.green);
-			dst << ';';
-			dst << std::to_string(m_background.blue);
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
 		}
 		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
 		{
-			dst << ";38;2;";
-			dst << std::to_string(m_foreground.red);
-			dst << ";";
-			dst << std::to_string(m_foreground.green);
-			dst << ";";
-			dst << std::to_string(m_foreground.blue);
+			dst.pushBuffer(";38;2;");
+			dst.pushBuffer(std::to_string(m_foreground.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_foreground.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_foreground.blue));
 
-			dst << ";48;2;";
-			dst << std::to_string(m_background.red);
-			dst << ';';
-			dst << std::to_string(m_background.green);
-			dst << ';';
-			dst << std::to_string(m_background.blue);
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
 		}
 		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
 			// only background color
-			dst << ";48;2;";
-			dst << std::to_string(m_background.red);
-			dst << ';';
-			dst << std::to_string(m_background.green);
-			dst << ';';
-			dst << std::to_string(m_background.blue);
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
 		}
 
-		dst << 'm';
+		dst.pushBuffer('m');
 		last_attributes = attributes;
 		m_last_foreground = m_foreground;
 		m_last_background = m_background;
