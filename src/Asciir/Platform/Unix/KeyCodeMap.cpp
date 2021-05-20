@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "KeyCodeMap.h"
+#include "UnixARAttributes.h"
 #include "Asciir/Logging/Log.h"
 #include "Asciir/Core/Engine.h"
 
@@ -496,7 +497,7 @@ namespace Asciir
             break;
         }
         
-        return XKeysymToKeycode(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()->m_display, unix_xk);
+        return XKeysymToKeycode(dynamic_cast<UnixARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler()).m_display, unix_xk);
     }
 
     int mouseCodeToUnix(MouseKey code)

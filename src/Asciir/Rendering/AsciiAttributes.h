@@ -99,41 +99,30 @@ namespace Asciir
 	* All of the above = Framed
 	*/
 
-	class Input;
+	class TerminalRender;
 
 	class AsciiAttr
 	{
-		
-		friend Input;
-
-		
-
+	protected:
 		Color m_foreground;
 		Color m_background;
 
 		Color m_last_foreground;
 		Color m_last_background;
+
 		std::array<bool, ATTR_COUNT> last_attributes;
 
 		TermVert m_pos;
+
 		bool m_should_move = false;
+		bool m_cleared = true;
 
 	public:
 
-		#ifdef AR_WIN
-		HANDLE m_hConsole;
-		#endif
-
-		#ifdef AR_UNIX
-		Display* m_display;
-		Window m_window;
-		Window m_focus_win;
-		#endif
-
 		std::array<bool, ATTR_COUNT> attributes;
 
-		AsciiAttr();
-		~AsciiAttr();
+		AsciiAttr() = default;
+		virtual ~AsciiAttr();
 
 		void setForeground(const Color& color);
 		Color getForeground();
@@ -157,29 +146,22 @@ namespace Asciir
 
 		#endif
 
-		std::string ansiCode();
-		void ansiCode(std::string& dst);
-		template<typename TStream>
-		void ansiCode(TStream& stream, bool is_newline = false);
+		virtual std::string ansiCode() = 0;
+		virtual void ansiCode(std::string& dst) = 0;
+		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
+		virtual void ansiCode(TerminalRender& dst, bool is_newline = false) = 0;
 		
 		void moveCode(std::string& dst);
-		template<typename TStream>
-		void moveCode(TStream& stream);
+		void moveCode(std::ostream& stream);
+		void moveCode(TerminalRender& dst);
+
 
 		void setTitle(const std::string& name);
 
-		Coord terminalPos() const;
-		TermVert terminalSize() const;
-		TermVert maxTerminalSize() const;
-	private:
-		bool m_cleared = true;
+		virtual Coord terminalPos() const = 0;
+		virtual TermVert terminalSize() const = 0;
+		virtual TermVert maxTerminalSize() const = 0;
 	};
 
 	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other);
 }
-
-#ifdef AR_WIN
-#include "Asciir/Platform/Windows/WindowsARAttributes.ipp"
-#elif defined AR_UNIX
-#include "Asciir/Platform/Unix/UnixARAttributes.ipp"
-#endif

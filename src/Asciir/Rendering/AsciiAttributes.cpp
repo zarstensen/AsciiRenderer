@@ -1,5 +1,6 @@
 #include "arpch.h"
 #include "AsciiAttributes.h"
+#include "TerminalRender.h"
 #include "RenderConsts.h"
 #include "Asciir/Logging/Log.h"
 
@@ -162,6 +163,8 @@ namespace Asciir
 
 	// constructor and destructor is platform dependent
 
+	AsciiAttr::~AsciiAttr() {}
+
 	void AsciiAttr::setForeground(const Color& color)
 	{
 		m_foreground = color;
@@ -242,6 +245,39 @@ namespace Asciir
 	{
 		m_pos = pos;
 		m_should_move = true;
+	}
+
+	void AsciiAttr::moveCode(std::string& dst)
+	{
+		if (m_should_move)
+		{
+			dst += AR_ANSIS_CSI;
+			dst += std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H';
+
+			m_should_move = false;
+		}
+	}
+
+	void AsciiAttr::moveCode(std::ostream& stream)
+	{
+		if (m_should_move)
+		{
+			stream << AR_ANSIS_CSI;
+			stream << std::to_string(m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'H';
+
+			m_should_move = false;
+		}
+	}
+
+	void AsciiAttr::moveCode(TerminalRender& dst)
+	{
+		if (m_should_move)
+		{
+			dst.pushBuffer(AR_ANSIS_CSI);
+			dst.pushBuffer(std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H');
+
+			m_should_move = false;
+		}
 	}
 
 	void AsciiAttr::setTitle(const std::string& name)

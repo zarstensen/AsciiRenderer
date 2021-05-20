@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Asciir/Rendering/AsciiAttributes.h>
+#include <AsciirHeaders.h>
 
 namespace Asciir
 {
 	class LogViewer
 	{
-		AsciiAttr m_log_attributes;
+		std::unique_ptr<AsciiAttr> m_log_attributes;
 		std::filesystem::path m_log_dir;
 		std::ifstream m_log_file;
 		std::vector<Color> m_colors;

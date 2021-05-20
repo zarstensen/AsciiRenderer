@@ -3,11 +3,24 @@
 #include "Asciir/Math/Lines.h"
 #include "Asciir/Logging/Log.h"
 
+#ifdef AR_WIN
+#include "Asciir/Platform/Windows/WindowsARAttributes.h"
+#elif defined AR_UNIX
+#include "Asciir/Platform/Unix/UnixARAttributes.h"
+#endif
+
 namespace Asciir
 {
 	TerminalRender::TerminalRender(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
+
+		#ifdef AR_WIN
+		m_attr_handler = std::make_unique<WinARAttr>();
+		#elif defined AR_UNIX
+		m_attr_handler = std::make_unique<UnixARAttr>();
+		#endif
+
 		m_buffer.reserve(buffer_size);
 		update();
 	}
@@ -157,9 +170,9 @@ namespace Asciir
 		return m_title;
 	}
 
-	AsciiAttr* const TerminalRender::getAttrHandler()
+	AsciiAttr& TerminalRender::getAttrHandler()
 	{
-		return &m_attr_handler;
+		return *m_attr_handler;
 	}
 
 	void TerminalRender::resize(TermVert size)
@@ -176,8 +189,8 @@ namespace Asciir
 
 		TRUpdateInfo r_info;
 
-		TermVert size = m_attr_handler.terminalSize();
-		Coord pos = m_attr_handler.terminalPos();
+		TermVert size = m_attr_handler->terminalSize();
+		Coord pos = m_attr_handler->terminalPos();
 
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
@@ -211,7 +224,7 @@ namespace Asciir
 
 		if (m_should_rename)
 		{
-			m_attr_handler.setTitle(m_title);
+			m_attr_handler->setTitle(m_title);
 			m_should_rename = false;
 			r_info.new_name = true;
 		}
@@ -221,12 +234,12 @@ namespace Asciir
 
 	void TerminalRender::draw()
 	{
-		m_attr_handler.clear();
+		m_attr_handler->clear();
 
 		bool skipped_tile = false;
 
-		m_attr_handler.move({ 0, 0 });
-		m_attr_handler.moveCode(*this);
+		m_attr_handler->move({ 0, 0 });
+		m_attr_handler->moveCode(*this);
 		
 		for (TInt y = 0; (size_t) y < drawSize().y; y++)
 		{
@@ -244,12 +257,12 @@ namespace Asciir
 				if (skipped_tile)
 				{
 					skipped_tile = false;
-					m_attr_handler.move({ x, y });
+					m_attr_handler->move({ x, y });
 				}
 
-				m_attr_handler.setForeground(new_tile.color);
-				m_attr_handler.setBackground(new_tile.background_color);
-				m_attr_handler.ansiCode<TerminalRender>(*this, x == 0);
+				m_attr_handler->setForeground(new_tile.color);
+				m_attr_handler->setBackground(new_tile.background_color);
+				m_attr_handler->ansiCode(*this, x == 0);
 
 				pushBuffer(new_tile.symbol);
 			}
@@ -258,8 +271,8 @@ namespace Asciir
 				pushBuffer('\n');
 		}
 
-		m_attr_handler.move({ drawSize().x - 1, drawSize().y - 1 });
-		m_attr_handler.moveCode(*this);
+		m_attr_handler->move({ drawSize().x - 1, drawSize().y - 1 });
+		m_attr_handler->moveCode(*this);
 
 		flushBuffer();
 
@@ -277,7 +290,7 @@ namespace Asciir
 
 	TermVert TerminalRender::termSize() const
 	{
-		return m_attr_handler.terminalSize();
+		return m_attr_handler->terminalSize();
 	}
 
 	TermVert TerminalRender::drawSize() const
@@ -289,12 +302,12 @@ namespace Asciir
 	TermVert TerminalRender::maxSize() const
 	{
 		
-		return m_attr_handler.maxTerminalSize();
+		return m_attr_handler->maxTerminalSize();
 	}
 
 	Coord TerminalRender::pos() const
 	{
-		return m_attr_handler.terminalPos();
+		return m_attr_handler->terminalPos();
 	}
 
 	void TerminalRender::pushBuffer(char c)
@@ -325,19 +338,7 @@ namespace Asciir
 
 	std::array<bool, ATTR_COUNT>& TerminalRender::attributes()
 	{
-		return m_attr_handler.attributes;
-	}
-
-	TerminalRender& TerminalRender::operator<<(const std::string& data)
-	{
-		pushBuffer(data);
-		return *this;
-	}
-
-	TerminalRender& TerminalRender::operator<<(char data)
-	{
-		pushBuffer(data);
-		return *this;
+		return m_attr_handler->attributes;
 	}
 	
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)

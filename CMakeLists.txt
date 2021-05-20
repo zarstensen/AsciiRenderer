@@ -112,13 +112,15 @@ set(SRC_DIR_PLATFORM
 
     # rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.cpp
-    src/Asciir/Platform/Windows/WindowsARAttributes.ipp
 )
 
 set(HEADER_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
+    
+    #rendering
+    src/Asciir/Platform/Windows/WindowsARAttributes.h
 )
 
 elseif(UNIX)
@@ -130,13 +132,15 @@ set(SRC_DIR_PLATFORM
 
     # rendering
     src/Asciir/Platform/Unix/UnixARAttributes.cpp
-    src/Asciir/Platform/Unix/UnixARAttributes.ipp
 )
 
 set(HEADER_DIR_PLATFORM
     # core
     src/Asciir/Platform/Unix/UnixInput.h
     src/Asciir/Platform/Unix/KeyCodeMap.h
+
+    #rendering
+    src/Asciir/Platform/Unix/UnixARAttributes.h
 )
 
 else()
@@ -145,6 +149,7 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC
     src/Asciir.h
+    src/AsciirHeaders.h
     src/pch/arpch.h
     src/pch/arpch.cpp
 

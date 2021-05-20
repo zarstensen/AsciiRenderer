@@ -1,9 +1,11 @@
 #include "arpch.h"
-#include "Asciir/Rendering/AsciiAttributes.h"
+#include "WindowsARAttributes.h"
+#include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Rendering/RenderConsts.h"
 
 namespace Asciir
 {
-	AsciiAttr::AsciiAttr()
+	WinARAttr::WinARAttr()
 		: m_hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 	{
 		// enable ansi code support
@@ -13,9 +15,9 @@ namespace Asciir
 		clearColor();
 	}
 
-	AsciiAttr::~AsciiAttr() {}
+	WinARAttr::~WinARAttr() {}
 
-	std::string AsciiAttr::ansiCode()
+	std::string WinARAttr::ansiCode()
 	{
 		size_t size = 3 + (5 + 4 * 3) * 2;
 
@@ -32,7 +34,7 @@ namespace Asciir
 		return escseq;
 	}
 
-	void AsciiAttr::ansiCode(std::string& dst)
+	void WinARAttr::ansiCode(std::string& dst)
 	{
 		// disabled because it causes a large overhead
 		#if 0
@@ -103,18 +105,245 @@ namespace Asciir
 		dst += 'm';
 	}
 
-	void AsciiAttr::moveCode(std::string& dst)
+	void WinARAttr::ansiCode(std::ostream& stream, bool is_newline)
 	{
-		if (m_should_move)
-		{
-			dst += AR_ANSIS_CSI;
-			dst += std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H';
 
-			m_should_move = false;
+		#if 0
+		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
+			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
+			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
+			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
+		#endif
+
+		// if nothing has changed do not modify the stream
+		bool has_changed = false;
+		for (size_t i = 0; i < ATTR_COUNT; i++)
+			if (attributes[i] != last_attributes[i])
+			{
+				has_changed = true;
+				break;
+			}
+
+
+		if (!has_changed && m_foreground != m_last_foreground)
+			has_changed = true;
+
+		if (!has_changed && m_background != m_last_background)
+			has_changed = true;
+
+		if (m_cleared)
+			has_changed = true;
+
+
+		if (!has_changed)
+			return;
+		// cursor
+		moveCode(stream);
+
+		// formatting
+		stream << AR_ANSIS_CSI;
+
+		if (attributes[ITALIC] && (!last_attributes[ITALIC] || m_cleared))
+			stream << ";3";
+		else if (!attributes[ITALIC] && (last_attributes[ITALIC] || m_cleared))
+			stream << ";23";
+
+		if (attributes[UNDERLINE] && (!last_attributes[UNDERLINE] || m_cleared))
+			stream << ";4";
+		else if (!attributes[UNDERLINE] && (last_attributes[UNDERLINE] || m_cleared))
+			stream << ";24";
+
+		if (attributes[BLINK] && (!last_attributes[BLINK] || m_cleared))
+			stream << ";5";
+		else if (!attributes[BLINK] && (last_attributes[BLINK] || m_cleared))
+			stream << ";25";
+
+		if (attributes[STRIKE] && (!last_attributes[STRIKE] || m_cleared))
+			stream << ";9";
+		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
+			stream << ";29";
+
+		// foreground color
+		// background color needs to be updated if the foreground color is changed
+		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
+		{
+			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
+			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
+			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
+
+			red = red > m_foreground.red ? red : 255;
+			green = green > m_foreground.green ? green : 255;
+			blue = blue > m_foreground.blue ? blue : 255;
+
+			stream << ";38;2;";
+			stream << std::to_string(red);
+			stream << ";";
+			stream << std::to_string(green);
+			stream << ";";
+			stream << std::to_string(blue);
+
+			stream << ";48;2;";
+			stream << std::to_string(m_background.red);
+			stream << ';';
+			stream << std::to_string(m_background.green);
+			stream << ';';
+			stream << std::to_string(m_background.blue);
 		}
+		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
+		{
+			stream << ";38;2;";
+			stream << std::to_string(m_foreground.red);
+			stream << ";";
+			stream << std::to_string(m_foreground.green);
+			stream << ";";
+			stream << std::to_string(m_foreground.blue);
+
+			stream << ";48;2;";
+			stream << std::to_string(m_background.red);
+			stream << ';';
+			stream << std::to_string(m_background.green);
+			stream << ';';
+			stream << std::to_string(m_background.blue);
+		}
+		else if (m_background != m_last_background || m_cleared || is_newline)
+		{
+			// only background color
+			stream << ";48;2;";
+			stream << std::to_string(m_background.red);
+			stream << ';';
+			stream << std::to_string(m_background.green);
+			stream << ';';
+			stream << std::to_string(m_background.blue);
+		}
+
+		stream << 'm';
+		last_attributes = attributes;
+		m_last_foreground = m_foreground;
+		m_last_background = m_background;
+
+		m_cleared = false;
 	}
 
-	Coord AsciiAttr::terminalPos() const
+	void WinARAttr::ansiCode(TerminalRender& dst, bool is_newline)
+	{
+
+		#if 0
+		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
+			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
+			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
+			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
+		#endif
+
+		// if nothing has changed do not modify the stream
+		bool has_changed = false;
+		for (size_t i = 0; i < ATTR_COUNT; i++)
+			if (attributes[i] != last_attributes[i])
+			{
+				has_changed = true;
+				break;
+			}
+
+
+		if (!has_changed && m_foreground != m_last_foreground)
+			has_changed = true;
+
+		if (!has_changed && m_background != m_last_background)
+			has_changed = true;
+
+		if (m_cleared)
+			has_changed = true;
+
+
+		if (!has_changed)
+			return;
+		// cursor
+		moveCode(dst);
+
+		// formatting
+		dst.pushBuffer(AR_ANSIS_CSI);
+
+		if (attributes[ITALIC] && (!last_attributes[ITALIC] || m_cleared))
+			dst.pushBuffer(";3");
+		else if (!attributes[ITALIC] && (last_attributes[ITALIC] || m_cleared))
+			dst.pushBuffer(";23");
+
+		if (attributes[UNDERLINE] && (!last_attributes[UNDERLINE] || m_cleared))
+			dst.pushBuffer(";4");
+		else if (!attributes[UNDERLINE] && (last_attributes[UNDERLINE] || m_cleared))
+			dst.pushBuffer(";24");
+
+		if (attributes[BLINK] && (!last_attributes[BLINK] || m_cleared))
+			dst.pushBuffer(";5");
+		else if (!attributes[BLINK] && (last_attributes[BLINK] || m_cleared))
+			dst.pushBuffer(";25");
+
+		if (attributes[STRIKE] && (!last_attributes[STRIKE] || m_cleared))
+			dst.pushBuffer(";9");
+		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
+			dst.pushBuffer(";29");
+
+		// foreground color
+		// background color needs to be updated if the foreground color is changed
+		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
+		{
+			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
+			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
+			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
+
+			red = red > m_foreground.red ? red : 255;
+			green = green > m_foreground.green ? green : 255;
+			blue = blue > m_foreground.blue ? blue : 255;
+
+			dst.pushBuffer(";38;2;");
+			dst.pushBuffer(std::to_string(red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(blue));
+
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
+		}
+		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
+		{
+			dst.pushBuffer(";38;2;");
+			dst.pushBuffer(std::to_string(m_foreground.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_foreground.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_foreground.blue));
+
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
+		}
+		else if (m_background != m_last_background || m_cleared || is_newline)
+		{
+			// only background color
+			dst.pushBuffer(";48;2;");
+			dst.pushBuffer(std::to_string(m_background.red));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.green));
+			dst.pushBuffer(';');
+			dst.pushBuffer(std::to_string(m_background.blue));
+		}
+
+		dst.pushBuffer('m');
+		last_attributes = attributes;
+		m_last_foreground = m_foreground;
+		m_last_background = m_background;
+
+		m_cleared = false;
+	}
+
+	Coord WinARAttr::terminalPos() const
 	{
 		CONSOLE_SCREEN_BUFFER_INFO console_info;
 		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
@@ -125,7 +354,7 @@ namespace Asciir
 		return { x, y };
 	}
 
-	TermVert AsciiAttr::terminalSize() const
+	TermVert WinARAttr::terminalSize() const
 	{
 		CONSOLE_SCREEN_BUFFER_INFO console_info;
 		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
@@ -135,7 +364,7 @@ namespace Asciir
 		return { width, height };
 	}
 
-	TermVert AsciiAttr::maxTerminalSize() const
+	TermVert WinARAttr::maxTerminalSize() const
 	{
 		COORD max_size = GetLargestConsoleWindowSize(m_hConsole);
 
