@@ -132,7 +132,6 @@ set(SRC_DIR_PLATFORM
 
     # rendering
     src/Asciir/Platform/Unix/UnixARAttributes.cpp
-    src/Asciir/Platform/Unix/UnixARAttributes.ipp
 )
 
 set(HEADER_DIR_PLATFORM
@@ -150,6 +149,7 @@ endif()
 
 add_library(${PROJECT_NAME} STATIC
     src/Asciir.h
+    src/AsciirHeaders.h
     src/pch/arpch.h
     src/pch/arpch.cpp
 
