@@ -26,6 +26,9 @@ public:
 
 	void start()
 	{
+		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->setTitle(m_log_dir);
+		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->update();
+
 		while (true)
 		{
 			if (std::filesystem::exists(m_log_dir))
@@ -60,6 +63,6 @@ Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 	{
 		log_dir = args[1];
 	}
-
+	
 	return new LogTerm(log_dir);
 }
