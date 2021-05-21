@@ -14,7 +14,7 @@ namespace Asciir
 		size_t bufferSize;
 
 
-		TerminalProps(const std::string& title = "Asciir Engine", TermVert size = { 100, 50 }, size_t buffer_size = 1024ULL * 1024ULL * 4ULL)
+		TerminalProps(const std::string& title = "Asciir Engine", TermVert size = { 0, 0 }, size_t buffer_size = 1024ULL * 512ULL)
 			: title(title), size(size), bufferSize(buffer_size)
 		{}
 	};

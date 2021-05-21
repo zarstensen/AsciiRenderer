@@ -10,7 +10,8 @@ namespace Asciir
 	Terminal::Terminal(const TerminalProps& props)
 		: m_terminal_render(props.title, props.bufferSize)
 	{
-		m_terminal_render.resize(props.size);
+		if(props.size.x > 0 && props.size.y > 0)
+			m_terminal_render.resize(props.size);
 	}
 
 	std::unique_ptr<Terminal> Terminal::create(const TerminalProps& props)
