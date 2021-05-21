@@ -39,18 +39,6 @@ public:
 	}
 };
 
-struct a
-{
-	int l_a;
-	a() { std::cout << l_a; }
-};
-
-struct b
-{
-	a a_var;
-	b() : a_var() {}
-};
-
 Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 {
 	return new Exec;
