@@ -153,7 +153,7 @@ namespace Asciir
 
 	Tile& TerminalRender::getTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		return m_tiles(0, pos.x, pos.y);

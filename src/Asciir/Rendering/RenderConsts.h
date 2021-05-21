@@ -43,6 +43,7 @@ namespace Asciir
 	static const auto WHITE8 = Color(204, 204, 204);
 	static const auto IBLACK8 = Color(118, 118, 118);
 	static const auto GRAY8 = IBLACK8;
+	static const auto GREY8 = GRAY8;
 	static const auto IRED8 = Color(231, 72, 86);
 	static const auto IGREEN8 = Color(22, 198, 12);
 	static const auto IBLUE8 = Color(59, 120, 255);
@@ -62,6 +63,7 @@ namespace Asciir
 	static const auto WHITE8 = Color(204, 204, 204);
 	static const auto IBLACK8 = Color(118, 118, 118);
 	static const auto GRAY8 = IBLACK8;
+	static const auto GREY8 = GRAY8;
 	static const auto IRED8 = Color(231, 72, 86);
 	static const auto IGREEN8 = Color(22, 198, 12);
 	static const auto IBLUE8 = Color(59, 120, 255);

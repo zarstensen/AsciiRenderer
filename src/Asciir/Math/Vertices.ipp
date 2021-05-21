@@ -15,6 +15,7 @@ namespace Asciir
 	arVertex<T, n>::arVertex(const Eigen::Vector<T, n>& vec)
 		: Eigen::Vector<T, n>(vec) {}
 
+
 	template<typename T, size_t n>
 	template<typename TOther>
 	arVertex<T, n>& arVertex<T, n>::operator=(const arVertex<TOther, n>& other)
@@ -26,6 +27,11 @@ namespace Asciir
 	template<typename TOther>
 	arVertex<T, n>::arVertex(const Eigen::MatrixBase<TOther>& other)
 		: arVertex(other.eval().template cast<T>()) {}
+
+	template<typename T, size_t n>
+	template<typename TOther>
+	inline arVertex<T, n>::arVertex(const Eigen::ArrayBase<TOther>& other)
+		: arVertex(other.matrix().eval().template cast<T>()) {}
 
 	template<typename T>
 	arVertex2D<T>::arVertex2D()
