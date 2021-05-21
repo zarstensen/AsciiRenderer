@@ -19,6 +19,7 @@ namespace Asciir
 		Coord terminalPos() const final;
 		TermVert terminalSize() const final;
 		TermVert maxTerminalSize() const final;
+		Size2D fontSize() const final;
 	};
 }
 

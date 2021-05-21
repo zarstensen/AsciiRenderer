@@ -4,6 +4,7 @@
 #include "Asciir/Core/Engine.h"
 #include "Asciir/Core/Terminal.h"
 #include "Asciir/Logging/Log.h"
+#include "WindowsARAttributes.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir
@@ -96,17 +97,35 @@ namespace Asciir
 
 	std::variant<std::monostate, MousePressedEvent, MouseReleasedEvent> Input::getMouseKeyEvent(MouseKey keycode)
 	{
+
+		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
+		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
+
+		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler());
+
+		Coord mouse_pos = getMousePos();
+		TermVert cur_pos = (mouse_pos - AREngine::getEngine()->getTerminal()->getPos()).cwiseQuotient((Coord)s_attr_handler.fontSize()) - Coord(1, 2);
+
 		if (isMouseDown(keycode))
-			return MousePressedEvent(keycode);
+		{
+			return MousePressedEvent(keycode, mouse_pos, cur_pos);
+		}
 		else if (isMouseUp(keycode))
-			return MouseReleasedEvent(keycode);
+		{
+			return MouseReleasedEvent(keycode, mouse_pos, cur_pos);
+		}
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
 
 	MouseMovedEvent Input::getMouseMovedEvent()
 	{
-		return MouseMovedEvent(getMousePos(), (Coord)(getMousePos() - s_last_mouse_pos).eval());
+		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler());
+		Coord mouse_pos = getMousePos();
+		TermVert cur_pos = (mouse_pos - AREngine::getEngine()->getTerminal()->getPos()).cwiseQuotient((Coord) s_attr_handler.fontSize()) - Coord(1, 2);
+		TermVert last_cur_pos = (s_last_mouse_pos - s_last_terminal_pos).cwiseQuotient((Coord) s_attr_handler.fontSize()) - Coord(1, 2);
+
+		return MouseMovedEvent(mouse_pos, mouse_pos - s_last_mouse_pos, cur_pos, cur_pos - last_cur_pos);
 	}
 
 	TerminalMovedEvent Input::getTerminalMovedEvent()
@@ -144,7 +163,7 @@ namespace Asciir
 			SHORT key = keyboard_state[i];
 
 			// only set toggled to true if it was not pressed before
-			if (CHECK_BIT(key, 15) && !key_data.is_down)
+			if (CHECK_BIT(key, 0) && !key_data.is_down)
 			{
 				key_data.is_toggled = true;
 				key_data.time_since_down = getTime();
@@ -155,11 +174,11 @@ namespace Asciir
 			}
 
 
-			if (CHECK_BIT(key, 15))
+			if (CHECK_BIT(key, 0))
 			{
 				key_data.is_down = true;
 			}
-			else if (!CHECK_BIT(key, 15) && key_data.is_down)
+			else if (!CHECK_BIT(key, 0) && key_data.is_down)
 			{
 				key_data.is_down = false;
 				key_data.is_toggled = true;
