@@ -19,8 +19,11 @@ namespace Asciir
 		arVertex(const Eigen::MatrixBase<TOther>& other);
 
 		template<typename TOther>
-		arVertex<T, n>& operator=(const arVertex<TOther, n>& other);
+		arVertex(const Eigen::ArrayBase<TOther>& other);
 
+		template<typename TOther>
+		arVertex<T, n>& operator=(const arVertex<TOther, n>& other);
+		
 
 		using Eigen::Vector<T, n>::operator[];
 		using Eigen::Vector<T, n>::operator();
