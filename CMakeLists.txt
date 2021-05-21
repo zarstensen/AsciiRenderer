@@ -231,5 +231,6 @@ endif()
 
 if(ASCIIR_EXAMPLES)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/MouseInputExample MouseInputExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/TriangleExample TriangleExample)
 endif()
