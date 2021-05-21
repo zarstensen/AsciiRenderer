@@ -161,6 +161,7 @@ namespace Asciir
 		virtual Coord terminalPos() const = 0;
 		virtual TermVert terminalSize() const = 0;
 		virtual TermVert maxTerminalSize() const = 0;
+		virtual Size2D fontSize() const = 0;
 	};
 
 	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other);
