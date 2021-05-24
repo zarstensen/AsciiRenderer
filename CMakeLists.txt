@@ -64,6 +64,7 @@ set(DIR_EVENT
 set(DIR_INPUT
     src/Asciir/Input/Input.h
     src/Asciir/Input/KeyCodes.h
+    src/Asciir/Input/EventListener.h
 )
 
 set(SRC_DIR_LOGGING
@@ -112,6 +113,9 @@ set(SRC_DIR_PLATFORM
 
     # rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.cpp
+
+    # input
+    src/Asciir/Platform/Windows/WinEventListener.cpp
 )
 
 set(HEADER_DIR_PLATFORM
