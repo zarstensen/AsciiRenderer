@@ -12,8 +12,9 @@ namespace Asciir
 		int m_signal;
 	public:
 		TerminalClosedEvent(int signal) : m_signal(signal) {}
+		TerminalClosedEvent() : m_signal(-1) { m_valid = false; }
 
-		int getSignal() { return m_signal; }
+		int getSignal() { AR_EVENT_IS_VALID; return m_signal; }
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
 		EVENT_TYPE_DEFINE(TerminalClosed)
@@ -29,11 +30,14 @@ namespace Asciir
 		TerminalResizedEvent(TermVert size, TermVert size_diff, bool by_client)
 			: m_size(size), m_size_diff(size_diff), m_client(by_client)
 		{}
+		
+		TerminalResizedEvent()
+			: m_size(AR_INVALID_COORD), m_size_diff(AR_INVALID_COORD), m_client(false) { m_valid = false; }
 
-		TermVert getSize() const { return m_size; }
-		TermVert getDiff() const { return m_size_diff; }
+		TermVert getSize() const { AR_EVENT_IS_VALID; return m_size; }
+		TermVert getDiff() const { AR_EVENT_IS_VALID; return m_size_diff; }
 
-		bool client() { return m_client; }
+		bool client() { AR_EVENT_IS_VALID; return m_client; }
 
 		virtual std::string toString() const override
 		{
@@ -59,10 +63,13 @@ namespace Asciir
 			:m_pos(pos), m_offset(offset), m_client(by_client)
 		{}
 
-		Coord getPos() const { return m_pos; }
-		Coord getOff() const { return m_offset; }
+		TerminalMovedEvent()
+			: m_pos(AR_INVALID_COORD), m_offset(AR_INVALID_COORD), m_client(false) { m_valid = false; }
 
-		bool client() { return m_client; }
+		Coord getPos() const { AR_EVENT_IS_VALID; return m_pos; }
+		Coord getOff() const { AR_EVENT_IS_VALID; return m_offset; }
+
+		bool client() { AR_EVENT_IS_VALID; return m_client; }
 
 		virtual std::string toString() const override
 		{
@@ -77,19 +84,20 @@ namespace Asciir
 		EVENT_TYPE_DEFINE(TerminalMoved)
 	};
 
-	class TerminalFocusedEvent: public Event
+	class TerminalFocusEvent: public Event
 	{
-		TerminalFocusedEvent() {}
+	protected:
+		bool m_focused;
+	public:
+		TerminalFocusEvent(bool focused)
+			: m_focused(focused) {}
+
+		TerminalFocusEvent()
+			: m_focused(false) { m_valid = false; }
+
+		bool isFocused() { AR_EVENT_IS_VALID; return m_focused; }
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
 		EVENT_TYPE_DEFINE(TerminalFocused)
-	};
-
-	class TerminalLostFocusEvent : public Event
-	{
-		TerminalLostFocusEvent() {}
-
-		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalLostFocus)
 	};
 }

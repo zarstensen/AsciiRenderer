@@ -23,23 +23,29 @@ namespace Asciir
 	
 	typedef int EventCategory;
 
-	constexpr EventCategory CategoryNone =		0;
-	constexpr EventCategory CategoryTerminal =		BIT_SHL(0);
+	constexpr EventCategory CategoryNone =				0;
+	constexpr EventCategory CategoryTerminal =	BIT_SHL(0);
 	constexpr EventCategory CategoryInput =		BIT_SHL(1);
 	constexpr EventCategory CategoryKeyboard =	BIT_SHL(2);
 	constexpr EventCategory CategoryMouse =		BIT_SHL(3);
 	constexpr EventCategory CategoryCursor =	BIT_SHL(4);
 
+	#define AR_INVALID_COORD {-1, -1}
+
+	#define AR_EVENT_IS_VALID AR_ASSERT(m_valid, "Attempt to acsess value of non valid event.\nName: ", getName(), "\nCategory: ", getCategory(), "\nType:", (int)getStaticType())
+
 	class Event
 	{
+	protected:
+		bool m_valid = true;
 	public:
-		
 		bool handled = false;
 		virtual EventType getType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual EventCategory getCategory() const = 0;
 		virtual std::string toString() const { return getName(); }
 		operator std::string() const { return toString(); }
+		bool isValid() { return m_valid; }
 
 		bool inCategory(EventCategory category)
 		{
@@ -85,4 +91,5 @@ namespace Asciir
 	}
 
 	#define AR_BIND_EVENT_CALLBACK(e) std::bind(&AREngine::e, this, std::placeholders::_1)
+
 }
