@@ -12,7 +12,8 @@ namespace Asciir
 		int m_signal;
 	public:
 		TerminalClosedEvent(int signal) : m_signal(signal) {}
-		TerminalClosedEvent() : m_signal(-1) { m_valid = false; }
+		TerminalClosedEvent()
+			: m_signal(-1) { m_valid = false; }
 
 		int getSignal() { AR_EVENT_IS_VALID; return m_signal; }
 

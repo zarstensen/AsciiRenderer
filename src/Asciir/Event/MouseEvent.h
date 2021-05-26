@@ -41,7 +41,8 @@ namespace Asciir
 		MousePressedEvent(MouseKey mousecode, Coord mouse_pos, TermVert cur_pos, bool double_click)
 			: MouseKeyEvent(mousecode, mouse_pos, cur_pos), m_double_click(double_click) {}
 
-		MousePressedEvent(): m_double_click(false) {}
+		MousePressedEvent()
+			: m_double_click(false) {}
 
 	public:
 

@@ -62,8 +62,7 @@ namespace Asciir
 		Event& m_event;
 	public:
 		EventHandler(Event& input_event)
-			: m_event(input_event)
-		{}
+			: m_event(input_event) {}
 
 		// only calls the callback if the callback type is the same as the target event.
 		template<typename T>

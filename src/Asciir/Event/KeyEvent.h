@@ -15,7 +15,8 @@ namespace Asciir
 			:m_keycode(keycode)
 		{}
 
-		KeyEvent() : m_keycode(Key::UNKNOWN) { m_valid = false; }
+		KeyEvent()
+			: m_keycode(Key::UNKNOWN) { m_valid = false; }
 
 		Key getKeyCode() const { AR_EVENT_IS_VALID; return m_keycode; }
 
@@ -31,7 +32,8 @@ namespace Asciir
 		KeyPressedEvent(Key keycode, bool repeat)
 			: KeyEvent(keycode), m_repeat(repeat) {}
 
-		KeyPressedEvent() : m_repeat(false) {}
+		KeyPressedEvent()
+			: m_repeat(false) {}
 
 		std::string toString() const override
 		{
