@@ -345,11 +345,17 @@ namespace Asciir
 
 	Coord WinARAttr::terminalPos() const
 	{
+		RECT rect;
+		HWND term_win = GetConsoleWindow();
+		
+		AR_WIN_VERIFY(GetClientRect(term_win, &rect));
+		AR_WIN_VERIFY(MapWindowPoints(term_win, GetParent(term_win), (LPPOINT)&rect, 2));
+
 		CONSOLE_SCREEN_BUFFER_INFO console_info;
 		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
 
-		long long x = console_info.srWindow.Top;
-		long long y = console_info.srWindow.Left;
+		long long x = rect.top;
+		long long y = rect.left;
 
 		return { x, y };
 	}

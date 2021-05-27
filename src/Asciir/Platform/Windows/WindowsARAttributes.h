@@ -3,9 +3,11 @@
 
 namespace Asciir
 {
+
 	class WinARAttr : public AsciiAttr
 	{
-	HANDLE m_hConsole;
+
+		HANDLE m_hConsole;
 	
 	public:
 		WinARAttr();
