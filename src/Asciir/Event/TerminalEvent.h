@@ -2,7 +2,7 @@
 
 #include "Event.h"
 
-// Events related to the terminal.
+// Events related to the terminal. by_clinent is always set to false but might be implemented in the future
 
 namespace Asciir
 {
@@ -99,6 +99,6 @@ namespace Asciir
 		bool isFocused() { AR_EVENT_IS_VALID; return m_focused; }
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalFocused)
+		EVENT_TYPE_DEFINE(TerminalFocus)
 	};
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Event.h"
+#include "Asciir/Math/Vertices.h"
 
 namespace Asciir
 {
@@ -33,18 +34,13 @@ namespace Asciir
 
 	class MousePressedEvent : public MouseKeyEvent
 	{
-		friend Input;
 	protected:
-
 		bool m_double_click;
-
+	public:
 		MousePressedEvent(MouseKey mousecode, Coord mouse_pos, TermVert cur_pos, bool double_click)
 			: MouseKeyEvent(mousecode, mouse_pos, cur_pos), m_double_click(double_click) {}
 
-		MousePressedEvent()
-			: m_double_click(false) {}
-
-	public:
+		MousePressedEvent() : m_double_click(false) {}
 
 		bool isDoubleClick() { AR_EVENT_IS_VALID; return m_double_click; }
 
@@ -62,14 +58,14 @@ namespace Asciir
 
 	class MouseReleasedEvent : public MouseKeyEvent
 	{
-		friend Input;
-	protected:
+	
+	public:
 		MouseReleasedEvent(MouseKey mousecode, Coord mouse_pos, TermVert cur_pos)
 			: MouseKeyEvent(mousecode, mouse_pos, cur_pos) {}
 
 		MouseReleasedEvent() {}
 
-	public:
+		
 
 		virtual std::string toString() const override
 		{

@@ -18,10 +18,10 @@ namespace Asciir
 		KeyEvent()
 			: m_keycode(Key::UNKNOWN) { m_valid = false; }
 
-		Key getKeyCode() const { AR_EVENT_IS_VALID; return m_keycode; }
 
 
 	public:
+		Key getKeyCode() const { AR_EVENT_IS_VALID; return m_keycode; }
 		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
 
@@ -34,6 +34,8 @@ namespace Asciir
 
 		KeyPressedEvent()
 			: m_repeat(false) {}
+
+		bool isRepeat() { AR_EVENT_IS_VALID; return m_repeat; }
 
 		std::string toString() const override
 		{

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
+#include "Asciir/Logging/Log.h"
 
 /*
 *	Events are passed to onEvent functions in the engine, terminal and all of the layers.
@@ -15,7 +16,7 @@ namespace Asciir
 	enum class EventType
 	{
 		NoneType,
-		TerminalClosed, TerminalResized, TerminalMoved, TerminalFocused, TerminalLostFocus, CursorMoved,
+		TerminalClosed, TerminalResized, TerminalMoved, TerminalFocus, CursorMoved,
 		GameTick, GameUpdate, GameRender,
 		KeyPressed, KeyReleased,
 		MousePressed, MouseReleased, MouseMoved, MouseScrolled
@@ -32,7 +33,7 @@ namespace Asciir
 
 	#define AR_INVALID_COORD {-1, -1}
 
-	#define AR_EVENT_IS_VALID AR_ASSERT(m_valid, "Attempt to acsess value of non valid event.\nName: ", getName(), "\nCategory: ", getCategory(), "\nType:", (int)getStaticType())
+	#define AR_EVENT_IS_VALID AR_ASSERT_MSG(m_valid, "Attempt to acsess value of non valid event.\nName: ", getName(), "\nCategory: ", getCategory(), "\nType:", (int)getType())
 
 	class Event
 	{
