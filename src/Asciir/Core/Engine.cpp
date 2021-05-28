@@ -10,8 +10,7 @@ namespace Asciir
 {
 	AREngine::AREngine()
 	{
-		m_terminal = Terminal::create();
-		m_terminal->setEventCallback(AR_BIND_EVENT_CALLBACK(onEvent));
+		m_terminal.setEventCallback(AR_BIND_EVENT_CALLBACK(onEvent));
 	}
 
 	AREngine* AREngine::i_engine = nullptr;
@@ -21,7 +20,7 @@ namespace Asciir
 	void AREngine::start()
 	{
 		AR_CORE_INFO("Started engine");
-		m_terminal->onStart();
+		m_terminal.onStart();
 		m_running = true;
 		run();
 	}
@@ -32,77 +31,12 @@ namespace Asciir
 		AR_CORE_INFO("Running engine");
 		while (m_running)
 		{
-			m_terminal->updateInput();
-
-			// terminal event handling
-			if (Input::isTerminalMoved())
-			{
-				auto e = Input::getTerminalMovedEvent();
-				onEvent(e);
-			}
-
-			if (Input::isTerminalResized())
-			{
-				auto e = Input::getTerminalResizedEvent();
-				onEvent(e);
-			}
-
-			// key event handling
-
-			// loop over all key codes except UNDEFINED (0)
-			for (int code = 1; code < KEY_CODE_COUNT; code++)
-			{
-				if (Input::isKeyToggled((Key)code) || Input::isKeyPressed((Key)code))
-				{
-					// if key is not toggled it must be pressed
-					auto e = std::get<KeyPressedEvent>(Input::getKeyEvent((Key)code));
-					onEvent(e);
-				}
-				else if (Input::isKeyUntoggled((Key)code))
-				{
-					// if key is not toggled it must be pressed
-					auto e = std::get<KeyReleasedEvent>(Input::getKeyEvent((Key)code));
-					onEvent(e);
-				}
-			}
-
-			// mouse events
-			
-			// mouse key events
-			
-			// loop over all mouse codes except UNDEFINED (0)
-			for (int code = 1; code < MOUSE_CODE_COUNT; code++)
-			{
-				// skip control break processing code
-				if (code == 0x03) code++;
-
-				if (Input::isMouseToggled((MouseKey)code))
-				{
-					// if key is not toggled it must be pressed
-					auto e = std::get<MousePressedEvent>(Input::getMouseKeyEvent((MouseKey)code));
-					onEvent(e);
-				} 
-				else if (Input::isMouseUntoggled((MouseKey)code))
-				{
-					// if key is not toggled it must be pressed
-					auto e = std::get<MouseReleasedEvent>(Input::getMouseKeyEvent((MouseKey)code));
-					onEvent(e);
-				}
-
-			}
-
-			// mouse move events
-			
-			if (Input::isMouseMoved())
-			{
-				auto e = Input::getMouseMovedEvent();
-				onEvent(e);
-			}
+			m_terminal.pollInput();
 
 			for (Layer* layer: m_layerStack)
 				layer->onUpdate();
 
-			m_terminal->onUpdate();
+			m_terminal.onUpdate();
 		}
 	}
 	
@@ -142,9 +76,9 @@ namespace Asciir
 		return i_engine;
 	}
 	
-	Terminal* const AREngine::getTerminal()
+	Terminal& AREngine::getTerminal()
 	{
-		return m_terminal.get();
+		return m_terminal;
 	}
 
 	// stop main loop on terminal close

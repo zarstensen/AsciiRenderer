@@ -5,17 +5,29 @@
 #include "Asciir/Input/Input.h"
 #include "Asciir/Event/TerminalEvent.h"
 
+#ifdef AR_WIN
+#include "Asciir/Platform/Windows/WinEventListener.h"
+#elif defined AR_LINUX
+#endif
+
 namespace Asciir
 {
 	Terminal::Terminal(const TerminalProps& props)
 		: m_terminal_render(props.title, props.bufferSize)
 	{
+
+		#ifdef AR_WIN
+		m_event_listener = std::make_shared<WinEventListener>();
+		#elif defined(AR_LINUX)
+		#error Events Not Implemented Yet
+		#endif
+
 		m_terminal_render.resize(props.size);
 	}
 
-	std::unique_ptr<Terminal> Terminal::create(const TerminalProps& props)
+	Terminal::~Terminal()
 	{
-		return std::make_unique<Terminal>(props);
+		m_event_listener->stop();
 	}
 	
 	void Terminal::onStart()
@@ -23,6 +35,8 @@ namespace Asciir
 		// Terminal close callbacks
 		signal(SIG_CTRL_C, onCloseSignal);
 		signal(SIG_CMD_CLOSE, onCloseSignal);
+		Input::setEventListener(m_event_listener);
+		m_event_listener->start(m_event_callback);
 	}
 
 	void Terminal::onUpdate()
@@ -30,15 +44,16 @@ namespace Asciir
 		m_terminal_render.draw();
 	}
 	
-	void Terminal::updateInput()
+	void Terminal::pollInput()
 	{
-		Input::update(m_terminal_render.update());
+		m_event_listener->pollState();
+		Input::pollState(m_terminal_render.update());
 	}
 	
 	void onCloseSignal(int signal)
 	{
 		TerminalClosedEvent event(signal);
-		AREngine::getEngine()->getTerminal()->EventCallback(event);
+		AREngine::getEngine()->getTerminal().EventCallback(event);
 	}
 	
 	TerminalRender* const Terminal::getRenderer()

@@ -28,9 +28,7 @@ namespace Asciir
 
 
 		Terminal(const TerminalProps& props = TerminalProps());
-		~Terminal() = default;
-
-		static std::unique_ptr<Terminal> create(const TerminalProps& props = TerminalProps());
+		~Terminal();
 
 		void onStart();
 		void onUpdate();
@@ -45,9 +43,8 @@ namespace Asciir
 
 	protected:
 		TerminalRender m_terminal_render;
-		std::unique_ptr<EventListener> m_event_listener;
+		std::shared_ptr<EventListener> m_event_listener;
 		EventCallbackFp m_event_callback;
-		std::thread m_input_thrd;
 	};
 
 	void onCloseSignal(int signal);
