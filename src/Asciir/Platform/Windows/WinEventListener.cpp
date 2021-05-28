@@ -113,7 +113,7 @@ namespace Asciir
 		{
 			KeyInputData& data = keybd_state[(size_t) WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
 			KeyPressedEvent e;
-			
+
 			if (!data.is_down)
 			{
 				data.is_repeat = true;
@@ -121,15 +121,29 @@ namespace Asciir
 				data.time_since_down = getTime();
 
 				e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), false);
+
+				m_callback(e);
+
+				for (size_t i = 0; i < event.wRepeatCount - 1; i++)
+				{
+					e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
+
+					m_callback(e);
+				}
+
 			}
 			else if (data.is_down)
 			{
 				data.is_repeat = false;
+				
+				for (size_t i = 0; i < event.wRepeatCount; i++)
+				{
+					e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
 
-				e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
+					m_callback(e);
+				}
 			}
 
-			m_callback(e);
 		}
 		else
 		{
@@ -195,8 +209,6 @@ namespace Asciir
 				else
 				{
 					MouseInputData& data = mouse_state[button];
-					
-					AR_CORE_INFO(event.dwEventFlags);
 
 					if (data.is_down)
 					{
