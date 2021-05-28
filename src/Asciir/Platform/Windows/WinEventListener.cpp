@@ -212,10 +212,10 @@ namespace Asciir
 			{
 				Coord pos = getMousePos();
 				TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
-				MouseMovedEvent e(pos, pos - m_last_mouse_pos, cur_pos, cur_pos - m_last_cur_pos);
+				MouseMovedEvent e(pos, pos - m_mouse_pos, cur_pos, cur_pos - m_cur_pos);
 
-				m_last_mouse_pos = pos;
-				m_last_cur_pos = cur_pos;
+				m_mouse_pos = pos;
+				m_cur_pos = cur_pos;
 
 				m_callback(e);
 			}
@@ -230,9 +230,6 @@ namespace Asciir
 
 	void WinEventListener::sendTermEvents()
 	{
-
-
-
 		// Resize event
 
 		TermVert new_size = m_attr->terminalSize();
@@ -256,21 +253,9 @@ namespace Asciir
 		}
 
 		m_last_term_pos = new_pos;
-
 	}
 
-
-	Coord EventListener::getLastMousePos()
-	{
-		return m_last_mouse_pos;
-	}
-
-	TermVert EventListener::getLastCursorPos()
-	{
-		return m_last_cur_pos;
-	}
-
-	Coord Asciir::EventListener::getMousePos()
+	Coord EventListener::getGlobalMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));

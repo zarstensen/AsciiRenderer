@@ -48,8 +48,10 @@ namespace Asciir
 		std::array<MouseInputData, MIS_LEN> mouse_state;
 		std::array<MouseInputData, MIS_LEN> mouse_poll_state;
 
-		Coord m_last_mouse_pos;
-		TermVert m_last_cur_pos;
+		Coord m_mouse_pos;
+		Coord m_poll_mouse_pos;
+		TermVert m_poll_cur_pos;
+		TermVert m_cur_pos;
 
 	public:
 
@@ -68,9 +70,14 @@ namespace Asciir
 		const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() { return keybd_poll_state; }
 		const std::array<MouseInputData, MIS_LEN>& getMousePoll() { return mouse_poll_state; }
 		
-		Coord getLastMousePos();
-		TermVert getLastCursorPos();
+		Coord getMousePosPoll() { return m_poll_mouse_pos;  };
+		Coord getMousePos() { return m_mouse_pos;  };
+		
+		TermVert getCursorPosPoll() { return m_poll_cur_pos; };
+		TermVert getCursorPos() { return m_cur_pos; };
 
-		static Coord getMousePos();
+
+
+		static Coord getGlobalMousePos();
 	};
 }
