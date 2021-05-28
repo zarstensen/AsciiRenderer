@@ -6,7 +6,7 @@ class ExampleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->clearTerminal();
+		Asciir::AREngine::getEngine()->getTerminal().getRenderer()->clearTerminal();
 
 		if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
 			pos.y--;
@@ -20,7 +20,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x++;
 
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal()->getRenderer();
+		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 
 		renderer->symbol((char)219);
 

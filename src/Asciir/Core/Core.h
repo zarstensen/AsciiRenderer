@@ -22,7 +22,7 @@ namespace Asciir
 		return a << x;
 	}
 
-	constexpr int CHECK_BIT(long long x, int bit)
+	constexpr bool CHECK_BIT(long long x, int bit)
 	{
 		return (x >> bit) & 1U;
 	}

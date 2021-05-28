@@ -64,6 +64,7 @@ set(DIR_EVENT
 set(DIR_INPUT
     src/Asciir/Input/Input.h
     src/Asciir/Input/KeyCodes.h
+    src/Asciir/Input/EventListener.h
 )
 
 set(SRC_DIR_LOGGING
@@ -108,10 +109,12 @@ if(WIN32)
 set(SRC_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WinInput.cpp
-    src/Asciir/Platform/Windows/KeyCodeMap.cpp
 
     # rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.cpp
+
+    # input
+    src/Asciir/Platform/Windows/WinEventListener.cpp
 )
 
 set(HEADER_DIR_PLATFORM
@@ -121,6 +124,9 @@ set(HEADER_DIR_PLATFORM
     
     #rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.h
+
+    # input
+    src/Asciir/Platform/Windows/WinEventListener.h
 )
 
 elseif(UNIX)
@@ -128,7 +134,6 @@ elseif(UNIX)
 set(SRC_DIR_PLATFORM
     # core
     src/Asciir/Platform/Unix/UnixInput.cpp
-    src/Asciir/Platform/Unix/KeyCodeMap.cpp
 
     # rendering
     src/Asciir/Platform/Unix/UnixARAttributes.cpp

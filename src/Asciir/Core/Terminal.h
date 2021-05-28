@@ -2,7 +2,9 @@
 
 #include "Asciir/Event/Event.h"
 #include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Input/EventListener.h"
 #include "Asciir/Math/Vertices.h"
+
 
 namespace Asciir
 {
@@ -26,13 +28,11 @@ namespace Asciir
 
 
 		Terminal(const TerminalProps& props = TerminalProps());
-		~Terminal() = default;
-
-		static std::unique_ptr<Terminal> create(const TerminalProps& props = TerminalProps());
+		~Terminal();
 
 		void onStart();
 		void onUpdate();
-		void updateInput();
+		void pollInput();
 
 		TermVert getSize() const;
 		Coord getPos() const;
@@ -43,9 +43,8 @@ namespace Asciir
 
 	protected:
 		TerminalRender m_terminal_render;
-
+		std::shared_ptr<EventListener> m_event_listener;
 		EventCallbackFp m_event_callback;
-
 	};
 
 	void onCloseSignal(int signal);

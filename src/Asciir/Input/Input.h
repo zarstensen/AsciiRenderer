@@ -18,15 +18,7 @@ namespace Asciir
 {
 	class Input
 	{
-
 		friend Terminal;
-
-	protected:
-		static Coord s_last_mouse_pos;
-		static Coord s_last_terminal_pos;
-		static TermVert s_last_size;
-		static Terminal* i_terminal;
-		static TRUpdateInfo s_info;
 
 	public:
 
@@ -61,8 +53,19 @@ namespace Asciir
 		static TerminalResizedEvent getTerminalResizedEvent();
 
 	protected:
-		static void update(TRUpdateInfo info);
+		static void pollState(TRUpdateInfo info);
 		static Coord getMousePos();
+
+		static void setEventListener(std::shared_ptr<EventListener> listener);
+
+		static Coord s_mouse_pos, s_mouse_diff;
+		static Coord s_last_terminal_pos;
+		static TermVert s_last_size;
+		static TermVert s_cur_pos, s_cur_diff;
+		static Terminal* i_terminal;
+		static TRUpdateInfo s_info;
+		static std::shared_ptr<EventListener> s_event_listener;
 	};
 
+	
 }
