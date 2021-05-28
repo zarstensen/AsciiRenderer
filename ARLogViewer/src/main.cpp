@@ -26,8 +26,8 @@ public:
 
 	void start()
 	{
-		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->setTitle(m_log_dir);
-		Asciir::AREngine::getEngine()->getTerminal()->getRenderer()->update();
+		Asciir::AREngine::getEngine()->getTerminal().getRenderer()->setTitle(m_log_dir);
+		Asciir::AREngine::getEngine()->getTerminal().getRenderer()->update();
 
 		while (true)
 		{
