@@ -146,18 +146,15 @@ namespace Asciir
 		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
 		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
 
-		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler());
-
-		Coord mouse_pos = getMousePos();
-		TermVert cur_pos = (mouse_pos - AREngine::getEngine()->getTerminal()->getPos()).cwiseQuotient((Coord)s_attr_handler.fontSize()) - Coord(1, 2);
+		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer()->getAttrHandler());
 
 		if (isMouseDown(keycode))
 		{
-			return MousePressedEvent(keycode, mouse_pos, cur_pos);
+			return MousePressedEvent(keycode, win_listener->getMousePos(), win_listener->getCursorPos(), win_listener->getMouseFromKeyCode(keycode).is_double_click);
 		}
 		else if (isMouseUp(keycode))
 		{
-			return MouseReleasedEvent(keycode, mouse_pos, cur_pos);
+			return MouseReleasedEvent(keycode, win_listener->getMousePos(), win_listener->getCursorPos());
 		}
 
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");

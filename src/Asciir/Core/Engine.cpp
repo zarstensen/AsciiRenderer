@@ -22,7 +22,7 @@ namespace Asciir
 		AR_CORE_INFO("Started engine");
 		for (Layer* layer : m_layerStack)
 			layer->onStart();
-		m_terminal->onStart();
+		m_terminal.onStart();
 		m_running = true;
 		run();
 	}

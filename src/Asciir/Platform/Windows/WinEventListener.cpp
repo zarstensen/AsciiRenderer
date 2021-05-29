@@ -47,22 +47,22 @@ namespace Asciir
 
 	EventListener::KeyInputData WinEventListener::getKeybdFromWinCode(WORD code) const
 	{
-		return keybd_state[(size_t) WinToKeyCodeMap.at(code) - 1];
+		return keybd_poll_state[(size_t) WinToKeyCodeMap.at(code) - 1];
 	}
 
 	EventListener::KeyInputData WinEventListener::getKeybdFromKeyCode(Key code) const
 	{
-		return keybd_state[(size_t)code - 1];
+		return keybd_poll_state[(size_t)code - 1];
 	}
 
 	EventListener::MouseInputData WinEventListener::getMouseFromWinCode(WORD code) const
 	{
-		return mouse_state[(size_t)WinToKeyCodeMap.at(code) - 1];
+		return mouse_poll_state[(size_t)WinToKeyCodeMap.at(code) - 1];
 	}
 
 	EventListener::MouseInputData WinEventListener::getMouseFromKeyCode(MouseKey code) const
 	{
-		return mouse_state[(size_t)code - 1];
+		return mouse_poll_state[(size_t)code - 1];
 	}
 
 	void WinEventListener::listenForInputs()

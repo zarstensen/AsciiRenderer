@@ -7,7 +7,7 @@ class TriangleLayer : public Asciir::Layer
 
 	Asciir::TInt pos = 0;
 	bool forward = true;
-	Asciir::TerminalRender& renderer;
+	Asciir::TerminalRender* renderer;
 
 	void onStart() final
 	{
@@ -20,7 +20,7 @@ class TriangleLayer : public Asciir::Layer
 	{
 		if (Asciir::Input::isMouseDown(Asciir::MouseKey::LEFT_BUTTON))
 		{
-			Asciir::MousePressedEvent& e = std::get<Asciir::MousePressedEvent>(Asciir::Input::getMouseKeyEvent(Asciir::MouseKey::LEFT_BUTTON));
+			Asciir::MousePressedEvent e = std::get<Asciir::MousePressedEvent>(Asciir::Input::getMouseKeyEvent(Asciir::MouseKey::LEFT_BUTTON));
 			if (e.getCursorPos().y > 0)
 			{
 				Asciir::Tile tile = renderer->getTile(e.getCursorPos());
