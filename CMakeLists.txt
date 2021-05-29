@@ -205,7 +205,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
+target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
 if(${UNIX})
 find_package(X11 REQUIRED)
@@ -236,5 +236,6 @@ endif()
 
 if(ASCIIR_EXAMPLES)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/MouseInputExample MouseInputExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/TriangleExample TriangleExample)
 endif()

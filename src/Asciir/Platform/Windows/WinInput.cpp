@@ -5,6 +5,7 @@
 #include "Asciir/Core/Terminal.h"
 #include "WinEventListener.h"
 #include "Asciir/Logging/Log.h"
+#include "WindowsARAttributes.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir
@@ -141,10 +142,24 @@ namespace Asciir
 
 	std::variant<std::monostate, MousePressedEvent, MouseReleasedEvent> Input::getMouseKeyEvent(MouseKey keycode)
 	{
+
+		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
+		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
+
+		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler());
+
+		Coord mouse_pos = getMousePos();
+		TermVert cur_pos = (mouse_pos - AREngine::getEngine()->getTerminal()->getPos()).cwiseQuotient((Coord)s_attr_handler.fontSize()) - Coord(1, 2);
+
 		if (isMouseDown(keycode))
-			return MousePressedEvent();
+		{
+			return MousePressedEvent(keycode, mouse_pos, cur_pos);
+		}
 		else if (isMouseUp(keycode))
-			return MouseReleasedEvent();
+		{
+			return MouseReleasedEvent(keycode, mouse_pos, cur_pos);
+		}
+
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
@@ -152,7 +167,6 @@ namespace Asciir
 	MouseMovedEvent Input::getMouseMovedEvent()
 	{
 		return MouseMovedEvent(s_mouse_pos, s_mouse_diff, s_cur_pos, s_cur_diff);
-		return MouseMovedEvent();
 	}
 
 	TerminalMovedEvent Input::getTerminalMovedEvent()
@@ -195,7 +209,6 @@ namespace Asciir
 				input_key_data.is_toggled = false;
 
 			input_key_data = poll_data;
-
 		}
 		
 		for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)

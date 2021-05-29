@@ -15,6 +15,8 @@ namespace Asciir
 	Terminal::Terminal(const TerminalProps& props)
 		: m_terminal_render(props.title, props.bufferSize)
 	{
+		if(props.size.x > 0 && props.size.y > 0)
+			m_terminal_render.resize(props.size);
 
 		#ifdef AR_WIN
 		m_event_listener = std::make_shared<WinEventListener>();

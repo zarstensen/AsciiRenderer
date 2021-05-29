@@ -345,17 +345,11 @@ namespace Asciir
 
 	Coord WinARAttr::terminalPos() const
 	{
-		RECT rect;
-		HWND term_win = GetConsoleWindow();
-		
-		AR_WIN_VERIFY(GetClientRect(term_win, &rect));
-		AR_WIN_VERIFY(MapWindowPoints(term_win, GetParent(term_win), (LPPOINT)&rect, 2));
+		RECT pos;
+		AR_WIN_VERIFY(GetWindowRect(GetConsoleWindow(), &pos));
 
-		CONSOLE_SCREEN_BUFFER_INFO console_info;
-		GetConsoleScreenBufferInfo(m_hConsole, &console_info);
-
-		long long x = rect.top;
-		long long y = rect.left;
+		long long x = pos.left;
+		long long y = pos.top;
 
 		return { x, y };
 	}
@@ -375,5 +369,14 @@ namespace Asciir
 		COORD max_size = GetLargestConsoleWindowSize(m_hConsole);
 
 		return { max_size.X, max_size.Y };
+	}
+	
+	Size2D WinARAttr::fontSize() const
+	{
+		CONSOLE_FONT_INFO f_info;
+
+		AR_WIN_VERIFY(GetCurrentConsoleFont(m_hConsole, false, &f_info));
+
+		return { (size_t) f_info.dwFontSize.X, (size_t) f_info.dwFontSize.Y };
 	}
 }

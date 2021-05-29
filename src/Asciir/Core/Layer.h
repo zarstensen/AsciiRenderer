@@ -12,9 +12,15 @@ namespace Asciir
 		Layer(const std::string& name = "Layer");
 		virtual ~Layer();
 
+		// gets called when the layer is pushed on the layer stack
 		virtual void onAdd() {};
+		// gets called when the engine is started if it is already on the layer stack
+		virtual void onStart() {};
+		// gets called when the layer is removed from the layer stack
 		virtual void onRemove() {};
+		// gets called when the engine is updating
 		virtual void onUpdate() {};
+		// gets called before onUpdate with all the events polled
 		virtual void onEvent(Event& e) {};
 
 		const std::string& getName() const {
