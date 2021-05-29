@@ -18,7 +18,7 @@ class TriangleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		if (Asciir::Input::isMouseDown(Asciir::MouseKey::LEFT_BUTTON))
+		if (Asciir::Input::isMouseToggled(Asciir::MouseKey::LEFT_BUTTON))
 		{
 			Asciir::MousePressedEvent e = std::get<Asciir::MousePressedEvent>(Asciir::Input::getMouseKeyEvent(Asciir::MouseKey::LEFT_BUTTON));
 			if (e.getCursorPos().y > 0)

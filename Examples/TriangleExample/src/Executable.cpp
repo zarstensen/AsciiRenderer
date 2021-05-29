@@ -8,6 +8,12 @@ class TriangleLayer : public Asciir::Layer
 	Asciir::TInt pos = 0;
 	bool forward = true;
 
+	void onStart() final
+	{
+		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
+		renderer->resize({ 240, 63 });
+	}
+
 	void onUpdate() final
 	{
 		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
