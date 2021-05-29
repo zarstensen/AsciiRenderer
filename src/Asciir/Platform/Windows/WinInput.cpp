@@ -3,79 +3,124 @@
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Engine.h"
 #include "Asciir/Core/Terminal.h"
+#include "WinEventListener.h"
 #include "Asciir/Logging/Log.h"
 #include "WindowsARAttributes.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir
 {
-	Coord Input::s_last_mouse_pos, Input::s_last_terminal_pos;
-	TermVert Input::s_last_size;
+	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
+	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
 	TRUpdateInfo Input::s_info;
+	std::shared_ptr<EventListener> Input::s_event_listener;
+
+	// global windows specific variables
+
+	struct WinInKeyData
+	{
+		bool is_down = false;
+		bool is_toggled = false;
+
+		WinInKeyData& operator=(EventListener::KeyInputData data)
+		{
+			is_down = data.is_down;
+			
+			return *this;
+		}
+
+	};
+
+	struct WinInMouseData
+	{
+		bool is_down = false;
+		bool is_toggled = false;
+
+		WinInMouseData& operator=(EventListener::MouseInputData data)
+		{
+			is_down = data.is_down;
+
+			return *this;
+		}
+	};
+
+	static std::shared_ptr<WinEventListener> win_listener;
+	static std::array<WinInKeyData, KEY_CODE_COUNT>		key_toggled_state = { WinInKeyData() };
+	static std::array<WinInMouseData, MOUSE_CODE_COUNT>	mouse_toggled_state = { WinInMouseData() };
+
+	void Input::setEventListener(std::shared_ptr<EventListener> listener)
+	{
+		s_event_listener = listener;
+		win_listener = dynamic_pointer_cast<WinEventListener>(s_event_listener);
+	}
 
 	bool Input::isKeyDown(Key keycode)
 	{
-		return WIN_KEY_MAP[keyCodeToWin(keycode)].is_down && isFocused();
+		return win_listener->getKeybdFromKeyCode(keycode).is_down && isFocused();
 	}
 
 	bool Input::isKeyUp(Key keycode)
 	{
-		return !WIN_KEY_MAP[keyCodeToWin(keycode)].is_down && isFocused();
+		return !win_listener->getKeybdFromKeyCode(keycode).is_down && isFocused();
 	}
 
 	bool Input::isKeyPressed(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
+		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
 		return castMilli(getTime() - key_data.time_since_down) > AR_KEY_PRESSED_TIMEOUT && key_data.is_down && isFocused();
 	}
 
 	bool Input::isKeyToggled(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
-		return key_data.is_toggled && key_data.is_down && isFocused();
+		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
+		return key_toggled_state[(size_t) keycode - 1].is_toggled && key_data.is_down && isFocused();
+		return false;
 	}
 
 	bool Input::isKeyUntoggled(Key keycode)
 	{
-		KeyInputData& key_data = WIN_KEY_MAP[keyCodeToWin(keycode)];
-		return key_data.is_toggled && !key_data.is_down && isFocused();
+		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
+		return key_toggled_state[(size_t)keycode - 1].is_toggled && !key_data.is_down && isFocused();
+		return false;
 	}
 
 	bool Input::isMouseDown(MouseKey keycode)
 	{
-		return WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down && isFocused();
+		return win_listener->getMouseFromKeyCode(keycode).is_down && isFocused();
 	}
 
 	bool Input::isMouseUp(MouseKey keycode)
 	{
-		return !WIN_KEY_MAP[mouseCodeToWin(keycode)].is_down && isFocused();
+		return !win_listener->getMouseFromKeyCode(keycode).is_down && isFocused();
 	}
 
 	bool Input::isMouseToggled(MouseKey keycode)
 	{
-		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
-		return mouse_data.is_toggled && mouse_data.is_down && isFocused();
+		EventListener::MouseInputData mouse_data = win_listener->getMouseFromKeyCode(keycode);
+		return mouse_toggled_state[(size_t)keycode - 1].is_toggled && mouse_data.is_down && isFocused();
+		return false;
 	}
 
 	bool Input::isMouseUntoggled(MouseKey keycode)
 	{
-		KeyInputData mouse_data = WIN_KEY_MAP[mouseCodeToWin(keycode)];
-		return mouse_data.is_toggled && !mouse_data.is_down && isFocused();
+		EventListener::MouseInputData mouse_data = win_listener->getMouseFromKeyCode(keycode);
+		return mouse_toggled_state[(size_t)keycode - 1].is_toggled && !mouse_data.is_down && isFocused();
+		return false;
 	}
 
 	bool Input::isMouseMoved()
 	{
-		return getMousePos() != s_last_mouse_pos && isFocused();
+		return (s_mouse_diff != Coord(0, 0)) && isFocused();
 	}
 
 	bool Input::isTerminalMoved()
 	{
-		return AREngine::getEngine()->getTerminal()->getPos() != s_last_terminal_pos;
+		return AREngine::getEngine()->getTerminal().getPos() != s_last_terminal_pos;
 	}
 
 	bool Input::isTerminalResized()
 	{
-		return AREngine::getEngine()->getTerminal()->getSize() != s_last_size;
+		return AREngine::getEngine()->getTerminal().getSize() != s_last_size;
 	}
 
 	bool Input::isFocused()
@@ -114,79 +159,70 @@ namespace Asciir
 		{
 			return MouseReleasedEvent(keycode, mouse_pos, cur_pos);
 		}
+
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
 
 	MouseMovedEvent Input::getMouseMovedEvent()
 	{
-		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal()->getRenderer()->getAttrHandler());
-		Coord mouse_pos = getMousePos();
-		TermVert cur_pos = (mouse_pos - AREngine::getEngine()->getTerminal()->getPos()).cwiseQuotient((Coord) s_attr_handler.fontSize()) - Coord(1, 2);
-		TermVert last_cur_pos = (s_last_mouse_pos - s_last_terminal_pos).cwiseQuotient((Coord) s_attr_handler.fontSize()) - Coord(1, 2);
-
-		return MouseMovedEvent(mouse_pos, mouse_pos - s_last_mouse_pos, cur_pos, cur_pos - last_cur_pos);
+		return MouseMovedEvent(s_mouse_pos, s_mouse_diff, s_cur_pos, s_cur_diff);
 	}
 
 	TerminalMovedEvent Input::getTerminalMovedEvent()
 	{
 		return TerminalMovedEvent(
-			AREngine::getEngine()->getTerminal()->getPos(),
-			AREngine::getEngine()->getTerminal()->getPos() - s_last_terminal_pos, false);
+			AREngine::getEngine()->getTerminal().getPos(),
+			AREngine::getEngine()->getTerminal().getPos() - s_last_terminal_pos, false);
 	}
 
 	TerminalResizedEvent Input::getTerminalResizedEvent()
 	{
 		return TerminalResizedEvent(
-			AREngine::getEngine()->getTerminal()->getSize(),
-			AREngine::getEngine()->getTerminal()->getSize() - s_last_size, false);
+			AREngine::getEngine()->getTerminal().getSize(),
+			AREngine::getEngine()->getTerminal().getSize() - s_last_size, false);
 	}
 
-	void Input::update(TRUpdateInfo info)
+	void Input::pollState(TRUpdateInfo info)
 	{
+		s_mouse_diff = win_listener->getMousePos() - s_mouse_pos;
+		s_cur_diff = win_listener->getCursorPos() - s_cur_pos;
+
+		s_mouse_pos = win_listener->getMousePos();
+		s_cur_pos = win_listener->getCursorPos();
+
 		s_info = info;
-		s_last_mouse_pos = getMousePos();
-		s_last_terminal_pos = AREngine::getEngine()->getTerminal()->getPos();
-		s_last_size = AREngine::getEngine()->getTerminal()->getSize();
+		s_last_terminal_pos = AREngine::getEngine()->getTerminal().getPos();
+		s_last_size = AREngine::getEngine()->getTerminal().getSize();
 
-		constexpr int ks_len = 256;
-		SHORT keyboard_state[ks_len];
+		const auto& keybd_poll = win_listener->getKeybdPoll();
+		const auto& mouse_poll = win_listener->getMousePoll();
 
-		// fill keyboard_state with data from GetAsyncKeyState
-		for (int i = 0; i < ks_len; i++)
-			keyboard_state[i] = GetAsyncKeyState(i);
-
-		for (int i = 0; i < ks_len; i++)
+		for (size_t i = 0; i < KEY_CODE_COUNT; i++)
 		{
+			EventListener::KeyInputData poll_data = keybd_poll[i];
+			WinInKeyData& input_key_data = key_toggled_state[i];
 
- 			KeyInputData& key_data = WIN_KEY_MAP[i];
-			SHORT key = keyboard_state[i];
+			if (poll_data.is_down != input_key_data.is_down)
+				input_key_data.is_toggled = true;
+			else if (poll_data.is_down == input_key_data.is_down)
+				input_key_data.is_toggled = false;
 
-			// only set toggled to true if it was not pressed before
-			if (CHECK_BIT(key, 0) && !key_data.is_down)
-			{
-				key_data.is_toggled = true;
-				key_data.time_since_down = getTime();
-			}
-			else
-			{
-				key_data.is_toggled = false;
-			}
-
-
-			if (CHECK_BIT(key, 0))
-			{
-				key_data.is_down = true;
-			}
-			else if (!CHECK_BIT(key, 0) && key_data.is_down)
-			{
-				key_data.is_down = false;
-				key_data.is_toggled = true;
-			}
-			else
-				key_data.is_down = false;
+			input_key_data = poll_data;
 		}
+		
+		for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
+		{
+			EventListener::MouseInputData poll_data = mouse_poll[i];
+			WinInMouseData& input_mouse_data = mouse_toggled_state[i];
+			
+			if (poll_data.is_down != input_mouse_data.is_down)
+				input_mouse_data.is_toggled = true;
+			else if (poll_data.is_down == input_mouse_data.is_down)
+				input_mouse_data.is_toggled = false;
 
+			input_mouse_data = poll_data;
+		}
 	}
 
 	Coord Input::getMousePos()

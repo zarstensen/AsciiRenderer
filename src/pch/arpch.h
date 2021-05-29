@@ -22,6 +22,7 @@
 #include <vector>
 #include <array>
 #include <tuple>
+#include <map>
 #include <variant>
 #include <assert.h>
 #include <signal.h>

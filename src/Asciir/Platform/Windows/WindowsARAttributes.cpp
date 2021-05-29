@@ -346,7 +346,7 @@ namespace Asciir
 	Coord WinARAttr::terminalPos() const
 	{
 		RECT pos;
-		GetWindowRect(GetConsoleWindow(), &pos);
+		AR_WIN_VERIFY(GetWindowRect(GetConsoleWindow(), &pos));
 
 		long long x = pos.left;
 		long long y = pos.top;

@@ -10,7 +10,7 @@ class TriangleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal()->getRenderer();
+		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 		
 		renderer->clearTerminal(Asciir::Tile{ Asciir::Color(25, 25, 25) });
 		

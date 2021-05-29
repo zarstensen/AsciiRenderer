@@ -27,14 +27,14 @@ namespace Asciir
 		static void create(AREngine* engine);
 
 		static AREngine* const getEngine();
-		Terminal* const getTerminal();
+		Terminal& getTerminal();
 		
 
 	private:
 
 		bool onTerminalClose(TerminalClosedEvent& e);
 
-		std::unique_ptr<Terminal> m_terminal;
+		Terminal m_terminal;
 		bool m_running = false;
 		LayerStack m_layerStack;
 
