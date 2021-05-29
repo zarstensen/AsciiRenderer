@@ -41,11 +41,14 @@ namespace Asciir
 		EventCallbackFp m_callback;
 		// updated for every event
 		std::array<KeyInputData, KIS_LEN> keybd_state;
-		// copies and store keybd_state every pollUpdate
+		// only stores key down events. Gets cleared every call to pollState
+		std::array<KeyInputData, KIS_LEN> keybd_down_state;
+		// copies and store keybd_down_state every pollUpdate
 		std::array<KeyInputData, KIS_LEN> keybd_poll_state;
 
 		// same for mouse
 		std::array<MouseInputData, MIS_LEN> mouse_state;
+		std::array<MouseInputData, MIS_LEN> mouse_down_state;
 		std::array<MouseInputData, MIS_LEN> mouse_poll_state;
 
 		Coord m_mouse_pos;
@@ -63,8 +66,10 @@ namespace Asciir
 
 		void pollState()
 		{
-			keybd_poll_state = keybd_state;
-			mouse_poll_state = mouse_state;
+			keybd_poll_state = keybd_down_state;
+			mouse_poll_state = mouse_down_state;
+			keybd_down_state.fill(KeyInputData());
+			mouse_down_state.fill(MouseInputData());
 		};
 
 		const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() { return keybd_poll_state; }
@@ -75,8 +80,6 @@ namespace Asciir
 		
 		TermVert getCursorPosPoll() { return m_poll_cur_pos; };
 		TermVert getCursorPos() { return m_cur_pos; };
-
-
 
 		static Coord getGlobalMousePos();
 	};

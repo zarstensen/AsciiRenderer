@@ -23,8 +23,6 @@ namespace Asciir
 		#elif defined(AR_LINUX)
 		#error Events Not Implemented Yet
 		#endif
-
-		m_terminal_render.resize(props.size);
 	}
 
 	Terminal::~Terminal()

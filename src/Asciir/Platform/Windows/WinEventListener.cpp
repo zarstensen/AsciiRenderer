@@ -144,6 +144,8 @@ namespace Asciir
 				}
 			}
 
+			// store down event
+			keybd_down_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1] = data;
 		}
 		else
 		{
@@ -181,8 +183,14 @@ namespace Asciir
 					data.is_double_click = true;
 
 					TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
-					MousePressedEvent e(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, true);
-					m_callback(e);
+					MousePressedEvent e_first(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
+					MousePressedEvent e_second(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, true);
+					
+					m_callback(e_first);
+					m_callback(e_second);
+
+					// store down event
+					mouse_down_state[button] = data;
 				}
 				else
 					mouse_state[button].is_double_click = false;
@@ -204,6 +212,9 @@ namespace Asciir
 						MousePressedEvent e(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
 						
 						m_callback(e);
+
+						// store down event
+						mouse_down_state;
 					}
 				}
 				else
