@@ -29,7 +29,7 @@ namespace Asciir
 
 	void WinEventListener::start(EventCallbackFp callback)
 	{
-		m_attr = dynamic_cast<WinARAttr*>(&AREngine::getEngine()->getTerminal().getRenderer()->getAttrHandler());
+		m_attr = dynamic_cast<const WinARAttr*>(&AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
 
 		m_last_term_pos = m_attr->terminalPos();
 		m_last_term_size = m_attr->terminalSize();

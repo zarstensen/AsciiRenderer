@@ -96,11 +96,13 @@ set(HEADER_DIR_MATH
 set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
     src/Asciir/Rendering/TerminalRenderer.cpp
+    src/Asciir/Rendering/Renderer.cpp
 )
 
 set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.h
     src/Asciir/Rendering/TerminalRenderer.h
+    src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
 )
 
@@ -237,5 +239,6 @@ endif()
 if(ASCIIR_EXAMPLES)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/MouseInputExample MouseInputExample)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/RendererExample RendererExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/TriangleExample TriangleExample)
 endif()

@@ -36,7 +36,7 @@ namespace Asciir
 
 		TermVert getSize() const;
 		Coord getPos() const;
-		TerminalRenderer* const getRenderer();
+		TerminalRenderer& getRenderer();
 
 		void EventCallback(Event& e);
 		void setEventCallback(const EventCallbackFp& callback);

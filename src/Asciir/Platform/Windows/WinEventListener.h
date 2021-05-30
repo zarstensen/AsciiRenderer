@@ -15,10 +15,10 @@ namespace Asciir
 		HANDLE m_hConsole_in;
 		HANDLE m_hConsole_out;
 
-		Coord m_last_term_pos;
-		TermVert m_last_term_size;
+		Coord m_last_term_pos = {0, 0};
+		TermVert m_last_term_size = {0, 0};
 
-		WinARAttr* m_attr;
+		const WinARAttr* m_attr = nullptr;
 
 		static constexpr size_t BUFF_LEN = 256;
 		INPUT_RECORD m_event_buffer[BUFF_LEN] = {0};

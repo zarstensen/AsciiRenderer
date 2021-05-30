@@ -146,7 +146,7 @@ namespace Asciir
 		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
 		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
 
-		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer()->getAttrHandler());
+		const WinARAttr& s_attr_handler = dynamic_cast<const WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
 
 		if (isMouseDown(keycode))
 		{

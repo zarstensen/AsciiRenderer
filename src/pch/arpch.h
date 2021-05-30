@@ -7,7 +7,7 @@
 #include <functional>
 #include <memory>
 #include <algorithm>
-#include <math.h>
+#include <cmath>
 #include <thread>
 #include <chrono>
 #include <filesystem>

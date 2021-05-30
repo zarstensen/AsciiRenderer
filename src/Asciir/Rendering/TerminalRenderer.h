@@ -21,6 +21,11 @@ namespace Asciir
 		Color color = WHITE8;
 		char symbol = ' ';
 
+		Tile() = default;
+
+		Tile(Color background_color, Color color, char symbol)
+			: background_color(background_color), color(color), symbol(symbol) {}
+
 		bool operator==(Tile other)
 		{
 			return background_color == other.background_color && color == other.color && symbol == other.symbol;
@@ -73,7 +78,7 @@ namespace Asciir
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 
-		AsciiAttr& getAttrHandler();
+		const AsciiAttr& getAttrHandler();
 
 		void resize(TermVert size);
 
@@ -94,7 +99,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT>& attributes();
 
 	protected:
-		std::unique_ptr<AsciiAttr> m_attr_handler;
+		std::shared_ptr<AsciiAttr> m_attr_handler;
 		std::string m_buffer;
 		bool m_should_resize = false;
 		bool m_should_rename = true;

@@ -170,7 +170,7 @@ namespace Asciir
 		return m_title;
 	}
 
-	AsciiAttr& TerminalRenderer::getAttrHandler()
+	const AsciiAttr& TerminalRenderer::getAttrHandler()
 	{
 		return *m_attr_handler;
 	}
