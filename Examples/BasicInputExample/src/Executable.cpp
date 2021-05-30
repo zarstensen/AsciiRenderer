@@ -20,7 +20,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x++;
 
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
+		Asciir::TerminalRenderer* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 
 		renderer->symbol((char)219);
 

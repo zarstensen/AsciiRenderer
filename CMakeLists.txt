@@ -95,12 +95,12 @@ set(HEADER_DIR_MATH
 
 set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
-    src/Asciir/Rendering/TerminalRender.cpp
+    src/Asciir/Rendering/TerminalRenderer.cpp
 )
 
 set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.h
-    src/Asciir/Rendering/TerminalRender.h
+    src/Asciir/Rendering/TerminalRenderer.h
     src/Asciir/Rendering/RenderConsts.h
 )
 

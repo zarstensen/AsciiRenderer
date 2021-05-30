@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Event/Event.h"
-#include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Math/Vertices.h"
 
@@ -36,13 +36,13 @@ namespace Asciir
 
 		TermVert getSize() const;
 		Coord getPos() const;
-		TerminalRender* const getRenderer();
+		TerminalRenderer* const getRenderer();
 
 		void EventCallback(Event& e);
 		void setEventCallback(const EventCallbackFp& callback);
 
 	protected:
-		TerminalRender m_terminal_render;
+		TerminalRenderer m_terminal_render;
 		std::shared_ptr<EventListener> m_event_listener;
 		EventCallbackFp m_event_callback;
 	};

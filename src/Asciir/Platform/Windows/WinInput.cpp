@@ -12,7 +12,7 @@ namespace Asciir
 {
 	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
-	TRUpdateInfo Input::s_info;
+	TerminalRenderer::TRUpdateInfo Input::s_info;
 	std::shared_ptr<EventListener> Input::s_event_listener;
 
 	// global windows specific variables
@@ -180,7 +180,7 @@ namespace Asciir
 			AREngine::getEngine()->getTerminal().getSize() - s_last_size, false);
 	}
 
-	void Input::pollState(TRUpdateInfo info)
+	void Input::pollState(TerminalRenderer::TRUpdateInfo info)
 	{
 		s_mouse_diff = win_listener->getMousePos() - s_mouse_pos;
 		s_cur_diff = win_listener->getCursorPos() - s_cur_pos;

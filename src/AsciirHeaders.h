@@ -22,7 +22,7 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 
-#include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Matrix.h"

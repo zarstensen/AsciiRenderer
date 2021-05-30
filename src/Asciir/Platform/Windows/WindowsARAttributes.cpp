@@ -1,6 +1,6 @@
 #include "arpch.h"
 #include "WindowsARAttributes.h"
-#include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/RenderConsts.h"
 
 namespace Asciir
@@ -224,7 +224,7 @@ namespace Asciir
 		m_cleared = false;
 	}
 
-	void WinARAttr::ansiCode(TerminalRender& dst, bool is_newline)
+	void WinARAttr::ansiCode(TerminalRenderer& dst, bool is_newline)
 	{
 
 		#if 0

@@ -34,15 +34,18 @@ namespace Asciir
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
 
-	struct TRUpdateInfo
-	{
-		bool new_size = false;
-		bool new_pos = false;
-		bool new_name = false;
-	};
+	
 
-	class TerminalRender
+	class TerminalRenderer
 	{
+	public:
+		struct TRUpdateInfo
+		{
+			bool new_size = false;
+			bool new_pos = false;
+			bool new_name = false;
+		};
+
 	protected:
 		arTensor3D<Tile> m_tiles;
 		Coord m_pos;
@@ -50,7 +53,7 @@ namespace Asciir
 		std::string m_title;
 
 	public:
-		TerminalRender(const std::string& title, size_t buffer_size);
+		TerminalRenderer(const std::string& title, size_t buffer_size);
 
 		void color(Color color);
 		void backgroundColor(Color color);

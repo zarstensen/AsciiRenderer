@@ -1,5 +1,5 @@
 ﻿#include "arpch.h"
-#include "TerminalRender.h"
+#include "TerminalRenderer.h"
 #include "Asciir/Math/Lines.h"
 #include "Asciir/Logging/Log.h"
 
@@ -11,7 +11,7 @@
 
 namespace Asciir
 {
-	TerminalRender::TerminalRender(const std::string& title, size_t buffer_size)
+	TerminalRenderer::TerminalRenderer(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
 
@@ -25,22 +25,22 @@ namespace Asciir
 		update();
 	}
 
-	void TerminalRender::color(Color color)
+	void TerminalRenderer::color(Color color)
 	{
 		m_tile_state.color = color;
 	}
 
-	void TerminalRender::backgroundColor(Color color)
+	void TerminalRenderer::backgroundColor(Color color)
 	{
 		m_tile_state.background_color = color;
 	}
 
-	void TerminalRender::symbol(char symbol)
+	void TerminalRenderer::symbol(char symbol)
 	{
 		m_tile_state.symbol = symbol;
 	}
 
-	void TerminalRender::drawVertices(const TermVerts& vertices, DrawMode mode)
+	void TerminalRenderer::drawVertices(const TermVerts& vertices, DrawMode mode)
 	{
 		if (mode == DrawMode::Line)
 		{
@@ -113,37 +113,37 @@ namespace Asciir
 		}
 	}
 	
-	void TerminalRender::drawLine(const TermVert& a, const TermVert& b)
+	void TerminalRenderer::drawLine(const TermVert& a, const TermVert& b)
 	{
 		drawVertices({ a, b }, DrawMode::Line);
 	}
 
-	void TerminalRender::clearTerminal(Tile clear_tile)
+	void TerminalRenderer::clearTerminal(Tile clear_tile)
 	{
 		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(clear_tile);
 	}
 
-	void TerminalRender::clearTiles()
+	void TerminalRenderer::clearTiles()
 	{
 		m_tiles.fill(Tile());
 	}
 
-	void TerminalRender::setState(Tile tile)
+	void TerminalRenderer::setState(Tile tile)
 	{
 		m_tile_state = tile;
 	}
 
-	Tile& TerminalRender::getState()
+	Tile& TerminalRenderer::getState()
 	{
 		return m_tile_state;
 	}
 
-	Tile TerminalRender::getState() const
+	Tile TerminalRenderer::getState() const
 	{
 		return m_tile_state;
 	}
 
-	void TerminalRender::drawTile(const TermVert& pos)
+	void TerminalRenderer::drawTile(const TermVert& pos)
 	{
 		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
@@ -151,7 +151,7 @@ namespace Asciir
 		m_tiles(0, pos.x, pos.y) = m_tile_state;
 	}
 
-	Tile& TerminalRender::getTile(const TermVert& pos)
+	Tile& TerminalRenderer::getTile(const TermVert& pos)
 	{
 		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
@@ -159,23 +159,23 @@ namespace Asciir
 		return m_tiles(0, pos.x, pos.y);
 	}
 
-	void TerminalRender::setTitle(const std::string& title)
+	void TerminalRenderer::setTitle(const std::string& title)
 	{
 		m_title = title;
 		m_should_rename = true;
 	}
 
-	std::string TerminalRender::getTitle() const
+	std::string TerminalRenderer::getTitle() const
 	{
 		return m_title;
 	}
 
-	AsciiAttr& TerminalRender::getAttrHandler()
+	AsciiAttr& TerminalRenderer::getAttrHandler()
 	{
 		return *m_attr_handler;
 	}
 
-	void TerminalRender::resize(TermVert size)
+	void TerminalRenderer::resize(TermVert size)
 	{
 		AR_ASSERT_MSG(size.x <= maxSize().x && size.x > 0 && size.y <= maxSize().y && size.y > 0,
 			          "Size ", size, " is too large or negative. Max size: ", maxSize());
@@ -184,7 +184,7 @@ namespace Asciir
 		m_tiles.resize({ (size_t) 2, (size_t) size.x, (size_t) size.y });
 	}
 
-	TRUpdateInfo TerminalRender::update()
+	TerminalRenderer::TRUpdateInfo TerminalRenderer::update()
 	{
 
 		TRUpdateInfo r_info;
@@ -232,7 +232,7 @@ namespace Asciir
 		return r_info;
 	}
 
-	void TerminalRender::draw()
+	void TerminalRenderer::draw()
 	{
 		m_attr_handler->clear();
 
@@ -280,7 +280,7 @@ namespace Asciir
 		m_tiles.block(m_tiles.size().y, 0, drawSize().x, drawSize().y) = tile_block;
 	}
 
-	TRUpdateInfo TerminalRender::render()
+	TerminalRenderer::TRUpdateInfo TerminalRenderer::render()
 	{
 		TRUpdateInfo r_info = update();
 		draw();
@@ -288,29 +288,29 @@ namespace Asciir
 		return r_info;
 	}
 
-	TermVert TerminalRender::termSize() const
+	TermVert TerminalRenderer::termSize() const
 	{
 		return m_attr_handler->terminalSize();
 	}
 
-	TermVert TerminalRender::drawSize() const
+	TermVert TerminalRenderer::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
 		return { (TInt) m_tiles.size().y, (TInt) m_tiles.size().z};
 	}
 	
-	TermVert TerminalRender::maxSize() const
+	TermVert TerminalRenderer::maxSize() const
 	{
 		
 		return m_attr_handler->maxTerminalSize();
 	}
 
-	Coord TerminalRender::pos() const
+	Coord TerminalRenderer::pos() const
 	{
 		return m_attr_handler->terminalPos();
 	}
 
-	void TerminalRender::pushBuffer(char c)
+	void TerminalRenderer::pushBuffer(char c)
 	{
 		if (m_buffer.size() + 1 > m_buffer.capacity())
 			flushBuffer();
@@ -319,7 +319,7 @@ namespace Asciir
 	}
 
 
-	void TerminalRender::pushBuffer(const std::string& data)
+	void TerminalRenderer::pushBuffer(const std::string& data)
 	{
 		if (data.size() + m_buffer.size() > m_buffer.capacity())
 			flushBuffer();
@@ -330,13 +330,13 @@ namespace Asciir
 		m_buffer += data;
 	}
 
-	void TerminalRender::flushBuffer()
+	void TerminalRenderer::flushBuffer()
 	{
 		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
 		m_buffer.clear();
 	}
 
-	std::array<bool, ATTR_COUNT>& TerminalRender::attributes()
+	std::array<bool, ATTR_COUNT>& TerminalRenderer::attributes()
 	{
 		return m_attr_handler->attributes;
 	}

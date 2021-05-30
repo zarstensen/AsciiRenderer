@@ -1,6 +1,6 @@
 #include "arpch.h"
 #include "AsciiAttributes.h"
-#include "TerminalRender.h"
+#include "TerminalRenderer.h"
 #include "RenderConsts.h"
 #include "Asciir/Logging/Log.h"
 
@@ -269,7 +269,7 @@ namespace Asciir
 		}
 	}
 
-	void AsciiAttr::moveCode(TerminalRender& dst)
+	void AsciiAttr::moveCode(TerminalRenderer& dst)
 	{
 		if (m_should_move)
 		{

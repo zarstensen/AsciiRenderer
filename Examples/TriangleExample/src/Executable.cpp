@@ -10,13 +10,13 @@ class TriangleLayer : public Asciir::Layer
 
 	void onStart() final
 	{
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
+		Asciir::TerminalRenderer* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 		renderer->resize({ 240, 63 });
 	}
 
 	void onUpdate() final
 	{
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
+		Asciir::TerminalRenderer* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 		
 		renderer->clearTerminal(Asciir::Tile{ Asciir::Color(25, 25, 25) });
 		

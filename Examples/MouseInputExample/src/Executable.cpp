@@ -7,7 +7,7 @@ class TriangleLayer : public Asciir::Layer
 
 	Asciir::TInt pos = 0;
 	bool forward = true;
-	Asciir::TerminalRender* renderer;
+	Asciir::TerminalRenderer* renderer;
 
 	void onStart() final
 	{
