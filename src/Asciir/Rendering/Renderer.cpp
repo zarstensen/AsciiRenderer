@@ -82,6 +82,6 @@ namespace Asciir
 	
 	Size2D Renderer::size()
 	{
-		return s_renderer->termSize();
+		return s_renderer->drawSize();
 	}
 }
