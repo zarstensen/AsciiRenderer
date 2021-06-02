@@ -182,9 +182,9 @@ namespace Asciir
 			// check wether both points are to the left or right of line_vec
 
 			Real cross_l = point_l.y * line_vec.x - line_vec.y * point_l.x;
-			Real cross_r = line_vec.y * point_l.x - point_l.y * line_vec.x;
+			Real cross_r = line_vec.y * point_r.x - point_r.y * line_vec.x;
 
-			return cross_l > 0 && cross_r > 0;
+			return cross_l >= 0 && cross_r >= 0;
 		}
 		else
 		{
