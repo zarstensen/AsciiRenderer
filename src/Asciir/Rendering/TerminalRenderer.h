@@ -25,8 +25,12 @@ namespace Asciir
 		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
 			: background_color(background_color), color(color), symbol(symbol) {}
 
-		Tile(bool is_empty)
-			: is_empty(is_empty) {}
+		static Tile emptyTile()
+		{
+			Tile tile;
+			tile.is_empty = true;
+			return tile;
+		}
 
 		bool operator==(Tile other)
 		{

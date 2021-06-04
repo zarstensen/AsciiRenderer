@@ -17,9 +17,7 @@ namespace Asciir
 	
 	void Renderer::drawPolygon(Coords verts, Tile tile)
 	{
-		AR_CORE_INFO(verts);
 		Coords projected_verts = projectCoordsToTerminal(verts);
-		AR_CORE_INFO(projected_verts);
 
 		Tile prev_state = s_renderer->getState();
 		s_renderer->setState(tile);

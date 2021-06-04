@@ -84,11 +84,10 @@ namespace Asciir
 				{
 					bool is_corner = false;
 					bool tmp_inside = is_inside;
-					for (size_t verti = 0; verti < (size_t) vertices.size() - 1; verti++)
+					for (size_t verti = 0; verti < (size_t) vertices.size(); verti++)
 					{
 						size_t next_vert = verti + 1 > (size_t) vertices.size() - 1 ? 0 : verti + 1;
 						RealVertex point(x, line);
-						AR_CORE_INFO(vertices[verti], vertices[verti + 1]);
 						Line lsegment = Line::fromPoints(vertices[verti], vertices[next_vert]);
 
 						// corner case {jokes be funny :)}
@@ -98,7 +97,12 @@ namespace Asciir
 
 							Line other_lsegment = Line::fromPoints(other_corner, vertices[verti]);
 
-							if (other_lsegment.direction.y > 0 != lsegment.direction.y > 0)
+							if (other_lsegment.direction.y == 0 || lsegment.direction.y == 0)
+							{
+								was_inside = false;
+								tmp_inside = is_inside;
+							}
+							else if (other_lsegment.direction.y > 0 != lsegment.direction.y > 0)
 							{
 								is_corner = true;
 								was_inside = false;
@@ -150,7 +154,7 @@ namespace Asciir
 
 	void TerminalRenderer::clearTiles()
 	{
-		m_tiles.fill(Tile(true));
+		m_tiles.fill(Tile::emptyTile());
 	}
 
 	void TerminalRenderer::setState(Tile tile)
