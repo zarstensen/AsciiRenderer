@@ -47,13 +47,13 @@ namespace Asciir
 			// loop over vertices in pairs and draw lines between them
 			for (size_t i = 0; i < (size_t) vertices.size() - 1; i++)
 			{
-				LineSegment line(vertices[i], vertices[i+1]);
+				Line line = Line::fromPoints(vertices[i], vertices[i+1]);
 				
-				TInt length = line.length();
+				TInt length = (TInt) line.direction.norm();
 
 				for (TInt j = 0; j <= length; j++)
 				{
-					auto point = line.at(j);
+					auto point = line.pointFromGrid(j, 1);
 					drawTile(point);
 				}
 			}
@@ -82,27 +82,52 @@ namespace Asciir
 
 				for (TInt x = minx; x < maxx + 1; x++)
 				{
+					bool is_corner = false;
+					bool tmp_inside = is_inside;
 					for (size_t verti = 0; verti < (size_t) vertices.size() - 1; verti++)
 					{
-						LineSegment lsegment(vertices[verti], vertices[verti + 1]);
-						bool intersects = lsegment.intersects({ x, line });
+						size_t next_vert = verti + 1 > vertices.size() - 1 ? 0 : verti + 1;
+						RealVertex point(x, line);
+						AR_CORE_INFO(vertices[verti], vertices[verti + 1]);
+						Line lsegment = Line::fromPoints(vertices[verti], vertices[next_vert]);
+
+						// corner case {jokes be funny :)}
+						if((RealVertex) vertices[verti] == point)
+						{
+							RealVertex other_corner = vertices[verti == 0 ? vertices.size() - 1 : verti - 1];
+
+							Line other_lsegment = Line::fromPoints(other_corner, vertices[verti]);
+
+							if (other_lsegment.direction.y > 0 != lsegment.direction.y > 0)
+							{
+								is_corner = true;
+								was_inside = false;
+								tmp_inside = is_inside;
+							}
+							else
+							{
+								was_inside = true;
+								tmp_inside = !is_inside;
+							}
+
+							break;
+						}
+
+						// calculate width based on the slope of the line
+						Real width = std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
+
+						bool intersects = lsegment.intDirection(point, width);
 						if (intersects)
 						{
 							was_inside = true;
-							is_inside = !is_inside;
+							tmp_inside = !tmp_inside;
 						}
 
 					}
+					
+					is_inside = tmp_inside;
 
-					LineSegment lsegment(vertices[vertices.size() - 1], vertices[0]);
-
-					if (lsegment.intersects({ x, line }))
-					{
-						was_inside = true;
-						is_inside = !is_inside;
-					}
-
-					if (is_inside || was_inside)
+					if (!(is_corner && is_inside) && (is_corner && !is_inside || is_inside || was_inside))
 					{
 						was_inside = false;
 						drawTile({ x, line });
@@ -125,7 +150,7 @@ namespace Asciir
 
 	void TerminalRenderer::clearTiles()
 	{
-		m_tiles.fill(Tile());
+		m_tiles.fill(Tile(true));
 	}
 
 	void TerminalRenderer::setState(Tile tile)

@@ -20,20 +20,28 @@ namespace Asciir
 		Color background_color = BLACK8;
 		Color color = WHITE8;
 		char symbol = ' ';
+		bool is_empty = false;
 
-		Tile() = default;
-
-		Tile(Color background_color, Color color, char symbol)
+		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
 			: background_color(background_color), color(color), symbol(symbol) {}
+
+		Tile(bool is_empty)
+			: is_empty(is_empty) {}
 
 		bool operator==(Tile other)
 		{
-			return background_color == other.background_color && color == other.color && symbol == other.symbol;
+			if (!is_empty && !other.is_empty)
+				return background_color == other.background_color && color == other.color && symbol == other.symbol;
+			else
+				return false;
 		}
 
 		bool operator!=(Tile other)
 		{
-			return !(*this == other);
+			if (!is_empty && !other.is_empty)
+				return !(*this == other);
+			else
+				return false;
 		}
 	};
 
