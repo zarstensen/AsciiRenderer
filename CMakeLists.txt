@@ -82,6 +82,7 @@ set(HEADER_DIR_LOGGING
 set(SRC_DIR_MATH
     src/Asciir/Math/Lines.cpp
     src/Asciir/Math/Vertices.ipp
+    src/Asciir/Math/Vector.ipp
     src/Asciir/Math/Matrix.ipp
     src/Asciir/Math/Tensor.ipp
 )
@@ -89,6 +90,7 @@ set(SRC_DIR_MATH
 set(HEADER_DIR_MATH
     src/Asciir/Math/Lines.h
     src/Asciir/Math/Vertices.h
+    src/Asciir/Math/Vector.h
     src/Asciir/Math/Matrix.h
     src/Asciir/Math/Tensor.h
 )
