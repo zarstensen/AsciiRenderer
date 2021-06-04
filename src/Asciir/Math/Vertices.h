@@ -109,6 +109,8 @@ namespace Asciir
 	{
 		arVertices() = default;
 
+		arVertices(size_t length);
+
 		template<typename TOther>
 		arVertices(const arVertices<TOther, d>&other);
 		arVertices(const Eigen::VectorX<arVertex<T, d>>&other);
@@ -119,6 +121,11 @@ namespace Asciir
 
 		arVertices<T, d> offset(const arVertex<T, d>& vec);
 		
+		void fill(arVertex<T, d> val);
+
+		// shortend version of conservativeResize
+		void cResize(size_t size);
+
 		using Eigen::VectorX<arVertex<T, d>>::operator[];
 	};
 	
@@ -136,6 +143,8 @@ namespace Asciir
 		s_arVertices(const Eigen::MatrixBase<TOther>& other);
 
 		s_arVertices<T, d, n> offset(const arVertex<T, d>&vec);
+
+		void fill(arVertex<T, d> val);
 
 		using Eigen::Vector<arVertex<T, d>, n>::operator[];
 	};

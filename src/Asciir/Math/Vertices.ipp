@@ -114,6 +114,12 @@ namespace Asciir
 	arVertices<T, d>::arVertices(const arVertices<TOther, d>& other)
 		: arVertices(other.template cast<arVertex<T, d>>()) {}
 
+	template<typename T, size_t d>
+	arVertices<T, d>::arVertices(size_t length)
+		: Eigen::VectorX<arVertex<T, d>>(length)
+	{
+		fill(arVertex<T, d>());
+	}
 
 	template<typename T, size_t d>
 	arVertices<T, d>::arVertices(const Eigen::VectorX<arVertex<T, d>>& other)
@@ -139,6 +145,19 @@ namespace Asciir
 		}
 
 		return res;
+	}
+
+	template<typename T, size_t d>
+	void arVertices<T, d>::fill(arVertex<T, d> val)
+	{
+		for (arVertex<T, d>& elem : *this)
+			elem = val;
+	}
+
+	template<typename T, size_t d>
+	void arVertices<T, d>::cResize(size_t size)
+	{
+		Eigen::VectorX<arVertex<T, d>>::conservativeResize(size);
 	}
 
 	
@@ -173,6 +192,13 @@ namespace Asciir
 
 		return res;
 	}
+
+	template<typename T, size_t d, size_t n>
+	void s_arVertices<T, d, n>::fill(arVertex<T, d> val)
+	{
+		for (arVertex<T, d>& elem : *this)
+			elem = val;
+	}
 	
 	
 	
@@ -192,7 +218,7 @@ namespace Asciir
 	template<typename T, size_t d>
 	std::ostream& operator<<(std::ostream& stream, const arVertices<T, d>& verts)
 	{
-		for (size_t i = 0; i < verts.size() - 1; i++)
+		for (size_t i = 0; i < (size_t) verts.size() - 1; i++)
 		{
 			stream << verts[i] << ',';
 		}
