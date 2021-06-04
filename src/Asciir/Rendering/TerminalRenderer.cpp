@@ -86,7 +86,7 @@ namespace Asciir
 					bool tmp_inside = is_inside;
 					for (size_t verti = 0; verti < (size_t) vertices.size() - 1; verti++)
 					{
-						size_t next_vert = verti + 1 > vertices.size() - 1 ? 0 : verti + 1;
+						size_t next_vert = verti + 1 > (size_t) vertices.size() - 1 ? 0 : verti + 1;
 						RealVertex point(x, line);
 						AR_CORE_INFO(vertices[verti], vertices[verti + 1]);
 						Line lsegment = Line::fromPoints(vertices[verti], vertices[next_vert]);
@@ -114,7 +114,7 @@ namespace Asciir
 						}
 
 						// calculate width based on the slope of the line
-						Real width = std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
+						Real width = (Real) std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
 
 						bool intersects = lsegment.intDirection(point, width);
 						if (intersects)
