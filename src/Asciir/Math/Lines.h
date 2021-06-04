@@ -4,26 +4,6 @@
 
 namespace Asciir
 {
-
-	// used with lines represented in the terminal, accounts for tile size when checking for intersect
-	class TermLine
-	{
-	public:
-		TermVert a, b;
-
-		TermLine() = default;
-		TermLine(TermVert a, TermVert b);
-
-		TInt length();
-
-		TermVert at(TInt pos);
-
-		TInt getX(TInt y);
-		TInt getY(TInt x);
-
-		bool intersects(TermVert point);
-	};
-
 	class Line
 	{
 	public:
