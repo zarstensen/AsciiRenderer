@@ -123,7 +123,15 @@ namespace Asciir
  	    RIGHT_CONTROL,
  	    RIGHT_ALT,
  	    RIGHT_SUPER,
- 	    MENU
+ 	    MENU,
+        VOLUME_MUTE,
+        VOLUME_DOWN,
+        VOLUME_UP,
+        STOP,
+        SKIP_BACKWARD,
+        PLAY_PAUSE,
+        SKIP_FORWARD
+
     };
 
     constexpr int KEY_CODE_COUNT = 119;

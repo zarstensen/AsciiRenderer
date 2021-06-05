@@ -4,6 +4,10 @@
 #define AR_DEBUG
 #endif
 
+#ifdef AR_DEBUG
+#define AR_SAFE_RELEASE
+#endif
+
 #ifndef AR_CLIENT_LOG_DIR
 #define AR_CLIENT_LOG_DIR "./logs/client_log.log"
 #endif
