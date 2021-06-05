@@ -99,6 +99,7 @@ set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
+    src/Asciir/Rendering/Renderer.ipp
 )
 
 set(HEADER_DIR_RENDERING
@@ -209,7 +210,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
+target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> $<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=3 AR_CLIENT_VERBOSITY=2> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
 if(${UNIX})
 find_package(X11 REQUIRED)

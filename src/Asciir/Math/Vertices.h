@@ -206,6 +206,27 @@ namespace Asciir
 	template<size_t n>
 	using s_Coords3D = s_arVertices3D<long long, n>;
 
+	// template check for array or vector types
+	template<typename T>
+	struct is_vertices_type
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename T, size_t d>
+	struct is_vertices_type<arVertices<T, d>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template<typename T, size_t d, size_t n>
+	struct is_vertices_type<s_arVertices<T, d, n>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template<typename T>
+	constexpr bool is_vertices_type_v = is_vertices_type<T>::value;
 
 	// ostream functions
 

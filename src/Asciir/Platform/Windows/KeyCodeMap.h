@@ -251,11 +251,17 @@ namespace Asciir
         {VK_APPS, Key::MENU},
 
         { VK_VOLUME_MUTE, Key::VOLUME_MUTE },
+
         { VK_VOLUME_DOWN, Key::VOLUME_DOWN },
+
         { VK_VOLUME_UP, Key::VOLUME_UP },
+
         { VK_MEDIA_STOP, Key::STOP },
+
         { VK_MEDIA_PREV_TRACK, Key::SKIP_BACKWARD },
+
         { VK_MEDIA_PLAY_PAUSE, Key::PLAY_PAUSE },
+
         { VK_MEDIA_NEXT_TRACK, Key::SKIP_FORWARD }
     };
 
