@@ -16,7 +16,7 @@ namespace Asciir
 		std::string ansiCode() final;
 		void ansiCode(std::string& dst) final;
 		void ansiCode(std::ostream& stream, bool is_newline = false) final;
-		void ansiCode(TerminalRender& dst, bool is_newline = false) final;
+		void ansiCode(TerminalRenderer& dst, bool is_newline = false) final;
 
 		Coord terminalPos() const final;
 		TermVert terminalSize() const final;

@@ -1,24 +1,41 @@
 #pragma once
 
-#include "Vertices.h"
+#include "Vector.h"
 
 namespace Asciir
 {
-	struct LineSegment
+	class Line
 	{
-		TermVert a, b;
+	public:
+		Vector<Real> direction, offset;
 
-		LineSegment() = default;
-		LineSegment(TermVert a, TermVert b);
+		Line() = default;
+		Line(Real a, Real b);
+		Line(Vector<Real> direction, Vector<Real> offset = Vector<Real>());
 
-		TInt length();
+		// direction goes from a to b
+		static Line fromPoints(arVertex2D<Real> a, arVertex2D<Real> b);
 
-		TermVert at(TInt pos);
+		Real fx(Real x) const;
+		Real fy(Real y) const;
 
-		TInt getX(TInt y);
-		TInt getY(TInt x);
+		arVertex2D<Real> pointFromGrid(long long indx, Real resolution);
 
-		bool intersects(TermVert point);
+		Real slope() const;
+		Real a() const;
+		Real yIntercept() const;
+		Real b() const;
+		Real xIntercept() const;
+
+
+		bool visible(arVertex2D<Real> point) const;
+		static bool visibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point);
+		
+		bool notVisible(arVertex2D<Real> point) const;
+		static bool notVisibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point);
+
+		arVertex2D<Real> intersect(const Line& other);
+		bool intersects(arVertex2D<Real> point, Real margin = 0);
+		bool intDirection(arVertex2D<Real> point, Real margin = 0);
 	};
-
 }

@@ -56,9 +56,9 @@ namespace Asciir
 		AREngine::getEngine()->getTerminal().EventCallback(event);
 	}
 	
-	TerminalRender* const Terminal::getRenderer()
+	TerminalRenderer& Terminal::getRenderer()
 	{
-		return &m_terminal_render;
+		return m_terminal_render;
 	}
 
 	TermVert Terminal::getSize() const

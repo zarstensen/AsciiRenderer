@@ -8,53 +8,52 @@ namespace Asciir
 
 	template<typename T, size_t n>
 	template<typename TOther>
-	arVertex<T, n>::arVertex(const arVertex<TOther, n>& other)
-		: arVertex((T)other.x, (T)other.y) {}
+	arVertBase<T, n>::arVertBase(const arVertBase<TOther, n>& other)
+		: arVertBase(Eigen::Vector<T, n>(other.template cast<T>())) {}
 
 	template<typename T, size_t n>
-	arVertex<T, n>::arVertex(const Eigen::Vector<T, n>& vec)
+	arVertBase<T, n>::arVertBase(const Eigen::Vector<T, n>& vec)
 		: Eigen::Vector<T, n>(vec) {}
-
 
 	template<typename T, size_t n>
 	template<typename TOther>
-	arVertex<T, n>& arVertex<T, n>::operator=(const arVertex<TOther, n>& other)
+	arVertBase<T, n>& arVertBase<T, n>::operator=(const arVertBase<TOther, n>& other)
 	{
-		return arVertex<T, n>(other);
+		return arVertBase<T, n>(other);
 	}
 
 	template<typename T, size_t n>
 	template<typename TOther>
-	arVertex<T, n>::arVertex(const Eigen::MatrixBase<TOther>& other)
-		: arVertex(other.eval().template cast<T>()) {}
+	arVertBase<T, n>::arVertBase(const Eigen::MatrixBase<TOther>& other)
+		: arVertBase(other.eval().template cast<T>()) {}
 
 	template<typename T, size_t n>
 	template<typename TOther>
-	inline arVertex<T, n>::arVertex(const Eigen::ArrayBase<TOther>& other)
-		: arVertex(other.matrix().eval().template cast<T>()) {}
+	arVertBase<T, n>::arVertBase(const Eigen::ArrayBase<TOther>& other)
+		: arVertBase(other.matrix().eval().template cast<T>()) {}
 
 	template<typename T>
-	arVertex2D<T>::arVertex2D()
-		: arVertex2D(0, 0) {}
+	arVertex<T, 2>::arVertex()
+		: arVertex(0, 0) {}
 
 	template<typename T>
-	arVertex2D<T>::arVertex2D(T x, T y)
+	arVertex<T, 2>::arVertex(T x, T y)
 	{
 		this->x = x;
 		this->y = y;
 	}
 
 	template<typename T>
-	arVertex2D<T>::arVertex2D(const arVertex2D<T>& other)
-		: arVertex2D(other.x, other.y) {}
+	arVertex<T, 2>::arVertex(const arVertex<T, 2>& other)
+		: arVertex(other.x, other.y) {}
 
 	template<typename T>
 	template<typename TOther>
-	arVertex2D<T>::arVertex2D(const arVertex2D<TOther>& other)
-		: arVertex2D((T)other.x, (T)other.y) {}
+	arVertex<T, 2>::arVertex(const arVertex<TOther, 2>& other)
+		: arVertex((T)other.x, (T)other.y) {}
 
 	template<typename T>
-	arVertex2D<T>& Asciir::arVertex2D<T>::operator=(const arVertex2D<T>& other)
+	arVertex<T, 2>& Asciir::arVertex<T, 2>::operator=(const arVertex<T, 2>& other)
 	{
 		x = other.x;
 		y = other.y;
@@ -64,11 +63,11 @@ namespace Asciir
 	#ifdef AR_WIN
 	
 	template<typename T>
-	arVertex2D<T>::arVertex2D(POINT point)
-		: arVertex2D<T>(point.x, point.y){}
+	arVertex<T, 2>::arVertex(POINT point)
+		: arVertex(point.x, point.y){}
 
 	template<typename T>
-	arVertex2D<T>::operator POINT()
+	arVertex<T, 2>::operator POINT()
 	{
 		return { x, y };
 	}
@@ -77,11 +76,11 @@ namespace Asciir
 
 
 	template<typename T>
-	arVertex3D<T>::arVertex3D()
-		: arVertex3D(0, 0, 0) {}
+	arVertex<T, 3>::arVertex()
+		: arVertex(0, 0, 0) {}
 
 	template<typename T>
-	arVertex3D<T>::arVertex3D(T x, T y, T z)
+	arVertex<T, 3>::arVertex(T x, T y, T z)
 	{
 		this->x = x;
 		this->y = y;
@@ -89,16 +88,16 @@ namespace Asciir
 	}
 
 	template<typename T>
-	arVertex3D<T>::arVertex3D(const arVertex3D<T>& other)
-		: arVertex3D(other.x, other.y, other.z) {}
+	arVertex<T, 3>::arVertex(const arVertex<T, 3>& other)
+		: arVertex(other.x, other.y, other.z) {}
 
 	template<typename T>
 	template<typename TOther>
-	arVertex3D<T>::arVertex3D(const arVertex3D<TOther>& other)
-		: arVertex3D((T)other.x, (T)other.y, (T)other.z) {}
+	arVertex<T, 3>::arVertex(const arVertex<TOther, 3>& other)
+		: arVertex((T)other.x, (T)other.y, (T)other.z) {}
 
 	template<typename T>
-	arVertex3D<T>& Asciir::arVertex3D<T>::operator=(const arVertex3D<T>& other)
+	arVertex<T, 3>& Asciir::arVertex<T, 3>::operator=(const arVertex<T, 3>& other)
 	{
 		x = other.x;
 		y = other.y;
@@ -113,8 +112,14 @@ namespace Asciir
 	template<typename T, size_t d>
 	template<typename TOther>
 	arVertices<T, d>::arVertices(const arVertices<TOther, d>& other)
-		: arVertices(other.template cast<T>()) {}
+		: arVertices(other.template cast<arVertex<T, d>>()) {}
 
+	template<typename T, size_t d>
+	arVertices<T, d>::arVertices(size_t length)
+		: Eigen::VectorX<arVertex<T, d>>(length)
+	{
+		fill(arVertex<T, d>());
+	}
 
 	template<typename T, size_t d>
 	arVertices<T, d>::arVertices(const Eigen::VectorX<arVertex<T, d>>& other)
@@ -123,7 +128,7 @@ namespace Asciir
 	template<typename T, size_t d>
 	template<typename TOther>
 	arVertices<T, d>::arVertices(const Eigen::MatrixBase<TOther>& other)
-		: arVertices<T, d>(other.eval().template cast<T>()) {}
+		: arVertices(Eigen::VectorX<arVertex<T, d>>(other.eval().template cast<arVertex<T, d>>())) {}
 
 	template<typename T, size_t d>
 	arVertices<T, d>::arVertices(const std::initializer_list<arVertex<T, d>>& other)
@@ -142,11 +147,30 @@ namespace Asciir
 		return res;
 	}
 
+	template<typename T, size_t d>
+	void arVertices<T, d>::fill(arVertex<T, d> val)
+	{
+		for (arVertex<T, d>& elem : *this)
+			elem = val;
+	}
+
+	template<typename T, size_t d>
+	void arVertices<T, d>::cResize(size_t size)
+	{
+		Eigen::VectorX<arVertex<T, d>>::conservativeResize(size);
+	}
+
+	template<typename T, size_t d>
+	size_t arVertices<T, d>::size() const
+	{
+		return Eigen::VectorX<arVertex<T, d>>::size();
+	}
+
 	
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
 	s_arVertices<T, d, n>::s_arVertices(const s_arVertices<TOther, d, n>& other)
-		: s_arVertices(other.template cast<T>()) {}
+		: s_arVertices(other.template cast<arVertex<T, d>>()) {}
 
 
 	template<typename T, size_t d, size_t n>
@@ -156,7 +180,7 @@ namespace Asciir
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
 	s_arVertices<T, d, n>::s_arVertices(const Eigen::MatrixBase<TOther>& other)
-		: s_arVertices<T, d, n>(other.eval().template cast<T>()) {}
+		: s_arVertices<T, d, n>(other.eval().template cast<arVertex<T, d>>()) {}
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n>::s_arVertices(const std::initializer_list<arVertex<T, d>>& other)
@@ -174,7 +198,19 @@ namespace Asciir
 
 		return res;
 	}
-	
+
+	template<typename T, size_t d, size_t n>
+	void s_arVertices<T, d, n>::fill(arVertex<T, d> val)
+	{
+		for (arVertex<T, d>& elem : *this)
+			elem = val;
+	}
+
+	template<typename T, size_t d, size_t n>
+	constexpr size_t s_arVertices<T, d, n>::size() const
+	{
+		return n;
+	}
 	
 	
 	template<typename T, size_t n>
@@ -193,7 +229,7 @@ namespace Asciir
 	template<typename T, size_t d>
 	std::ostream& operator<<(std::ostream& stream, const arVertices<T, d>& verts)
 	{
-		for (size_t i = 0; i < verts.size() - 1; i++)
+		for (size_t i = 0; i < (size_t) verts.size() - 1; i++)
 		{
 			stream << verts[i] << ',';
 		}

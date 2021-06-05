@@ -20,29 +20,49 @@ namespace Asciir
 		Color background_color = BLACK8;
 		Color color = WHITE8;
 		char symbol = ' ';
+		bool is_empty = false;
+
+		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
+			: background_color(background_color), color(color), symbol(symbol) {}
+
+		static Tile emptyTile()
+		{
+			Tile tile;
+			tile.is_empty = true;
+			return tile;
+		}
 
 		bool operator==(Tile other)
 		{
-			return background_color == other.background_color && color == other.color && symbol == other.symbol;
+			if (!is_empty && !other.is_empty)
+				return background_color == other.background_color && color == other.color && symbol == other.symbol;
+			else
+				return false;
 		}
 
 		bool operator!=(Tile other)
 		{
-			return !(*this == other);
+			if (!is_empty && !other.is_empty)
+				return !(*this == other);
+			else
+				return false;
 		}
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
 
-	struct TRUpdateInfo
-	{
-		bool new_size = false;
-		bool new_pos = false;
-		bool new_name = false;
-	};
+	
 
-	class TerminalRender
+	class TerminalRenderer
 	{
+	public:
+		struct TRUpdateInfo
+		{
+			bool new_size = false;
+			bool new_pos = false;
+			bool new_name = false;
+		};
+
 	protected:
 		arTensor3D<Tile> m_tiles;
 		Coord m_pos;
@@ -50,7 +70,7 @@ namespace Asciir
 		std::string m_title;
 
 	public:
-		TerminalRender(const std::string& title, size_t buffer_size);
+		TerminalRenderer(const std::string& title, size_t buffer_size);
 
 		void color(Color color);
 		void backgroundColor(Color color);
@@ -70,7 +90,7 @@ namespace Asciir
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 
-		AsciiAttr& getAttrHandler();
+		const AsciiAttr& getAttrHandler();
 
 		void resize(TermVert size);
 
@@ -91,7 +111,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT>& attributes();
 
 	protected:
-		std::unique_ptr<AsciiAttr> m_attr_handler;
+		std::shared_ptr<AsciiAttr> m_attr_handler;
 		std::string m_buffer;
 		bool m_should_resize = false;
 		bool m_should_rename = true;

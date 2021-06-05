@@ -82,6 +82,7 @@ set(HEADER_DIR_LOGGING
 set(SRC_DIR_MATH
     src/Asciir/Math/Lines.cpp
     src/Asciir/Math/Vertices.ipp
+    src/Asciir/Math/Vector.ipp
     src/Asciir/Math/Matrix.ipp
     src/Asciir/Math/Tensor.ipp
 )
@@ -89,18 +90,22 @@ set(SRC_DIR_MATH
 set(HEADER_DIR_MATH
     src/Asciir/Math/Lines.h
     src/Asciir/Math/Vertices.h
+    src/Asciir/Math/Vector.h
     src/Asciir/Math/Matrix.h
     src/Asciir/Math/Tensor.h
 )
 
 set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
-    src/Asciir/Rendering/TerminalRender.cpp
+    src/Asciir/Rendering/TerminalRenderer.cpp
+    src/Asciir/Rendering/Renderer.cpp
+    src/Asciir/Rendering/Renderer.ipp
 )
 
 set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.h
-    src/Asciir/Rendering/TerminalRender.h
+    src/Asciir/Rendering/TerminalRenderer.h
+    src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
 )
 
@@ -205,7 +210,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
+target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> $<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=3 AR_CLIENT_VERBOSITY=2> AR_CORE_LOG_DIR="${CMAKE_BINARY_DIR}/logs/core_log.log" AR_CLIENT_LOG_DIR="${CMAKE_BINARY_DIR}/logs/client_log.log")
 
 if(${UNIX})
 find_package(X11 REQUIRED)
@@ -237,5 +242,6 @@ endif()
 if(ASCIIR_EXAMPLES)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/MouseInputExample MouseInputExample)
+add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/RendererExample RendererExample)
 add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/TriangleExample TriangleExample)
 endif()

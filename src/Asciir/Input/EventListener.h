@@ -68,8 +68,8 @@ namespace Asciir
 		{
 			keybd_poll_state = keybd_down_state;
 			mouse_poll_state = mouse_down_state;
-			keybd_down_state.fill(KeyInputData());
-			mouse_down_state.fill(MouseInputData());
+			keybd_down_state = keybd_state;
+			mouse_down_state = mouse_state;
 		};
 
 		const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() { return keybd_poll_state; }

@@ -32,6 +32,9 @@ int main(int argc, char** argv)
 	}
 	
 	Asciir::AREngine::create(Asciir::createEngine(std::move(args)));
+
+	Asciir::Renderer::init();
+
 	Asciir::AREngine::getEngine()->start();
 	delete Asciir::AREngine::getEngine();
 }

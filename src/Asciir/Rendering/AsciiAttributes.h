@@ -99,7 +99,7 @@ namespace Asciir
 	* All of the above = Framed
 	*/
 
-	class TerminalRender;
+	class TerminalRenderer;
 
 	class AsciiAttr
 	{
@@ -149,11 +149,11 @@ namespace Asciir
 		virtual std::string ansiCode() = 0;
 		virtual void ansiCode(std::string& dst) = 0;
 		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
-		virtual void ansiCode(TerminalRender& dst, bool is_newline = false) = 0;
+		virtual void ansiCode(TerminalRenderer& dst, bool is_newline = false) = 0;
 		
 		void moveCode(std::string& dst);
 		void moveCode(std::ostream& stream);
-		void moveCode(TerminalRender& dst);
+		void moveCode(TerminalRenderer& dst);
 
 
 		void setTitle(const std::string& name);

@@ -53,7 +53,7 @@ namespace Asciir
 		static TerminalResizedEvent getTerminalResizedEvent();
 
 	protected:
-		static void pollState(TRUpdateInfo info);
+		static void pollState(TerminalRenderer::TRUpdateInfo info);
 		static Coord getMousePos();
 
 		static void setEventListener(std::shared_ptr<EventListener> listener);
@@ -63,7 +63,7 @@ namespace Asciir
 		static TermVert s_last_size;
 		static TermVert s_cur_pos, s_cur_diff;
 		static Terminal* i_terminal;
-		static TRUpdateInfo s_info;
+		static TerminalRenderer::TRUpdateInfo s_info;
 		static std::shared_ptr<EventListener> s_event_listener;
 	};
 

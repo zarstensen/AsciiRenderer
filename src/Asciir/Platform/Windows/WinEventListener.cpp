@@ -29,7 +29,7 @@ namespace Asciir
 
 	void WinEventListener::start(EventCallbackFp callback)
 	{
-		m_attr = dynamic_cast<WinARAttr*>(&AREngine::getEngine()->getTerminal().getRenderer()->getAttrHandler());
+		m_attr = dynamic_cast<const WinARAttr*>(&AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
 
 		m_last_term_pos = m_attr->terminalPos();
 		m_last_term_size = m_attr->terminalSize();
@@ -109,6 +109,14 @@ namespace Asciir
 
 	void WinEventListener::sendKeybdEvent(KEY_EVENT_RECORD event)
 	{
+		#ifdef AR_SAFE_RELEASE
+		if (!WinToKeyCodeMap.contains((size_t)event.wVirtualKeyCode - 1))
+		{
+			AR_CORE_WARN("Unknown key recieved: ", event.wVirtualKeyCode);
+			return;
+		}
+		#endif
+
 		if (event.bKeyDown)
 		{
 			KeyInputData& data = keybd_state[(size_t) WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
@@ -201,8 +209,6 @@ namespace Asciir
 				{
 					MouseInputData& data = mouse_state[button];
 
-					
-
 					if (!data.is_down)
 					{
 						data.is_down = true;
@@ -214,7 +220,7 @@ namespace Asciir
 						m_callback(e);
 
 						// store down event
-						mouse_down_state;
+						mouse_down_state[button] = data;
 					}
 				}
 				else

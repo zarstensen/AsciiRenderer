@@ -6,7 +6,7 @@ class ExampleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		Asciir::AREngine::getEngine()->getTerminal().getRenderer()->clearTerminal();
+		Asciir::Renderer::clear(Asciir::Tile({ 0, 0, 155 }, {0, 0, 155}, 219));
 
 		if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
 			pos.y--;
@@ -20,17 +20,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x++;
 
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
-
-		renderer->symbol((char)219);
-
-		renderer->color({0, 0, 155});
-		renderer->backgroundColor({ 0, 0, 155 });
-		renderer->drawVertices({ Asciir::TermVert(0, 0), Asciir::TermVert(0, renderer->drawSize().y - 1), Asciir::TermVert(renderer->drawSize().x - 1, renderer->drawSize().y - 1), Asciir::TermVert(renderer->drawSize().x - 1, 0) }, Asciir::DrawMode::Filled);
-
-		renderer->symbol((char)219);
-		renderer->color({ (u_char)rand(), (u_char)rand(), (u_char)rand() });
-		renderer->drawTile(pos);
+		Asciir::Renderer::drawTile(pos, Asciir::Tile(0, { (u_char)rand(), (u_char)rand(), (u_char)rand() }, 219));
 
 		Asciir::sleep(1000 / 60);
 	}

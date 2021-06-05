@@ -10,27 +10,25 @@ class TriangleLayer : public Asciir::Layer
 
 	void onStart() final
 	{
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
-		renderer->resize({ 240, 63 });
+		Asciir::Renderer::resize({ 240, 63 });
 	}
 
 	void onUpdate() final
 	{
-		Asciir::TerminalRender* renderer = Asciir::AREngine::getEngine()->getTerminal().getRenderer();
 		
-		renderer->clearTerminal(Asciir::Tile{ Asciir::Color(25, 25, 25) });
+		Asciir::Renderer::clear(Asciir::Tile(25));
 		
 		if (forward)
 			pos++;
 		else
 			pos--;
 
-		if (pos > 140 || pos <= 0)
+		if (pos > 180 || pos <= -80)
 			forward = !forward;
 
-		renderer->setState(Asciir::Tile{ Asciir::Color(255, 255, 255) });
-		renderer->drawVertices(triangle_verts.offset(Asciir::TermVert(pos, 0)), Asciir::DrawMode::Filled);
-		renderer->resize({ 240, 63 });
+		Asciir::Renderer::drawPolygon(triangle_verts.offset(Asciir::TermVert(pos, 0)), Asciir::Tile(255));
+		
+		Asciir::Renderer::resize({ 240, 63 });
 
 		Asciir::sleep(1000 / 60);
 	}

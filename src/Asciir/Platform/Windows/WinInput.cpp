@@ -12,7 +12,7 @@ namespace Asciir
 {
 	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
-	TRUpdateInfo Input::s_info;
+	TerminalRenderer::TRUpdateInfo Input::s_info;
 	std::shared_ptr<EventListener> Input::s_event_listener;
 
 	// global windows specific variables
@@ -146,7 +146,7 @@ namespace Asciir
 		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
 		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
 
-		WinARAttr& s_attr_handler = dynamic_cast<WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer()->getAttrHandler());
+		const WinARAttr& s_attr_handler = dynamic_cast<const WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
 
 		if (isMouseDown(keycode))
 		{
@@ -180,7 +180,7 @@ namespace Asciir
 			AREngine::getEngine()->getTerminal().getSize() - s_last_size, false);
 	}
 
-	void Input::pollState(TRUpdateInfo info)
+	void Input::pollState(TerminalRenderer::TRUpdateInfo info)
 	{
 		s_mouse_diff = win_listener->getMousePos() - s_mouse_pos;
 		s_cur_diff = win_listener->getCursorPos() - s_cur_pos;
