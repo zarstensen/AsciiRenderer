@@ -34,15 +34,32 @@ namespace Asciir
 		Tile prev_state = s_renderer->getState();
 		s_renderer->setState(tile);
 
-		projectCoordsToTerminal(verts);
+		Coords projected_verts = projectCoordsToTerminal(verts);
 
-		Coord tl = verts[0];
-		Coord br = verts[1];
+		Coord tl = projected_verts[0];
+		Coord br = projected_verts[1];
 		Coord tr = { br.x, tl.y };
 		Coord bl = { tl.x, br.y };
 
 		s_renderer->drawVertices({ tr, tl, bl, br }, DrawMode::Filled);
 		s_renderer->setState(prev_state);
+	}
+
+	void Renderer::drawTile(Coord pos, Tile tile)
+	{
+		if (pos.x >= 0 && pos.x < (size_t) size().x && pos.y >= 0 && pos.y < (size_t) size().y)
+		{
+			Tile prev_state = s_renderer->getState();
+			s_renderer->setState(tile);
+			s_renderer->drawTile((TermVert) pos);
+			s_renderer->setState(prev_state);
+		}
+	}
+
+	Tile Renderer::viewTile(Coord pos)
+	{
+		AR_ASSERT_MSG(pos.x >= 0 && pos.x < (size_t) size().x&& pos.y >= 0 && pos.y < (size_t) size().y, "Cannot view tile outside of terminal size");
+		return s_renderer->getTile((TermVert)pos);
 	}
 
 	void Renderer::clear(Tile tile)

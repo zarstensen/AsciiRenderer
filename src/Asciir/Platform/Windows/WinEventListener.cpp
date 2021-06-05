@@ -209,8 +209,6 @@ namespace Asciir
 				{
 					MouseInputData& data = mouse_state[button];
 
-					
-
 					if (!data.is_down)
 					{
 						data.is_down = true;
@@ -222,7 +220,7 @@ namespace Asciir
 						m_callback(e);
 
 						// store down event
-						mouse_down_state;
+						mouse_down_state[button] = data;
 					}
 				}
 				else

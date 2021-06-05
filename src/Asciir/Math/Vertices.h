@@ -126,6 +126,8 @@ namespace Asciir
 		// shortend version of conservativeResize
 		void cResize(size_t size);
 
+		size_t size() const;
+
 		using Eigen::VectorX<arVertex<T, d>>::operator[];
 	};
 	
@@ -145,6 +147,8 @@ namespace Asciir
 		s_arVertices<T, d, n> offset(const arVertex<T, d>&vec);
 
 		void fill(arVertex<T, d> val);
+
+		constexpr size_t size() const;
 
 		using Eigen::Vector<arVertex<T, d>, n>::operator[];
 	};

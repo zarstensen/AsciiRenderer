@@ -160,6 +160,12 @@ namespace Asciir
 		Eigen::VectorX<arVertex<T, d>>::conservativeResize(size);
 	}
 
+	template<typename T, size_t d>
+	size_t arVertices<T, d>::size() const
+	{
+		return Eigen::VectorX<arVertex<T, d>>::size();
+	}
+
 	
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
@@ -199,7 +205,12 @@ namespace Asciir
 		for (arVertex<T, d>& elem : *this)
 			elem = val;
 	}
-	
+
+	template<typename T, size_t d, size_t n>
+	constexpr size_t s_arVertices<T, d, n>::size() const
+	{
+		return n;
+	}
 	
 	
 	template<typename T, size_t n>
