@@ -99,8 +99,8 @@ namespace Asciir
 
 							if (other_lsegment.direction.y == 0 || lsegment.direction.y == 0)
 							{
-								was_inside = false;
-								tmp_inside = is_inside;
+								was_inside = is_inside;
+								tmp_inside = !is_inside;
 							}
 							else if (other_lsegment.direction.y > 0 != lsegment.direction.y > 0)
 							{
