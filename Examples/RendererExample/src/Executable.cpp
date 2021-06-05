@@ -10,8 +10,9 @@ class TriangleLayer : public Asciir::Layer
 
 	void onUpdate() final
 	{
-		Asciir::Renderer::drawRect({ Asciir::Coord(0, 0), Asciir::Coord(99, 49) }, Asciir::Tile(0, 0, ' '));
-		Asciir::Renderer::drawRect({ Asciir::Coord( 5, 5 ), Asciir::Coord( 10, 10 ) }, Asciir::Tile(255, 255, 219));
+		Asciir::Renderer::clear();
+		Asciir::Renderer::drawPolygon({ Asciir::Coord(-10, 15), Asciir::Coord(10, 20), Asciir::Coord(30, 5) }, Asciir::Tile(255, 0, ' '));
+		Asciir::Renderer::drawRect({ {30, 30}, {40, 35} }, Asciir::Tile(255));
 		Asciir::Renderer::resize({ 100, 50 });
 	}
 };
