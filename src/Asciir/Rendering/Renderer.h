@@ -24,12 +24,12 @@ namespace Asciir
 
 	protected:
 
-		static Coords projectCoordsToTerminal(const Coords& coords);
-
-		template<size_t n>
-		static Coords projectCoordsToTerminal(const s_Coords<n>& coords);
+		template<typename T, std::enable_if_t<is_vertices_type_v<T>, bool> = false>
+		static Coords projectCoordsToTerminal(const T& coords);
 
 		static TerminalRenderer* s_renderer;
 		static const AsciiAttr* s_attr_handler;
 	};
 }
+
+#include "Renderer.ipp"
