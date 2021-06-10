@@ -29,13 +29,19 @@ namespace Asciir
 
 
 		bool visible(arVertex2D<Real> point) const;
-		static bool visibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point);
+		template<typename T, std::enable_if_t<is_list_type_v<Line, T>, bool> = false>
+		static bool visibleByAll(const T& lines, arVertex2D<Real> point);
 		
 		bool notVisible(arVertex2D<Real> point) const;
-		static bool notVisibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point);
+		template<typename T, std::enable_if_t<is_list_type_v<Line, T>, bool> = false>
+		static bool notVisibleByAll(const T& lines, arVertex2D<Real> point);
 
 		arVertex2D<Real> intersect(const Line& other);
 		bool intersects(arVertex2D<Real> point, Real margin = 0);
 		bool intDirection(arVertex2D<Real> point, Real margin = 0);
 	};
+
+	
 }
+
+#include "Lines.ipp"

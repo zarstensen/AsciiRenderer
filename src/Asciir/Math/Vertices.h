@@ -210,27 +210,147 @@ namespace Asciir
 	template<size_t n>
 	using s_Coords3D = s_arVertices3D<long long, n>;
 
+	template<typename T, typename TEST = void>
+	struct is_vert
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename T, size_t d, template<typename T, size_t> class TTest>
+	struct is_vert<TTest<T, d>, std::enable_if_t<std::is_same_v<TTest<T, d>, arVertex<T, d>>>>
+	{
+		static constexpr bool value = true;
+	};
+
 	// template check for array or vector types
 	template<typename T>
-	struct is_vertices_type
+	struct is_vertices
 	{
 		static constexpr bool value = false;
 	};
 
 	template<typename T, size_t d>
-	struct is_vertices_type<arVertices<T, d>>
+	struct is_vertices<arVertices<T, d>>
 	{
 		static constexpr bool value = true;
 	};
 
 	template<typename T, size_t d, size_t n>
-	struct is_vertices_type<s_arVertices<T, d, n>>
+	struct is_vertices<s_arVertices<T, d, n>>
+	{
+		static constexpr bool value = true;
+	};
+
+	template<typename TStorage, size_t d_storage, typename T>
+	struct is_vertices_type
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename TStorage, size_t d_storage, template<typename, size_t> class TArr>
+	struct is_vertices_type<TStorage, d_storage, TArr<TStorage, d_storage>>
+	{
+		static constexpr bool value = is_vertices<TArr<TStorage, d_storage>>::value;
+	};
+
+	template<typename TStorage, size_t d_storage, template<typename, size_t, size_t> class TArr, size_t n>
+	struct is_vertices_type<TStorage, d_storage, TArr<TStorage, d_storage, n>>
+	{
+		static constexpr bool value = is_vertices<TArr<TStorage, d_storage, n>>::value;
+	};
+
+	template<typename TStorage, typename T, typename TEST = void>
+	struct is_vertices_vtype
+	{
+		static constexpr bool value = false;
+	};
+
+	template<typename TStorage, size_t d_storage, template<typename, size_t, typename> class TVert, template<typename, size_t> class TArr>
+	struct is_vertices_vtype<TVert<TStorage, d_storage, void>, TArr<TStorage, d_storage>, std::enable_if_t<is_vert<TVert<TStorage, d_storage, void>>::value>>
+	{
+		static constexpr bool value = is_vertices<TArr<TStorage, d_storage>>::value;
+	};
+
+	template<typename TStorage, size_t d_storage, template<typename, size_t, typename> class TVert, template<typename, size_t, size_t> class TArr, size_t n>
+	struct is_vertices_vtype<TVert<TStorage, d_storage, void>, TArr<TStorage, d_storage, n>, std::enable_if_t<is_vert<TVert<TStorage, d_storage, void>>::value>>
+	{
+		static constexpr bool value = is_vertices<TArr<TStorage, d_storage, n>>::value;
+	};
+
+	template<typename T>
+	struct is_list
+	{
+		static constexpr bool value = is_vertices<T>::value;
+	};
+
+	template<typename T, size_t n>
+	struct is_list<std::array<T, n>>
 	{
 		static constexpr bool value = true;
 	};
 
 	template<typename T>
-	constexpr bool is_vertices_type_v = is_vertices_type<T>::value;
+	struct is_list<std::vector<T>>
+	{
+		static constexpr bool value = true;
+	};
+
+
+	template<typename TStorage, typename T>
+	struct is_list_type
+	{
+		static constexpr bool value = is_vertices_vtype<TStorage, T>::Value;
+	};
+
+	template<typename TStorage, template<typename ...> class T, typename ... Args>
+	struct is_list_type<TStorage, T<TStorage, Args...>>
+	{
+		static constexpr bool value = is_list<T<TStorage>>::value;
+	};
+
+	template<typename TStorage, size_t n, template<typename, size_t, typename ...> class T, typename ... Args>
+	struct is_list_type<TStorage, T<TStorage, n, Args...>>
+	{
+		static constexpr bool value = is_list<T<TStorage, n>>::value;
+	};
+
+
+	template<typename T>
+	constexpr bool is_vert_v = is_vert<T>::value;
+	template<typename T>
+	constexpr bool is_vertices_v = is_vertices<T>::value;
+	template<typename TStorage, size_t d, typename T>
+	constexpr bool is_vertices_type_v = is_vertices_type<TStorage, d, T>::value;
+	template<typename TStorage, typename T>
+	constexpr bool is_vertices_vtype_v = is_vertices_vtype<TStorage, T>::value;
+	template<typename T>
+	constexpr bool is_list_v = is_list<T>::value;
+	template<typename TStorage, typename T>
+	constexpr bool is_list_type_v = is_list_type<TStorage, T>::value;
+
+	// view class for verticies
+
+	template<typename T, size_t d>
+	class VertsView
+	{
+		const T* m_data;
+		size_t m_len;
+	public:
+
+		template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool> = false>
+		VertsView(const TArr& source);
+
+		template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool> = false>
+		VertsView(const TArr& source, size_t len, size_t offset = 0);
+
+		const T& operator[](size_t i) { return m_data[i]; }
+
+		size_t size() const { return m_len; }
+
+		const T* begin() const { return m_data; }
+		const T* end() const { return m_data + m_len; }
+
+	};
 
 	// ostream functions
 
@@ -238,6 +358,7 @@ namespace Asciir
 	std::ostream& operator<<(std::ostream& stream, const arVertex<T, n>& vert);
 	template<typename T, size_t n>
 	std::ostream& operator<<(std::ostream& stream, const arVertices<T, n>& verts);
+
 }
 
 #include "Vertices.ipp"

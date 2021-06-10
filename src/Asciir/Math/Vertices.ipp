@@ -212,7 +212,26 @@ namespace Asciir
 		return n;
 	}
 	
-	
+	// vertsView class
+
+	template<typename T, size_t d>
+	template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool>>
+	VertsView<T, d>::VertsView(const TArr& source)
+		: m_data(source.data()), m_len(source.size()) {}
+
+
+	template<typename T, size_t d>
+	template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool>>
+	VertsView<T, d>::VertsView(const TArr& source, size_t len, size_t offset)
+		: m_data(source.data() + offset), m_len(len)
+	{
+		AR_ASSERT(source.size() <= len + offset);
+	}
+
+
+
+
+
 	template<typename T, size_t n>
 	std::ostream& operator<<(std::ostream& stream, const arVertex<T, n>& vert)
 	{

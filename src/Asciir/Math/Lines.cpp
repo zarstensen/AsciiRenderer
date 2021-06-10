@@ -81,29 +81,9 @@ namespace Asciir
 	}
 	
 	 
-	bool Line::visibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point)
-	{
-		for (const Line& line : lines)
-			if (line.notVisible(point))
-				return false;
-
-		return true;
-	}
-	
-	 
 	bool Line::notVisible(arVertex2D<Real> point) const
 	{
 		return !visible(point);
-	}
-	
-	 
-	bool Line::notVisibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point)
-	{
-		for (const Line& line : lines)
-			if (line.visible(point))
-				return false;
-
-		return true;
 	}
 	
 	 
@@ -122,7 +102,7 @@ namespace Asciir
 	}
 	
 	// checks if the given point intersects the line
-	// margin: the are around the line that should be considered to intersect the point
+	// margin: the area around the line that should be considered to intersect the point
 	 
 	bool Line::intersects(arVertex2D<Real> point, Real margin)
 	{
@@ -162,7 +142,7 @@ namespace Asciir
 
 
 	// calls intersects with given arguments and also checks if the point is inside the direction vector of the line
-	 
+
 	bool Line::intDirection(arVertex2D<Real> point, Real margin)
 	{
 		bool intersects_line = intersects(point, margin);
@@ -178,5 +158,4 @@ namespace Asciir
 		else
 			return false;
 	}
-
 }
