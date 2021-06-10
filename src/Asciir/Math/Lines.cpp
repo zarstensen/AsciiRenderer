@@ -179,4 +179,95 @@ namespace Asciir
 			return false;
 	}
 
+	bool LineSegment::intersects(arVertex2D<Real> point, Real margin)
+	{
+		bool intersects_line = intersects(point, margin);
+
+		point -= offset;
+
+		if (intersects_line)
+			if (point.x > std::min(-margin, direction.x - margin) && point.x < std::max(margin, direction.x + margin) &&
+				point.y > std::min(-margin, direction.y - margin) && point.y < std::max(margin, direction.y + margin))
+				return true;
+			else
+				return false;
+		else
+			return false;
+	}
+
+	bool LineSegment::intersects(const Line& other)
+	{
+
+		if (direction.perp(other.direction))
+		{
+			if (direction.perp(offset - other.offset))
+				return true;
+			else
+				return false;
+		}
+
+		arVertex2D<Real> intersect = Line::intersect(other);
+
+		// check if point lays on the line segment
+
+		arVertex2D<Real> distance_to_offset = offset - intersect;
+		Real length_diff = distance_to_offset.norm() - direction.norm();
+		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+
+		return are_same_dir && length_diff < 0;
+	}
+
+	bool LineSegment::intersects(const LineSegment& other)
+	{
+
+		if (direction.perp(other.direction))
+		{
+			if (direction.perp(offset - other.offset)&&)
+				return true;
+			else
+				return false;
+		}
+
+		arVertex2D<Real> intersect = Line::intersect(other);
+
+		// check if point lays on this line segment
+
+		arVertex2D<Real> distance_to_offset = offset - intersect;
+		Real length_diff = distance_to_offset.norm() - direction.norm();
+		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+
+		// check if point lays on other line segment
+
+		arVertex2D<Real> distance_to_offset = other.offset - intersect;
+		Real other_length_diff = distance_to_offset.norm() - other.direction.norm();
+		bool other_are_same_dir = distance_to_offset.dot(other.direction) < 0;
+
+		return are_same_dir && length_diff < 0 && other_are_same_dir && other_length_diff < 0;
+	}
+
+
+	bool LineSegment::intersect(const Line&)
+	{
+		return false;
+	}
+
+
+
+	// A Line class which takes the length and position of the line into account.
+	// The length of the direction vector represents the length of the segment
+	class LineSegment : public Line
+	{
+	public:
+		using Line::Line;
+		LineSegment(Line other);
+
+		arVertex2D<Real> intersect(const Line& other);
+		arVertex2D<Real> intersect(const LineSegment& other);
+
+		bool intersects(arVertex2D<Real> point, Real margin = 0);
+		bool intersects(const Line& other);
+		bool intersects(const LineSegment& other);
+
+	};
+
 }
