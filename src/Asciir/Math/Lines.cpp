@@ -10,7 +10,14 @@ namespace Asciir
 	 
 	Line::Line(Vector<Real> direction, Vector<Real> offset)
 		: direction(direction), offset(offset) {}
-	
+
+	Line::Line(const Line& other)
+		: Line(other.direction, other.offset) {}
+
+	Line::operator LineSegment()
+	{
+		return LineSegment(*this);
+	}
 	 
 	Line Line::fromPoints(arVertex2D<Real> a, arVertex2D<Real> b)
 	{
@@ -160,10 +167,37 @@ namespace Asciir
 		}
 	}
 
+	bool Line::isPerpendicular(const Line& other)
+	{
+		return direction.perp(other.direction);
+	}
 
-	// calls intersects with given arguments and also checks if the point is inside the direction vector of the line
-	 
-	bool Line::intDirection(arVertex2D<Real> point, Real margin)
+	// if the lines does not intersect but is called anyways behavior is as follows
+	// DEBUG: asserts
+	// RELEASE: returns intersecting point as if the line segment was a line
+	arVertex2D<Real> LineSegment::intersect(const Line& other)
+	{
+		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
+		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		return Line::intersect(other);
+	}
+
+	// if the lines does not intersect but is called anyways behavior is as follows
+	// DEBUG: asserts
+	// RELEASE: returns intersecting point as if the line segment was a line
+	arVertex2D<Real> LineSegment::intersect(const LineSegment& other)
+	{
+		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
+		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		return Line::intersect(other);
+	}
+
+	bool LineSegment::isPerpendicular(const Line& other)
+	{
+		return direction.perp(other.direction);
+	}
+
+	bool LineSegment::intersects(arVertex2D<Real> point, Real margin)
 	{
 		bool intersects_line = intersects(point, margin);
 
@@ -179,4 +213,69 @@ namespace Asciir
 			return false;
 	}
 
+	bool LineSegment::intersects(const Line& other)
+	{
+
+		if (isPerpendicular(other))
+		{
+			if (direction.perp(offset - other.offset))
+				return true;
+			else
+				return false;
+		}
+
+		arVertex2D<Real> intersect = Line::intersect(other);
+
+		// check if point lays on the line segment
+
+		arVertex2D<Real> distance_to_offset = offset - intersect;
+		Real length_diff = distance_to_offset.norm() - direction.norm();
+		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+
+		return are_same_dir && length_diff < 0;
+	}
+
+	bool LineSegment::intersects(const LineSegment& other)
+	{
+
+		// special case for perpendicular lines
+		if (isPerpendicular(other))
+		{
+
+			if (direction.perp(offset - other.offset))
+			{
+				// check if the lines intersect each other
+
+				arVertex2D<Real> dist_end_ostart = direction + offset - other.offset;
+				arVertex2D<Real> dist_end_oend = direction + offset - other.direction + other.offset;
+				arVertex2D<Real> dist_oend_start = other.direction + other.offset - offset;
+				arVertex2D<Real> dist_oend_end = other.direction + other.offset - direction + offset;
+
+				// if the vectors point in diffrent directions the value will be negative
+				Real dot_oend = dist_oend_start.dot(dist_oend_end);
+				Real dot_end = dist_end_ostart.dot(dist_end_oend);
+
+				
+				return dot_oend < 0 || dot_end < 0;
+			}
+			else
+				return false;
+		}
+
+		arVertex2D<Real> intersect = Line::intersect(other);
+
+		// check if point lays on this line segment
+
+		arVertex2D<Real> distance_to_offset = offset - intersect;
+		Real length_diff = distance_to_offset.norm() - direction.norm();
+		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+
+		// check if point lays on other line segment
+
+		arVertex2D<Real> other_distance_to_offset = other.offset - intersect;
+		Real other_length_diff = other_distance_to_offset.norm() - other.direction.norm();
+		bool other_are_same_dir = other_distance_to_offset.dot(other.direction) < 0;
+
+		return are_same_dir && length_diff < 0 && other_are_same_dir && other_length_diff < 0;
+	}
 }
