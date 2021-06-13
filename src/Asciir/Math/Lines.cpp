@@ -16,7 +16,7 @@ namespace Asciir
 
 	Line::operator LineSegment()
 	{
-		return LineSegment(*this);
+		return LineSegment(direction, offset);
 	}
 	 
 	Line Line::fromPoints(arVertex2D<Real> a, arVertex2D<Real> b)
@@ -179,7 +179,7 @@ namespace Asciir
 
 	bool LineSegment::intersects(arVertex2D<Real> point, Real margin)
 	{
-		bool intersects_line = intersects(point, margin);
+		bool intersects_line = Line::intersects(point, margin);
 
 		point -= offset;
 

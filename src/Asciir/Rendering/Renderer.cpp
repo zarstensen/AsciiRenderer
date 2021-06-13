@@ -15,11 +15,10 @@ namespace Asciir
 		s_renderer = &AREngine::getEngine()->getTerminal().getRenderer();
 		s_attr_handler = &s_renderer->getAttrHandler();
 	}
-	
+
 	void Renderer::drawPolygon(Coords verts, Tile tile)
 	{
-		constexpr bool val = is_vertices_type_v<s_Coords<2>>;
-		Coords projected_verts = projectCoordsToTerminal<Coords>(verts);
+		Coords projected_verts = projectCoordsToTerminal(verts);
 
 		AR_INFO(projected_verts);
 
@@ -47,7 +46,7 @@ namespace Asciir
 
 	void Renderer::drawTile(Coord pos, Tile tile)
 	{
-		if (pos.x >= 0 && pos.x < (size_t) size().x && pos.y >= 0 && pos.y < (size_t) size().y)
+		if (pos.x >= 0 && (size_t )pos.x < size().x && pos.y >= 0 && (size_t) pos.y < size().y)
 		{
 			Tile prev_state = s_renderer->getState();
 			s_renderer->setState(tile);
@@ -58,7 +57,7 @@ namespace Asciir
 
 	Tile Renderer::viewTile(Coord pos)
 	{
-		AR_ASSERT_MSG(pos.x >= 0 && pos.x < (size_t) size().x&& pos.y >= 0 && pos.y < (size_t) size().y, "Cannot view tile outside of terminal size");
+		AR_ASSERT_MSG(pos.x >= 0 && (size_t) pos.x < size().x && pos.y >= 0 && (size_t) pos.y < size().y, "Cannot view tile outside of terminal size");
 		return s_renderer->getTile((TermVert)pos);
 	}
 

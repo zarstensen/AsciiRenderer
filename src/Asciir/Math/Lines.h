@@ -39,7 +39,8 @@ namespace Asciir
 		static bool visibleByAll(const T& lines, arVertex2D<Real> point);
 		
 		bool notVisible(arVertex2D<Real> point) const;
-		static bool notVisibleByAll(const std::vector<Line>& lines, arVertex2D<Real> point);
+		template<typename T, std::enable_if_t<is_list_type_v<Line, T>, bool> = false>
+		static bool notVisibleByAll(const T& lines, arVertex2D<Real> point);
 		
 		bool isPerpendicular(const Line& other);
 
@@ -53,6 +54,9 @@ namespace Asciir
 	{
 	public:
 		using Line::Line;
+
+		LineSegment(const Line& other) : Line(other) {};
+		LineSegment(const LineSegment& other) : Line((Line)other) {};
 
 		// direction goes from a to b
 		static LineSegment fromPoints(arVertex2D<Real> a, arVertex2D<Real> b) { return Line::fromPoints(a, b); };

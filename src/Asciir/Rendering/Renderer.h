@@ -24,7 +24,7 @@ namespace Asciir
 
 	protected:
 
-		template<typename T, std::enable_if_t<is_vertices_type_v<T>, bool> = false>
+		template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool> = false>
 		static Coords projectCoordsToTerminal(const T& coords);
 
 		static TerminalRenderer* s_renderer;
