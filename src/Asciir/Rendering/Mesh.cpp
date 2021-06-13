@@ -270,17 +270,6 @@ namespace Asciir
 		return m_faces[firstIndexFromFace(face_index) + index];
 	}
 
-	Mesh Mesh::intersect(Mesh cutter_poly, Mesh clipping_poly)
-	{
-		return Mesh();
-	}
-
-
-	Mesh Mesh::join(Mesh cutter_poly, Mesh clipping_poly)
-	{
-		
-	}
-
 	// Returns the first index of a face list
 	size_t Mesh::firstIndexFromFace(size_t face_index) const
 	{
