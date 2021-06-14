@@ -96,9 +96,9 @@ namespace Asciir
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
 		
 		if (index + 1 < faceCornerCount(face_index))
-			return LineSegment(getCornerVert(face_index, index), getCornerVert(face_index, index + 1));
+			return LineSegment::fromPoints(getCornerVert(face_index, index), getCornerVert(face_index, index + 1));
 		else
-			return LineSegment(getCornerVert(face_index, index), getCornerVert(face_index, 0));
+			return LineSegment::fromPoints(getCornerVert(face_index, index), getCornerVert(face_index, 0));
 	}
 
 	void Mesh::addVertex(Coord new_vert)
@@ -268,6 +268,38 @@ namespace Asciir
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Corner index is out of bounds");
 
 		return m_faces[firstIndexFromFace(face_index) + index];
+	}
+
+	Mesh Mesh::join(Mesh cutter_poly, Mesh clipping_poly)
+	{
+		std::vector<bool> is_cutter_processed(cutter_poly.cornerCount(), false);
+		std::vector<bool> is_clipping_processed(clipping_poly.cornerCount(), false);
+		
+		Mesh* active_mesh = &cutter_poly;
+
+		return *active_mesh;
+
+	}
+
+	bool Mesh::isInside(Coord coord)
+	{
+
+		Line ray = Line::horzLine(coord);
+		int winding_number = 0;
+
+		for (size_t i = 0; i < faceCount(); i++)
+		{
+			for (size_t j = 0; j < faceCornerCount(i); j++)
+			{
+				LineSegment edge = getEdge(i, j);
+				bool intersects = edge.intersects(ray);
+				if (intersects && edge.offset.x <= ray.offset.x && edge.direction.y != 0)
+					winding_number += edge.direction.y < 0 ? 1 : -1;
+			}
+		}
+
+		return winding_number > 0;
+
 	}
 
 	// Returns the first index of a face list

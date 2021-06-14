@@ -38,7 +38,8 @@ namespace Asciir
 		Mesh(const Coords& vertices);
 
 		// Creates a mesh with edges connecting each vertex in each element
-		// the first element in the vector will have the face connected as CW and the rest as CCW
+		// The first element in the vector will have the face connected as CW and the rest as CCW
+		// NOTE: this constructor assumes that the vertices given are in a clockwise order
 		Mesh(const std::vector<Coords>& polygon);
 		Mesh(const Coords& vertices, const std::vector<size_t>& edges);
 
@@ -72,6 +73,8 @@ namespace Asciir
 		*/
 		void addFace(const std::vector<size_t>& new_face) { addFace(new_face, faceCount()); };
 		void addFace(const std::vector<size_t>& new_face, size_t index);
+		
+		// inserts a corner at the given position and face
 		void extendFace(size_t face_index, size_t new_corner) { extendFace(face_index, new_corner, faceCornerCount(face_index)); };
 		void extendFace(size_t face_index, size_t new_corner, size_t corner_index);
 		void extendFace(size_t face_index, const std::vector<size_t>& new_corners) { extendFace(face_index, new_corners, faceCornerCount(face_index)); }
@@ -91,12 +94,14 @@ namespace Asciir
 
 		size_t faceCornerCount(size_t face_index) const;
 		size_t faceCount() const { return m_face_count; };
-		size_t cornerCount() const { return m_faces.size(); };
+		size_t cornerCount() const { return m_faces.size() - m_face_count; };
 		size_t vertCount() const { return m_vertices.size(); }
 
 		static Mesh intersect(Mesh cutter_poly, Mesh clipping_poly);
 		static Mesh join(Mesh cutter_poly, Mesh clipping_poly);
 		static Mesh diffrence(Mesh cutter_poly, Mesh clipping_poly);
+
+		bool isInside(Coord coord);
 
 	protected:
 		size_t firstIndexFromFace(size_t face_index) const;

@@ -21,6 +21,10 @@ namespace Asciir
 
 		// direction goes from a to b
 		static Line fromPoints(arVertex2D<Real> a, arVertex2D<Real> b);
+		// direction is horizontal and intersects p
+		static Line horzLine(arVertex2D<Real> p);
+		// direction is vertical and intersects p
+		static Line verticLine(arVertex2D<Real> p);
 
 		Real fx(Real x) const;
 		Real fy(Real y) const;

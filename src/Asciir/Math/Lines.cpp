@@ -23,6 +23,16 @@ namespace Asciir
 	{
 		return Line(b - a, a);
 	}
+
+	Line Line::horzLine(arVertex2D<Real> p)
+	{
+		return Line::fromPoints(p, p + arVertex2D<Real>(1, 0));
+	}
+
+	Line Line::verticLine(arVertex2D<Real> p)
+	{
+		return Line::fromPoints(p, p + arVertex2D<Real>(0, 1));
+	}
 	
 	 
 	Real Line::fx(Real x) const
@@ -210,9 +220,9 @@ namespace Asciir
 
 		arVertex2D<Real> distance_to_offset = offset - intersect;
 		Real length_diff = distance_to_offset.norm() - direction.norm();
-		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+		bool are_same_dir = distance_to_offset.dot(direction) <= 0;
 
-		return are_same_dir && length_diff < 0;
+		return are_same_dir && length_diff <= 0;
 	}
 
 	bool LineSegment::intersects(const LineSegment& other)
