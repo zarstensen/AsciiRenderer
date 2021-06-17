@@ -31,7 +31,8 @@
 #include "Asciir/Math/Lines.h"
 
 #include "Asciir/Rendering/RenderConsts.h"
-#include "ASciir/Rendering/Renderer.h"
+#include "Asciir/Rendering/Renderer.h"
+#include "Asciir/Rendering/Mesh.h"
 
 // Platform specific headers
 

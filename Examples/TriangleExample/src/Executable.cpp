@@ -3,7 +3,9 @@
 class TriangleLayer : public Asciir::Layer
 {
 
-	Asciir::TermVerts triangle_verts = Asciir::TermVerts({ Asciir::TermVert(20, 40), Asciir::TermVert(80, 40), Asciir::TermVert(50, 10) });
+	Asciir::Mesh triangle_verts = Asciir::Mesh(
+		{ { {20, 40}, {50, 10}, {80, 40} },
+		  { {35, 25}, {65, 25}, {50, 40} } });
 
 	Asciir::TInt pos = 0;
 	bool forward = true;
@@ -25,9 +27,8 @@ class TriangleLayer : public Asciir::Layer
 
 		if (pos > 180 || pos <= -80)
 			forward = !forward;
+		Asciir::Renderer::drawMesh(triangle_verts.offset({ forward ? 1 : -1, 0 }), Asciir::Tile(Asciir::YELLOW8));
 
-		Asciir::Renderer::drawPolygon(triangle_verts.offset(Asciir::TermVert(pos, 0)), Asciir::Tile(255));
-		
 		Asciir::Renderer::resize({ 240, 63 });
 
 		Asciir::sleep(1000 / 60);
@@ -42,6 +43,12 @@ public:
 		PushLayer(new TriangleLayer);
 	}
 };
+
+std::ostream& operator<<(std::ostream& stream, bool boolean_value)
+{
+	stream << (boolean_value ? "true" : "false");
+	return stream;
+}
 
 Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 {

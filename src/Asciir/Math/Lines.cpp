@@ -16,12 +16,22 @@ namespace Asciir
 
 	Line::operator LineSegment()
 	{
-		return LineSegment(*this);
+		return LineSegment(direction, offset);
 	}
 	 
 	Line Line::fromPoints(arVertex2D<Real> a, arVertex2D<Real> b)
 	{
 		return Line(b - a, a);
+	}
+
+	Line Line::horzLine(arVertex2D<Real> p)
+	{
+		return Line::fromPoints(p, p + arVertex2D<Real>(1, 0));
+	}
+
+	Line Line::verticLine(arVertex2D<Real> p)
+	{
+		return Line::fromPoints(p, p + arVertex2D<Real>(0, 1));
 	}
 	
 	 
@@ -158,7 +168,7 @@ namespace Asciir
 	arVertex2D<Real> LineSegment::intersect(const Line& other)
 	{
 		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
-		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		AR_ASSERT_MSG(!isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
 		return Line::intersect(other);
 	}
 
@@ -168,7 +178,7 @@ namespace Asciir
 	arVertex2D<Real> LineSegment::intersect(const LineSegment& other)
 	{
 		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
-		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		AR_ASSERT_MSG(!isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
 		return Line::intersect(other);
 	}
 
@@ -179,13 +189,13 @@ namespace Asciir
 
 	bool LineSegment::intersects(arVertex2D<Real> point, Real margin)
 	{
-		bool intersects_line = intersects(point, margin);
+		bool intersects_line = Line::intersects(point, margin);
 
 		point -= offset;
 
 		if (intersects_line)
-			if (point.x > std::min(-margin, direction.x - margin) && point.x < std::max(margin, direction.x + margin) &&
-				point.y > std::min(-margin, direction.y - margin) && point.y < std::max(margin, direction.y + margin))
+			if (point.x >= std::min(-margin, direction.x - margin) && point.x <= std::max(margin, direction.x + margin) &&
+				point.y >= std::min(-margin, direction.y - margin) && point.y <= std::max(margin, direction.y + margin))
 				return true;
 			else
 				return false;
@@ -210,9 +220,9 @@ namespace Asciir
 
 		arVertex2D<Real> distance_to_offset = offset - intersect;
 		Real length_diff = distance_to_offset.norm() - direction.norm();
-		bool are_same_dir = distance_to_offset.dot(direction) < 0;
+		bool are_same_dir = distance_to_offset.dot(direction) <= 0;
 
-		return are_same_dir && length_diff < 0;
+		return are_same_dir && length_diff <= 0;
 	}
 
 	bool LineSegment::intersects(const LineSegment& other)

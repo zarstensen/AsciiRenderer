@@ -137,12 +137,9 @@ namespace Asciir
 	template<typename T, size_t d>
 	arVertices<T, d> arVertices<T, d>::offset(const arVertex<T, d>& vec)
 	{
-		arVertices<T, d> res = *this;
+		arVertices<T, d>& res = *this;
 
-		for (arVertex<T, d>& vert : res)
-		{
-			vert += vec;
-		}
+		for (arVertex<T, d>& vert : res) vert += vec;
 
 		return res;
 	}
@@ -248,12 +245,17 @@ namespace Asciir
 	template<typename T, size_t d>
 	std::ostream& operator<<(std::ostream& stream, const arVertices<T, d>& verts)
 	{
-		for (size_t i = 0; i < (size_t) verts.size() - 1; i++)
+		if (verts.size() > 0)
 		{
-			stream << verts[i] << ',';
-		}
+			for (size_t i = 0; i < (size_t)verts.size() - 1; i++)
+			{
+				stream << verts[i] << ',';
+			}
 
-		stream << verts[verts.size() - 1];
+			stream << verts[verts.size() - 1];
+		}
+		else
+			stream << "empty";
 
 		return stream;
 	}

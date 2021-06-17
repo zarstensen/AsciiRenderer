@@ -88,14 +88,14 @@ namespace Asciir
 					{
 						size_t next_vert = verti + 1 > (size_t) vertices.size() - 1 ? 0 : verti + 1;
 						RealVertex point(x, line);
-						Line lsegment = Line::fromPoints(vertices[verti], vertices[next_vert]);
+						LineSegment lsegment = LineSegment::fromPoints(vertices[verti], vertices[next_vert]);
 
 						// corner case {jokes be funny :)}
 						if((RealVertex) vertices[verti] == point)
 						{
 							RealVertex other_corner = vertices[verti == 0 ? vertices.size() - 1 : verti - 1];
 
-							Line other_lsegment = Line::fromPoints(other_corner, vertices[verti]);
+							LineSegment other_lsegment = LineSegment::fromPoints(other_corner, vertices[verti]);
 
 							if (other_lsegment.direction.y == 0 || lsegment.direction.y == 0)
 							{
@@ -120,7 +120,7 @@ namespace Asciir
 						// calculate width based on the slope of the line
 						Real width = (Real) std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
 
-						bool intersects = lsegment.intDirection(point, width);
+						bool intersects = lsegment.intersects(point, width);
 						if (intersects)
 						{
 							was_inside = true;

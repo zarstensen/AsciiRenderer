@@ -36,8 +36,10 @@ namespace Asciir
 			m_log_file.open(log_name, std::ios::app);
 		else
 			m_log_file.open(log_name);
+
 		m_name = log_name;
 		m_save_file = save_file;
+		m_log_file << std::boolalpha;
 	}
 
 	void FileLog::close()

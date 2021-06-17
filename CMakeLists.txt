@@ -30,6 +30,13 @@ else()
 message(STATUS "unknown architecture")
 endif()
 
+set(EXAMPLES
+    BasicInputExample
+    MouseInputExample
+    RendererExample
+    TriangleExample
+)
+
 set(INCLUDE_DIRS
     src/pch
     src
@@ -81,6 +88,7 @@ set(HEADER_DIR_LOGGING
 
 set(SRC_DIR_MATH
     src/Asciir/Math/Lines.cpp
+    src/Asciir/Math/Lines.ipp
     src/Asciir/Math/Vertices.ipp
     src/Asciir/Math/Vector.ipp
     src/Asciir/Math/Matrix.ipp
@@ -97,6 +105,7 @@ set(HEADER_DIR_MATH
 
 set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
+    src/Asciir/Rendering/Mesh.cpp
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
@@ -104,6 +113,7 @@ set(SRC_DIR_RENDERING
 
 set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.h
+    src/Asciir/Rendering/Mesh.h
     src/Asciir/Rendering/TerminalRenderer.h
     src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
@@ -243,7 +253,7 @@ if(ASCIIR_EXAMPLES)
     foreach(EXAMPLE IN ITEMS ${EXAMPLES})
         add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/${EXAMPLE} ${EXAMPLE})
     endforeach()
-
+    
     set_target_properties(${EXAMPLES} PROPERTIES
         FOLDER "Examples"
     )

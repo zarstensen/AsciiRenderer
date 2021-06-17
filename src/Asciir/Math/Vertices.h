@@ -216,8 +216,8 @@ namespace Asciir
 		static constexpr bool value = false;
 	};
 
-	template<typename T, size_t d, template<typename T, size_t> class TTest>
-	struct is_vert<TTest<T, d>, std::enable_if_t<std::is_same_v<TTest<T, d>, arVertex<T, d>>>>
+	template<typename T, size_t d, typename TTest, template<typename T, size_t, typename> class TVert>
+	struct is_vert<TVert<T, d, TTest>, std::enable_if_t<std::is_same_v<TVert<T, d, TTest>, arVertex<T, d>>>>
 	{
 		static constexpr bool value = true;
 	};
