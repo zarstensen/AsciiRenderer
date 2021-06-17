@@ -240,8 +240,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
 endif()
 
 if(ASCIIR_EXAMPLES)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/BasicInputExample BasicInputExample)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/MouseInputExample MouseInputExample)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/RendererExample RendererExample)
-add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/TriangleExample TriangleExample)
+    foreach(EXAMPLE IN ITEMS ${EXAMPLES})
+        add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/${EXAMPLE} ${EXAMPLE})
+    endforeach()
+
+    set_target_properties(${EXAMPLES} PROPERTIES
+        FOLDER "Examples"
+    )
 endif()
