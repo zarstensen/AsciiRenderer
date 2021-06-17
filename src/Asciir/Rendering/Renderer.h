@@ -2,6 +2,7 @@
 
 #include "TerminalRenderer.h"
 #include "Asciir/Math/Vertices.h"
+#include "Mesh.h"
 
 namespace Asciir
 {
@@ -12,7 +13,7 @@ namespace Asciir
 		static void init();
 
 		// graphic functions
-		static void drawPolygon(Coords verts, Tile tile);
+		static void drawMesh(const Mesh& mesh, Tile tile);
 		static void drawRect(s_Coords<2> verts, Tile tile);
 		static void drawTile(Coord pos, Tile tile);
 		static Tile viewTile(Coord pos);

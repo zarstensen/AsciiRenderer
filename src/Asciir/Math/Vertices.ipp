@@ -137,12 +137,9 @@ namespace Asciir
 	template<typename T, size_t d>
 	arVertices<T, d> arVertices<T, d>::offset(const arVertex<T, d>& vec)
 	{
-		arVertices<T, d> res = *this;
+		arVertices<T, d>& res = *this;
 
-		for (arVertex<T, d>& vert : res)
-		{
-			vert += vec;
-		}
+		for (arVertex<T, d>& vert : res) vert += vec;
 
 		return res;
 	}

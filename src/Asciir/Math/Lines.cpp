@@ -168,7 +168,7 @@ namespace Asciir
 	arVertex2D<Real> LineSegment::intersect(const Line& other)
 	{
 		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
-		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		AR_ASSERT_MSG(!isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
 		return Line::intersect(other);
 	}
 
@@ -178,7 +178,7 @@ namespace Asciir
 	arVertex2D<Real> LineSegment::intersect(const LineSegment& other)
 	{
 		AR_ASSERT_MSG(intersects(other), "Cannot find intersecting point if the lines do not intersect");
-		AR_ASSERT_MSG(isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
+		AR_ASSERT_MSG(!isPerpendicular(other), "Cannot find intersecting point if the lines are perpendicular");
 		return Line::intersect(other);
 	}
 
@@ -194,8 +194,8 @@ namespace Asciir
 		point -= offset;
 
 		if (intersects_line)
-			if (point.x > std::min(-margin, direction.x - margin) && point.x < std::max(margin, direction.x + margin) &&
-				point.y > std::min(-margin, direction.y - margin) && point.y < std::max(margin, direction.y + margin))
+			if (point.x >= std::min(-margin, direction.x - margin) && point.x <= std::max(margin, direction.x + margin) &&
+				point.y >= std::min(-margin, direction.y - margin) && point.y <= std::max(margin, direction.y + margin))
 				return true;
 			else
 				return false;

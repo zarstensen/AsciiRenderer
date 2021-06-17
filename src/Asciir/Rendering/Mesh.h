@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Lines.h"
 
@@ -43,18 +45,13 @@ namespace Asciir
 		Mesh(const std::vector<Coords>& polygon);
 		Mesh(const Coords& vertices, const std::vector<size_t>& edges);
 
-		Coord& getVert(size_t index) { return m_vertices[index]; };
-		Coord getVert(size_t index) const { return m_vertices[index]; };
 
-		Coords& getVerts() { return m_vertices; }
-		const Coords& getVerts() const { return m_vertices; }
-
-		size_t getCorner(size_t face_index, size_t index) const { return m_faces[firstIndexFromFace(face_index) + index]; }
-		arVertex2D<Real> getCornerVert(size_t face_index, size_t index) const { return getVert(getCorner(face_index, index)); }
 
 		const std::vector<size_t>& getFaces() const { return m_faces; }
 
 		LineSegment getEdge(size_t face_index, size_t index) const;
+		// mods the input index by the number of corners in a face, c = circular
+		LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
 
 		void addVertex(Coord new_vert);
 		void addVertex(Coord new_vert, size_t index);
@@ -80,6 +77,14 @@ namespace Asciir
 		void extendFace(size_t face_index, const std::vector<size_t>& new_corners) { extendFace(face_index, new_corners, faceCornerCount(face_index)); }
 		void extendFace(size_t face_index, const std::vector<size_t>& new_corners, size_t index);
 
+		// creates a face (CCW) out of the range of vertices selected
+		void joinAsFace(size_t vert_start, size_t vert_stop);
+		void joinAsFace(const std::vector<size_t>& verts);
+
+		// creates a hole (CW) out of the range of vertices selected
+		void joinAsHole(size_t vert_start, size_t vert_stop);
+		void joinAsHole(const std::vector<size_t>& verts);
+
 		void removeVertex(size_t index);
 		void removeVertices(size_t index_begin, size_t index_offset);
 
@@ -87,21 +92,26 @@ namespace Asciir
 		void decreaseFace(size_t face_index, size_t index);
 		
 		void setVertex(size_t index, Coord new_val);
-		Coord getVertex(size_t index);
+		Mesh& offset(Coord offset);
+		Coord getVertex(size_t index) const;
+		// mods the input index by the number of vertices
+		Coord cgetVertex(size_t index) const { return getVertex(index & vertCount()); };
+
+		const Coords& getVerts() const { return m_vertices; }
 
 		void setCorner(size_t face_index, size_t index, size_t new_corner);
-		size_t getCorner(size_t face_index, size_t index);
+		size_t getCorner(size_t face_index, size_t index) const;
+		// mods the input index by the number of corners
+		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index));  };
+		arVertex2D<Real> getCornerVert(size_t face_index, size_t index) const { return getVertex(getCorner(face_index, index)); }
+		arVertex2D<Real> cgetCornerVert(size_t face_index, size_t index) const { return getVertex(cgetCorner(face_index, index)); }
 
 		size_t faceCornerCount(size_t face_index) const;
 		size_t faceCount() const { return m_face_count; };
 		size_t cornerCount() const { return m_faces.size() - m_face_count; };
 		size_t vertCount() const { return m_vertices.size(); }
 
-		static Mesh intersect(Mesh cutter_poly, Mesh clipping_poly);
-		static Mesh join(Mesh cutter_poly, Mesh clipping_poly);
-		static Mesh diffrence(Mesh cutter_poly, Mesh clipping_poly);
-
-		bool isInside(Coord coord);
+		bool isInside(Coord coord) const;
 
 	protected:
 		size_t firstIndexFromFace(size_t face_index) const;

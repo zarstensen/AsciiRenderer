@@ -55,7 +55,9 @@ assert(false);\
 #endif
 
 #ifdef AR_DEBUG
-#define AR_ASSERT_MSG(x, ...) if(!(x)) {AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;assert(false);}
+#define AR_ASSERT_MSG(x, ...) if(!(x)) {AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;assert((false && "Error message can be found in a log file"));}
 #else
 #define AR_ASSERT_MSG(x, ...)
 #endif
+
+#define AR_ASSERT_VOLATILE(x, ...) if(!(x)) {AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__);AR_DEBUG_BREAK;assert((false && "Error message can be found in a log file"));}
