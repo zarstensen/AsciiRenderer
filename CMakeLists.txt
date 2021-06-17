@@ -253,8 +253,8 @@ if(ASCIIR_EXAMPLES)
     foreach(EXAMPLE IN ITEMS ${EXAMPLES})
         add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/${EXAMPLE} ${EXAMPLE})
     endforeach()
+    
+    set_target_properties(${EXAMPLES} PROPERTIES
+        FOLDER "Examples"
+    )
 endif()
-
-set_target_properties(${EXAMPLES} PROPERTIES
-    FOLDER "Examples"
-)
