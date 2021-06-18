@@ -17,4 +17,15 @@ namespace Asciir
 	{
 		return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
 	}
+
+	Real castRealMilli(const duration& dur)
+	{
+		return Real(std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count()) / 1000000;
+	}
+
+	std::ostream& operator<<(std::ostream& stream, const DeltaTime& time)
+	{
+		stream << time.milliSeconds() << " ms";
+		return stream;
+	}
 }

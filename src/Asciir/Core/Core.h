@@ -18,7 +18,9 @@
 
 namespace Asciir
 {
+	// value used for terminal position arguments
 	typedef short TInt;
+	// value used for numbers with decimal points
 	typedef float Real;
 
 	constexpr int BIT_SHL(int x, int a = 1)

@@ -19,7 +19,7 @@ namespace Asciir
 		// gets called when the layer is removed from the layer stack
 		virtual void onRemove() {};
 		// gets called when the engine is updating
-		virtual void onUpdate() {};
+		virtual void onUpdate(DeltaTime delta_time) {};
 		// gets called before onUpdate with all the events polled
 		virtual void onEvent(Event& e) {};
 

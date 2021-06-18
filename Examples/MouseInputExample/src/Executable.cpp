@@ -10,7 +10,7 @@ public:
 		Asciir::Renderer::clear(Asciir::Tile(Asciir::Color(0, 0, 255)));
 	}
 
-	void onUpdate() final
+	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
 		if (Asciir::Input::isMouseToggled(Asciir::MouseKey::LEFT_BUTTON))
 		{

@@ -10,14 +10,20 @@ class TriangleLayer : public Asciir::Layer
 	Asciir::TInt pos = 0;
 	bool forward = true;
 
+	Asciir::Real avg_time = 0;
+	size_t frames = 0;
+
 	void onStart() final
 	{
 		Asciir::Renderer::resize({ 240, 63 });
 	}
 
-	void onUpdate() final
+	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
-		
+		avg_time += delta_time.seconds();
+		frames++;
+		AR_INFO(1/(avg_time/frames));
+
 		Asciir::Renderer::clear(Asciir::Tile(25));
 		
 		if (forward)
@@ -27,6 +33,7 @@ class TriangleLayer : public Asciir::Layer
 
 		if (pos > 180 || pos <= -80)
 			forward = !forward;
+
 		Asciir::Renderer::drawMesh(triangle_verts.offset({ forward ? 1 : -1, 0 }), Asciir::Tile(Asciir::YELLOW8));
 
 		Asciir::Renderer::resize({ 240, 63 });

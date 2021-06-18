@@ -24,6 +24,7 @@ namespace Asciir
 			layer->onStart();
 		m_terminal.onStart();
 		m_running = true;
+		m_last_frame_start = getTime();
 		run();
 	}
 	
@@ -33,12 +34,17 @@ namespace Asciir
 		AR_CORE_INFO("Running engine");
 		while (m_running)
 		{
+			duration m_curr_frame_start = getTime();
+			DeltaTime d_time(castRealMilli(m_curr_frame_start - m_last_frame_start));
+
 			m_terminal.pollInput();
 
 			for (Layer* layer: m_layerStack)
-				layer->onUpdate();
+				layer->onUpdate(d_time);
 
 			m_terminal.onUpdate();
+
+			m_last_frame_start = m_curr_frame_start;
 		}
 	}
 	

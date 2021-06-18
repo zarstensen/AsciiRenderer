@@ -8,7 +8,7 @@ class TriangleLayer : public Asciir::Layer
 		Asciir::Renderer::resize({ 100, 50 });
 	}
 
-	void onUpdate() final
+	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
 		Asciir::Renderer::clear();
 		Asciir::Renderer::resize({ 100, 50 });

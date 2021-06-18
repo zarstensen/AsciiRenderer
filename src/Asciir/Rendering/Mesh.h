@@ -5,7 +5,6 @@
 
 namespace Asciir
 {
-
 	/*
 	* A class containing vertices and data about how to connect them
 	* Points will be determinded wether to be outside or inside the mesh depending on the winding order of the edges

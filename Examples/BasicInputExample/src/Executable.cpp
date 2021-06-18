@@ -4,7 +4,7 @@ class ExampleLayer : public Asciir::Layer
 {
 	Asciir::TermVert pos = { 10, 10 };
 
-	void onUpdate() final
+	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
 		Asciir::Renderer::clear(Asciir::Tile({ 0, 0, 155 }, {0, 0, 155}, 219));
 

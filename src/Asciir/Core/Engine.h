@@ -37,6 +37,7 @@ namespace Asciir
 		Terminal m_terminal;
 		bool m_running = false;
 		LayerStack m_layerStack;
+		duration m_last_frame_start;
 
 		static AREngine* i_engine;
 	};

@@ -35,12 +35,12 @@ namespace Asciir
 			bottom_right_coord.x = std::max(bottom_right_coord.x, vert.x);
 			bottom_right_coord.y = std::max(bottom_right_coord.y, vert.y);
 
-			bottom_right_coord.x = bottom_right_coord.x >= size().x ? size().x - 1 : bottom_right_coord.x;
-			bottom_right_coord.y = bottom_right_coord.y >= size().y ? size().y - 1 : bottom_right_coord.y;
+			bottom_right_coord.x = bottom_right_coord.x >= (long long) size().x ? size().x - 1 : bottom_right_coord.x;
+			bottom_right_coord.y = bottom_right_coord.y >= (long long) size().y ? size().y - 1 : bottom_right_coord.y;
 		}
 
-		for (TInt y = top_left_coord.y; y < bottom_right_coord.y + 1; y++)
-			for (TInt x = top_left_coord.x; x < bottom_right_coord.x + 1; x++)
+		for (TInt y = (TInt) top_left_coord.y; y < bottom_right_coord.y + 1; y++)
+			for (TInt x = (TInt) top_left_coord.x; x < bottom_right_coord.x + 1; x++)
 				if (mesh.isInside({ x, y })) s_renderer->drawTile({x, y});
 
 		s_renderer->setState(prev_state);
