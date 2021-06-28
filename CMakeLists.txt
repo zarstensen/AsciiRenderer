@@ -26,6 +26,7 @@ endif()
 # options
 option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
 option(ASCIIR_EXAMPLES "build example projects" OFF)
+option(ASCIIR_HIGH_PRECISSION_FLOAT "uses double instead of float as floating point data type (uses more memory)" OFF)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
 set(ARCH "x64")
@@ -34,6 +35,14 @@ set(ARCH "x86")
 else()
 message(STATUS "unknown architecture")
 endif()
+
+define_property(
+    TARGET
+    PROPERTY FOLDER
+    INHERITED
+    BRIEF_DOCS "Set the folder name."
+    FULL_DOCS  "Use to organize targets in an IDE."
+)
 
 set(EXAMPLES
     BasicInputExample
@@ -53,6 +62,7 @@ set(SRC_DIR_CORE
     src/Asciir/Core/LayerStack.cpp 
     src/Asciir/Core/Terminal.cpp 
     src/Asciir/Core/Timing.cpp  
+    src/Asciir/Core/AsciirLiterals.cpp
 )
 
 set(HEADER_DIR_CORE 
@@ -61,8 +71,10 @@ set(HEADER_DIR_CORE
     src/Asciir/Core/EntryPoint.h 
     src/Asciir/Core/Layer.h 
     src/Asciir/Core/LayerStack.h 
+    src/Asciir/Core/MacroArguments.h
     src/Asciir/Core/Terminal.h 
-    src/Asciir/Core/Timing.h 
+    src/Asciir/Core/Timing.h
+    src/Asciir/Core/AsciirLiterals.h
 )
 
 set(DIR_EVENT
@@ -92,6 +104,7 @@ set(HEADER_DIR_LOGGING
 )
 
 set(SRC_DIR_MATH
+    src/Asciir/Math/Math.cpp
     src/Asciir/Math/Lines.cpp
     src/Asciir/Math/Lines.ipp
     src/Asciir/Math/Vertices.ipp
@@ -101,6 +114,7 @@ set(SRC_DIR_MATH
 )
 
 set(HEADER_DIR_MATH
+    src/Asciir/Math/Math.h
     src/Asciir/Math/Lines.h
     src/Asciir/Math/Vertices.h
     src/Asciir/Math/Vector.h
@@ -225,7 +239,12 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC $<$<CONFIG:DEBUG>:AR_DEBUG> $<$<CONFIG:INLINEDEBUG>:AR_DEBUG> $<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=2 AR_CLIENT_VERBOSITY=4> $<$<CONFIG:RELEASE,DEBUG,INLINEDEBUG>:AR_CORE_LOG_DIR="../../../logs/core_log.log" AR_CLIENT_LOG_DIR="../../../logs/client_log.log"> $<$<CONFIG:DEPLOYREL>:AR_CORE_LOG_DIR="./logs/core_log.log" AR_CLIENT_LOG_DIR="./logs/client_log.log">)
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+$<$<CONFIG:DEBUG,INLINEDEBUG>:AR_DEBUG>
+$<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=2 AR_CLIENT_VERBOSITY=4>
+$<$<CONFIG:RELEASE,DEBUG,INLINEDEBUG>:AR_CORE_LOG_DIR="../../../logs/core_log.log" AR_CLIENT_LOG_DIR="../../../logs/client_log.log">
+$<$<CONFIG:DEPLOYREL>:AR_CORE_LOG_DIR="./logs/core_log.log" AR_CLIENT_LOG_DIR="./logs/client_log.log">
+$<$<BOOL:${ASCIIR_HIGH_PRECISSION_FLOAT}>:AR_HIGH_PRECISSION_FLOAT>)
 
 if(${UNIX})
 find_package(X11 REQUIRED)
@@ -249,7 +268,19 @@ set_target_properties(${PROJECT_NAME}
 
 # Eigen 3
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/modules/eigen)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
+
+# OpenAL soft
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
+
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "OpenAL")
+
+target_link_libraries(${PROJECT_NAME} OpenAL)
+
+
 
 if(ASCIIR_LOG_VIEWER)
 add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
