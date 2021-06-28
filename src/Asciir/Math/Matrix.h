@@ -62,13 +62,13 @@ namespace Asciir
 	// s_ = static size
 
 	template<typename T>
-	constexpr arMatrix<T> arMatrix2 = arMatrix<T>(2, 2);
+	static const arMatrix<T> arMatrix2 = arMatrix<T>(2, 2);
 
 	template<typename T>
-	constexpr arMatrix<T> arMatrix3 = arMatrix<T>(3, 3);
+	static const arMatrix<T> arMatrix3 = arMatrix<T>(3, 3);
 
 	template<typename T>
-	constexpr arMatrix<T> arMatrix4 = arMatrix<T>(4, 4);
+	static const arMatrix<T> arMatrix4 = arMatrix<T>(4, 4);
 
 	template<typename T>
 	using s_arMatrix2 = s_arMatrix<T, 2, 2>;

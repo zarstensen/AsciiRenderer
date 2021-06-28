@@ -5,6 +5,7 @@
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
+#include "Asciir/Rendering/Renderer.h"
 
 namespace Asciir
 {
@@ -34,6 +35,7 @@ namespace Asciir
 		AR_CORE_INFO("Running engine");
 		while (m_running)
 		{
+			Renderer::clear();
 			duration m_curr_frame_start = getTime();
 			DeltaTime d_time(castRealMilli(m_curr_frame_start - m_last_frame_start));
 
@@ -41,6 +43,8 @@ namespace Asciir
 
 			for (Layer* layer: m_layerStack)
 				layer->onUpdate(d_time);
+
+			Renderer::flushQueue();
 
 			m_terminal.onUpdate();
 

@@ -64,12 +64,12 @@ namespace Asciir
 	
 	template<typename T>
 	arVertex<T, 2>::arVertex(POINT point)
-		: arVertex(point.x, point.y){}
+		: arVertex((Real) point.x, (Real) point.y){}
 
 	template<typename T>
 	arVertex<T, 2>::operator POINT()
 	{
-		return { x, y };
+		return { (LONG) x, (LONG) y };
 	}
 
 	#endif

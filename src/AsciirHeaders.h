@@ -25,6 +25,8 @@
 
 #include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
+
+#include "Asciir/Math/Math.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Math/Matrix.h"
 #include "Asciir/Math/Tensor.h"
@@ -33,6 +35,8 @@
 #include "Asciir/Rendering/RenderConsts.h"
 #include "Asciir/Rendering/Renderer.h"
 #include "Asciir/Rendering/Mesh.h"
+
+#include "Asciir/Core/AsciirLiterals.h"
 
 // Platform specific headers
 

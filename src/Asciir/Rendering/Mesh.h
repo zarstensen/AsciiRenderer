@@ -5,6 +5,21 @@
 
 namespace Asciir
 {
+	// struct containing transform data for a mesh
+	struct Transform
+	{
+		Coord pos = {0, 0};
+		Scale2D scale = {1, 1};
+		Real rotation = 0;
+
+		Coord origin = {0, 0};
+
+		Coord applyTransform(const Coord& vec) const;
+		Coord reverseTransform(const Coord& vec) const;
+	};
+
+	static const Transform NoTransform = Transform();
+
 	/*
 	* A class containing vertices and data about how to connect them
 	* Points will be determinded wether to be outside or inside the mesh depending on the winding order of the edges
@@ -15,7 +30,7 @@ namespace Asciir
 	* example: [0, 1, 2, 3, 0] (one face)
 	* example: [0,1,2,3,0, 3,2,0,1,3] (two faces)
 	*
-	* error: [0, 1, 2, 3] (missing end)
+	* error: [0, 1, 2, 3] (missing end *0*)
 	* error: [0, 1, 2, 1, 3, 0] (repeating index *1*)
 	*
 	* The order of the indices in the list defines what winding order the edges will have,
@@ -44,13 +59,7 @@ namespace Asciir
 		Mesh(const std::vector<Coords>& polygon);
 		Mesh(const Coords& vertices, const std::vector<size_t>& edges);
 
-
-
 		const std::vector<size_t>& getFaces() const { return m_faces; }
-
-		LineSegment getEdge(size_t face_index, size_t index) const;
-		// mods the input index by the number of corners in a face, c = circular
-		LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
 
 		void addVertex(Coord new_vert);
 		void addVertex(Coord new_vert, size_t index);
@@ -92,9 +101,11 @@ namespace Asciir
 		
 		void setVertex(size_t index, Coord new_val);
 		Mesh& offset(Coord offset);
-		Coord getVertex(size_t index) const;
+		Coord getVertex(size_t index, const Transform& transform = NoTransform) const;
 		// mods the input index by the number of vertices
-		Coord cgetVertex(size_t index) const { return getVertex(index & vertCount()); };
+		Coord cgetVertex(size_t index, const Transform& transform = NoTransform) const { return getVertex(index % vertCount(), transform); };
+
+		Coord getMedianVert() const;
 
 		const Coords& getVerts() const { return m_vertices; }
 
@@ -102,21 +113,30 @@ namespace Asciir
 		size_t getCorner(size_t face_index, size_t index) const;
 		// mods the input index by the number of corners
 		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index));  };
-		arVertex2D<Real> getCornerVert(size_t face_index, size_t index) const { return getVertex(getCorner(face_index, index)); }
-		arVertex2D<Real> cgetCornerVert(size_t face_index, size_t index) const { return getVertex(cgetCorner(face_index, index)); }
+		arVertex2D<Real> getCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(getCorner(face_index, index), transform); }
+		arVertex2D<Real> cgetCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(cgetCorner(face_index, index), transform); }
+
+		LineSegment getEdge(size_t face_index, size_t index, const Transform& transform = NoTransform) const;
+		// mods the input index by the number of corners in a face, c = circular
+		LineSegment cgetEdge(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getEdge(face_index, index % faceCornerCount(face_index), transform); };
 
 		size_t faceCornerCount(size_t face_index) const;
 		size_t faceCount() const { return m_face_count; };
 		size_t cornerCount() const { return m_faces.size() - m_face_count; };
 		size_t vertCount() const { return m_vertices.size(); }
 
-		bool isInside(Coord coord) const;
+		bool isInside(const Coord& coord, const Transform& transform = NoTransform) const;
+		bool isInsideGrid(const Coord& coord, Real resolution, const Transform& transform = NoTransform) const;
 
 	protected:
+		Transform m_transform;
+
 		size_t firstIndexFromFace(size_t face_index) const;
 		size_t lastIndexFromFace(size_t face_index) const;
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Mesh& mesh);
+
+
 }
 

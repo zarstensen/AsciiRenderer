@@ -22,6 +22,11 @@ namespace Asciir
 		: red(other.red), green(other.green), blue(other.blue)
 	{}
 
+	Color Color::inverse() const
+	{
+		return Color(255 - red, 255 - green, 255 - blue);
+	}
+
 	bool Color::operator==(const Color& other) const
 	{
 		return red == other.red && green == other.green && blue == other.blue;

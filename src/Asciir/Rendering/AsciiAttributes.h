@@ -36,6 +36,8 @@ namespace Asciir
 		Color(unsigned char gray);
 		Color(const Color& other);
 
+		Color inverse() const;
+
 		bool operator==(const Color& other) const;
 		bool operator!=(const Color& other) const;
 		bool operator<(const Color& other) const;

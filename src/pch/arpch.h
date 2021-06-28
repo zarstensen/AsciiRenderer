@@ -7,6 +7,7 @@
 #include <functional>
 #include <memory>
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <thread>
 #include <chrono>

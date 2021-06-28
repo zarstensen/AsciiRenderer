@@ -172,7 +172,7 @@ namespace Asciir
 	using s_arVertices2D = s_arVertices<T, n, 2>;
 
 	template<typename T, size_t n>
-	using s_arVertices3D = s_arVertices<T, n, 3 >;
+	using s_arVertices3D = s_arVertices<T, n, 3>;
 
 
 	typedef arVertex2D<size_t> Size2D;
@@ -200,15 +200,21 @@ namespace Asciir
 	typedef arVertices2D<TInt> TermVerts;
 	template<size_t n>
 	using s_TermVerts = s_arVertices2D<TInt, n>;
-	
-	typedef arVertex2D<long long> Coord;
-	typedef arVertex3D<long long> Coord3D;
-	typedef arVertices2D<long long> Coords;
-	typedef arVertices3D<long long> Coords3D;
+
+	typedef arVertex2D<Real> Coord;
+	typedef arVertex3D<Real> Coord3D;
+
+	typedef arVertices2D<Real> Coords;
+	typedef arVertices3D<Real> Coords3D;
+
+	typedef Real Scale;
+	typedef arVertex2D<Scale> Scale2D;
+	typedef arVertex3D<Scale> Scale3D;
+
 	template<size_t n>
-	using s_Coords = s_arVertices2D<long long, n>;
+	using s_Coords = s_arVertices2D<Real, n>;
 	template<size_t n>
-	using s_Coords3D = s_arVertices3D<long long, n>;
+	using s_Coords3D = s_arVertices3D<Real, n>;
 
 	template<typename T, typename TEST = void>
 	struct is_vert
