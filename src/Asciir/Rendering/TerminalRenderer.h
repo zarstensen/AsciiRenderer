@@ -111,7 +111,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT>& attributes();
 
 	protected:
-		std::shared_ptr<AsciiAttr> m_attr_handler;
+		Ref<AsciiAttr> m_attr_handler;
 		std::string m_buffer;
 		bool m_should_resize = false;
 		bool m_should_rename = true;

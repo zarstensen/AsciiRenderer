@@ -220,7 +220,6 @@ namespace Asciir
 
 		arVertex2D<Real> distance_to_offset = offset - intersect;
 		Real length_diff = distance_to_offset.norm() - direction.norm();
-		Real res = distance_to_offset.dot(direction);
 		bool are_same_dir = distance_to_offset.dot(direction) <= 0;
 
 		return are_same_dir && length_diff <= 0;

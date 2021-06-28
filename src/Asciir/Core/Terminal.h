@@ -43,7 +43,7 @@ namespace Asciir
 
 	protected:
 		TerminalRenderer m_terminal_render;
-		std::shared_ptr<EventListener> m_event_listener;
+		Ref<EventListener> m_event_listener;
 		EventCallbackFp m_event_callback;
 	};
 

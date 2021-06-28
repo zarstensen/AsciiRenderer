@@ -86,10 +86,6 @@ namespace Asciir
 
 // Core macros
 
-#ifndef AR_CORE_VERBOSITY
-#define AR_CORE_VERBOSITY 4
-#endif
-
 #if AR_CORE_VERBOSITY >= 4
 #define AR_CORE_INFO(...)	::Asciir::Log::coreInfo(__LINE__, __FILE__, __VA_ARGS__)
 #else
@@ -124,10 +120,6 @@ namespace Asciir
 
 
 // Client macros
-
-#ifndef AR_CLIENT_VERBOSITY
-#define AR_CLIENT_VERBOSITY 4
-#endif
 
 #if AR_CLIENT_VERBOSITY >= 4
 #define AR_INFO(...)	::Asciir::Log::clientInfo(__LINE__, __FILE__, __VA_ARGS__)

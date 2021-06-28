@@ -28,6 +28,7 @@ namespace Asciir
 		static Tile viewTile(Coord pos);
 
 		// environment functions
+		// TODO add environment functions
 
 		// terminal functions
 		static void clear(Tile tile = Tile(BLACK8, WHITE8, ' '));
@@ -41,16 +42,12 @@ namespace Asciir
 
 		static void flushQueue();
 		static void drawQueueElem(const QueueElem& elem);
-
 		
 		
 		static TerminalRenderer* s_renderer;
 		static const AsciiAttr* s_attr_handler;
 		static std::vector<QueueElem> s_render_queue;
 	};
-
-	
-
 }
 
 #include "Renderer.ipp"

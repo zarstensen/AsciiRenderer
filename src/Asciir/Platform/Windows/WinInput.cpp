@@ -13,7 +13,7 @@ namespace Asciir
 	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
 	TerminalRenderer::TRUpdateInfo Input::s_info;
-	std::shared_ptr<EventListener> Input::s_event_listener;
+	Ref<EventListener> Input::s_event_listener;
 
 	// global windows specific variables
 
@@ -44,14 +44,14 @@ namespace Asciir
 		}
 	};
 
-	static std::shared_ptr<WinEventListener> win_listener;
+	static Ref<WinEventListener> win_listener;
 	static std::array<WinInKeyData, KEY_CODE_COUNT>		key_toggled_state = { WinInKeyData() };
 	static std::array<WinInMouseData, MOUSE_CODE_COUNT>	mouse_toggled_state = { WinInMouseData() };
 
-	void Input::setEventListener(std::shared_ptr<EventListener> listener)
+	void Input::setEventListener(Ref<EventListener> listener)
 	{
 		s_event_listener = listener;
-		win_listener = dynamic_pointer_cast<WinEventListener>(s_event_listener);
+		win_listener = s_event_listener.cast<WinEventListener>();
 	}
 
 	bool Input::isKeyDown(Key keycode)

@@ -56,7 +56,7 @@ namespace Asciir
 		static void pollState(TerminalRenderer::TRUpdateInfo info);
 		static Coord getMousePos();
 
-		static void setEventListener(std::shared_ptr<EventListener> listener);
+		static void setEventListener(Ref<EventListener> listener);
 
 		static Coord s_mouse_pos, s_mouse_diff;
 		static Coord s_last_terminal_pos;
@@ -64,7 +64,7 @@ namespace Asciir
 		static TermVert s_cur_pos, s_cur_diff;
 		static Terminal* i_terminal;
 		static TerminalRenderer::TRUpdateInfo s_info;
-		static std::shared_ptr<EventListener> s_event_listener;
+		static Ref<EventListener> s_event_listener;
 	};
 
 	

@@ -19,7 +19,7 @@ namespace Asciir
 			m_terminal_render.resize(props.size);
 
 		#ifdef AR_WIN
-		m_event_listener = std::make_shared<WinEventListener>();
+		m_event_listener = new WinEventListener();
 		#elif defined(AR_LINUX)
 		#error Events Not Implemented Yet
 		#endif

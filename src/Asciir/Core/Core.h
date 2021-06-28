@@ -1,27 +1,33 @@
 #pragma once
-
-#if defined(DEBUG) || defined(_DEBUG) && !defined(AR_DEBUG)
-#define AR_DEBUG
-#endif
-
-#ifdef AR_DEBUG
-#define AR_SAFE_RELEASE
-#endif
-
-#ifndef AR_CLIENT_LOG_DIR
-#define AR_CLIENT_LOG_DIR "./logs/client_log.log"
-#endif
-
-#ifndef AR_CORE_LOG_DIR
-#define AR_CORE_LOG_DIR "./logs/core_log.log"
-#endif
+#include "arpch.h"
+#include "MacroArguments.h"
 
 namespace Asciir
 {
-	// value used for terminal position arguments
+	// type used for terminal position arguments
 	typedef short TInt;
-	// value used for numbers with decimal points
+	// type used for numbers with decimal points (floating point numbers)
+	#ifdef AR_HIGH_PRECISSION_FLOAT
+	typedef double Real;
+	#else
 	typedef float Real;
+	#endif
+
+	template<typename T>
+	class Ref: public std::shared_ptr<T>
+	{
+	public:
+		Ref() : std::shared_ptr<T>(nullptr) {}
+		Ref(T* data): std::shared_ptr<T>(data) {}
+		Ref(const T& data): std::shared_ptr<T>(std::make_shared<T>(data)) {}
+		Ref(const Ref<T>& other): std::shared_ptr<T>(other) {}
+		Ref(const std::shared_ptr<T> other) : std::shared_ptr<T>(other) {}
+		
+		template<typename TOther>
+		Ref<TOther> cast() { return Ref<TOther>(dynamic_pointer_cast<TOther>(*this)); };
+
+		using std::shared_ptr<T>::operator=;
+	};
 
 	constexpr int BIT_SHL(int x, int a = 1)
 	{

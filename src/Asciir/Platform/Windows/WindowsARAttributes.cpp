@@ -351,7 +351,7 @@ namespace Asciir
 		long long x = pos.left;
 		long long y = pos.top;
 
-		return { x, y };
+		return { (Real) x, (Real) y };
 	}
 
 	TermVert WinARAttr::terminalSize() const
