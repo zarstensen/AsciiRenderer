@@ -14,11 +14,10 @@ namespace Asciir
 	TerminalRenderer::TerminalRenderer(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
-
 		#ifdef AR_WIN
-		m_attr_handler = std::make_unique<WinARAttr>();
+		m_attr_handler = Ref<WinARAttr>(WinARAttr());
 		#elif defined AR_UNIX
-		m_attr_handler = std::make_unique<UnixARAttr>();
+		m_attr_handler = Ref<UnixARAttr>(WinArAttr());
 		#endif
 
 		m_buffer.reserve(buffer_size);
@@ -184,6 +183,14 @@ namespace Asciir
 					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		m_tiles(pos.x, pos.y).current = m_tile_state;
+	}
+
+	void TerminalRenderer::blendTile(const TermVert& pos)
+	{
+		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+
+		m_tiles(pos.x, pos.y).current.blend(m_tile_state);
 	}
 
 	TerminalRenderer::DrawTile& TerminalRenderer::getTile(const TermVert& pos)
@@ -369,8 +376,7 @@ namespace Asciir
 
 	void TerminalRenderer::flushBuffer()
 	{
-		std::cout << m_buffer;
-		//fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
+		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
 		m_buffer.clear();
 	}
 

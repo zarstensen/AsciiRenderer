@@ -9,7 +9,7 @@ class TriangleLayer : public Asciir::Layer
 		{ { {20, 40}, {50, 10}, {80, 40} },
 		  { {35, 25}, {65, 25}, {50, 40} } });
 
-	Asciir::Ref<Asciir::Mesh> square_mesh = Asciir::Mesh({ {0, 0}, { 3, 0 }, {3, 3}, {0, 3} });
+	Asciir::Ref<Asciir::Mesh> square_mesh = Asciir::Mesh({ {0, 0}, { 15, 0 }, {15, 15}, {0, 15} });
 
 	Asciir::TInt pos = 0;
 	bool forward = true;
@@ -37,10 +37,11 @@ class TriangleLayer : public Asciir::Layer
 		Asciir::Transform transform;
 		Asciir::Transform square_transform;
 
-		square_transform.pos.x = pos;
-		square_transform.pos.y = 0;
+		square_transform.pos.x = pos + 30;
+		square_transform.pos.y = 20;
 		square_transform.origin = square_mesh->getMedianVert();
-		Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(Asciir::IRED8), square_transform);
+		Asciir::Color square_color = Asciir::IRED8;
+		square_color.alpha = 100;
 		
 		transform.pos.x = pos;
 		transform.pos.y = 0;
@@ -48,7 +49,10 @@ class TriangleLayer : public Asciir::Layer
 		transform.origin = triangle_verts->getMedianVert();
 		transform.rotation = Asciir::degToRad(pos + 45);
 
-		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(Asciir::YELLOW8), transform);
+		Asciir::Color triangle_color = Asciir::YELLOW8;
+
+		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(triangle_color), transform);
+		Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_color), square_transform);
 
 		Asciir::Renderer::resize({ 240, 63 });
 	}

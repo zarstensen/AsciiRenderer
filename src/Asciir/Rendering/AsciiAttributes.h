@@ -29,11 +29,11 @@ namespace Asciir
 
 	struct Color
 	{
-		unsigned char red, green, blue;
+		unsigned char red, green, blue, alpha;
 
 		Color();
-		Color(unsigned char r, unsigned char g, unsigned char b);
-		Color(unsigned char gray);
+		Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = UCHAR_MAX);
+		Color(unsigned char gray, unsigned char a = UCHAR_MAX);
 		Color(const Color& other);
 
 		Color inverse() const;
@@ -44,6 +44,14 @@ namespace Asciir
 		bool operator>(const Color& other) const;
 		bool operator<=(const Color& other) const;
 		bool operator>=(const Color& other) const;
+
+		
+		// blends the two colors taking the alpha value into account
+		// uses the current color as the background and calculates the alpha result afterwards
+		Color& blend(const Color& other);
+		// blends the two colors taking the alpha value into account
+		static Color blend(const Color& background, const Color& color);
+
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Color& c);

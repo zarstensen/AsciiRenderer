@@ -47,6 +47,17 @@ namespace Asciir
 			else
 				return false;
 		}
+
+		// blends the foreground and background color
+		// the symbol is overwritten by the other tiles symbol
+		Tile& blend(const Tile& other)
+		{
+			symbol = other.symbol;
+			color.blend(other.color);
+			background_color.blend(other.background_color);
+			
+			return *this;
+		}
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
@@ -93,6 +104,8 @@ namespace Asciir
 		Tile getState() const;
 		Tile& getState();
 		void drawTile(const TermVert& pos);
+		// blends the current tile state into the stored tile with the stored tile as the background
+		void blendTile(const TermVert& pos);
 		DrawTile& getTile(const TermVert& pos);
 		void setTitle(const std::string & title);
 		std::string getTitle() const;

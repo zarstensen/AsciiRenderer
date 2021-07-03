@@ -53,7 +53,7 @@ namespace Asciir
 
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (q_elem.mesh->isInsideGrid({ x, y }, 1, q_elem.transform)) s_renderer->drawTile(TermVert( (TInt) x, (TInt) y ));
+				if (q_elem.mesh->isInsideGrid({ x, y }, 1, q_elem.transform)) s_renderer->blendTile(TermVert( (TInt) x, (TInt) y ));
 				#ifdef AR_VISUALIZE_DRAW_BOX
 				else {
 					s_renderer->setState(q_elem.tile.color.inverse()); 
@@ -71,13 +71,14 @@ namespace Asciir
 		{
 			Tile prev_state = s_renderer->getState();
 			s_renderer->setState(data.tile);
-			s_renderer->drawTile((TermVert)data.pos);
+			s_renderer->blendTile((TermVert)data.pos);
 			s_renderer->setState(prev_state);
 		}
 	}
 
 	void Renderer::drawClearData(const ClearData& data)
 	{
+		AR_ASSERT_MSG(data.background_color.alpha == UCHAR_MAX, "Background color must be 100% opaque (alpha = 255), got: ", data.background_color.alpha, " as the alpha value");
 		s_renderer->clearTerminal(data);
 	}
 
