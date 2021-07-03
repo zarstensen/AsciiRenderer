@@ -19,6 +19,8 @@ namespace Asciir
 
 		void run();
 
+		void render();
+
 		void onEvent(Event& event);
 	
 		void PushLayer(Layer* layer);
@@ -38,6 +40,10 @@ namespace Asciir
 		bool m_running = false;
 		LayerStack m_layerStack;
 		duration m_last_frame_start;
+
+		// thread gets started every time an update is finished, unless a thread already is running
+		std::thread m_render_thread;
+
 
 		static AREngine* i_engine;
 	};

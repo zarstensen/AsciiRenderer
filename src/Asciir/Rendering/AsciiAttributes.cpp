@@ -290,6 +290,14 @@ namespace Asciir
 		std::cout << AR_ANSIS_OSC << "0;" << name << '\a';
 	}
 
+	std::ostream& operator<<(std::ostream& stream, const Color& c)
+	{
+		stream	<< std::setfill(' ') << std::setw(3) << (int) c.red		<< ' '
+				<< std::setfill(' ') << std::setw(3) << (int) c.green	<< ' '
+				<< std::setfill(' ') << std::setw(3) << (int) c.blue;
+		return stream;
+	}
+
 	std::ostream& operator<<(std::ostream& stream, AsciiAttr& other)
 	{
 		other.ansiCode(stream);

@@ -20,10 +20,10 @@ namespace Asciir
 		Color background_color = BLACK8;
 		Color color = WHITE8;
 		char symbol = ' ';
-		bool is_empty = false;
+		bool is_empty = true;
 
 		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
-			: background_color(background_color), color(color), symbol(symbol) {}
+			: background_color(background_color), color(color), symbol(symbol), is_empty(false) {}
 
 		static Tile emptyTile()
 		{
@@ -32,7 +32,7 @@ namespace Asciir
 			return tile;
 		}
 
-		bool operator==(Tile other)
+		bool operator==(const Tile& other) const
 		{
 			if (!is_empty && !other.is_empty)
 				return background_color == other.background_color && color == other.color && symbol == other.symbol;
@@ -40,7 +40,7 @@ namespace Asciir
 				return false;
 		}
 
-		bool operator!=(Tile other)
+		bool operator!=(const Tile& other) const
 		{
 			if (!is_empty && !other.is_empty)
 				return !(*this == other);
@@ -63,8 +63,15 @@ namespace Asciir
 			bool new_name = false;
 		};
 
+		struct DrawTile
+		{
+			Tile current;
+			Tile last = Tile::emptyTile();
+		};
+
 	protected:
-		arTensor3D<Tile> m_tiles;
+
+		arMatrix<DrawTile> m_tiles;
 		Coord m_pos;
 		Tile m_tile_state = Tile();
 		std::string m_title;
@@ -80,13 +87,13 @@ namespace Asciir
 		void drawLine(const TermVert& a, const TermVert& b);
 
 		void clearTerminal(Tile clear_tile = Tile());
-		void clearTiles();
+		void clearRenderTiles();
 
 		void setState(Tile tile);
 		Tile getState() const;
 		Tile& getState();
 		void drawTile(const TermVert& pos);
-		Tile& getTile(const TermVert& pos);
+		DrawTile& getTile(const TermVert& pos);
 		void setTitle(const std::string & title);
 		std::string getTitle() const;
 

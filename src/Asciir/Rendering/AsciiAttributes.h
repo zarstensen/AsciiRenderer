@@ -45,6 +45,8 @@ namespace Asciir
 		bool operator<=(const Color& other) const;
 		bool operator>=(const Color& other) const;
 	};
+
+	std::ostream& operator<<(std::ostream& stream, const Color& c);
 	
 	typedef Color RGB24;
 

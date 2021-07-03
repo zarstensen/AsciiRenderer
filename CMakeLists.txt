@@ -155,6 +155,7 @@ set(HEADER_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WinInput.h
     src/Asciir/Platform/Windows/KeyCodeMap.h
+    src/Asciir/Platform/Windows/WinInit.h
     
     #rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.h
@@ -242,7 +243,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 target_compile_definitions(${PROJECT_NAME} PUBLIC
 $<$<CONFIG:DEBUG,INLINEDEBUG>:AR_DEBUG>
 $<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=2 AR_CLIENT_VERBOSITY=4>
-$<$<CONFIG:RELEASE,DEBUG,INLINEDEBUG>:AR_CORE_LOG_DIR="../../../logs/core_log.log" AR_CLIENT_LOG_DIR="../../../logs/client_log.log">
+$<$<CONFIG:RELEASE,DEBUG,INLINEDEBUG>:AR_CORE_LOG_DIR="../../logs/core_log.log" AR_CLIENT_LOG_DIR="../../logs/client_log.log">
 $<$<CONFIG:DEPLOYREL>:AR_CORE_LOG_DIR="./logs/core_log.log" AR_CLIENT_LOG_DIR="./logs/client_log.log">
 $<$<BOOL:${ASCIIR_HIGH_PRECISSION_FLOAT}>:AR_HIGH_PRECISSION_FLOAT>)
 

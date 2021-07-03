@@ -149,12 +149,18 @@ namespace Asciir
 
 	void TerminalRenderer::clearTerminal(Tile clear_tile)
 	{
-		m_tiles.block(0, 0, drawSize().x, drawSize().y).fill(clear_tile);
+		m_tiles = m_tiles.unaryExpr([&](DrawTile cleared_tile) {
+			cleared_tile.current = clear_tile;
+			return cleared_tile;
+			}).eval();
 	}
 
-	void TerminalRenderer::clearTiles()
+	void TerminalRenderer::clearRenderTiles()
 	{
-		m_tiles.fill(Tile::emptyTile());
+		m_tiles = m_tiles.unaryExpr([&](DrawTile cleared_tile) {
+			cleared_tile.last = Tile::emptyTile();
+			return cleared_tile;
+			});
 	}
 
 	void TerminalRenderer::setState(Tile tile)
@@ -177,15 +183,15 @@ namespace Asciir
 		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(0, pos.x, pos.y) = m_tile_state;
+		m_tiles(pos.x, pos.y).current = m_tile_state;
 	}
 
-	Tile& TerminalRenderer::getTile(const TermVert& pos)
+	TerminalRenderer::DrawTile& TerminalRenderer::getTile(const TermVert& pos)
 	{
 		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
-		return m_tiles(0, pos.x, pos.y);
+		return m_tiles(pos.x, pos.y);
 	}
 
 	void TerminalRenderer::setTitle(const std::string& title)
@@ -193,6 +199,7 @@ namespace Asciir
 		m_title = title;
 		m_should_rename = true;
 	}
+
 
 	std::string TerminalRenderer::getTitle() const
 	{
@@ -210,7 +217,7 @@ namespace Asciir
 			          "Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
-		m_tiles.resize({ (size_t) 2, (size_t) size.x, (size_t) size.y });
+		m_tiles.resize(size);
 	}
 
 	TerminalRenderer::TRUpdateInfo TerminalRenderer::update()
@@ -224,28 +231,30 @@ namespace Asciir
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
 		if (m_should_resize)
+
 		{
+			// reset stored tiles from last update
+			if(drawSize() != size)
+				clearRenderTiles();
+			
 			m_should_resize = false;
 			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
-			// reset stored tiles from last update
-			clearTiles();
-
 			r_info.new_size = true;
 		}
-		else if (size.x != drawSize().x || size.y != drawSize().y)
+		else if (size != drawSize())
 		{
 			pushBuffer("\x1b[?25l");
-			m_tiles.resize({ 2, (size_t)size.x, (size_t)size.y });
+			m_tiles.resize(size);
 
 			// reset stored tiles from last update
-			clearTiles();
+			clearRenderTiles();
 
 			r_info.new_size = true;
 		}
 
-		if (m_pos.x != pos.x || m_pos.y != pos.y)
+		if (m_pos != pos)
 		{
 			m_pos = pos;
 			r_info.new_pos = true;
@@ -269,13 +278,13 @@ namespace Asciir
 
 		m_attr_handler->move({ 0, 0 });
 		m_attr_handler->moveCode(*this);
-		
+
 		for (TInt y = 0; (size_t) y < drawSize().y; y++)
 		{
 			for (TInt x = 0; (size_t) x < drawSize().x; x++)
 			{
-				Tile& new_tile = m_tiles(0, x, y );
-				Tile& old_tile = m_tiles(1, x, y );
+				Tile& new_tile = m_tiles(x, y).current;
+				Tile& old_tile = m_tiles(x, y).last;
 
 				if (new_tile == old_tile)
 				{
@@ -305,8 +314,8 @@ namespace Asciir
 
 		flushBuffer();
 
-		auto tile_block = m_tiles.block(0, 0, drawSize().x, drawSize().y);
-		m_tiles.block(m_tiles.size().y, 0, drawSize().x, drawSize().y) = tile_block;
+		
+		m_tiles[1] = m_tiles[0];
 	}
 
 	TerminalRenderer::TRUpdateInfo TerminalRenderer::render()
@@ -325,12 +334,11 @@ namespace Asciir
 	TermVert TerminalRenderer::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return { (TInt) m_tiles.size().y, (TInt) m_tiles.size().z};
+		return (TermVert) m_tiles.size();
 	}
 	
 	TermVert TerminalRenderer::maxSize() const
 	{
-		
 		return m_attr_handler->maxTerminalSize();
 	}
 
@@ -361,7 +369,8 @@ namespace Asciir
 
 	void TerminalRenderer::flushBuffer()
 	{
-		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
+		std::cout << m_buffer;
+		//fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
 		m_buffer.clear();
 	}
 
@@ -372,7 +381,7 @@ namespace Asciir
 	
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
 	{
-		stream << (int)tile.symbol;
+		stream << (int)tile.symbol << " (" << tile.background_color << ") (" << tile.color << ") ";
 		return stream;
 	}
 }

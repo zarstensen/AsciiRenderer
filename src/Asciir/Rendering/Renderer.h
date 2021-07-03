@@ -11,24 +11,48 @@ namespace Asciir
 	{
 		friend AREngine;
 	public:
+		enum class Command
+		{
+			Mesh,
+			Point,
+			Clear
+		};
 
-		struct QueueElem
+		struct MeshData
 		{
 			Ref<Mesh> mesh;
 			Tile tile;
 			Transform transform;
 		};
 
+		struct TileData
+		{
+			Coord pos;
+			Tile tile;
+		};
+
+		typedef Tile ClearData;
+
+		// mesh data, point data or clear data
+		typedef std::variant <MeshData, TileData, ClearData> QueueElem;
+		
+
 		static void init();
 
-		// draw functions
-		static void submitToQueue(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
+		// submit functions
+		static void submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
+		static void submitTile(Coord pos, Tile tile);
+		static void submitToQueue(QueueElem new_elem);
 		static Ref<Mesh> submitRect(s_Coords<2> verts, Tile tile);
-		static void drawTile(Coord pos, Tile tile);
 		static Tile viewTile(Coord pos);
 
 		// environment functions
-		// TODO add environment functions
+		
+		// set the minimum delta time between updates
+		static void setMinDT(DeltaTime min_dt) { AR_ASSERT(min_dt.milliSeconds() >= 0); s_min_dt = min_dt; }
+
+		static DeltaTime getMinDT() { return s_min_dt; }
+
 
 		// terminal functions
 		static void clear(Tile tile = Tile(BLACK8, WHITE8, ' '));
@@ -40,13 +64,24 @@ namespace Asciir
 		template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool> = false>
 		static Coords projectCoordsToTerminal(const T& coords);
 
-		static void flushQueue();
-		static void drawQueueElem(const QueueElem& elem);
-		
+		// swaps and reallocates queues if necesary
+		static void swapQueues();
+		static void flushRenderQueue();
+		static void drawMeshData(const MeshData& data);
+		static void drawTileData(const TileData& data);
+		static void drawClearData(const ClearData& data);
+
+		static void waitMinDT(DeltaTime curr_dt);
 		
 		static TerminalRenderer* s_renderer;
 		static const AsciiAttr* s_attr_handler;
-		static std::vector<QueueElem> s_render_queue;
+		static std::vector<QueueElem>* s_submit_queue;
+		static std::vector<QueueElem>* s_render_queue;
+
+
+		// the engine will wait until the minimum delta time is hit, after each update
+		// DEFAULT: no limit
+		static DeltaTime s_min_dt;
 	};
 }
 

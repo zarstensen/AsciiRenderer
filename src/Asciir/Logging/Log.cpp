@@ -8,8 +8,8 @@ namespace Asciir
 		std::filesystem::create_directories(std::filesystem::absolute(CORE_LOG_DIR).parent_path());
 		std::filesystem::create_directories(std::filesystem::absolute(CLIENT_LOG_DIR).parent_path());
 
-		s_core_log_out.open(CORE_LOG_DIR, save_core, append_logs);
-		s_client_log_out.open(CLIENT_LOG_DIR, save_client, append_logs);
+		s_core_log_out.open(CORE_LOG_DIR.string(), save_core, append_logs);
+		s_client_log_out.open(CLIENT_LOG_DIR.string(), save_client, append_logs);
 	}
 	
 	void Log::setCoreLogDir(const std::string& dir)

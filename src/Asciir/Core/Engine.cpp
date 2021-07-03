@@ -23,7 +23,9 @@ namespace Asciir
 		AR_CORE_INFO("Started engine");
 		for (Layer* layer : m_layerStack)
 			layer->onStart();
+
 		m_terminal.onStart();
+
 		m_running = true;
 		m_last_frame_start = getTime();
 		run();
@@ -33,23 +35,33 @@ namespace Asciir
 	void AREngine::run()
 	{
 		AR_CORE_INFO("Running engine");
+		m_last_frame_start = getTime();
 		while (m_running)
 		{
-			Renderer::clear();
 			duration m_curr_frame_start = getTime();
 			DeltaTime d_time(castRealMilli(m_curr_frame_start - m_last_frame_start));
-
-			m_terminal.pollInput();
+			m_last_frame_start = m_curr_frame_start;
+			
 
 			for (Layer* layer: m_layerStack)
 				layer->onUpdate(d_time);
 
-			Renderer::flushQueue();
+			if (m_render_thread.joinable())
+				m_render_thread.join();
+			
+			Renderer::swapQueues();
 
-			m_terminal.onUpdate();
+			m_render_thread = std::thread(&AREngine::render, this);
 
-			m_last_frame_start = m_curr_frame_start;
+			Renderer::waitMinDT(castRealMilli(getTime() - m_curr_frame_start));
 		}
+	}
+
+	void AREngine::render()
+	{
+		Renderer::flushRenderQueue();
+		m_terminal.onUpdate();
+		m_terminal.pollInput();
 	}
 	
 	void AREngine::onEvent(Event& e)
@@ -61,8 +73,8 @@ namespace Asciir
 		for (auto iter = m_layerStack.end(); iter != m_layerStack.begin();)
 		{
 			(*--iter)->onEvent(e);
-			if (e.handled)
-				break;
+			
+			if (e.handled) break;
 		}
 	}
 

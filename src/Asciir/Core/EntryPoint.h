@@ -25,6 +25,14 @@ int main(int argc, char** argv)
 
 	Asciir::Log::init(save_core, save_client, append_logs);
 
+	#if defined(AR_WIN)
+	Asciir::WindowsInit();
+	#elif defined(AR_LINUX)
+	Asciir::LinuxInit();
+	#elif defined(AR_MAC)
+	Asciir::MacInit();
+	#endif
+
 	std::vector<std::string> args(argc);
 	for (int i = 0; i < argc; i++)
 	{

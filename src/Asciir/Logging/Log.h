@@ -5,8 +5,8 @@
 
 namespace Asciir
 {
-	static std::string CORE_LOG_DIR = AR_CORE_LOG_DIR;
-	static std::string CLIENT_LOG_DIR = AR_CLIENT_LOG_DIR;
+	static std::filesystem::path CORE_LOG_DIR = AR_CORE_LOG_DIR;
+	static std::filesystem::path CLIENT_LOG_DIR = AR_CLIENT_LOG_DIR;
 	
 	class Log
 	{

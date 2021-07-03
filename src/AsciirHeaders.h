@@ -42,6 +42,7 @@
 
 #ifdef AR_WIN
 #include "Asciir/Platform/Windows/WindowsARAttributes.h"
+#include "Asciir/Platform/Windows/WinInit.h"
 #elif defined(AR_UNIX)
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
