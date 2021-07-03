@@ -53,7 +53,7 @@ namespace Asciir
 
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (q_elem.mesh->isInsideGrid({ x, y }, 1, q_elem.transform)) s_renderer->drawTile(TermVert( x, y ));
+				if (q_elem.mesh->isInsideGrid({ x, y }, 1, q_elem.transform)) s_renderer->drawTile(TermVert( (TInt) x, (TInt) y ));
 				#ifdef AR_VISUALIZE_DRAW_BOX
 				else {
 					s_renderer->setState(q_elem.tile.color.inverse()); 

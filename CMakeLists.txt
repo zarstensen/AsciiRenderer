@@ -143,6 +143,7 @@ if(WIN32)
 set(SRC_DIR_PLATFORM
     # core
     src/Asciir/Platform/Windows/WinInput.cpp
+    src/Asciir/Platform/Windows/WinInit.cpp
 
     # rendering
     src/Asciir/Platform/Windows/WindowsARAttributes.cpp
