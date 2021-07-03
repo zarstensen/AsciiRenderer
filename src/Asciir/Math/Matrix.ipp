@@ -14,12 +14,6 @@ namespace Asciir
 	template<typename TOther>
 	arMatrix<T>::arMatrix(const Eigen::MatrixBase<TOther>& other)
 		: Eigen::MatrixX<T>(other.template cast<T>()) {}
-
-	template<typename T>
-	arMatrix<T> arMatrix<T>::operator=(const arMatrix<T>& other)
-	{
-		return arMatrix<T>(other);
-	}
 	
 	template<typename T>
 	arMatrix<T>::arMatrix(Size2D size)
@@ -35,9 +29,10 @@ namespace Asciir
 	}
 	
 	template<typename T>
-	void arMatrix<T>::resize(Size2D size)
+	void arMatrix<T>::resize(Size2D new_size)
 	{
-		Eigen::MatrixX<T>::conservativeResize(size.x, size.y);
+		Size2D prev_size = size();
+		Eigen::MatrixX<T>::conservativeResize(new_size.x, new_size.y);
 	}
 
 	template<typename T>

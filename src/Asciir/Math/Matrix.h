@@ -25,8 +25,6 @@ namespace Asciir
 		Size2D size() const;
 
 		void resize(Size2D size);
-
-		arMatrix<T> operator=(const arMatrix<T>& other);
 		
 		T& operator[](size_t indx);
 

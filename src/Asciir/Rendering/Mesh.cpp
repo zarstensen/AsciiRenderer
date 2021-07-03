@@ -8,43 +8,36 @@ namespace Asciir
 
 	Coord Transform::applyTransform(const Coord& vec) const
 	{
+		// uses Eigen transform matrices to perform the transformation
 
-		auto origin_vec = vec - origin;
+		auto origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
 
-		auto rotation_vec = Eigen::Matrix2<Real>();
-		
-		rotation_vec << std::cos(rotation), -std::sin(rotation),
-						std::sin(rotation),  std::cos(rotation);
+		auto scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale) * origin_transform;
 
-		auto rotated_vec = rotation_vec * origin_vec;
+		auto rotation_transform = Eigen::Rotation2D<Real>(rotation) * scale_transform;
 
-		auto scaled_vec = rotated_vec.cwiseProduct(scale);
+		auto move_transform = Eigen::Translation<Real, 2>(pos) * rotation_transform;
 
-		auto moved_vec = scaled_vec + pos;
+		auto result = Eigen::Translation<Real, 2>(origin) * move_transform;
 
-		auto result_vec = moved_vec + origin;
-
-		return result_vec;
+		return result;
 	}
 
 	Coord Transform::reverseTransform(const Coord& vec) const
 	{
-		auto origin_vec = vec - origin;
-		
-		auto moved_vec = origin_vec - pos;
+		// uses Eigen transform matrices to perform the transformation
 
-		auto scaled_vec = moved_vec.cwiseQuotient(scale);
-		
-		auto rotation_vec = Eigen::Matrix2<Real>();
+		auto origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
 
-		rotation_vec << std::cos(-rotation), -std::sin(-rotation),
-						std::sin(-rotation), std::cos(-rotation);
+		auto move_transform = Eigen::Translation<Real, 2>(pos).inverse() * origin_transform;
 
-		auto rotated_vec = rotation_vec * scaled_vec;
+		auto rotation_transform = Eigen::Rotation2D<Real>(rotation).inverse() * move_transform;
 
-		auto result_vec = rotated_vec + origin;
+		auto scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale).inverse() * rotation_transform;
 
-		return result_vec; 
+		auto result = Eigen::Translation<Real, 2>(origin) * rotation_transform;
+
+		return result;
 	}
 
 	Mesh::Mesh(const Coords& vertices)
