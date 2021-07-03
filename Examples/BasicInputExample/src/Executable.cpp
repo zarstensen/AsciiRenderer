@@ -2,7 +2,7 @@
 
 class ExampleLayer : public Asciir::Layer
 {
-	Asciir::TermVert pos = { 10, 10 };
+	Asciir::Coord pos = { 10, 10 };
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
@@ -20,7 +20,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x++;
 
-		Asciir::Renderer::drawTile(pos, Asciir::Tile(0, { (u_char)rand(), (u_char)rand(), (u_char)rand() }, 219));
+		Asciir::Renderer::submitTile(pos, Asciir::Tile(0, { (u_char)rand(), (u_char)rand(), (u_char)rand() }, 219));
 
 		Asciir::sleep(1000 / 60);
 	}

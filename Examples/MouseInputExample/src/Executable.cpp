@@ -26,7 +26,7 @@ public:
 				tile.background_color.blue = tmp_color.green;
 
 				
-				Asciir::Renderer::drawTile(e.getCursorPos(), tile);
+				Asciir::Renderer::submitTile(e.getCursorPos(), tile);
 			}
 		}
 	}
