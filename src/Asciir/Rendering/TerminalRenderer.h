@@ -15,15 +15,72 @@ namespace Asciir
 		Filled
 	};
 
+	size_t U8CharSize(const char* u8_str);
+	size_t U8Len(const char* u8_str);
+
+	class UTF8Char
+	{
+	protected:
+		static constexpr int UTF_CODE_LEN = 4;
+
+
+		char m_data[UTF_CODE_LEN + 1] = { '\0' };
+
+	public:
+
+		UTF8Char() = default;
+		
+		UTF8Char(char c) { m_data[0] = c; };
+
+		UTF8Char(const char* c) 
+		{
+			AR_ASSERT_MSG(u8Len(c) < 2, "u8 string must only contain one or less characters, found ", u8Len(c));
+			strcpy_s(m_data, c);
+		};
+
+		operator const char*() const
+		{
+			return m_data;
+		}
+
+		operator std::string() const
+		{
+			return (const char*) m_data;
+		}
+
+		explicit operator char*()
+		{
+			return m_data;
+		}
+
+		explicit operator int() const
+		{
+			return *(int*)m_data;
+		}
+
+		bool operator==(const UTF8Char& other) const { return (int)*this == (int)other; }
+
+	protected:
+		static size_t u8Len(const char* u8_str)
+		{
+			int len = 0;
+			
+			while (*u8_str)
+				len += (*u8_str++ & 0xc0) != 0x80;
+
+			return len;
+		}
+	};
+
 	struct Tile
 	{
-		Color background_color = BLACK8;
+		UTF8Char symbol = ' ';
 		Color color = WHITE8;
-		char symbol = ' ';
+		Color background_color = BLACK8;
 		bool is_empty = true;
 
 		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
-			: background_color(background_color), color(color), symbol(symbol), is_empty(false) {}
+			: symbol(symbol), color(color), background_color(background_color), is_empty(false) {}
 
 		static Tile emptyTile()
 		{
@@ -107,7 +164,7 @@ namespace Asciir
 		// blends the current tile state into the stored tile with the stored tile as the background
 		void blendTile(const TermVert& pos);
 		DrawTile& getTile(const TermVert& pos);
-		void setTitle(const std::string & title);
+		void setTitle(const std::string& title);
 		std::string getTitle() const;
 
 		const AsciiAttr& getAttrHandler();

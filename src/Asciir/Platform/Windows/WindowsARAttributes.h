@@ -8,6 +8,9 @@ namespace Asciir
 	{
 
 		HANDLE m_hConsole;
+		DWORD m_fallback_mode;
+		UINT m_fallback_cp;
+
 	
 	public:
 		WinARAttr();

@@ -11,13 +11,52 @@
 
 namespace Asciir
 {
+	size_t U8CharSize(const char* u8_str)
+	{
+		// check if the first bit in the first byte is 0, if so the char size is 1
+		if (~(u8_str[0] >> 7) & 1U)
+			return 1;
+		// check if the first bits in the first bytes are 110 (size 2), 1110 (size 3) or 11110 (size 4)
+		else
+		{
+			unsigned char check = 0b110;
+			unsigned char mask = 0b111;
+			for (int i = 2; i <= 4; i++)
+			{
+				if (!(bool)(((u8_str[0] >> (7 - i)) & mask) ^ check)) return i;
+
+				check = (check << 1) + 0b10;
+				mask = (mask << 1) + 0b1;
+			}
+
+			
+		}
+
+		// first bit was not formatted correctly
+		AR_ASSERT_MSG(false, "Unknown utf-8 character");
+		return 0;
+	}
+
+	size_t U8Len(const char* u8_str)
+	{
+		size_t len = 0;
+
+		for (size_t i = 0; i < strlen(u8_str);)
+		{
+			i += U8CharSize(u8_str + i);
+			len++;
+		}
+
+		return len;
+	}
+
 	TerminalRenderer::TerminalRenderer(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
 		#ifdef AR_WIN
-		m_attr_handler = Ref<WinARAttr>(WinARAttr());
+		m_attr_handler = std::make_shared<WinARAttr>();
 		#elif defined AR_UNIX
-		m_attr_handler = Ref<UnixARAttr>(WinArAttr());
+		m_attr_handler = std::make_shared(WinArAttr());
 		#endif
 
 		m_buffer.reserve(buffer_size);
@@ -229,7 +268,6 @@ namespace Asciir
 
 	TerminalRenderer::TRUpdateInfo TerminalRenderer::update()
 	{
-
 		TRUpdateInfo r_info;
 
 		TermVert size = m_attr_handler->terminalSize();
@@ -390,4 +428,6 @@ namespace Asciir
 		stream << (int)tile.symbol << " (" << tile.background_color << ") (" << tile.color << ") ";
 		return stream;
 	}
+
+	
 }

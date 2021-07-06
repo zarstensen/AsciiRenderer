@@ -25,7 +25,7 @@ namespace Asciir
 		
 		// enable_if_t doesn't work in the template here for reasons :/
 		template<typename TOther>
-		std::enable_if_t<std::is_abstract_v<T>&& std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(dynamic_pointer_cast<TOther>(*this)); }
+		std::enable_if_t<std::is_abstract_v<T>&& std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
 
 		using std::shared_ptr<T>::operator=;
 	};

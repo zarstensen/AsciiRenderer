@@ -93,7 +93,7 @@ namespace Asciir
 
 	void Renderer::submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform)
 	{
-		submitToQueue(QueueElem(MeshData(mesh, tile, transform)));
+		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));
 		
 		#if AR_RENDER_QUEUE_MAX != -1
 		static_assert(AR_RENDER_QUEUE_MAX > 0);
@@ -114,7 +114,7 @@ namespace Asciir
 
 	void Renderer::submitTile(Coord pos, Tile tile)
 	{
-		submitToQueue(TileData(pos, tile));
+		submitToQueue(TileData{ pos, tile });
 	}
 
 	void Renderer::submitToQueue(QueueElem new_elem)

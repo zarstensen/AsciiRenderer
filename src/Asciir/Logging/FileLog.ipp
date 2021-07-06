@@ -24,7 +24,7 @@ namespace Asciir
 		long long minutes = milliseconds / (1000 * 60);
 		milliseconds -= minutes * 1000 * 60;
 
-		float seconds = (float)milliseconds / 10;
+		Real seconds = (Real)milliseconds / 10;
 		seconds = round(seconds);
 		seconds /= 100;
 		

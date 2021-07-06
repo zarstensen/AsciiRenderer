@@ -110,7 +110,7 @@ namespace Asciir
 	void WinEventListener::sendKeybdEvent(KEY_EVENT_RECORD event)
 	{
 		#ifdef AR_SAFE_RELEASE
-		if (!WinToKeyCodeMap.contains((size_t)event.wVirtualKeyCode - 1))
+		if (!WinToKeyCodeMap.count((size_t)event.wVirtualKeyCode - 1) == 0)
 		{
 			AR_CORE_WARN("Unknown key recieved: ", event.wVirtualKeyCode);
 			return;

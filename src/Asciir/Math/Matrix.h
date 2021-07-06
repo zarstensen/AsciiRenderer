@@ -25,10 +25,18 @@ namespace Asciir
 		Size2D size() const;
 
 		void resize(Size2D size);
-		
+
 		T& operator[](size_t indx);
+		T operator[](size_t indx) const;
+		T& operator()(Size2D coord) { return get(coord); }
+		T operator()(Size2D coord) const { return get(coord); }
+		T& operator()(size_t x, size_t y) { return get(x, y); }
+		T operator()(size_t x, size_t y) const { return get(x, y); }
 
 		T& get(Size2D coord);
+		T get(Size2D coord) const;
+		T& get(size_t x, size_t y);
+		T get(size_t x, size_t y) const;
 	};
 
 	template<typename T, size_t w, size_t h>
@@ -52,8 +60,16 @@ namespace Asciir
 		s_arMatrix<T, w, h> operator=(const s_arMatrix<T, w, h>& other);
 
 		T& operator[](size_t indx);
+		T operator[](size_t indx) const;
+		T& operator()(Size2D coord) { return get(coord); }
+		T operator()(Size2D coord) const { return get(coord); }
+		T& operator()(size_t x, size_t y) { return get(x, y); }
+		T operator()(size_t x, size_t y) const { return get(x, y); }
 
 		T& get(Size2D coord);
+		T get(Size2D coord) const;
+		T& get(size_t x, size_t y);
+		T get(size_t x, size_t y) const;
 	};
 
 	// typedef / using / variables for Eigen::Matrix
