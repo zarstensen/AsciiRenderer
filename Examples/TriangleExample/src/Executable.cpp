@@ -14,6 +14,10 @@ class TriangleLayer : public Asciir::Layer
 	Asciir::TInt pos = 0;
 	bool forward = true;
 
+	
+	Asciir::Real total_time = 0;
+	size_t frame_count = 0;
+
 	void onStart() final
 	{
 		Asciir::Renderer::resize({ 240, 63 });
@@ -22,7 +26,10 @@ class TriangleLayer : public Asciir::Layer
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
-		AR_INFO(delta_time);
+		if(frame_count != 0)
+			total_time += delta_time.fps();
+		frame_count++;
+		AR_INFO(total_time / (frame_count - 1));
 
 		Asciir::Renderer::clear(Asciir::Tile(25));
 		

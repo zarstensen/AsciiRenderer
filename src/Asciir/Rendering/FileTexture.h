@@ -1,0 +1,39 @@
+#pragma once
+
+#include "Texture.h"
+
+namespace Asciir
+{
+
+	typedef std::filesystem::path Path;
+
+	// stores data from a .cart (compact asciir Texture) file
+	class FileTexture: public Texture
+	{
+	public:
+		FileTexture() = default;
+		FileTexture(const Path& file_dir);
+
+		~FileTexture() final override { if (loaded()) unload(); }
+
+		Size2D size() const final override { return m_size; }
+		Tile readTile(const Size2D& coord) const final override { return m_data(coord); }
+
+		void load(const Path& dir);
+		void unload();
+		
+		void reload();
+
+		bool loaded() const { return m_is_loaded; }
+
+	protected:
+		Path m_file_dir;
+
+		bool m_is_loaded = false;
+
+		arMatrix<Tile> m_data;
+		Size2D m_size;
+
+	};
+}
+

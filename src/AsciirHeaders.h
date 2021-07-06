@@ -35,6 +35,8 @@
 #include "Asciir/Rendering/RenderConsts.h"
 #include "Asciir/Rendering/Renderer.h"
 #include "Asciir/Rendering/Mesh.h"
+#include "Asciir/Rendering/FileTexture.h"
+#include "Asciir/Rendering/DynamicTexture.h"
 
 #include "Asciir/Core/AsciirLiterals.h"
 
