@@ -32,7 +32,7 @@ namespace Asciir
 		Path m_file_dir;
 
 		Size2D m_size;
-		
+
 		arMatrix<Tile> m_data;
 
 		bool m_is_loaded = false;

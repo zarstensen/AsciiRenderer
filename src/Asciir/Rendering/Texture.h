@@ -11,6 +11,7 @@ namespace Asciir
 	{
 	public:
 		virtual ~Texture() {};
+
 		virtual Size2D size() const = 0;
 		virtual Tile readTile(const Size2D& coord) const = 0;
 	};
