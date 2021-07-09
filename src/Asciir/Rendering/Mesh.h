@@ -129,7 +129,6 @@ namespace Asciir
 		bool isInsideGrid(const Coord& coord, Real resolution, const Transform& transform = NoTransform) const;
 
 	protected:
-		Transform m_transform;
 
 		size_t firstIndexFromFace(size_t face_index) const;
 		size_t lastIndexFromFace(size_t face_index) const;

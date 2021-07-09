@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
+#include "vertices.h"
 
 namespace Asciir
 {
@@ -14,7 +15,10 @@ namespace Asciir
 	bool fcompare(Real a, Real b, Real margin = 0);
 
 	Real round(Real val, Real base = 1);
+	Coord round(const Coord& coord, Real base = 1);
 	Real ceil(Real val, Real base = 1);
+	Coord ceil(const Coord& coord, Real base = 1);
 	Real floor(Real val, Real base = 1);
+	Coord floor(const Coord& coord, Real base = 1);
 
 }

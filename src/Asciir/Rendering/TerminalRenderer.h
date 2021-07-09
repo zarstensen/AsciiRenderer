@@ -59,6 +59,12 @@ namespace Asciir
 		}
 
 		bool operator==(const UTF8Char& other) const { return (int)*this == (int)other; }
+		bool operator!=(const UTF8Char& other) const { return !(*this == other); }
+		bool operator==(int c) const { return (int) *this == c; }
+		bool operator!=(int c) const { return !(*this == c); }
+		bool operator==(const char* c_str) const { return *this == UTF8Char(c_str); }
+		bool operator!=(const char* c_str) const { return !(*this == c_str); }
+
 
 	protected:
 		static size_t u8Len(const char* u8_str)
@@ -79,7 +85,7 @@ namespace Asciir
 		Color background_color = BLACK8;
 		bool is_empty = true;
 
-		Tile(Color background_color = BLACK8, Color color = WHITE8, char symbol = ' ')
+		Tile(Color background_color = BLACK8, Color color = WHITE8, UTF8Char symbol = ' ')
 			: symbol(symbol), color(color), background_color(background_color), is_empty(false) {}
 
 		static Tile emptyTile()
@@ -106,10 +112,11 @@ namespace Asciir
 		}
 
 		// blends the foreground and background color
-		// the symbol is overwritten by the other tiles symbol
+		// the symbol is overwritten by the other tiles symbol, unless the symbol value is NULL ('\0')
 		Tile& blend(const Tile& other)
 		{
-			symbol = other.symbol;
+			if(other.symbol != '\0') symbol = other.symbol;
+			// TODO should background color be blended here aswell?
 			color.blend(other.color);
 			background_color.blend(other.background_color);
 			

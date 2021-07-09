@@ -22,6 +22,9 @@ namespace Asciir
 		Ref(const T& data): std::shared_ptr<T>(std::make_shared<T>(data)) {}
 		Ref(const Ref<T>& other): std::shared_ptr<T>(other) {}
 		Ref(const std::shared_ptr<T> other) : std::shared_ptr<T>(other) {}
+
+		template<typename TOther>
+		Ref(const Ref<TOther>& other): std::shared_ptr<T>(std::dynamic_pointer_cast<T>(other)) {}
 		
 		// enable_if_t doesn't work in the template here for reasons :/
 		template<typename TOther>
