@@ -6,3 +6,5 @@ Some of the engine is being built with the help of the [game engine tutorial ser
 > <img src="Resources/AREarlyExample.gif" width=450 height=450>
 > 
 > #### the source code for this example is in the BasicInputExample project
+
+docs coming soon...
