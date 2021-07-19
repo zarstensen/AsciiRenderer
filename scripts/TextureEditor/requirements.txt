@@ -1,4 +1,0 @@
-tkcolorpicker
-numpy
-opencv-python
-Pillow
