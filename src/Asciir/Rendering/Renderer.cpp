@@ -98,7 +98,7 @@ namespace Asciir
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
-			
+				{
 					s_renderer->setState(data.texture->readTile(data.transform.reverseTransform({ x, y })));
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
 				}
