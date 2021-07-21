@@ -12,7 +12,7 @@ namespace Asciir
 		AR_WIN_VERIFY(GetConsoleMode(m_hConsole, &m_fallback_mode));
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole, m_fallback_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
 		clearColor();
-		
+
 		// enable UTF8 codepage
 		m_fallback_cp = GetConsoleOutputCP();
 		AR_WIN_VERIFY(SetConsoleOutputCP(CP_UTF8));
@@ -45,12 +45,12 @@ namespace Asciir
 	void WinARAttr::ansiCode(std::string& dst)
 	{
 		// disabled because it causes a large overhead
-		#if 0
+#if 0
 		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
 			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
-		#endif
+#endif
 
 		// cursor
 
@@ -115,13 +115,12 @@ namespace Asciir
 
 	void WinARAttr::ansiCode(std::ostream& stream, bool is_newline)
 	{
-
-		#if 0
+#if 0
 		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
 			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
-		#endif
+#endif
 
 		// if nothing has changed do not modify the stream
 		bool has_changed = false;
@@ -132,7 +131,6 @@ namespace Asciir
 				break;
 			}
 
-
 		if (!has_changed && m_foreground != m_last_foreground)
 			has_changed = true;
 
@@ -141,7 +139,6 @@ namespace Asciir
 
 		if (m_cleared)
 			has_changed = true;
-
 
 		if (!has_changed)
 			return;
@@ -234,13 +231,12 @@ namespace Asciir
 
 	void WinARAttr::ansiCode(TerminalRenderer& dst, bool is_newline)
 	{
-
-		#if 0
+#if 0
 		SetConsoleTextAttribute(m_hConsole, DEFAULT_FOREGROUND
 			| COMMON_LVB_GRID_HORIZONTAL * attributes[TOP]
 			| COMMON_LVB_GRID_LVERTICAL * attributes[LEFT]
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
-		#endif
+#endif
 
 		// if nothing has changed do not modify the stream
 		bool has_changed = false;
@@ -251,7 +247,6 @@ namespace Asciir
 				break;
 			}
 
-
 		if (!has_changed && m_foreground != m_last_foreground)
 			has_changed = true;
 
@@ -260,7 +255,6 @@ namespace Asciir
 
 		if (m_cleared)
 			has_changed = true;
-
 
 		if (!has_changed)
 			return;
@@ -359,7 +353,7 @@ namespace Asciir
 		long long x = pos.left;
 		long long y = pos.top;
 
-		return { (Real) x, (Real) y };
+		return { (Real)x, (Real)y };
 	}
 
 	TermVert WinARAttr::terminalSize() const
@@ -378,13 +372,13 @@ namespace Asciir
 
 		return { max_size.X, max_size.Y };
 	}
-	
+
 	Size2D WinARAttr::fontSize() const
 	{
 		CONSOLE_FONT_INFO f_info;
 
 		AR_WIN_VERIFY(GetCurrentConsoleFont(m_hConsole, false, &f_info));
 
-		return { (size_t) f_info.dwFontSize.X, (size_t) f_info.dwFontSize.Y };
+		return { (size_t)f_info.dwFontSize.X, (size_t)f_info.dwFontSize.Y };
 	}
 }

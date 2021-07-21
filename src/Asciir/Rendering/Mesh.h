@@ -8,11 +8,11 @@ namespace Asciir
 	// struct containing transform data for a mesh
 	struct Transform
 	{
-		Coord pos = {0, 0};
-		Scale2D scale = {1, 1};
+		Coord pos = { 0, 0 };
+		Scale2D scale = { 1, 1 };
 		Real rotation = 0;
 
-		Coord origin = {0, 0};
+		Coord origin = { 0, 0 };
 
 		Coord applyTransform(const Coord& vec) const;
 		Coord reverseTransform(const Coord& vec) const;
@@ -23,7 +23,7 @@ namespace Asciir
 	/*
 	* A class containing vertices and data about how to connect them
 	* Points will be determinded wether to be outside or inside the mesh depending on the winding order of the edges
-	* 
+	*
 	* An index in a face list represents what vertex it should connect to, where the vertex is placed at the index in the vertices list
 	* A face consists of a list of indicies with the same index at the start and the end of the list (this defines the length of the list)
 	* Only the first index can appear twice in the list, other indicies inbetween must be unique.
@@ -70,15 +70,15 @@ namespace Asciir
 		// adds a face with an area of 0 at position [start_vert]
 		void addFace(size_t start_vert = 0) { addFace(start_vert, m_face_count); };
 		void addFace(size_t start_vert, size_t index);
-		
-		/* 
+
+		/*
 		* adds a face using the given vector as the corners.
 		* It will automaticly append the first value in the list to the end of the face list
-		* example: (input) [0, 1, 2] -> (face list) [0, 1, 2, 0] 
+		* example: (input) [0, 1, 2] -> (face list) [0, 1, 2, 0]
 		*/
 		void addFace(const std::vector<size_t>& new_face) { addFace(new_face, faceCount()); };
 		void addFace(const std::vector<size_t>& new_face, size_t index);
-		
+
 		// inserts a corner at the given position and face
 		void extendFace(size_t face_index, size_t new_corner) { extendFace(face_index, new_corner, faceCornerCount(face_index)); };
 		void extendFace(size_t face_index, size_t new_corner, size_t corner_index);
@@ -98,7 +98,7 @@ namespace Asciir
 
 		void removeFace(size_t face_index);
 		void decreaseFace(size_t face_index, size_t index);
-		
+
 		void setVertex(size_t index, Coord new_val);
 		Mesh& offset(Coord offset);
 		Coord getVertex(size_t index, const Transform& transform = NoTransform) const;
@@ -112,7 +112,7 @@ namespace Asciir
 		void setCorner(size_t face_index, size_t index, size_t new_corner);
 		size_t getCorner(size_t face_index, size_t index) const;
 		// mods the input index by the number of corners
-		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index));  };
+		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index)); };
 		arVertex2D<Real> getCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(getCorner(face_index, index), transform); }
 		arVertex2D<Real> cgetCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(cgetCorner(face_index, index), transform); }
 
@@ -135,7 +135,4 @@ namespace Asciir
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Mesh& mesh);
-
-
 }
-

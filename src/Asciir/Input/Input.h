@@ -66,6 +66,4 @@ namespace Asciir
 		static TerminalRenderer::TRUpdateInfo s_info;
 		static Ref<EventListener> s_event_listener;
 	};
-
-	
 }

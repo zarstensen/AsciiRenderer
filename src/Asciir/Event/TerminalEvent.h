@@ -13,12 +13,14 @@ namespace Asciir
 	public:
 		TerminalClosedEvent(int signal) : m_signal(signal) {}
 		TerminalClosedEvent()
-			: m_signal(-1) { m_valid = false; }
+			: m_signal(-1) {
+			m_valid = false;
+		}
 
 		int getSignal() { AR_EVENT_IS_VALID; return m_signal; }
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalClosed)
+			EVENT_TYPE_DEFINE(TerminalClosed)
 	};
 
 	class TerminalResizedEvent : public Event
@@ -31,9 +33,11 @@ namespace Asciir
 		TerminalResizedEvent(TermVert size, TermVert size_diff, bool by_client)
 			: m_size(size), m_size_diff(size_diff), m_client(by_client)
 		{}
-		
+
 		TerminalResizedEvent()
-			: m_size(AR_INVALID_COORD), m_size_diff(AR_INVALID_COORD), m_client(false) { m_valid = false; }
+			: m_size(AR_INVALID_COORD), m_size_diff(AR_INVALID_COORD), m_client(false) {
+			m_valid = false;
+		}
 
 		TermVert getSize() const { AR_EVENT_IS_VALID; return m_size; }
 		TermVert getDiff() const { AR_EVENT_IS_VALID; return m_size_diff; }
@@ -50,7 +54,7 @@ namespace Asciir
 		}
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalResized)
+			EVENT_TYPE_DEFINE(TerminalResized)
 	};
 
 	class TerminalMovedEvent : public Event
@@ -65,7 +69,9 @@ namespace Asciir
 		{}
 
 		TerminalMovedEvent()
-			: m_pos(AR_INVALID_COORD), m_offset(AR_INVALID_COORD), m_client(false) { m_valid = false; }
+			: m_pos(AR_INVALID_COORD), m_offset(AR_INVALID_COORD), m_client(false) {
+			m_valid = false;
+		}
 
 		Coord getPos() const { AR_EVENT_IS_VALID; return m_pos; }
 		Coord getOff() const { AR_EVENT_IS_VALID; return m_offset; }
@@ -82,10 +88,10 @@ namespace Asciir
 		}
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalMoved)
+			EVENT_TYPE_DEFINE(TerminalMoved)
 	};
 
-	class TerminalFocusEvent: public Event
+	class TerminalFocusEvent : public Event
 	{
 	protected:
 		bool m_focused;
@@ -94,11 +100,13 @@ namespace Asciir
 			: m_focused(focused) {}
 
 		TerminalFocusEvent()
-			: m_focused(false) { m_valid = false; }
+			: m_focused(false) {
+			m_valid = false;
+		}
 
 		bool isFocused() { AR_EVENT_IS_VALID; return m_focused; }
 
 		EVENT_CATEGORY_DEFINE(CategoryTerminal)
-		EVENT_TYPE_DEFINE(TerminalFocus)
+			EVENT_TYPE_DEFINE(TerminalFocus)
 	};
 }

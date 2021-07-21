@@ -19,12 +19,11 @@ class TextureLayer : public Asciir::Layer
 		Transform texture_t;
 		texture_t.pos = { 10, 10 };
 		texture_t.scale = { 2, 2 };
-		texture_t.origin = (Coord) texture->size() / 2;
+		texture_t.origin = (Coord)texture->size() / 2;
 
 		Renderer::submitShader(texture, texture_t);
 		//Renderer::resize({ 20, 20 });
 	}
-
 };
 
 class TextureExample : public Asciir::AREngine
@@ -37,8 +36,6 @@ public:
 };
 
 // tile hold char as variant between pointer and stack verison
-
-
 
 Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 {

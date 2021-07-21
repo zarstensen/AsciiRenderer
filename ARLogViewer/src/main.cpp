@@ -63,6 +63,6 @@ Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 	{
 		log_dir = args[1];
 	}
-	
+
 	return new LogTerm(log_dir);
 }

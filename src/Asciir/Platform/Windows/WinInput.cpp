@@ -25,10 +25,9 @@ namespace Asciir
 		WinInKeyData& operator=(EventListener::KeyInputData data)
 		{
 			is_down = data.is_down;
-			
+
 			return *this;
 		}
-
 	};
 
 	struct WinInMouseData
@@ -73,7 +72,7 @@ namespace Asciir
 	bool Input::isKeyToggled(Key keycode)
 	{
 		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
-		return key_toggled_state[(size_t) keycode - 1].is_toggled && key_data.is_down && isFocused();
+		return key_toggled_state[(size_t)keycode - 1].is_toggled && key_data.is_down && isFocused();
 		return false;
 	}
 
@@ -138,11 +137,8 @@ namespace Asciir
 		return {};
 	}
 
-	
-
 	std::variant<std::monostate, MousePressedEvent, MouseReleasedEvent> Input::getMouseKeyEvent(MouseKey keycode)
 	{
-
 		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
 		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
 
@@ -207,12 +203,12 @@ namespace Asciir
 
 			input_key_data = poll_data;
 		}
-		
+
 		for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
 		{
 			EventListener::MouseInputData poll_data = mouse_poll[i];
 			WinInMouseData& input_mouse_data = mouse_toggled_state[i];
-			
+
 			if (poll_data.is_down != input_mouse_data.is_down)
 				input_mouse_data.is_toggled = true;
 			else if (poll_data.is_down == input_mouse_data.is_down)

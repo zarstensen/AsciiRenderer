@@ -2,12 +2,11 @@
 
 #include "FileLog.h"
 
-
 namespace Asciir
 {
 	static std::filesystem::path CORE_LOG_DIR = AR_CORE_LOG_DIR;
 	static std::filesystem::path CLIENT_LOG_DIR = AR_CLIENT_LOG_DIR;
-	
+
 	class Log
 	{
 		inline static FileLog s_core_log_out;
@@ -17,7 +16,7 @@ namespace Asciir
 
 		static void setCoreLogDir(const std::string& dir);
 		static void setClientLogDir(const std::string& dir);
-		
+
 		static const FileLog& getCoreLog();
 		static const FileLog& getClientLog();
 
@@ -74,7 +73,7 @@ namespace Asciir
 		{
 			s_client_log_out.Log(3, "CLIENT", "CRITICAL", line, file, args...);
 		}
-	
+
 		template<typename ... T>
 		inline static void clientError(size_t line, const char* file, const T& ... args)
 		{
@@ -82,7 +81,6 @@ namespace Asciir
 		}
 	};
 }
-
 
 // Core macros
 
@@ -104,7 +102,6 @@ namespace Asciir
 #define AR_CORE_WARN(...)	__VA_ARGS__
 #endif
 
-
 #if AR_CORE_VERBOSITY >= 1
 #define AR_CORE_CRIT(...)	::Asciir::Log::coreCritical(__LINE__, __FILE__, __VA_ARGS__)
 #else
@@ -116,8 +113,6 @@ namespace Asciir
 #else
 #define AR_CORE_ERR(...)	__VA_ARGS__
 #endif
-
-
 
 // Client macros
 
@@ -138,7 +133,6 @@ namespace Asciir
 #else
 #define AR_WARN(...)	__VA_ARGS__
 #endif
-
 
 #if AR_CLIENT_VERBOSITY >= 1
 #define AR_CRIT(...)	::Asciir::Log::clientCritical(__LINE__, __FILE__, __VA_ARGS__)

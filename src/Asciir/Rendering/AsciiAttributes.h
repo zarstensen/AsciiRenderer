@@ -17,13 +17,13 @@ namespace Asciir
 	static constexpr ATTRI TOP = 7;
 	static constexpr ATTRI OVERLINED = 7;
 	static constexpr ATTRI BOTTOM = 2;
-	#ifdef AR_WIN
+#ifdef AR_WIN
 	static constexpr ATTRI LEFT = 5;
 	static constexpr ATTRI RIGHT = 6;
-	#else
+#else
 	static constexpr ATTRI FRAMED = 5;
 	static constexpr ATTRI ENCIRCLED = 6;
-	#endif
+#endif
 
 	static constexpr size_t ATTR_MAX_SIZE = 48;
 
@@ -45,17 +45,15 @@ namespace Asciir
 		bool operator<=(const Color& other) const;
 		bool operator>=(const Color& other) const;
 
-		
 		// blends the two colors taking the alpha value into account
 		// uses the current color as the background and calculates the alpha result afterwards
 		Color& blend(const Color& other);
 		// blends the two colors taking the alpha value into account
 		static Color blend(const Color& background, const Color& color);
-
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Color& c);
-	
+
 	typedef Color RGB24;
 
 	struct RGB8
@@ -68,7 +66,7 @@ namespace Asciir
 		Color getColor();
 		operator Color();
 	};
-	
+
 	struct RGB4
 	{
 		bool red, green, blue, intensity;
@@ -78,7 +76,6 @@ namespace Asciir
 
 		Color getColor();
 		operator Color();
-
 	};
 
 	struct GRAY8
@@ -150,23 +147,22 @@ namespace Asciir
 
 		void move(TermVert pos);
 
-		#ifdef AR_WIN
+#ifdef AR_WIN
 
 		void setBoxed(bool val);
 		void setLR(bool val);
 		void setTB(bool val);
 
-		#endif
+#endif
 
 		virtual std::string ansiCode() = 0;
 		virtual void ansiCode(std::string& dst) = 0;
 		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
 		virtual void ansiCode(TerminalRenderer& dst, bool is_newline = false) = 0;
-		
+
 		void moveCode(std::string& dst);
 		void moveCode(std::ostream& stream);
 		void moveCode(TerminalRenderer& dst);
-
 
 		void setTitle(const std::string& name);
 

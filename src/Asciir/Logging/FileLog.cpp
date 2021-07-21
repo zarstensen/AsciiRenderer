@@ -23,12 +23,12 @@ namespace Asciir
 
 	void FileLog::open(const std::string& log_name, bool save_file, bool append_logs)
 	{
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		if (is_open)
 		{
 			throw std::runtime_error("Log is already open");
 		}
-		#endif
+#endif
 
 		is_open = true;
 
@@ -44,13 +44,12 @@ namespace Asciir
 
 	void FileLog::close()
 	{
-
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		if (!is_open)
 		{
 			throw std::runtime_error("Log is already closed");
 		}
-		#endif
+#endif
 
 		is_open = false;
 
@@ -71,5 +70,4 @@ namespace Asciir
 		std::filesystem::path dir = m_name;
 		return dir.parent_path().string();
 	}
-
 }

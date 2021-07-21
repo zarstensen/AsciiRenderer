@@ -2,7 +2,7 @@
 #include "Vertices.h"
 
 namespace Asciir
-{	
+{
 	template<typename T, size_t d>
 	class arVector : public arVertex<T, d>
 	{
@@ -14,7 +14,6 @@ namespace Asciir
 
 	template<typename T>
 	using Vector = arVector<T, 2>;
-
 
 	typedef Vector<Real> RealVector;
 }

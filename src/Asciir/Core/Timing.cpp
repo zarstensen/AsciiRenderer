@@ -20,7 +20,7 @@ namespace Asciir
 
 	DeltaTime castRealMilli(const duration& dur)
 	{
-		return DeltaTime(Real(std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count()) / (Real) 1000000);
+		return DeltaTime(Real(std::chrono::duration_cast<std::chrono::nanoseconds>(dur).count()) / (Real)1000000);
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const DeltaTime& time)

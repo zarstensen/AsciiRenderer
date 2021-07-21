@@ -5,7 +5,6 @@
 
 namespace Asciir
 {
-
 	Coord Transform::applyTransform(const Coord& vec) const
 	{
 		// uses Eigen transform matrices to perform the transformation
@@ -59,7 +58,6 @@ namespace Asciir
 			vert_count += verts.size();
 			edge_count += verts.size() + 1;
 		}
-			
 
 		m_vertices.resize(vert_count);
 		m_faces.reserve(vert_count);
@@ -68,7 +66,7 @@ namespace Asciir
 		size_t index_offset = 0;
 
 		addFace(index_offset);
-		
+
 		m_vertices[index_offset] = polygon[0][0];
 		for (size_t j = 1; j < polygon[0].size(); j++)
 		{
@@ -114,30 +112,30 @@ namespace Asciir
 		else
 			m_face_count = 0;
 
-		#ifdef AR_DEBUG
-		for(size_t i = 0; i < m_face_count; i++)
+#ifdef AR_DEBUG
+		for (size_t i = 0; i < m_face_count; i++)
 			for (size_t j = 0; j < faceCornerCount(i); j++)
 			{
 				AR_ASSERT_MSG(std::count(m_faces.begin() + firstIndexFromFace(i), m_faces.begin() + lastIndexFromFace(i), getCorner(i, j)) == 1,
 					"Cannot have more than one vertex in a face, unless it is the first vertex");
 				AR_ASSERT_MSG(m_faces[firstIndexFromFace(i) + j] < m_vertices.size(), "Face corner is out of bounds: ", m_faces[firstIndexFromFace(i) + j]);
 			}
-		#endif
+#endif
 	}
-	
+
 	LineSegment Mesh::getEdge(size_t face_index, size_t index, const Transform& transform) const
 	{
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
 
-			return LineSegment::fromPoints(getCornerVert(face_index, index, transform), cgetCornerVert(face_index, index + 1, transform));
+		return LineSegment::fromPoints(getCornerVert(face_index, index, transform), cgetCornerVert(face_index, index + 1, transform));
 	}
 
 	void Mesh::addVertex(Coord new_vert)
 	{
 		addVertex(new_vert, m_vertices.size());
 	}
-	
+
 	void Mesh::addVertex(Coord new_vert, size_t index)
 	{
 		size_t prev_size = m_vertices.size();
@@ -145,7 +143,7 @@ namespace Asciir
 		m_vertices.block(index + 1, 0, prev_size - index, 0) = m_vertices.block(index, 0, prev_size - index, 0);
 		m_vertices[index] = new_vert;
 	}
-	
+
 	void Mesh::addVertices(const Coords& new_verts)
 	{
 		addVertices(new_verts, m_vertices.size());
@@ -154,7 +152,7 @@ namespace Asciir
 	void Mesh::addVertices(const Coords& new_verts, size_t index)
 	{
 		size_t prev_size = m_vertices.size();
-		
+
 		m_vertices.cResize(m_vertices.size() + new_verts.size());
 		m_vertices.segment(index + new_verts.size(), prev_size - index) = m_vertices.segment(index, prev_size - index);
 		m_vertices.segment(index, new_verts.size()) = new_verts;
@@ -168,7 +166,7 @@ namespace Asciir
 			m_faces.insert(m_faces.begin(), { start_vert, start_vert });
 		else
 			m_faces.insert(m_faces.begin() + firstIndexFromFace(index - 1) + faceCornerCount(index - 1) + 1, { start_vert, start_vert });
-		
+
 		m_face_count++;
 	}
 
@@ -186,10 +184,10 @@ namespace Asciir
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index <= faceCornerCount(face_index), "Corner index is out of bounds");
 
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		for (size_t i = 0; i < faceCornerCount(face_index); i++)
 			AR_ASSERT_MSG(m_faces[firstIndexFromFace(face_index) + i] != new_corner, "Cannot have the same corner twice in a face");
-		#endif
+#endif
 
 		if (index == 0) m_faces[lastIndexFromFace(face_index)] = new_corner;
 
@@ -201,15 +199,15 @@ namespace Asciir
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index <= faceCornerCount(face_index), "Corner index is out of bounds");
 
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		for (size_t i = 0; i < new_corners.size(); i++)
 			for (size_t j = 0; j < new_corners.size(); j++)
 				AR_ASSERT_MSG(new_corners[i] != new_corners[j] && i != j, "Cannot have the same croner twice in a face");
-		
+
 		for (size_t i = 0; i < faceCornerCount(face_index); i++)
-			for(size_t corner : new_corners)
+			for (size_t corner : new_corners)
 				AR_ASSERT_MSG(m_faces[firstIndexFromFace(face_index) + i] != corner, "Cannot have the same corner twice in a face");
-		#endif
+#endif
 
 		if (index == 0) m_faces[lastIndexFromFace(face_index)] = new_corners[0];
 
@@ -229,7 +227,6 @@ namespace Asciir
 		}
 	}
 
-	
 	size_t Mesh::faceCornerCount(size_t face_index) const
 	{
 		AR_ASSERT_MSG(face_index < m_face_count, "Index is out of bounds");
@@ -252,11 +249,11 @@ namespace Asciir
 		m_vertices.segment(index_begin, mov_size) = m_vertices.segment(index_begin + index_offset, mov_size);
 		m_vertices.cResize(m_vertices.size() - index_offset);
 
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		for (size_t corner : m_faces)
 			AR_ASSERT_MSG(corner < m_vertices.size(),
 				"Face corner is no longer in bounds: ", corner);
-		#endif
+#endif
 	}
 
 	void Mesh::removeFace(size_t face_index)
@@ -308,7 +305,7 @@ namespace Asciir
 			avg_vert += vert;
 		}
 
-		avg_vert /= (Real) vertCount();
+		avg_vert /= (Real)vertCount();
 
 		return avg_vert;
 	}
@@ -335,7 +332,6 @@ namespace Asciir
 		return m_faces[firstIndexFromFace(face_index) + index];
 	}
 
-
 	bool Mesh::isInside(const Coord& coord, const Transform& transform) const
 	{
 		Coord transformed_coord = transform.reverseTransform(coord);
@@ -348,7 +344,7 @@ namespace Asciir
 			{
 				LineSegment edge = getEdge(i, j);
 				bool intersects = edge.intersects(ray);
- 				if (intersects && !edge.isPerpendicular(ray))
+				if (intersects && !edge.isPerpendicular(ray))
 				{
 					Coord intersect = edge.intersect(ray);
 
@@ -363,7 +359,6 @@ namespace Asciir
 		}
 
 		return winding_number > 0;
-
 	}
 
 	bool Mesh::isInsideGrid(const Coord& coord, Real resolution, const Transform& transform) const
@@ -380,10 +375,10 @@ namespace Asciir
 			for (size_t j = 0; j < faceCornerCount(i); j++)
 			{
 				LineSegment edge = getEdge(i, j);
-				
+
 				// calculate width based on the slope of the line
 				Real width = (Real)std::sin(std::acos((edge.direction.dot(RealVertex(1, 0))) / (edge.direction.norm() * std::sqrt(1)))) * resolution;
-				
+
 				bool intersects = edge.intersects(grid_ray);
 				if (intersects && !edge.isPerpendicular(grid_ray))
 				{
@@ -417,8 +412,7 @@ namespace Asciir
 				i++;
 				start_val = m_faces[i];
 				curr_face++;
-				if(curr_face == face_index) return i;
-
+				if (curr_face == face_index) return i;
 			}
 		}
 
@@ -444,7 +438,7 @@ namespace Asciir
 	std::ostream& operator<<(std::ostream& stream, const Mesh& mesh)
 	{
 		stream << "VERTS: " << mesh.getVerts() << "\nFACES: ";
-		
+
 		if (mesh.faceCount() > 0)
 		{
 			stream << '\n';
@@ -455,7 +449,7 @@ namespace Asciir
 				stream << mesh.cgetCorner(i, mesh.faceCornerCount(i)) << '\n';
 			}
 		}
-		else 
+		else
 			stream << "None";
 
 		return stream;

@@ -3,15 +3,12 @@
 
 namespace Asciir
 {
-
 	class WinARAttr : public AsciiAttr
 	{
-
 		HANDLE m_hConsole;
 		DWORD m_fallback_mode;
 		UINT m_fallback_cp;
 
-	
 	public:
 		WinARAttr();
 		~WinARAttr() final;
@@ -27,4 +24,3 @@ namespace Asciir
 		Size2D fontSize() const final;
 	};
 }
-

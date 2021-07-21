@@ -4,7 +4,6 @@ using namespace Asciir::AsciirLiterals;
 
 class TriangleLayer : public Asciir::Layer
 {
-
 	Asciir::Ref<Asciir::Mesh> triangle_verts = Asciir::Mesh(
 		{ { {20, 40}, {50, 10}, {80, 40} },
 		  { {35, 25}, {65, 25}, {50, 40} } });
@@ -14,7 +13,6 @@ class TriangleLayer : public Asciir::Layer
 	Asciir::TInt pos = 0;
 	bool forward = true;
 
-	
 	Asciir::Real total_time = 0;
 	size_t frame_count = 0;
 
@@ -26,13 +24,13 @@ class TriangleLayer : public Asciir::Layer
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
-		if(frame_count != 0)
+		if (frame_count != 0)
 			total_time += delta_time.fps();
 		frame_count++;
 		AR_INFO(total_time / (frame_count - 1));
 
 		Asciir::Renderer::clear(Asciir::Tile(25));
-		
+
 		if (forward)
 			pos++;
 		else
@@ -49,7 +47,7 @@ class TriangleLayer : public Asciir::Layer
 		square_transform.origin = square_mesh->getMedianVert();
 		Asciir::Color square_color = Asciir::IRED8;
 		square_color.alpha = 100;
-		
+
 		transform.pos.x = pos;
 		transform.pos.y = 0;
 		transform.scale.x = 1;
@@ -65,7 +63,7 @@ class TriangleLayer : public Asciir::Layer
 	}
 };
 
-class Exec: public Asciir::AREngine
+class Exec : public Asciir::AREngine
 {
 public:
 	Exec()

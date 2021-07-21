@@ -15,21 +15,21 @@ namespace Asciir
 	Terminal::Terminal(const TerminalProps& props)
 		: m_terminal_render(props.title, props.bufferSize)
 	{
-		if(props.size.x > 0 && props.size.y > 0)
+		if (props.size.x > 0 && props.size.y > 0)
 			m_terminal_render.resize(props.size);
 
-		#ifdef AR_WIN
+#ifdef AR_WIN
 		m_event_listener = new WinEventListener();
-		#elif defined(AR_LINUX)
-		#error Events Not Implemented Yet
-		#endif
+#elif defined(AR_LINUX)
+#error Events Not Implemented Yet
+#endif
 	}
 
 	Terminal::~Terminal()
 	{
 		m_event_listener->stop();
 	}
-	
+
 	void Terminal::onStart()
 	{
 		// Terminal close callbacks
@@ -43,19 +43,19 @@ namespace Asciir
 	{
 		m_terminal_render.draw();
 	}
-	
+
 	void Terminal::pollInput()
 	{
 		m_event_listener->pollState();
 		Input::pollState(m_terminal_render.update());
 	}
-	
+
 	void onCloseSignal(int signal)
 	{
 		TerminalClosedEvent event(signal);
 		AREngine::getEngine()->getTerminal().EventCallback(event);
 	}
-	
+
 	TerminalRenderer& Terminal::getRenderer()
 	{
 		return m_terminal_render;
@@ -80,5 +80,4 @@ namespace Asciir
 	{
 		m_event_callback(e);
 	}
-
 }

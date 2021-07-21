@@ -12,8 +12,7 @@ class ExampleLayer : public Asciir::Layer
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
 	{
-		Asciir::Renderer::clear(Asciir::Tile({ 0, 0, 155 }, {0, 0, 155}, 219));
-
+		Asciir::Renderer::clear(Asciir::Tile({ 0, 0, 155 }, { 0, 0, 155 }, 219));
 
 		if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
 			pos.y -= delta_time * speed;

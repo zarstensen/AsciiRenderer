@@ -8,12 +8,10 @@
 
 namespace Asciir
 {
-
 	class EventListener
 	{
 	public:
 		using EventCallbackFp = std::function<void(Event&)>;
-		
 
 		// structures that holds key data and times key down events
 		struct KeyInputData
@@ -36,7 +34,7 @@ namespace Asciir
 		static constexpr size_t KIS_LEN = KEY_CODE_COUNT;
 		// size of key input array for the mouse
 		static constexpr size_t MIS_LEN = MOUSE_CODE_COUNT;
-	
+
 	protected:
 		EventCallbackFp m_callback;
 		// updated for every event
@@ -74,10 +72,10 @@ namespace Asciir
 
 		const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() { return keybd_poll_state; }
 		const std::array<MouseInputData, MIS_LEN>& getMousePoll() { return mouse_poll_state; }
-		
-		Coord getMousePosPoll() { return m_poll_mouse_pos;  };
-		Coord getMousePos() { return m_mouse_pos;  };
-		
+
+		Coord getMousePosPoll() { return m_poll_mouse_pos; };
+		Coord getMousePos() { return m_mouse_pos; };
+
 		TermVert getCursorPosPoll() { return m_poll_cur_pos; };
 		TermVert getCursorPos() { return m_cur_pos; };
 

@@ -56,10 +56,10 @@ namespace Asciir
 	{
 		Real foreground_alpha = (Real)other.alpha / UCHAR_MAX;
 
-		red =	unsigned char(foreground_alpha * other.red + (1 - foreground_alpha) * (Real) red);
-		green = unsigned char(foreground_alpha * other.green + (1 - foreground_alpha) * (Real) green);
-		blue =	unsigned char(foreground_alpha * other.blue + (1 - foreground_alpha) * (Real) blue);
-		alpha = unsigned char(alpha + (1 - (Real) alpha / UCHAR_MAX) * foreground_alpha);
+		red = unsigned char(foreground_alpha * other.red + (1 - foreground_alpha) * (Real)red);
+		green = unsigned char(foreground_alpha * other.green + (1 - foreground_alpha) * (Real)green);
+		blue = unsigned char(foreground_alpha * other.blue + (1 - foreground_alpha) * (Real)blue);
+		alpha = unsigned char(alpha + (1 - (Real)alpha / UCHAR_MAX) * foreground_alpha);
 
 		return *this;
 	}
@@ -130,53 +130,52 @@ namespace Asciir
 	{
 		switch (BIT_SHL(0, red) | BIT_SHL(1, green) | BIT_SHL(2, blue) | BIT_SHL(intensity, 3))
 		{
-			case IS_BLACK:
-				return BLACK8;
-				break;
-			case IS_RED:
-				return RED8;
-				break;
-			case IS_GREEN:
-				return GREEN8;
-				break;
-			case IS_BLUE:
-				return BLUE8;
-				break;
-			case IS_YELLOW:
-				return YELLOW8;
-				break;
-			case IS_MAGENTA:
-				return MAGENTA8;
-				break;
-			case IS_CYAN:
-				return CYAN8;
-				break;
-			case IS_IBLACK:
-				return IBLACK8;
-				break;
-			case IS_IRED:
-				return IRED8;
-				break;
-			case IS_IGREEN:
-				return IGREEN8;
-				break;
-			case IS_IBLUE:
-				return IBLUE8;
-				break;
-			case IS_IYELLOW:
-				return IYELLOW8;
-				break;
-			case IS_IMAGENTA:
-				return IMAGENTA8;
-				break;
-			case IS_ICYAN:
-				return ICYAN8;
-				break;
-			default:
-				AR_ASSERT_MSG(false, "Invalid color");
-				return {};
+		case IS_BLACK:
+			return BLACK8;
+			break;
+		case IS_RED:
+			return RED8;
+			break;
+		case IS_GREEN:
+			return GREEN8;
+			break;
+		case IS_BLUE:
+			return BLUE8;
+			break;
+		case IS_YELLOW:
+			return YELLOW8;
+			break;
+		case IS_MAGENTA:
+			return MAGENTA8;
+			break;
+		case IS_CYAN:
+			return CYAN8;
+			break;
+		case IS_IBLACK:
+			return IBLACK8;
+			break;
+		case IS_IRED:
+			return IRED8;
+			break;
+		case IS_IGREEN:
+			return IGREEN8;
+			break;
+		case IS_IBLUE:
+			return IBLUE8;
+			break;
+		case IS_IYELLOW:
+			return IYELLOW8;
+			break;
+		case IS_IMAGENTA:
+			return IMAGENTA8;
+			break;
+		case IS_ICYAN:
+			return ICYAN8;
+			break;
+		default:
+			AR_ASSERT_MSG(false, "Invalid color");
+			return {};
 		}
-		
 	}
 
 	RGB4::operator Color()
@@ -214,8 +213,8 @@ namespace Asciir
 		m_background = background;
 	}
 
-	#ifdef AR_WIN
-	
+#ifdef AR_WIN
+
 	void AsciiAttr::setBoxed(bool val)
 	{
 		attributes[TOP] = val;
@@ -235,8 +234,8 @@ namespace Asciir
 		attributes[TOP] = val;
 		attributes[BOTTOM] = val;
 	}
-	
-	#endif
+
+#endif
 
 	void AsciiAttr::clear()
 	{
@@ -249,7 +248,7 @@ namespace Asciir
 	{
 		memset(attributes.data(), false, ATTR_COUNT);
 	}
-	
+
 	void AsciiAttr::clearColor()
 	{
 		setForeground(WHITE8);
@@ -310,10 +309,10 @@ namespace Asciir
 
 	std::ostream& operator<<(std::ostream& stream, const Color& c)
 	{
-		stream	<< std::setfill(' ') << std::setw(3) << (int) c.red		<< ' '
-				<< std::setfill(' ') << std::setw(3) << (int) c.green	<< ' '
-				<< std::setfill(' ') << std::setw(3) << (int) c.blue	<< ' '
-				<< std::setfill(' ') << std::setw(3) << (int) c.alpha;
+		stream << std::setfill(' ') << std::setw(3) << (int)c.red << ' '
+			<< std::setfill(' ') << std::setw(3) << (int)c.green << ' '
+			<< std::setfill(' ') << std::setw(3) << (int)c.blue << ' '
+			<< std::setfill(' ') << std::setw(3) << (int)c.alpha;
 		return stream;
 	}
 

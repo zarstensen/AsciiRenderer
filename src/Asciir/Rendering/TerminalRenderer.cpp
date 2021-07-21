@@ -28,8 +28,6 @@ namespace Asciir
 				check = (check << 1) + 0b10;
 				mask = (mask << 1) + 0b1;
 			}
-
-			
 		}
 
 		// first bit was not formatted correctly
@@ -53,11 +51,11 @@ namespace Asciir
 	TerminalRenderer::TerminalRenderer(const std::string& title, size_t buffer_size)
 		: m_title(title)
 	{
-		#ifdef AR_WIN
+#ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
-		#elif defined AR_UNIX
+#elif defined AR_UNIX
 		m_attr_handler = std::make_shared(WinArAttr());
-		#endif
+#endif
 
 		m_buffer.reserve(buffer_size);
 		update();
@@ -83,11 +81,11 @@ namespace Asciir
 		if (mode == DrawMode::Line)
 		{
 			// loop over vertices in pairs and draw lines between them
-			for (size_t i = 0; i < (size_t) vertices.size() - 1; i++)
+			for (size_t i = 0; i < (size_t)vertices.size() - 1; i++)
 			{
-				Line line = Line::fromPoints(vertices[i], vertices[i+1]);
-				
-				TInt length = (TInt) line.direction.norm();
+				Line line = Line::fromPoints(vertices[i], vertices[i + 1]);
+
+				TInt length = (TInt)line.direction.norm();
 
 				for (TInt j = 0; j <= length; j++)
 				{
@@ -112,7 +110,6 @@ namespace Asciir
 				maxx = std::max(vert.x, maxx);
 			}
 
-
 			for (TInt line = miny; line < maxy + 1; line++)
 			{
 				bool is_inside = false;
@@ -122,14 +119,14 @@ namespace Asciir
 				{
 					bool is_corner = false;
 					bool tmp_inside = is_inside;
-					for (size_t verti = 0; verti < (size_t) vertices.size(); verti++)
+					for (size_t verti = 0; verti < (size_t)vertices.size(); verti++)
 					{
 						size_t next_vert = verti + 1 > (size_t) vertices.size() - 1 ? 0 : verti + 1;
 						RealVertex point(x, line);
 						LineSegment lsegment = LineSegment::fromPoints(vertices[verti], vertices[next_vert]);
 
 						// corner case {jokes be funny :)}
-						if((RealVertex) vertices[verti] == point)
+						if ((RealVertex)vertices[verti] == point)
 						{
 							RealVertex other_corner = vertices[verti == 0 ? vertices.size() - 1 : verti - 1];
 
@@ -156,7 +153,7 @@ namespace Asciir
 						}
 
 						// calculate width based on the slope of the line
-						Real width = (Real) std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
+						Real width = (Real)std::sin(std::acos((lsegment.direction.dot(RealVertex(1, 0))) / (lsegment.direction.norm() * std::sqrt(1))));
 
 						bool intersects = lsegment.intersects(point, width);
 						if (intersects)
@@ -164,9 +161,8 @@ namespace Asciir
 							was_inside = true;
 							tmp_inside = !tmp_inside;
 						}
-
 					}
-					
+
 					is_inside = tmp_inside;
 
 					if (!(is_corner && is_inside) && (is_corner && !is_inside || is_inside || was_inside))
@@ -176,10 +172,9 @@ namespace Asciir
 					}
 				}
 			}
-
 		}
 	}
-	
+
 	void TerminalRenderer::drawLine(const TermVert& a, const TermVert& b)
 	{
 		drawVertices({ a, b }, DrawMode::Line);
@@ -218,15 +213,15 @@ namespace Asciir
 
 	void TerminalRenderer::drawTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
-					 "Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		m_tiles(pos.x, pos.y).current = m_tile_state;
 	}
 
 	void TerminalRenderer::blendTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		m_tiles(pos.x, pos.y).current.blend(m_tile_state);
@@ -234,7 +229,7 @@ namespace Asciir
 
 	TerminalRenderer::DrawTile& TerminalRenderer::getTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y && pos.y >= 0,
+		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
 		return m_tiles(pos.x, pos.y);
@@ -245,7 +240,6 @@ namespace Asciir
 		m_title = title;
 		m_should_rename = true;
 	}
-
 
 	std::string TerminalRenderer::getTitle() const
 	{
@@ -260,7 +254,7 @@ namespace Asciir
 	void TerminalRenderer::resize(TermVert size)
 	{
 		AR_ASSERT_MSG(size.x <= maxSize().x && size.x > 0 && size.y <= maxSize().y && size.y > 0,
-			          "Size ", size, " is too large or negative. Max size: ", maxSize());
+			"Size ", size, " is too large or negative. Max size: ", maxSize());
 
 		m_should_resize = true;
 		m_tiles.resize(size);
@@ -279,9 +273,9 @@ namespace Asciir
 
 		{
 			// reset stored tiles from last update
-			if(drawSize() != size)
+			if (drawSize() != size)
 				clearRenderTiles();
-			
+
 			m_should_resize = false;
 			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
@@ -324,9 +318,9 @@ namespace Asciir
 		m_attr_handler->move({ 0, 0 });
 		m_attr_handler->moveCode(*this);
 
-		for (TInt y = 0; (size_t) y < drawSize().y; y++)
+		for (TInt y = 0; (size_t)y < drawSize().y; y++)
 		{
-			for (TInt x = 0; (size_t) x < drawSize().x; x++)
+			for (TInt x = 0; (size_t)x < drawSize().x; x++)
 			{
 				Tile& new_tile = m_tiles(x, y).current;
 				Tile& old_tile = m_tiles(x, y).last;
@@ -350,7 +344,7 @@ namespace Asciir
 				pushBuffer(new_tile.symbol);
 			}
 
-			if((size_t) y < (size_t) drawSize().y - 1 && !skipped_tile)
+			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)
 				pushBuffer('\n');
 		}
 
@@ -359,7 +353,6 @@ namespace Asciir
 
 		flushBuffer();
 
-		
 		m_tiles[1] = m_tiles[0];
 	}
 
@@ -379,9 +372,9 @@ namespace Asciir
 	TermVert TerminalRenderer::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return (TermVert) m_tiles.size();
+		return (TermVert)m_tiles.size();
 	}
-	
+
 	TermVert TerminalRenderer::maxSize() const
 	{
 		return m_attr_handler->maxTerminalSize();
@@ -400,12 +393,11 @@ namespace Asciir
 		m_buffer += c;
 	}
 
-
 	void TerminalRenderer::pushBuffer(const std::string& data)
 	{
 		if (data.size() + m_buffer.size() > m_buffer.capacity())
 			flushBuffer();
-		
+
 		if (data.size() > m_buffer.capacity())
 			fwrite(data.c_str(), 1, data.size(), stdout);
 
@@ -422,12 +414,10 @@ namespace Asciir
 	{
 		return m_attr_handler->attributes;
 	}
-	
+
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
 	{
 		stream << (int)tile.symbol << " (" << tile.background_color << ") (" << tile.color << ") ";
 		return stream;
 	}
-
-	
 }

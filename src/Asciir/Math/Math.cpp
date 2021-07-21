@@ -6,14 +6,14 @@ namespace Asciir
 
 	Real degToRad(Real degrees)
 	{
-		return degrees * PI / (Real) 180;
+		return degrees * PI / (Real)180;
 	}
 
 	Real radToDeg(Real radians)
 	{
 		return radians * (Real)180 / PI;
 	}
-	
+
 	bool fcompare(Real a, Real b, Real margin)
 	{
 		return  a < b + margin / 2 && a > b - margin / 2;

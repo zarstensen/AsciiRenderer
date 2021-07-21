@@ -16,9 +16,9 @@ namespace Asciir
 		{}
 
 		KeyEvent()
-			: m_keycode(Key::UNKNOWN) { m_valid = false; }
-
-
+			: m_keycode(Key::UNKNOWN) {
+			m_valid = false;
+		}
 
 	public:
 		Key getKeyCode() const { AR_EVENT_IS_VALID; return m_keycode; }

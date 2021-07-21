@@ -6,7 +6,6 @@
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Core/Engine.h"
 
-
 namespace Asciir
 {
 	class Renderer
@@ -36,7 +35,6 @@ namespace Asciir
 
 		// mesh data, texture data, point data or clear data
 		typedef std::variant <MeshData, ShaderData, TileData, ClearData> QueueElem;
-		
 
 		static void init();
 
@@ -49,12 +47,11 @@ namespace Asciir
 		static Tile viewTile(Coord pos);
 
 		// environment functions
-		
+
 		// set the minimum delta time between updates
 		static void setMinDT(DeltaTime min_dt) { AR_ASSERT(min_dt.milliSeconds() >= 0); s_min_dt = min_dt; }
 
 		static DeltaTime getMinDT() { return s_min_dt; }
-
 
 		// terminal functions
 		static void clear(Tile tile = Tile(BLACK8, WHITE8, ' '));
@@ -62,7 +59,7 @@ namespace Asciir
 		static Size2D size();
 
 	protected:
-		
+
 		template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool> = false>
 		static Coords projectCoordsToTerminal(const T& coords);
 
@@ -76,14 +73,13 @@ namespace Asciir
 		static void drawClearData(const ClearData& data);
 
 		static void waitMinDT(DeltaTime curr_dt);
-		
+
 		static Mesh coordToQuad(const Coord& coord);
 
 		static TerminalRenderer* s_renderer;
 		static const AsciiAttr* s_attr_handler;
 		static std::vector<QueueElem>* s_submit_queue;
 		static std::vector<QueueElem>* s_render_queue;
-
 
 		// the engine will wait until the minimum delta time is hit, after each update
 		// DEFAULT: no limit

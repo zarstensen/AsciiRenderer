@@ -6,7 +6,6 @@
 #include "Asciir/Core/Engine.h"
 #include "KeyCodeMap.h"
 
-
 namespace Asciir
 {
 	WinEventListener::WinEventListener()
@@ -18,8 +17,6 @@ namespace Asciir
 
 		AR_WIN_VERIFY(GetConsoleMode(m_hConsole_in, &m_hcin_fallback));
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole_in, m_hcin_fallback & ~ENABLE_QUICK_EDIT_MODE | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT));
-
-		
 	}
 
 	WinEventListener::~WinEventListener()
@@ -47,7 +44,7 @@ namespace Asciir
 
 	EventListener::KeyInputData WinEventListener::getKeybdFromWinCode(WORD code) const
 	{
-		return keybd_poll_state[(size_t) WinToKeyCodeMap.at(code) - 1];
+		return keybd_poll_state[(size_t)WinToKeyCodeMap.at(code) - 1];
 	}
 
 	EventListener::KeyInputData WinEventListener::getKeybdFromKeyCode(Key code) const
@@ -67,7 +64,6 @@ namespace Asciir
 
 	void WinEventListener::listenForInputs()
 	{
-		
 		while (m_is_listening)
 		{
 			DWORD num_events;
@@ -109,17 +105,17 @@ namespace Asciir
 
 	void WinEventListener::sendKeybdEvent(KEY_EVENT_RECORD event)
 	{
-		#ifdef AR_SAFE_RELEASE
+#ifdef AR_SAFE_RELEASE
 		if (!WinToKeyCodeMap.count((size_t)event.wVirtualKeyCode - 1) == 0)
 		{
 			AR_CORE_WARN("Unknown key recieved: ", event.wVirtualKeyCode);
 			return;
 		}
-		#endif
+#endif
 
 		if (event.bKeyDown)
 		{
-			KeyInputData& data = keybd_state[(size_t) WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
+			KeyInputData& data = keybd_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
 			KeyPressedEvent e;
 
 			if (!data.is_down)
@@ -138,12 +134,11 @@ namespace Asciir
 
 					m_callback(e);
 				}
-
 			}
 			else if (data.is_down)
 			{
 				data.is_repeat = false;
-				
+
 				for (size_t i = 0; i < event.wRepeatCount; i++)
 				{
 					e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
@@ -157,7 +152,7 @@ namespace Asciir
 		}
 		else
 		{
-			KeyInputData& data = keybd_state[(size_t) WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
+			KeyInputData& data = keybd_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
 			KeyReleasedEvent e(WinToKeyCodeMap.at(event.wVirtualKeyCode));
 
 			if (data.is_down)
@@ -177,14 +172,12 @@ namespace Asciir
 	// mouse pos on the screen is found when the event is recieved so it might be off compared to when the event was sent
 	void WinEventListener::sendMouseEvent(MOUSE_EVENT_RECORD event)
 	{
-		
 		for (int button = 0; button < 5; button++)
 		{
 			WORD button_word = BIT_SHL(button);
-			
+
 			if (event.dwEventFlags & DOUBLE_CLICK)
 			{
-
 				if (CHECK_BIT(event.dwButtonState, button))
 				{
 					MouseInputData& data = mouse_state[button];
@@ -193,7 +186,7 @@ namespace Asciir
 					TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
 					MousePressedEvent e_first(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
 					MousePressedEvent e_second(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, true);
-					
+
 					m_callback(e_first);
 					m_callback(e_second);
 
@@ -216,7 +209,7 @@ namespace Asciir
 
 						TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
 						MousePressedEvent e(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
-						
+
 						m_callback(e);
 
 						// store down event
@@ -290,5 +283,4 @@ namespace Asciir
 		AR_WIN_VERIFY(GetCursorPos(&pos));
 		return pos;
 	}
-
 }

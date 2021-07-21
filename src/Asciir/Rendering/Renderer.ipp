@@ -3,12 +3,12 @@
 
 namespace Asciir
 {
-    template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool>>
+	template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool>>
 	Coords Renderer::projectCoordsToTerminal(const T& coords)
 	{
 		RealVertex term_size = size();
-		
-		std::array<Line, 4> terminal_box = {  
+
+		std::array<Line, 4> terminal_box = {
 			Line::fromPoints({ term_size.x,	term_size.y }, { 0, term_size.y }), // top line		<-------↑
 			Line::fromPoints({ 0, term_size.y }, { 0, 0 }),						// left line	|		|
 			Line::fromPoints({ 0, 0 }, { term_size.x, 0 }),						// bottom line	|		|
@@ -19,7 +19,7 @@ namespace Asciir
 			Line::fromPoints(term_size, {0, 0}),					// lower right -> upper right
 			Line::fromPoints({term_size.x, 0}, {0, term_size.y})    // upper right -> lower left
 		};
-		
+
 		std::array<bool, 4> has_corner = { false };
 
 		// get number of verticies in new mesh
@@ -27,7 +27,7 @@ namespace Asciir
 		size_t res_size = 0;
 		Coord last_coord = coords[coords.size() - 1];
 
-		for (size_t i = 0; i < (size_t) coords.size(); i++)
+		for (size_t i = 0; i < (size_t)coords.size(); i++)
 		{
 			const Coord& coord = coords[i];
 			bool corner = false;
@@ -51,7 +51,6 @@ namespace Asciir
 
 			if (Line::visibleByAll(terminal_box, coord))
 				res_size++;
-			
 
 			if (Line::visibleByAll(terminal_box, coord) != Line::visibleByAll(terminal_box, last_coord))
 				res_size++;
@@ -63,18 +62,17 @@ namespace Asciir
 		size_t res_indx = 0;
 		has_corner.fill(false);
 
-
-		for (size_t i = 0; i < (size_t) coords.size(); i++)
+		for (size_t i = 0; i < (size_t)coords.size(); i++)
 		{
 			Coord coord = coords[i];
 			bool is_corner = false;
-			
+
 			if (Line::visibleByAll(terminal_box, last_coord))
 			{
 				result[res_indx] = last_coord;
 				res_indx++;
 			}
-			
+
 			for (size_t j = 0; j < terminal_diagonals.size(); j++)
 			{
 				AR_CORE_NOTIFY(terminal_diagonals[j].visible(coord), ' ', terminal_diagonals[j].visible(last_coord));

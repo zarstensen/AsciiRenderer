@@ -13,32 +13,32 @@ int main(int argc, char** argv)
 	bool save_core = true;
 	bool save_client = true;
 
-	#ifdef AR_LOG_APPEND
+#ifdef AR_LOG_APPEND
 	append_logs = true;
-	#endif
-	#ifdef AR_CORE_LOG_DELETE
+#endif
+#ifdef AR_CORE_LOG_DELETE
 	save_core = false;
-	#endif
-	#ifdef AR_CLEINT_LOG_DELETE
+#endif
+#ifdef AR_CLEINT_LOG_DELETE
 	save_core = false;
-	#endif
+#endif
 
 	Asciir::Log::init(save_core, save_client, append_logs);
 
-	#if defined(AR_WIN)
+#if defined(AR_WIN)
 	Asciir::WindowsInit();
-	#elif defined(AR_LINUX)
+#elif defined(AR_LINUX)
 	Asciir::LinuxInit();
-	#elif defined(AR_MAC)
+#elif defined(AR_MAC)
 	Asciir::MacInit();
-	#endif
+#endif
 
 	std::vector<std::string> args(argc);
 	for (int i = 0; i < argc; i++)
 	{
 		args[i] = std::move(argv[i]);
 	}
-	
+
 	Asciir::AREngine::create(Asciir::createEngine(std::move(args)));
 
 	Asciir::Renderer::init();

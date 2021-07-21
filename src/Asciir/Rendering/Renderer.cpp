@@ -6,7 +6,6 @@
 
 namespace Asciir
 {
-
 	TerminalRenderer* Renderer::s_renderer = nullptr;
 	const AsciiAttr* Renderer::s_attr_handler = nullptr;
 	std::vector<Renderer::QueueElem>* Renderer::s_submit_queue = new std::vector<Renderer::QueueElem>;
@@ -20,9 +19,9 @@ namespace Asciir
 	}
 
 	void Renderer::drawMeshData(const Renderer::MeshData& data)
-	{;
+	{
 		s_renderer->setState(data.tile);
-		
+
 		Coord top_left_coord(size());
 		Coord bottom_right_coord(0, 0);
 
@@ -31,51 +30,6 @@ namespace Asciir
 			Coord transformed_vert = data.transform.applyTransform(vert);
 			top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
 			top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
-
-
-			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
-			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
-		}
-		
- 		top_left_coord = top_left_coord;
-		bottom_right_coord = bottom_right_coord;
-
-		// make sure the area is inside the terminal
-
-		top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
-		top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
-
-		bottom_right_coord.x = ceil(bottom_right_coord.x) + 2;
-		bottom_right_coord.x = bottom_right_coord.x >= (long long) size().x ? size().x - 2 : bottom_right_coord.x;
-		bottom_right_coord.y = ceil(bottom_right_coord.y) + 2;
-		bottom_right_coord.y = bottom_right_coord.y >= (long long) size().y ? size().y - 2 : bottom_right_coord.y;
-
-		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform)) s_renderer->blendTile(TermVert( (TInt) x, (TInt) y ));
-				#ifdef AR_VISUALIZE_DRAW_BOX
-				else {
-					s_renderer->setState(q_elem.tile.color.inverse()); 
-					s_renderer->drawTile(TermVert(x, y));
-					s_renderer->setState(q_elem.tile);
-				}
-				#endif
-	}
-
-	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
-	{
-
-		Mesh texture_quad = coordToQuad(data.shader->size());
-		
-		Coord top_left_coord(size());
-		Coord bottom_right_coord(0, 0);
-
-		for (const Coord& vert : texture_quad.getVerts())
-		{
-			Coord transformed_vert = data.transform.applyTransform(vert);
-			top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
-			top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
-
 
 			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
 			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
@@ -94,6 +48,47 @@ namespace Asciir
 		bottom_right_coord.y = ceil(bottom_right_coord.y) + 2;
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y - 2 : bottom_right_coord.y;
 
+		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
+			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
+				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform)) s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
+#ifdef AR_VISUALIZE_DRAW_BOX
+				else {
+					s_renderer->setState(q_elem.tile.color.inverse());
+					s_renderer->drawTile(TermVert(x, y));
+					s_renderer->setState(q_elem.tile);
+				}
+#endif
+	}
+
+	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
+	{
+		Mesh texture_quad = coordToQuad(data.shader->size());
+
+		Coord top_left_coord(size());
+		Coord bottom_right_coord(0, 0);
+
+		for (const Coord& vert : texture_quad.getVerts())
+		{
+			Coord transformed_vert = data.transform.applyTransform(vert);
+			top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
+			top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
+
+			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
+			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
+		}
+
+		top_left_coord = top_left_coord;
+		bottom_right_coord = bottom_right_coord;
+
+		// make sure the area is inside the terminal
+
+		top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
+		top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
+
+		bottom_right_coord.x = ceil(bottom_right_coord.x) + 2;
+		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x - 2 : bottom_right_coord.x;
+		bottom_right_coord.y = ceil(bottom_right_coord.y) + 2;
+		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y - 2 : bottom_right_coord.y;
 
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
@@ -122,7 +117,7 @@ namespace Asciir
 	void Renderer::waitMinDT(DeltaTime curr_dt)
 	{
 		duration start_time = getTime();
-		auto d_val = start_time + (duration) s_min_dt.nanoSeconds() - (duration) curr_dt.nanoSeconds();
+		auto d_val = start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds();
 		while (start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds() > getTime());
 	}
 
@@ -159,17 +154,17 @@ namespace Asciir
 	{
 		s_submit_queue->push_back(new_elem);
 
-		#if AR_RENDER_QUEUE_MAX != -1
+#if AR_RENDER_QUEUE_MAX != -1
 		static_assert(AR_RENDER_QUEUE_MAX > 0);
 
 		AR_ASSERT_VOLATILE(s_renderer_queue.capacity() > AR_RENDER_QUEUE_MAX,
 			"Number of elements submitted to the render queue surpassed the maximum limit")
-		#endif
+#endif
 	}
 
 	Tile Renderer::viewTile(Coord pos)
 	{
-		AR_ASSERT_MSG(pos.x >= 0 && (size_t) pos.x < size().x && pos.y >= 0 && (size_t) pos.y < size().y, "Cannot view tile outside of terminal size");
+		AR_ASSERT_MSG(pos.x >= 0 && (size_t)pos.x < size().x&& pos.y >= 0 && (size_t)pos.y < size().y, "Cannot view tile outside of terminal size");
 		return s_renderer->getTile((TermVert)pos).current;
 	}
 
@@ -182,7 +177,7 @@ namespace Asciir
 	{
 		s_renderer->resize(size);
 	}
-	
+
 	Size2D Renderer::size()
 	{
 		return s_renderer->drawSize();
@@ -198,17 +193,17 @@ namespace Asciir
 		{
 			size_t new_capacity = queue_size;
 
-			#if AR_RENDER_QUEUE_MIN != -1
+#if AR_RENDER_QUEUE_MIN != -1
 
-			#if AR_RENDER_QUEUE_MAX != -1
+#if AR_RENDER_QUEUE_MAX != -1
 			static_assert(AR_RENDER_QUEUE_MIN + AR_RENDER_QUEUE_MARGIN < AR_RENDER_QUEUE_MAX);
-			#endif
+#endif
 
 			static_assert(AR_RENDER_QUEUE_MIN > 0);
 
 			new_capacity = std::max(new_capacity, (size_t)AR_RENDER_QUEUE_MIN);
 
-			#endif
+#endif
 
 			s_submit_queue->shrink_to_fit();
 			s_submit_queue->reserve(new_capacity);
@@ -217,7 +212,7 @@ namespace Asciir
 
 	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_Start)
 	{
-		for(const QueueElem& q_elem : *s_render_queue)
+		for (const QueueElem& q_elem : *s_render_queue)
 		{
 			switch (q_elem.index())
 			{
@@ -235,7 +230,7 @@ namespace Asciir
 				break;
 			}
 		}
-		
-		s_render_queue->clear();		
+
+		s_render_queue->clear();
 	}
 }

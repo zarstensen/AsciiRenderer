@@ -7,25 +7,25 @@ namespace Asciir
 	// type used for terminal position arguments
 	typedef short TInt;
 	// type used for numbers with decimal points (floating point numbers)
-	#ifdef AR_HIGH_PRECISSION_FLOAT
+#ifdef AR_HIGH_PRECISSION_FLOAT
 	typedef double Real;
-	#else
+#else
 	typedef float Real;
-	#endif
+#endif
 
 	template<typename T>
-	class Ref: public std::shared_ptr<T>
+	class Ref : public std::shared_ptr<T>
 	{
 	public:
 		Ref() : std::shared_ptr<T>(nullptr) {}
-		Ref(T* data): std::shared_ptr<T>(data) {}
-		Ref(const T& data): std::shared_ptr<T>(std::make_shared<T>(data)) {}
-		Ref(const Ref<T>& other): std::shared_ptr<T>(other) {}
+		Ref(T* data) : std::shared_ptr<T>(data) {}
+		Ref(const T& data) : std::shared_ptr<T>(std::make_shared<T>(data)) {}
+		Ref(const Ref<T>& other) : std::shared_ptr<T>(other) {}
 		Ref(const std::shared_ptr<T> other) : std::shared_ptr<T>(other) {}
 
 		template<typename TOther>
-		Ref(const Ref<TOther>& other): std::shared_ptr<T>(std::dynamic_pointer_cast<T>(other)) {}
-		
+		Ref(const Ref<TOther>& other) : std::shared_ptr<T>(std::dynamic_pointer_cast<T>(other)) {}
+
 		// enable_if_t doesn't work in the template here for reasons :/
 		template<typename TOther>
 		std::enable_if_t<std::is_abstract_v<T>&& std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
@@ -44,9 +44,9 @@ namespace Asciir
 	}
 
 	constexpr int SIG_CTRL_C = SIGINT;
-	#ifdef AR_WIN
+#ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;
-	#else
+#else
 	constexpr int SIG_CMD_CLOSE = SIGHUP;
-	#endif
+#endif
 }

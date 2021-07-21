@@ -4,12 +4,10 @@
 
 namespace Asciir
 {
-
 	// A wrapper for MatrixX that overloads functions like size() to return Asciir types instead of Eigen types.
 	template<typename T>
 	struct arMatrix : public Eigen::MatrixX<T>
 	{
-
 		using Eigen::MatrixX<T>::MatrixX;
 
 		arMatrix(Size2D size);
@@ -42,7 +40,6 @@ namespace Asciir
 	template<typename T, size_t w, size_t h>
 	struct s_arMatrix : public Eigen::MatrixX<T>
 	{
-
 		using Eigen::Matrix<T, w, h>::MatrixX;
 
 		template<typename TOther>

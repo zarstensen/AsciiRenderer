@@ -5,16 +5,13 @@
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Math/Vertices.h"
 
-
 namespace Asciir
 {
-
 	struct TerminalProps
 	{
 		std::string title;
 		TermVert size;
 		size_t bufferSize;
-
 
 		TerminalProps(const std::string& title = "Asciir Engine", TermVert size = { 0, 0 }, size_t buffer_size = 1024ULL * 512ULL)
 			: title(title), size(size), bufferSize(buffer_size)
@@ -25,7 +22,6 @@ namespace Asciir
 	{
 	public:
 		using EventCallbackFp = std::function<void(Event&)>;
-
 
 		Terminal(const TerminalProps& props = TerminalProps());
 		~Terminal();

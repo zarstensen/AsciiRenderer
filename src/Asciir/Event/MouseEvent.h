@@ -5,10 +5,9 @@
 
 namespace Asciir
 {
-
 	class Input;
 
-	class MouseKeyEvent: public Event
+	class MouseKeyEvent : public Event
 	{
 	protected:
 		MouseKey m_mousecode;
@@ -20,16 +19,17 @@ namespace Asciir
 			: m_mousecode(mousecode), m_mouse_pos(mouse_pos), m_cur_pos(cur_pos) {}
 
 		MouseKeyEvent()
-			: m_mousecode(MouseKey::UNKNOWN), m_mouse_pos(AR_INVALID_COORD), m_cur_pos(AR_INVALID_COORD) { m_valid = false; }
+			: m_mousecode(MouseKey::UNKNOWN), m_mouse_pos(AR_INVALID_COORD), m_cur_pos(AR_INVALID_COORD) {
+			m_valid = false;
+		}
 
 	public:
 
 		MouseKey getMouseCode() const { AR_EVENT_IS_VALID; return m_mousecode; }
-		Coord getMousePos() const { AR_EVENT_IS_VALID; return m_mouse_pos;  }
+		Coord getMousePos() const { AR_EVENT_IS_VALID; return m_mouse_pos; }
 		TermVert getCursorPos() const { AR_EVENT_IS_VALID; return m_cur_pos; }
 
 		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
-
 	};
 
 	class MousePressedEvent : public MouseKeyEvent
@@ -58,20 +58,17 @@ namespace Asciir
 
 	class MouseReleasedEvent : public MouseKeyEvent
 	{
-	
 	public:
 		MouseReleasedEvent(MouseKey mousecode, Coord mouse_pos, TermVert cur_pos)
 			: MouseKeyEvent(mousecode, mouse_pos, cur_pos) {}
 
 		MouseReleasedEvent() {}
 
-		
-
 		virtual std::string toString() const override
 		{
 			std::stringstream msg;
 
-			msg << "MouseReleased: " << (int) m_mousecode;
+			msg << "MouseReleased: " << (int)m_mousecode;
 
 			return msg.str();
 		}
@@ -79,7 +76,7 @@ namespace Asciir
 		EVENT_TYPE_DEFINE(MouseReleased)
 	};
 
-	class MouseMovedEvent: public Event
+	class MouseMovedEvent : public Event
 	{
 	protected:
 		Coord m_pos;
@@ -93,25 +90,27 @@ namespace Asciir
 		{}
 
 		MouseMovedEvent()
-			: m_pos(AR_INVALID_COORD), m_diff(AR_INVALID_COORD), m_cur_diff(AR_INVALID_COORD) { m_valid = false; }
+			: m_pos(AR_INVALID_COORD), m_diff(AR_INVALID_COORD), m_cur_diff(AR_INVALID_COORD) {
+			m_valid = false;
+		}
 
 		Coord getPos() const { AR_EVENT_IS_VALID; return m_pos; }
 		Coord getDiff() const { AR_EVENT_IS_VALID; return m_diff; }
 		TermVert getCursorPos() const { AR_EVENT_IS_VALID; return m_cur_pos; }
-		TermVert getCursorDiff() const { AR_EVENT_IS_VALID; return m_cur_diff;  }
+		TermVert getCursorDiff() const { AR_EVENT_IS_VALID; return m_cur_diff; }
 
 		virtual std::string toString() const override
 		{
 			std::stringstream msg;
 
 			msg << "MouseMoved: " << getPos() << ':' << getDiff() << "   " << getCursorPos() << ':' << getCursorDiff();
-			
+
 			return msg.str();
 		}
 
 		EVENT_TYPE_DEFINE(MouseMoved)
 
-		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
+			EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
 
 	class MouseScrolledEvent : public Event
@@ -124,7 +123,9 @@ namespace Asciir
 		{}
 
 		MouseScrolledEvent()
-			: m_off(AR_INVALID_COORD) { m_valid = false; }
+			: m_off(AR_INVALID_COORD) {
+			m_valid = false;
+		}
 
 		RealVertex getOff() const { AR_EVENT_IS_VALID; return m_off; }
 
@@ -139,6 +140,6 @@ namespace Asciir
 
 		EVENT_TYPE_DEFINE(MouseScrolled)
 
-		EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
+			EVENT_CATEGORY_DEFINE(CategoryInput | CategoryMouse)
 	};
 }

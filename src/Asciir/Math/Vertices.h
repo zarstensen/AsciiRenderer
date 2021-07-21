@@ -5,26 +5,25 @@
 
 namespace Asciir
 {
-
 	// A base wrapper to be used as a base for arVertex<n>, arVertex2D and arVertex3D
-	
+
 	template<typename T, size_t n>
 	struct arVertBase : public Eigen::Vector<T, n>
 	{
 		arVertBase() = default;
 		template<typename TOther>
-		arVertBase(const arVertBase<TOther, n>&other);
-		arVertBase(const Eigen::Vector<T, n>&vec);
+		arVertBase(const arVertBase<TOther, n>& other);
+		arVertBase(const Eigen::Vector<T, n>& vec);
 
 		// constructors for eigen generic expressions
 		template<typename TOther>
-		arVertBase(const Eigen::MatrixBase<TOther>&other);
+		arVertBase(const Eigen::MatrixBase<TOther>& other);
 
 		template<typename TOther>
-		arVertBase(const Eigen::ArrayBase<TOther>&other);
+		arVertBase(const Eigen::ArrayBase<TOther>& other);
 
 		template<typename TOther>
-		arVertBase<T, n>& operator=(const arVertBase<TOther, n>&other);
+		arVertBase<T, n>& operator=(const arVertBase<TOther, n>& other);
 
 		using Eigen::Vector<T, n>::operator[];
 		using Eigen::Vector<T, n>::operator();
@@ -40,30 +39,27 @@ namespace Asciir
 	template<typename T>
 	struct arVertex<T, 2, void> : public arVertBase<T, 2>
 	{
-
 		using arVertBase<T, 2>::arVertBase;
 
 		T& x = arVertex<T, 2>::operator[](0);
 		T& y = arVertex<T, 2>::operator[](1);
-
 
 		arVertex();
 		arVertex(T x, T y);
 
 		// copy constructor
 		arVertex(const arVertex<T, 2>& other);
-		
+
 		// cast constructors
 		template<typename TOther>
 		arVertex(const arVertex<TOther, 2>& other);
 		arVertex<T, 2>& operator=(const arVertex<T, 2>& other);
 
-		#ifdef AR_WIN
+#ifdef AR_WIN
 		arVertex(POINT point);
 		operator POINT();
-		#endif
+#endif
 	};
-
 
 	// exposes index 0, 1 and 2 as member variables x, y and z if there are 3 dimensions
 	template<typename T>
@@ -86,9 +82,7 @@ namespace Asciir
 		arVertex(const arVertex<TOther, 3>& other);
 
 		arVertex<T, 3>& operator=(const arVertex<T, 3>& other);
-
 	};
-
 
 	// exposes index 0, 1 and 2 as member variables x, y and z if there are more than 3 dimensions.
 	// no special constructors are created
@@ -101,9 +95,9 @@ namespace Asciir
 		T& y = arVertex<T, d>::operator[](1);
 		T& z = arVertex<T, d>::operator[](2);
 	};
-	
+
 	// wrapper for Eigen VectorX with arVertex as the data type
-	
+
 	template<typename T, size_t d>
 	struct arVertices : public Eigen::VectorX<arVertex<T, d>>
 	{
@@ -112,15 +106,15 @@ namespace Asciir
 		arVertices(size_t length);
 
 		template<typename TOther>
-		arVertices(const arVertices<TOther, d>&other);
-		arVertices(const Eigen::VectorX<arVertex<T, d>>&other);
-		arVertices(const std::initializer_list<arVertex<T, d>>&other);
+		arVertices(const arVertices<TOther, d>& other);
+		arVertices(const Eigen::VectorX<arVertex<T, d>>& other);
+		arVertices(const std::initializer_list<arVertex<T, d>>& other);
 
 		template<typename TOther>
-		arVertices(const Eigen::MatrixBase<TOther>&other);
+		arVertices(const Eigen::MatrixBase<TOther>& other);
 
 		arVertices<T, d> offset(const arVertex<T, d>& vec);
-		
+
 		void fill(arVertex<T, d> val);
 
 		// shortend version of conservativeResize
@@ -130,21 +124,21 @@ namespace Asciir
 
 		using Eigen::VectorX<arVertex<T, d>>::operator[];
 	};
-	
+
 	template<typename T, size_t d, size_t n>
 	struct s_arVertices : public Eigen::Vector<arVertex<T, d>, n>
 	{
 		s_arVertices() = default;
 
 		template<typename TOther>
-		s_arVertices(const s_arVertices<TOther, d, n>&other);
-		s_arVertices(const Eigen::Vector<arVertex<T, d>, n>&other);
+		s_arVertices(const s_arVertices<TOther, d, n>& other);
+		s_arVertices(const Eigen::Vector<arVertex<T, d>, n>& other);
 		s_arVertices(const std::initializer_list<arVertex<T, d>>& other);
 
 		template<typename TOther>
 		s_arVertices(const Eigen::MatrixBase<TOther>& other);
 
-		s_arVertices<T, d, n> offset(const arVertex<T, d>&vec);
+		s_arVertices<T, d, n> offset(const arVertex<T, d>& vec);
 
 		void fill(arVertex<T, d> val);
 
@@ -174,7 +168,6 @@ namespace Asciir
 	template<typename T, size_t n>
 	using s_arVertices3D = s_arVertices<T, n, 3>;
 
-
 	typedef arVertex2D<size_t> Size2D;
 	typedef arVertex3D<size_t> Size3D;
 
@@ -195,7 +188,7 @@ namespace Asciir
 	using s_Vertices = s_arVertices2D<int, n>;
 	template<size_t n>
 	using s_Vertices3D = s_arVertices3D<int, n>;
-	
+
 	typedef arVertex2D<TInt> TermVert;
 	typedef arVertices2D<TInt> TermVerts;
 	template<size_t n>
@@ -301,7 +294,6 @@ namespace Asciir
 		static constexpr bool value = true;
 	};
 
-
 	template<typename TStorage, typename T>
 	struct is_list_type
 	{
@@ -319,7 +311,6 @@ namespace Asciir
 	{
 		static constexpr bool value = is_list<T<TStorage, n>>::value;
 	};
-
 
 	template<typename T>
 	constexpr bool is_vert_v = is_vert<T>::value;
@@ -355,7 +346,6 @@ namespace Asciir
 
 		const T* begin() const { return m_data; }
 		const T* end() const { return m_data + m_len; }
-
 	};
 
 	// ostream functions
@@ -364,7 +354,6 @@ namespace Asciir
 	std::ostream& operator<<(std::ostream& stream, const arVertex<T, n>& vert);
 	template<typename T, size_t n>
 	std::ostream& operator<<(std::ostream& stream, const arVertices<T, n>& verts);
-
 }
 
 #include "Vertices.ipp"

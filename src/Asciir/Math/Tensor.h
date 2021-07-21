@@ -5,7 +5,7 @@
 namespace Asciir
 {
 	// A wrapper for arMatrix that overloads acsess functions to accept 3 indexes instead of 2.
-	// 
+	//
 	// resize and operator() gets the element by using w*h as the first index and d as the second index.
 	template<typename T>
 	struct arTensor3D : arMatrix<T>

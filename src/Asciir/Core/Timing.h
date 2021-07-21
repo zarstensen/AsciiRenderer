@@ -14,11 +14,11 @@ namespace Asciir
 		DeltaTime(Real ms = 0)
 			: m_time_ms(ms) {}
 
-		static DeltaTime FPS(Real fps) { return DeltaTime(1 / fps * (Real) 1e+3); }
+		static DeltaTime FPS(Real fps) { return DeltaTime(1 / fps * (Real)1e+3); }
 
-		Real seconds() const { return m_time_ms / (Real) 1e+3; }
+		Real seconds() const { return m_time_ms / (Real)1e+3; }
 		Real milliSeconds() const { return m_time_ms; }
-		long long nanoSeconds() const { return  (long long)(m_time_ms * (Real) 1e+6); }
+		long long nanoSeconds() const { return  (long long)(m_time_ms * (Real)1e+6); }
 		Real fps() const { return 1 / seconds(); }
 
 		operator Real() const { return milliSeconds(); }
@@ -32,7 +32,5 @@ namespace Asciir
 
 	DeltaTime castRealMilli(const duration& dur);
 
-
 	std::ostream& operator<<(std::ostream& stream, const DeltaTime& time);
-
 }

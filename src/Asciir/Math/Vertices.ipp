@@ -3,7 +3,6 @@
 
 namespace Asciir
 {
-
 	// Vertex implementation
 
 	template<typename T, size_t n>
@@ -60,20 +59,19 @@ namespace Asciir
 		return *this;
 	}
 
-	#ifdef AR_WIN
-	
+#ifdef AR_WIN
+
 	template<typename T>
 	arVertex<T, 2>::arVertex(POINT point)
-		: arVertex((Real) point.x, (Real) point.y){}
+		: arVertex((Real)point.x, (Real)point.y) {}
 
 	template<typename T>
 	arVertex<T, 2>::operator POINT()
 	{
-		return { (LONG) x, (LONG) y };
+		return { (LONG)x, (LONG)y };
 	}
 
-	#endif
-
+#endif
 
 	template<typename T>
 	arVertex<T, 3>::arVertex()
@@ -102,10 +100,9 @@ namespace Asciir
 		x = other.x;
 		y = other.y;
 		z = other.z;
-		
+
 		return *this;
 	}
-
 
 	// Vertices implementation
 
@@ -163,12 +160,10 @@ namespace Asciir
 		return Eigen::VectorX<arVertex<T, d>>::size();
 	}
 
-	
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>
 	s_arVertices<T, d, n>::s_arVertices(const s_arVertices<TOther, d, n>& other)
 		: s_arVertices(other.template cast<arVertex<T, d>>()) {}
-
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n>::s_arVertices(const Eigen::Vector<arVertex<T, d>, n>& other)
@@ -208,14 +203,13 @@ namespace Asciir
 	{
 		return n;
 	}
-	
+
 	// vertsView class
 
 	template<typename T, size_t d>
 	template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool>>
 	VertsView<T, d>::VertsView(const TArr& source)
 		: m_data(source.data()), m_len(source.size()) {}
-
 
 	template<typename T, size_t d>
 	template<typename TArr, std::enable_if_t<is_vertices_type_v<T, d, TArr>, bool>>
@@ -224,10 +218,6 @@ namespace Asciir
 	{
 		AR_ASSERT(source.size() <= len + offset);
 	}
-
-
-
-
 
 	template<typename T, size_t n>
 	std::ostream& operator<<(std::ostream& stream, const arVertex<T, n>& vert)

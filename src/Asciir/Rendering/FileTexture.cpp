@@ -12,7 +12,7 @@ namespace Asciir
 		{
 			m_file_dir = abs_dir;
 			m_is_loaded = true;
-			
+
 			std::ifstream texture_in(abs_dir, std::ios::binary);
 
 			// load the size into memory
@@ -36,16 +36,14 @@ namespace Asciir
 
 				texture_in.read((char*)&elem.background_color, sizeof(elem.background_color));
 			}
-
 		}
 		else
 		{
 			AR_CORE_ERR("the file ", dir, " does not exist, unable to load texture");
 			AR_ASSERT(false);
 		}
-
 	}
-	
+
 	void FileTexture::unload()
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
@@ -61,5 +59,4 @@ namespace Asciir
 		m_is_loaded = false;
 		load(m_file_dir);
 	}
-
 }

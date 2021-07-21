@@ -5,7 +5,6 @@
 
 namespace Asciir
 {
-
 	const extern Real PI;
 
 	Real degToRad(Real degrees);
@@ -20,5 +19,4 @@ namespace Asciir
 	Coord ceil(const Coord& coord, Real base = 1);
 	Real floor(Real val, Real base = 1);
 	Coord floor(const Coord& coord, Real base = 1);
-
 }

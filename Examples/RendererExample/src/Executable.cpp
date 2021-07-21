@@ -2,7 +2,6 @@
 
 class TriangleLayer : public Asciir::Layer
 {
-
 	void onStart() final
 	{
 		Asciir::Renderer::resize({ 100, 50 });

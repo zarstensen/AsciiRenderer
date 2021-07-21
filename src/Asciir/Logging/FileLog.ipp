@@ -2,7 +2,6 @@
 
 namespace Asciir
 {
-
 	template<typename ...T>
 	void FileLog::async_log(size_t log_level, const char* log_source, const char* log_type, size_t line, const char* file, std::tuple<const T& ...>& args)
 	{
@@ -27,7 +26,7 @@ namespace Asciir
 		Real seconds = (Real)milliseconds / 10;
 		seconds = round(seconds);
 		seconds /= 100;
-		
+
 		tmp_stream << '[' << log_level << ']';
 
 		tmp_stream << std::setfill('0') << '[' <<

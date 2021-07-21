@@ -1,4 +1,3 @@
-
 // AR_DEBUG: should be defined for debug builds, enables asserts, verifies and all logging functions
 #if defined(DEBUG) || defined(_DEBUG) && !defined(AR_DEBUG)
 #define AR_DEBUG
@@ -29,7 +28,7 @@
 #define AR_CLIENT_VERBOSITY 4
 #endif
 
-// AR_RENDER_QUEUE_MARGIN: specifies the maximum diffrence between the capacity and the size of the render queue can be before it is reallocated to the last size. 
+// AR_RENDER_QUEUE_MARGIN: specifies the maximum diffrence between the capacity and the size of the render queue can be before it is reallocated to the last size.
 #ifndef AR_RENDER_QUEUE_MARGIN
 #define AR_RENDER_QUEUE_MARGIN 10
 #endif
@@ -43,6 +42,3 @@
 #ifndef AR_RENDER_QUEUE_MAX
 #define AR_RENDER_QUEUE_MAX -1
 #endif
-
-
-

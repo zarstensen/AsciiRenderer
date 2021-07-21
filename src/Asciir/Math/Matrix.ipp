@@ -14,7 +14,7 @@ namespace Asciir
 	template<typename TOther>
 	arMatrix<T>::arMatrix(const Eigen::MatrixBase<TOther>& other)
 		: Eigen::MatrixX<T>(other.template cast<T>()) {}
-	
+
 	template<typename T>
 	arMatrix<T>::arMatrix(Size2D size)
 		: Eigen::MatrixX<T>(size.x, size.y) {}
@@ -27,7 +27,7 @@ namespace Asciir
 
 		return { height, width };
 	}
-	
+
 	template<typename T>
 	void arMatrix<T>::resize(Size2D new_size)
 	{
@@ -50,7 +50,7 @@ namespace Asciir
 	template<typename T>
 	T& arMatrix<T>::get(Size2D coord)
 	{
-		AR_ASSERT_MSG(coord.x < size().x && coord.y < size().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
 		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
 	}
@@ -58,7 +58,7 @@ namespace Asciir
 	template<typename T>
 	T arMatrix<T>::get(Size2D coord) const
 	{
-		AR_ASSERT_MSG(coord.x < size().x && coord.y < size().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
 		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
 	}
@@ -66,7 +66,7 @@ namespace Asciir
 	template<typename T>
 	T& arMatrix<T>::get(size_t x, size_t y)
 	{
-		AR_ASSERT_MSG(x < size().x && y < size().y, "Invalid coord: ", x, ',', y);
+		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 
 		return Eigen::MatrixX<T>::operator()(x, y);
 	}
@@ -74,7 +74,7 @@ namespace Asciir
 	template<typename T>
 	T arMatrix<T>::get(size_t x, size_t y) const
 	{
-		AR_ASSERT_MSG(x < size().x && y < size().y, "Invalid coord: ", x, ',', y);
+		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 
 		return Eigen::MatrixX<T>::operator()(x, y);
 	}
@@ -121,8 +121,7 @@ namespace Asciir
 	template<typename T, size_t w, size_t h>
 	T& s_arMatrix<T, w, h>::get(Size2D coord)
 	{
-
-		AR_ASSERT_MSG(coord.x < size().x && coord.y < size().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
 		return Eigen::Matrix<T, w, h>::operator()(coord.x, coord.y);
 	}
@@ -130,8 +129,7 @@ namespace Asciir
 	template<typename T, size_t w, size_t h>
 	T s_arMatrix<T, w, h>::get(Size2D coord) const
 	{
-
-		AR_ASSERT_MSG(coord.x < size().x && coord.y < size().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
 		return Eigen::Matrix<T, w, h>::operator()(coord.x, coord.y);
 	}
@@ -139,8 +137,7 @@ namespace Asciir
 	template<typename T, size_t w, size_t h>
 	T& s_arMatrix<T, w, h>::get(size_t x, size_t y)
 	{
-
-		AR_ASSERT_MSG(x < size().x && y < size().y, "Invalid coord: ", x, ',', y);
+		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 
 		return Eigen::Matrix<T, w, h>::operator()(x, y);
 	}
@@ -148,10 +145,8 @@ namespace Asciir
 	template<typename T, size_t w, size_t h>
 	T s_arMatrix<T, w, h>::get(size_t x, size_t y) const
 	{
-
-		AR_ASSERT_MSG(x < size().x && y < size().y, "Invalid coord: ", x, ',', y);
+		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 
 		return Eigen::Matrix<T, w, h>::operator()(x, y);
 	}
-
 }

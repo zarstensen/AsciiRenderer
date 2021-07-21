@@ -7,12 +7,11 @@ namespace Asciir
 	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors)
 		: m_log_dir(log_dir), m_colors(colors)
 	{
-
-		#ifdef AR_WIN
+#ifdef AR_WIN
 		m_log_attributes = std::make_unique<WinARAttr>();
-		#elif defined(AR_UNIX)
+#elif defined(AR_UNIX)
 		m_log_attributes = std::make_unique<UnixARAttr>();
-		#endif
+#endif
 
 		m_log_attributes->setTitle("LogViewer");
 	}
@@ -29,7 +28,7 @@ namespace Asciir
 
 	size_t LogViewer::size()
 	{
-		size_t length = (size_t) std::filesystem::file_size(m_log_dir);
+		size_t length = (size_t)std::filesystem::file_size(m_log_dir);
 		return length;
 	}
 
@@ -112,6 +111,5 @@ namespace Asciir
 
 		m_pos = 0;
 		m_log_file.seekg(std::ios::beg);
-		
 	}
 }

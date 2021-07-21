@@ -8,7 +8,6 @@
 
 namespace Asciir
 {
-
 	enum class DrawMode
 	{
 		Line,
@@ -23,32 +22,31 @@ namespace Asciir
 	protected:
 		static constexpr int UTF_CODE_LEN = 4;
 
-
 		char m_data[UTF_CODE_LEN + 1] = { '\0' };
 
 	public:
 
 		UTF8Char() = default;
-		
+
 		UTF8Char(char c) { m_data[0] = c; };
 
-		UTF8Char(const char* c) 
+		UTF8Char(const char* c)
 		{
 			AR_ASSERT_MSG(u8Len(c) < 2, "u8 string must only contain one or less characters, found ", u8Len(c));
 			strcpy_s(m_data, c);
 		};
 
-		operator const char*() const
+		operator const char* () const
 		{
 			return m_data;
 		}
 
 		operator std::string() const
 		{
-			return (const char*) m_data;
+			return (const char*)m_data;
 		}
 
-		explicit operator char*()
+		explicit operator char* ()
 		{
 			return m_data;
 		}
@@ -60,17 +58,16 @@ namespace Asciir
 
 		bool operator==(const UTF8Char& other) const { return (int)*this == (int)other; }
 		bool operator!=(const UTF8Char& other) const { return !(*this == other); }
-		bool operator==(int c) const { return (int) *this == c; }
+		bool operator==(int c) const { return (int)*this == c; }
 		bool operator!=(int c) const { return !(*this == c); }
 		bool operator==(const char* c_str) const { return *this == UTF8Char(c_str); }
 		bool operator!=(const char* c_str) const { return !(*this == c_str); }
-
 
 	protected:
 		static size_t u8Len(const char* u8_str)
 		{
 			int len = 0;
-			
+
 			while (*u8_str)
 				len += (*u8_str++ & 0xc0) != 0x80;
 
@@ -115,18 +112,16 @@ namespace Asciir
 		// the symbol is overwritten by the other tiles symbol, unless the symbol value is NULL ('\0')
 		Tile& blend(const Tile& other)
 		{
-			if(other.symbol != '\0') symbol = other.symbol;
+			if (other.symbol != '\0') symbol = other.symbol;
 			// TODO should background color be blended here aswell?
 			color.blend(other.color);
 			background_color.blend(other.background_color);
-			
+
 			return *this;
 		}
 	};
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
-
-	
 
 	class TerminalRenderer
 	{
@@ -202,5 +197,4 @@ namespace Asciir
 
 		friend AsciiAttr;
 	};
-	
 }

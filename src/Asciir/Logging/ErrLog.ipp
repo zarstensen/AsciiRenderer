@@ -1,6 +1,5 @@
 #pragma once
 
-
 #ifdef AR_WIN
 #define AR_DEBUG_BREAK __debugbreak()
 #else
@@ -24,7 +23,7 @@ AR_JOIN_NAME(ret_val, __LINE__)
 #define AR_WIN_VERIFY(x) x
 
 #endif
-	
+
 #ifdef AR_DEBUG
 #define AR_WIN_ASSERT(x) auto AR_JOIN_NAME(ret_val, __LINE__) = x; if(!AR_JOIN_NAME(ret_val, __LINE__)) {\
 char err_msg[256];\

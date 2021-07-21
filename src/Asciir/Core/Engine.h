@@ -22,7 +22,7 @@ namespace Asciir
 		void render();
 
 		void onEvent(Event& event);
-	
+
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
@@ -30,7 +30,6 @@ namespace Asciir
 
 		static AREngine* const getEngine();
 		Terminal& getTerminal();
-		
 
 	private:
 
@@ -45,7 +44,6 @@ namespace Asciir
 
 		// thread gets started every time an update is finished, unless a thread already is running
 		std::thread m_render_thread;
-
 
 		static AREngine* i_engine;
 	};

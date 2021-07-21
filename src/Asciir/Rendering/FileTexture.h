@@ -4,11 +4,10 @@
 
 namespace Asciir
 {
-
 	typedef std::filesystem::path Path;
 
 	// stores data from a .cart (compact asciir Texture) file
-	class FileTexture: public Shader
+	class FileTexture : public Shader
 	{
 	public:
 		FileTexture() = default;
@@ -21,7 +20,7 @@ namespace Asciir
 
 		void load(const Path& dir);
 		void unload();
-		
+
 		void reload();
 
 		bool loaded() const { return m_is_loaded; }
@@ -38,4 +37,3 @@ namespace Asciir
 		bool m_is_loaded = false;
 	};
 }
-

@@ -34,7 +34,7 @@ namespace Asciir
 
 		run();
 	}
-	
+
 	// main loop
 	void AREngine::run()
 	{
@@ -46,14 +46,13 @@ namespace Asciir
 			DeltaTime d_time(castRealMilli(curr_frame_start - m_last_frame_start));
 			m_last_frame_start = curr_frame_start;
 			m_frame_count++;
-			
 
-			for (Layer* layer: m_layerStack)
+			for (Layer* layer : m_layerStack)
 				layer->onUpdate(d_time);
 
 			if (m_render_thread.joinable())
 				m_render_thread.join();
-			
+
 			Renderer::swapQueues();
 
 			m_render_thread = std::thread(&AREngine::render, this);
@@ -68,17 +67,16 @@ namespace Asciir
 		m_terminal.onUpdate();
 		m_terminal.pollInput();
 	}
-	
+
 	void AREngine::onEvent(Event& e)
 	{
 		EventHandler handler(e);
 		handler.handle<TerminalClosedEvent>(AR_BIND_EVENT_CALLBACK(onTerminalClose));
 
-
 		for (auto iter = m_layerStack.end(); iter != m_layerStack.begin();)
 		{
 			(*--iter)->onEvent(e);
-			
+
 			if (e.handled) break;
 		}
 	}
@@ -91,10 +89,10 @@ namespace Asciir
 
 	void AREngine::create(AREngine* engine)
 	{
-		#ifdef AR_DEBUG
+#ifdef AR_DEBUG
 		if (i_engine)
 			AR_CORE_ERR("Cannot create more than one AREngine");
-		#endif
+#endif
 		i_engine = engine;
 	}
 
@@ -104,7 +102,7 @@ namespace Asciir
 	{
 		return i_engine;
 	}
-	
+
 	Terminal& AREngine::getTerminal()
 	{
 		return m_terminal;
@@ -113,7 +111,6 @@ namespace Asciir
 	// stop main loop on terminal close
 	bool AREngine::onTerminalClose(TerminalClosedEvent& e)
 	{
-		
 		AR_CORE_INFO("Stopping main loop");
 		m_running = false;
 		return true;

@@ -6,8 +6,7 @@ namespace Asciir
 {
 	Line::Line(Real a, Real b)
 		: direction(1, a), offset(0, b) {}
-	
-	 
+
 	Line::Line(Vector<Real> direction, Vector<Real> offset)
 		: direction(direction), offset(offset) {}
 
@@ -18,7 +17,7 @@ namespace Asciir
 	{
 		return LineSegment(direction, offset);
 	}
-	 
+
 	Line Line::fromPoints(arVertex2D<Real> a, arVertex2D<Real> b)
 	{
 		return Line(b - a, a);
@@ -33,16 +32,14 @@ namespace Asciir
 	{
 		return Line::fromPoints(p, p + arVertex2D<Real>(0, 1));
 	}
-	
-	 
+
 	Real Line::fx(Real x) const
 	{
 		AR_ASSERT_MSG(direction.x != 0, "Cannot get function of x on a vertical line");
 
 		return (x - offset.x) / direction.x * direction.y + offset.y;
 	}
-	
-	 
+
 	Real Line::fy(Real y) const
 	{
 		AR_ASSERT_MSG(direction.y != 0, "Cannot get function of y on a horizontal line");
@@ -52,79 +49,70 @@ namespace Asciir
 
 	// divides line into a grid of a specified resolution.
 	// Realhe index is the coords of the grid n times away from the center, intersecting the line
-	 
+
 	arVertex2D<Real> Line::pointFromGrid(long long indx, Real resolution)
 	{
 		return (direction / std::max(std::abs(direction.x), std::abs(direction.y))) / resolution * indx + offset;
 	}
-	
-	 
+
 	Real Line::slope() const
 	{
 		AR_ASSERT_MSG(direction.x != 0, "Cannot get slope of vertical line");
 
 		return direction.y / direction.x;
 	}
-	
-	 
+
 	Real Line::a() const
 	{
 		return slope();
 	}
-	
-	 
+
 	Real Line::yIntercept() const
 	{
 		return fx(0);
 	}
-	
-	 
+
 	Real Line::b() const
 	{
 		return yIntercept();
 	}
-	
-	 
+
 	Real Line::xIntercept() const
 	{
 		return fy(0);
 	}
-	
-	 
+
 	bool Line::visible(arVertex2D<Real> point) const
 	{
 		point -= offset;
 		return (point.y * direction.x - point.x * direction.y) >= 0;
 	}
-	
-	 
+
 	bool Line::notVisible(arVertex2D<Real> point) const
 	{
 		return !visible(point);
 	}
-	
-	 
+
 	arVertex2D<Real> Line::intersect(const Line& other)
 	{
-
 		AR_ASSERT_MSG(!direction.perp(other.direction), "Cannot get intersecting point with parallel lines\ndirection: ", direction, ',', other.direction);
 
 		// this works for all cases that has excactly one intersecting point
 		// below is a system of the equations fx() / fy() and other.fx() / other.fy() solved for fx and fy
 
-		Real fy = -(direction.x * other.direction.x * other.offset.y - direction.x * other.direction.x *  offset.y - direction.x * other.direction.y * other.offset.x + other.direction.x * direction.y * offset.x) / (direction.x * other.direction.y - other.direction.x * direction.y);
+		Real fy = -(direction.x * other.direction.x * other.offset.y - direction.x * other.direction.x * offset.y - direction.x * other.direction.y * other.offset.x + other.direction.x * direction.y * offset.x) / (direction.x * other.direction.y - other.direction.x * direction.y);
 		Real fx = -(other.direction.x * direction.y * other.offset.y - direction.x * other.direction.y * offset.y - direction.y * other.direction.y * other.offset.x + direction.y * other.direction.y * offset.x) / (direction.x * other.direction.y - other.direction.x * direction.y);
 
 		return { fy, fx };
 	}
-	
+
 	// checks if the given point intersects the line
 	// margin: the area around the line that should be considered to intersect the point
-	 
+
 	bool Line::intersects(arVertex2D<Real> point, Real margin)
 	{
 		AR_ASSERT_MSG(margin >= 0, "Margin cannot be less than 0\nMargin: ", margin);
-		
+
 		if (margin != 0)
 		{
 			// get unit vector pointing in the same direction as the line
@@ -205,7 +193,6 @@ namespace Asciir
 
 	bool LineSegment::intersects(const Line& other)
 	{
-
 		if (isPerpendicular(other))
 		{
 			if (direction.perp(offset - other.offset))
@@ -227,11 +214,9 @@ namespace Asciir
 
 	bool LineSegment::intersects(const LineSegment& other)
 	{
-
 		// special case for perpendicular lines
 		if (isPerpendicular(other))
 		{
-
 			if (direction.perp(offset - other.offset))
 			{
 				// check if the lines intersect each other
@@ -245,7 +230,6 @@ namespace Asciir
 				Real dot_oend = dist_oend_start.dot(dist_oend_end);
 				Real dot_end = dist_end_ostart.dot(dist_end_oend);
 
-				
 				return dot_oend < 0 || dot_end < 0;
 			}
 			else
