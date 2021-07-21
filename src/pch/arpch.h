@@ -13,7 +13,7 @@
 #include <chrono>
 #include <filesystem>
 #include <type_traits>
-#include <limits.h>
+#include <limits>
 
 #include <iostream>
 #include <string>
@@ -25,8 +25,8 @@
 #include <tuple>
 #include <map>
 #include <variant>
-#include <assert.h>
-#include <signal.h>
+#include <cassert>
+#include <csignal>
 
 #ifdef AR_WIN
 #include <Windows.h>

@@ -62,10 +62,10 @@ namespace Asciir
 				#endif
 	}
 
-	void Renderer::drawTextureData(const TextureData& data)
+	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
 	{
 
-		Mesh texture_quad = coordToQuad(data.texture->size());
+		Mesh texture_quad = coordToQuad(data.shader->size());
 		
 		Coord top_left_coord(size());
 		Coord bottom_right_coord(0, 0);
@@ -99,7 +99,7 @@ namespace Asciir
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
 				{
-					s_renderer->setState(data.texture->readTile(data.transform.reverseTransform({ x, y })));
+					s_renderer->setState(data.shader->readTile(data.transform.reverseTransform({ x, y }), time_since_start, frames_since_start));
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
 				}
 	}
@@ -136,9 +136,9 @@ namespace Asciir
 		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));
 	}
 
-	void Renderer::submitTexture(Ref<Texture> texture, Transform transform)
+	void Renderer::submitShader(Ref<Shader> texture, Transform transform)
 	{
-		submitToQueue(TextureData{ texture, transform });
+		submitToQueue(ShaderData{ texture, transform });
 	}
 
 	Ref<Mesh> Renderer::submitRect(s_Coords<2> verts, Tile tile)
@@ -215,7 +215,7 @@ namespace Asciir
 		}
 	}
 
-	void Renderer::flushRenderQueue()
+	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_Start)
 	{
 		for(const QueueElem& q_elem : *s_render_queue)
 		{
@@ -225,7 +225,7 @@ namespace Asciir
 				drawMeshData(std::get<MeshData>(q_elem));
 				break;
 			case 1:
-				drawTextureData(std::get<TextureData>(q_elem));
+				drawShaderData(std::get<ShaderData>(q_elem), time_since_start, frames_since_Start);
 				break;
 			case 2:
 				drawTileData(std::get<TileData>(q_elem));

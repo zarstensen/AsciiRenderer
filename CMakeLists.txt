@@ -131,9 +131,7 @@ set(SRC_DIR_RENDERING
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
-    src/Asciir/Rendering/Texture.cpp
     src/Asciir/Rendering/FileTexture.cpp
-    src/Asciir/Rendering/DynamicTexture.cpp
 )
 
 set(HEADER_DIR_RENDERING
@@ -142,9 +140,8 @@ set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/TerminalRenderer.h
     src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
-    src/Asciir/Rendering/Texture.h
+    src/Asciir/Rendering/Shader.h
     src/Asciir/Rendering/FileTexture.h
-    src/Asciir/Rendering/DynamicTexture.h
 )
 
 if(WIN32)

@@ -27,7 +27,11 @@ namespace Asciir
 		m_terminal.onStart();
 
 		m_running = true;
-		m_last_frame_start = getTime();
+		m_engine_start = getTime();
+		m_frame_count = 0;
+
+		m_last_frame_start = m_engine_start;
+
 		run();
 	}
 	
@@ -38,9 +42,10 @@ namespace Asciir
 		m_last_frame_start = getTime();
 		while (m_running)
 		{
-			duration m_curr_frame_start = getTime();
-			DeltaTime d_time(castRealMilli(m_curr_frame_start - m_last_frame_start));
-			m_last_frame_start = m_curr_frame_start;
+			duration curr_frame_start = getTime();
+			DeltaTime d_time(castRealMilli(curr_frame_start - m_last_frame_start));
+			m_last_frame_start = curr_frame_start;
+			m_frame_count++;
 			
 
 			for (Layer* layer: m_layerStack)
@@ -53,13 +58,13 @@ namespace Asciir
 
 			m_render_thread = std::thread(&AREngine::render, this);
 
-			Renderer::waitMinDT(castRealMilli(getTime() - m_curr_frame_start));
+			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
 		}
 	}
 
 	void AREngine::render()
 	{
-		Renderer::flushRenderQueue();
+		Renderer::flushRenderQueue(DeltaTime(castRealMilli(m_last_frame_start - m_engine_start)), m_frame_count);
 		m_terminal.onUpdate();
 		m_terminal.pollInput();
 	}

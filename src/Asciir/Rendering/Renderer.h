@@ -2,7 +2,7 @@
 
 #include "Mesh.h"
 #include "TerminalRenderer.h"
-#include "Texture.h"
+#include "Shader.h"
 #include "Asciir/Math/Vertices.h"
 #include "Asciir/Core/Engine.h"
 
@@ -20,9 +20,9 @@ namespace Asciir
 			Transform transform;
 		};
 
-		struct TextureData
+		struct ShaderData
 		{
-			Ref<Texture> texture;
+			Ref<Shader> shader;
 			Transform transform;
 		};
 
@@ -35,14 +35,14 @@ namespace Asciir
 		typedef Tile ClearData;
 
 		// mesh data, texture data, point data or clear data
-		typedef std::variant <MeshData, TextureData, TileData, ClearData> QueueElem;
+		typedef std::variant <MeshData, ShaderData, TileData, ClearData> QueueElem;
 		
 
 		static void init();
 
 		// submit functions
 		static void submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
-		static void submitTexture(Ref<Texture> texture, Transform transform = NoTransform);
+		static void submitShader(Ref<Shader> shader, Transform transform = NoTransform);
 		static void submitTile(Coord pos, Tile tile);
 		static void submitToQueue(QueueElem new_elem);
 		static Ref<Mesh> submitRect(s_Coords<2> verts, Tile tile);
@@ -68,10 +68,10 @@ namespace Asciir
 
 		// swaps and reallocates queues if necesary
 		static void swapQueues();
-		static void flushRenderQueue();
+		static void flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_start);
 
 		static void drawMeshData(const MeshData& data);
-		static void drawTextureData(const TextureData& data);
+		static void drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start);
 		static void drawTileData(const TileData& data);
 		static void drawClearData(const ClearData& data);
 

@@ -21,7 +21,7 @@ class TextureLayer : public Asciir::Layer
 		texture_t.scale = { 2, 2 };
 		texture_t.origin = (Coord) texture->size() / 2;
 
-		Renderer::submitTexture(texture, texture_t);
+		Renderer::submitShader(texture, texture_t);
 		//Renderer::resize({ 20, 20 });
 	}
 
