@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.0.0)
 Project(Asciir)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -51,6 +51,7 @@ set(EXAMPLES
     MouseInputExample
     RendererExample
     TriangleExample
+    TextureExample
 )
 
 set(INCLUDE_DIRS
@@ -130,6 +131,7 @@ set(SRC_DIR_RENDERING
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
+    src/Asciir/Rendering/FileTexture.cpp
 )
 
 set(HEADER_DIR_RENDERING
@@ -138,6 +140,8 @@ set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/TerminalRenderer.h
     src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
+    src/Asciir/Rendering/Shader.h
+    src/Asciir/Rendering/FileTexture.h
 )
 
 if(WIN32)

@@ -9,13 +9,21 @@ namespace Asciir
 		: m_hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 	{
 		// enable ansi code support
-		DWORD dwMode = 0;
-		GetConsoleMode(m_hConsole, &dwMode);
-		SetConsoleMode(m_hConsole, dwMode | ENABLE_VIRTUAL_TERMINAL_PROCESSING);
+		AR_WIN_VERIFY(GetConsoleMode(m_hConsole, &m_fallback_mode));
+		AR_WIN_VERIFY(SetConsoleMode(m_hConsole, m_fallback_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
 		clearColor();
+		
+		// enable UTF8 codepage
+		m_fallback_cp = GetConsoleOutputCP();
+		AR_WIN_VERIFY(SetConsoleOutputCP(CP_UTF8));
 	}
 
-	WinARAttr::~WinARAttr() {}
+	WinARAttr::~WinARAttr()
+	{
+		// reset console mode
+		AR_WIN_VERIFY(SetConsoleMode(m_hConsole, m_fallback_mode));
+		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_cp));
+	}
 
 	std::string WinARAttr::ansiCode()
 	{

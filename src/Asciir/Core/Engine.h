@@ -40,6 +40,8 @@ namespace Asciir
 		bool m_running = false;
 		LayerStack m_layerStack;
 		duration m_last_frame_start;
+		duration m_engine_start;
+		size_t m_frame_count;
 
 		// thread gets started every time an update is finished, unless a thread already is running
 		std::thread m_render_thread;

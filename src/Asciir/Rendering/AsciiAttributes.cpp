@@ -7,24 +7,24 @@
 namespace Asciir
 {
 	Color::Color()
-		: red(0), green(0), blue(0)
+		: red(0), green(0), blue(0), alpha(UCHAR_MAX)
 	{}
 
-	Color::Color(unsigned char r, unsigned char g, unsigned char b)
-		: red(r), green(g), blue(b)
+	Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+		: red(r), green(g), blue(b), alpha(a)
 	{}
 
-	Color::Color(unsigned char gray)
-		: red(gray), green(gray), blue(gray)
+	Color::Color(unsigned char gray, unsigned char a)
+		: red(gray), green(gray), blue(gray), alpha(a)
 	{}
 
 	Color::Color(const Color& other)
-		: red(other.red), green(other.green), blue(other.blue)
+		: red(other.red), green(other.green), blue(other.blue), alpha(other.alpha)
 	{}
 
 	Color Color::inverse() const
 	{
-		return Color(255 - red, 255 - green, 255 - blue);
+		return Color(UCHAR_MAX - red, UCHAR_MAX - green, UCHAR_MAX - blue);
 	}
 
 	bool Color::operator==(const Color& other) const
@@ -52,6 +52,24 @@ namespace Asciir
 		return (red + green + blue) / 3 >= (other.red + other.green + other.blue) / 3;
 	}
 
+	Color& Color::blend(const Color& other)
+	{
+		Real foreground_alpha = (Real)other.alpha / UCHAR_MAX;
+
+		red =	unsigned char(foreground_alpha * other.red + (1 - foreground_alpha) * (Real) red);
+		green = unsigned char(foreground_alpha * other.green + (1 - foreground_alpha) * (Real) green);
+		blue =	unsigned char(foreground_alpha * other.blue + (1 - foreground_alpha) * (Real) blue);
+		alpha = unsigned char(alpha + (1 - (Real) alpha / UCHAR_MAX) * foreground_alpha);
+
+		return *this;
+	}
+
+	Color Color::blend(const Color& background, const Color& color)
+	{
+		Color result = background;
+		result.blend(color);
+		return result;
+	}
 
 	RGB8::RGB8(unsigned char r, unsigned char g, unsigned char b)
 	{
@@ -294,7 +312,8 @@ namespace Asciir
 	{
 		stream	<< std::setfill(' ') << std::setw(3) << (int) c.red		<< ' '
 				<< std::setfill(' ') << std::setw(3) << (int) c.green	<< ' '
-				<< std::setfill(' ') << std::setw(3) << (int) c.blue;
+				<< std::setfill(' ') << std::setw(3) << (int) c.blue	<< ' '
+				<< std::setfill(' ') << std::setw(3) << (int) c.alpha;
 		return stream;
 	}
 

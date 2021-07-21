@@ -35,7 +35,7 @@ namespace Asciir
 
 		auto scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale).inverse() * rotation_transform;
 
-		auto result = Eigen::Translation<Real, 2>(origin) * rotation_transform;
+		auto result = Eigen::Translation<Real, 2>(origin) * scale_transform;
 
 		return result;
 	}
