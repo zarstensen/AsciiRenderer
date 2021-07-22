@@ -50,12 +50,15 @@ namespace Asciir
 
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform)) s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
+				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform))
+				{
+					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
+				}
 #ifdef AR_VISUALIZE_DRAW_BOX
 				else {
-					s_renderer->setState(q_elem.tile.color.inverse());
+					s_renderer->setState(data.tile.color.inverse());
 					s_renderer->drawTile(TermVert(x, y));
-					s_renderer->setState(q_elem.tile);
+					s_renderer->setState(data.tile);
 				}
 #endif
 	}
@@ -210,7 +213,7 @@ namespace Asciir
 		}
 	}
 
-	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_Start)
+	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_start)
 	{
 		for (const QueueElem& q_elem : *s_render_queue)
 		{
@@ -220,7 +223,7 @@ namespace Asciir
 				drawMeshData(std::get<MeshData>(q_elem));
 				break;
 			case 1:
-				drawShaderData(std::get<ShaderData>(q_elem), time_since_start, frames_since_Start);
+				drawShaderData(std::get<ShaderData>(q_elem), time_since_start, frames_since_start);
 				break;
 			case 2:
 				drawTileData(std::get<TileData>(q_elem));

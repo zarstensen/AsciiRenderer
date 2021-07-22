@@ -9,15 +9,15 @@ namespace Asciir
 	{
 		// uses Eigen transform matrices to perform the transformation
 
-		auto origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
+		Eigen::Matrix<Real, 2, 1> origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
 
-		auto scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale) * origin_transform;
+		Eigen::Matrix<Real, 2, 1> scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale) * origin_transform;
 
-		auto rotation_transform = Eigen::Rotation2D<Real>(rotation) * scale_transform;
+		Eigen::Matrix<Real, 2, 1> rotation_transform = Eigen::Rotation2D<Real>(rotation) * scale_transform;
 
-		auto move_transform = Eigen::Translation<Real, 2>(pos) * rotation_transform;
+		Eigen::Matrix<Real, 2, 1> move_transform = Eigen::Translation<Real, 2>(pos) * rotation_transform;
 
-		auto result = Eigen::Translation<Real, 2>(origin) * move_transform;
+		Eigen::Matrix<Real, 2, 1> result = Eigen::Translation<Real, 2>(origin) * move_transform;
 
 		return result;
 	}
@@ -26,15 +26,15 @@ namespace Asciir
 	{
 		// uses Eigen transform matrices to perform the transformation
 
-		auto origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
+		Eigen::Matrix<Real, 2, 1> origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
 
-		auto move_transform = Eigen::Translation<Real, 2>(pos).inverse() * origin_transform;
+		Eigen::Matrix<Real, 2, 1> move_transform = Eigen::Translation<Real, 2>(pos).inverse() * origin_transform;
 
-		auto rotation_transform = Eigen::Rotation2D<Real>(rotation).inverse() * move_transform;
+		Eigen::Matrix<Real, 2, 1> rotation_transform = Eigen::Rotation2D<Real>(rotation).inverse() * move_transform;
 
-		auto scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale).inverse() * rotation_transform;
+		Eigen::Matrix<Real, 2, 1> scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale).inverse() * rotation_transform;
 
-		auto result = Eigen::Translation<Real, 2>(origin) * scale_transform;
+		Eigen::Matrix<Real, 2, 1> result = Eigen::Translation<Real, 2>(origin) * scale_transform;
 
 		return result;
 	}

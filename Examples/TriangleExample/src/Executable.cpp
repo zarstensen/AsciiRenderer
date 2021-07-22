@@ -57,7 +57,12 @@ class TriangleLayer : public Asciir::Layer
 		Asciir::Color triangle_color = Asciir::YELLOW8;
 
 		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(triangle_color), transform);
-		Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_color), square_transform);
+		//Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_color), square_transform);
+
+		int a = 2;
+		int b = 6;
+
+		AR_CORE_NOTIFY(a, b);
 
 		Asciir::Renderer::resize({ 240, 63 });
 	}
