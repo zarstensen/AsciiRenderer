@@ -17,8 +17,6 @@ namespace Asciir
 
 			// load the size into memory
 
-			std::cout << sizeof(m_size.x);
-
 			texture_in.read((char*)&m_size.x, sizeof(m_size.x));
 			texture_in.read((char*)&m_size.y, sizeof(m_size.y));
 
