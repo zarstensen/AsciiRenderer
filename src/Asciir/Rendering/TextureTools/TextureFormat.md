@@ -22,7 +22,8 @@ Should appear after the size section with one or more newlines.
 This section should have the same number of columns as the width of the image and The same number of rows as the height of the image.   
 The data is stored as multi byte characters (UTF-8) for each grid element Seperated by a single space if it is not a character code (optional at end of row).  
 Incase of a character code there should be no spaces between the elements. 
-Character codes should be written as a 2 digit hex code where the hex value will be converted to its corresponding ASCII-8 character.  
+Character codes should be written as a 2 digit hex code where the hex value will be converted to its corresponding ASCII-8 character.
+these should mainly be used to define transparent characters.
 A null character (00) is considered transparent.
 
 > 3 'a' characters next to each other: a a a  
@@ -88,8 +89,8 @@ A .cart file is not compressed, the data is just stored as more compact and effi
 The size section is 16 bytes long with the first 8 bytes storing the width and the last 8 bytes storing the height of the texture.
 
 The symbols, foreground color and background color are merged into each other where each element has a symbol, a foreground color and a background color.
-Each element is 9 bytes long.
-> 1 byte: symbol  
+Each element is 9-12 bytes long.
+> 1-4 byte: symbol  
 > 4 bytes: foreground  
 > 4 bytes: background  
 
