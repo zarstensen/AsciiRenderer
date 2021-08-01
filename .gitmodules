@@ -4,3 +4,6 @@
 [submodule "modules/openal-soft"]
 	path = modules/openal-soft
 	url = https://github.com/kcat/openal-soft.git
+[submodule "scripts/ArtToCart"]
+	path = scripts/ArtToCart
+	url = https://github.com/karstensensensen/ArtToCart.git
