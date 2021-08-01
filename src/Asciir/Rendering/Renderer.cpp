@@ -43,10 +43,10 @@ namespace Asciir
 		top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
 		top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
 
-		bottom_right_coord.x = ceil(bottom_right_coord.x) + 2;
-		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x - 2 : bottom_right_coord.x;
-		bottom_right_coord.y = ceil(bottom_right_coord.y) + 2;
-		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y - 2 : bottom_right_coord.y;
+		bottom_right_coord.x = ceil(bottom_right_coord.x);
+		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x : bottom_right_coord.x;
+		bottom_right_coord.y = ceil(bottom_right_coord.y);
+		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
@@ -80,20 +80,19 @@ namespace Asciir
 			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
 		}
 
-		top_left_coord = top_left_coord;
-		bottom_right_coord = bottom_right_coord;
-
 		// make sure the area is inside the terminal
 
 		top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
 		top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
 
-		bottom_right_coord.x = ceil(bottom_right_coord.x) + 2;
-		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x - 2 : bottom_right_coord.x;
-		bottom_right_coord.y = ceil(bottom_right_coord.y) + 2;
-		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y - 2 : bottom_right_coord.y;
+		bottom_right_coord.x = ceil(bottom_right_coord.x);
+		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x : bottom_right_coord.x;
+		bottom_right_coord.y = ceil(bottom_right_coord.y);
+		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
+		//#pragma omp parallel for
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
+			//#pragma omp parallel for
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
 				{
