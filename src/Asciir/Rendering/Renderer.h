@@ -21,7 +21,7 @@ namespace Asciir
 
 		struct ShaderData
 		{
-			Ref<Shader> shader;
+			Ref<Shader2D> shader;
 			Transform transform;
 		};
 
@@ -40,7 +40,7 @@ namespace Asciir
 
 		// submit functions
 		static void submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
-		static void submitShader(Ref<Shader> shader, Transform transform = NoTransform);
+		static void submitShader(Ref<Shader2D> shader, Transform transform = NoTransform);
 		static void submitTile(Coord pos, Tile tile);
 		static void submitToQueue(QueueElem new_elem);
 		static Ref<Mesh> submitRect(s_Coords<2> verts, Tile tile);

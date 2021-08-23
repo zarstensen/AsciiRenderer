@@ -5,13 +5,13 @@
 
 namespace Asciir
 {
-	// A base class used to access dynamiccly generated data as a texture
-	// Should be inherited if the program wants to generate data at runtime
+	// A base class used to access dynamiccly generated data as a texture. runs on the CPU and not GPU.
+	// Should be inherited if the program wants to generate texture data at runtime
 	// Is inherited by FileTexture
-	class Shader
+	class Shader2D
 	{
 	public:
-		virtual ~Shader() {};
+		virtual ~Shader2D() {};
 
 		virtual Size2D size() const = 0;
 		virtual Tile readTile(const Size2D& coord, const DeltaTime& time_since_start, const size_t& frames_since_start) const = 0;

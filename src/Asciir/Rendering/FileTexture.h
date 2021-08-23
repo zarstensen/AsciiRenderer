@@ -7,7 +7,7 @@ namespace Asciir
 	typedef std::filesystem::path Path;
 
 	// stores data from a .cart (compact asciir Texture) file
-	class FileTexture : public Shader
+	class FileTexture : public Shader2D
 	{
 	public:
 		FileTexture() = default;

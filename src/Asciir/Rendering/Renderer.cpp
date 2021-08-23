@@ -90,9 +90,9 @@ namespace Asciir
 		bottom_right_coord.y = ceil(bottom_right_coord.y);
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
-		//#pragma omp parallel for
+		// #pragma omp parallel for
 		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			//#pragma omp parallel for
+			// #pragma omp parallel for
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
 				{
@@ -133,7 +133,7 @@ namespace Asciir
 		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));
 	}
 
-	void Renderer::submitShader(Ref<Shader> texture, Transform transform)
+	void Renderer::submitShader(Ref<Shader2D> texture, Transform transform)
 	{
 		submitToQueue(ShaderData{ texture, transform });
 	}
