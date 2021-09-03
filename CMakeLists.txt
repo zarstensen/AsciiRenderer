@@ -280,6 +280,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/ei
 
 # OpenAL soft
 
+if(FALSE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
@@ -287,6 +288,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/op
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "modules/OpenAL")
 
 target_link_libraries(${PROJECT_NAME} OpenAL)
+endif()
 
 # EThread
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
