@@ -7,3 +7,6 @@
 [submodule "scripts/ArtToCart"]
 	path = scripts/ArtToCart
 	url = https://github.com/karstensensensen/ArtToCart.git
+[submodule "modules/EThread"]
+	path = modules/EThread
+	url = https://github.com/karstensensensen/EThread.git
