@@ -55,6 +55,7 @@ namespace Asciir
 
 			Renderer::swapQueues();
 
+			// TODO: thread should only be created once.
 			m_render_thread = std::thread(&AREngine::render, this);
 
 			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
