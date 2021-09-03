@@ -9,7 +9,7 @@ set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
 
 if(${MSVC})
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release;InlineDebug;DeployRel" CACHE STRING "" FORCE)
+set(CMAKE_CONFIGURATION_TYPES "Debug;InlineDebug;Release;MinSizeRel;RelWithDebInfo;DeployRel" CACHE STRING "" FORCE)
 
 set(CMAKE_CXX_FLAGS_INLINEDEBUG                 "${CMAKE_CXX_FLAGS_DEBUG} /Ob2" CACHE STRING "" FORCE)
 set(CMAKE_EXE_FLAGS_INLINEDEBUG                 "${CMAKE_EXE_FLAGS_DEBUG}" CACHE STRING "" FORCE)
@@ -284,10 +284,18 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "OpenAL")
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "modules/OpenAL")
 
 target_link_libraries(${PROJECT_NAME} OpenAL)
 
+# EThread
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
+
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/EThread PROPERTY FOLDER "modules/EThread")
+
+target_link_libraries(${PROJECT_NAME} EThread)
 
 
 if(ASCIIR_LOG_VIEWER)
