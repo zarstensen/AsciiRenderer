@@ -8,21 +8,47 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
 
 if(${MSVC})
+    set(CMAKE_CONFIGURATION_TYPES "Debug;InlineDebug;Release;MinSizeRel;RelWithDebInfo;DeployRel" CACHE STRING "" FORCE)
 
-set(CMAKE_CONFIGURATION_TYPES "Debug;InlineDebug;Release;MinSizeRel;RelWithDebInfo;DeployRel" CACHE STRING "" FORCE)
+    if(NOT CMAKE_CXX_FLAGS_INLINEDEBUG)
+        set(CMAKE_CXX_FLAGS_INLINEDEBUG                 "${CMAKE_CXX_FLAGS_DEBUG} /Ob2" CACHE STRING "" FORCE)
+    endif()
 
-set(CMAKE_CXX_FLAGS_INLINEDEBUG                 "${CMAKE_CXX_FLAGS_DEBUG} /Ob2" CACHE STRING "" FORCE)
-set(CMAKE_EXE_FLAGS_INLINEDEBUG                 "${CMAKE_EXE_FLAGS_DEBUG}" CACHE STRING "" FORCE)
-set(CMAKE_LINKER_FLAGS_INLINEDEBUG              "${CMAKE_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_INLINEDEBUG       "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_INLINEDEBUG          "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
+    if(NOT CMAKE_EXE_FLAGS_INLINEDEBUG)
+        set(CMAKE_EXE_FLAGS_INLINEDEBUG                 "${CMAKE_EXE_FLAGS_DEBUG}" CACHE STRING "" FORCE)
+    endif()
 
-set(CMAKE_CXX_FLAGS_DEPLOYREL                   "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_EXE_FLAGS_DEPLOYREL                   "${CMAKE_EXE_FLAGS_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_LINKER_FLAGS_DEPLOYREL                "${CMAKE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_SHARED_LINKER_FLAGS_DEPLOYREL         "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_EXE_LINKER_FLAGS_DEPLOYREL            "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    if(NOT CMAKE_LINKER_FLAGS_INLINEDEBUG)
+        set(CMAKE_LINKER_FLAGS_INLINEDEBUG              "${CMAKE_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
+    endif()
 
+    if(NOT CMAKE_SHARED_LINKER_FLAGS_INLINEDEBUG)
+        set(CMAKE_SHARED_LINKER_FLAGS_INLINEDEBUG       "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_EXE_LINKER_FLAGS_INLINEDEBUG)
+        set(CMAKE_EXE_LINKER_FLAGS_INLINEDEBUG          "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_CXX_FLAGS_DEPLOYREL)
+        set(CMAKE_CXX_FLAGS_DEPLOYREL                   "${CMAKE_CXX_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_EXE_FLAGS_DEPLOYREL)
+        set(CMAKE_EXE_FLAGS_DEPLOYREL                   "${CMAKE_EXE_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_LINKER_FLAGS_DEPLOYREL)
+        set(CMAKE_LINKER_FLAGS_DEPLOYREL                "${CMAKE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_SHARED_LINKER_FLAGS_DEPLOYREL)
+        set(CMAKE_SHARED_LINKER_FLAGS_DEPLOYREL         "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    endif()
+
+    if(NOT CMAKE_EXE_LINKER_FLAGS_DEPLOYREL)
+        set(CMAKE_EXE_LINKER_FLAGS_DEPLOYREL            "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
+    endif()
 endif()
 
 # options
@@ -31,11 +57,11 @@ option(ASCIIR_EXAMPLES "build example projects" OFF)
 option(ASCIIR_HIGH_PRECISSION_FLOAT "uses double instead of float as floating point data type (uses more memory)" OFF)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-set(ARCH "x64")
+    set(ARCH "x64")
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-set(ARCH "x86")
+    set(ARCH "x86")
 else()
-message(STATUS "unknown architecture")
+    message(STATUS "unknown architecture")
 endif()
 
 define_property(
@@ -46,6 +72,7 @@ define_property(
     FULL_DOCS  "Use to organize targets in an IDE."
 )
 
+# organize folders and files into general variables
 set(EXAMPLES
     BasicInputExample
     MouseInputExample
@@ -144,56 +171,58 @@ set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/FileTexture.h
 )
 
+# platform specific files
 if(WIN32)
 
-set(SRC_DIR_PLATFORM
-    # core
-    src/Asciir/Platform/Windows/WinInput.cpp
-    src/Asciir/Platform/Windows/WinInit.cpp
+    set(SRC_DIR_PLATFORM
+        # core
+        src/Asciir/Platform/Windows/WinInput.cpp
+        src/Asciir/Platform/Windows/WinInit.cpp
 
-    # rendering
-    src/Asciir/Platform/Windows/WindowsARAttributes.cpp
+        # rendering
+        src/Asciir/Platform/Windows/WindowsARAttributes.cpp
 
-    # input
-    src/Asciir/Platform/Windows/WinEventListener.cpp
-)
+        # input
+        src/Asciir/Platform/Windows/WinEventListener.cpp
+    )
 
-set(HEADER_DIR_PLATFORM
-    # core
-    src/Asciir/Platform/Windows/WinInput.h
-    src/Asciir/Platform/Windows/KeyCodeMap.h
-    src/Asciir/Platform/Windows/WinInit.h
-    
-    #rendering
-    src/Asciir/Platform/Windows/WindowsARAttributes.h
+    set(HEADER_DIR_PLATFORM
+        # core
+        src/Asciir/Platform/Windows/WinInput.h
+        src/Asciir/Platform/Windows/KeyCodeMap.h
+        src/Asciir/Platform/Windows/WinInit.h
+        
+        #rendering
+        src/Asciir/Platform/Windows/WindowsARAttributes.h
 
-    # input
-    src/Asciir/Platform/Windows/WinEventListener.h
-)
+        # input
+        src/Asciir/Platform/Windows/WinEventListener.h
+    )
 
 elseif(UNIX)
 
-set(SRC_DIR_PLATFORM
-    # core
-    src/Asciir/Platform/Unix/UnixInput.cpp
+    set(SRC_DIR_PLATFORM
+        # core
+        src/Asciir/Platform/Unix/UnixInput.cpp
 
-    # rendering
-    src/Asciir/Platform/Unix/UnixARAttributes.cpp
-)
+        # rendering
+        src/Asciir/Platform/Unix/UnixARAttributes.cpp
+    )
 
-set(HEADER_DIR_PLATFORM
-    # core
-    src/Asciir/Platform/Unix/UnixInput.h
-    src/Asciir/Platform/Unix/KeyCodeMap.h
+    set(HEADER_DIR_PLATFORM
+        # core
+        src/Asciir/Platform/Unix/UnixInput.h
+        src/Asciir/Platform/Unix/KeyCodeMap.h
 
-    #rendering
-    src/Asciir/Platform/Unix/UnixARAttributes.h
-)
+        #rendering
+        src/Asciir/Platform/Unix/UnixARAttributes.h
+    )
 
 else()
-message(SEND_ERROR "Platform not supported")
+    message(SEND_ERROR "Platform not supported")
 endif()
 
+# add the main Asciir library
 add_library(${PROJECT_NAME} STATIC
     src/Asciir.h
     src/AsciirHeaders.h
@@ -222,6 +251,19 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_PLATFORM}
 )
 
+# compile options
+if(MSVC)
+
+    set_target_properties(${PROJECT_NAME} PROPERTIES test "$<$<CONFIG:INLINEDEB>:DEBUG> $<$<CONFIG:DEPLOYREL>:RELEASE>")
+
+    # set warning level
+
+    target_compile_options(${PROJECT_NAME} PRIVATE -W4 $<$<CONFIG:DEPLOYREL>:-WX>)
+else()
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+# organize the source files in the generated project
 source_group("core/header"        FILES ${HEADER_DIR_CORE})
 source_group("core/src"           FILES ${SRC_DIR_CORE})
 
@@ -241,12 +283,13 @@ source_group("rendering/src"      FILES ${SRC_DIR_RENDERING})
 source_group("platform/"           FILES src/Asciir/Platform/PlatformMacros.h)
 
 if(WIN32)
-source_group("platform/windows/header"  FILES ${HEADER_DIR_PLATFORM})
-source_group("platform/windows/src"  FILES ${SRC_DIR_PLATFORM})
+    source_group("platform/windows/header"  FILES ${HEADER_DIR_PLATFORM})
+    source_group("platform/windows/src"  FILES ${SRC_DIR_PLATFORM})
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
+# set compile definitions depending on configuration
 target_compile_definitions(${PROJECT_NAME} PUBLIC
 $<$<CONFIG:DEBUG,INLINEDEBUG>:AR_DEBUG>
 $<$<CONFIG:RELEASE>:AR_SAFE_RELEASE AR_CORE_VERBOSITY=2 AR_CLIENT_VERBOSITY=4>
@@ -254,14 +297,15 @@ $<$<CONFIG:RELEASE,DEBUG,INLINEDEBUG>:AR_CORE_LOG_DIR="../../logs/core_log.log" 
 $<$<CONFIG:DEPLOYREL>:AR_CORE_LOG_DIR="./logs/core_log.log" AR_CLIENT_LOG_DIR="./logs/client_log.log">
 $<$<BOOL:${ASCIIR_HIGH_PRECISSION_FLOAT}>:AR_HIGH_PRECISSION_FLOAT>)
 
+# packages
 if(${UNIX})
-find_package(X11 REQUIRED)
-include_directories(${X11_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES})
+    find_package(X11 REQUIRED)
+    include_directories(${X11_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES})
 
-find_package(Threads REQUIRED)
-include_directories(${THREADS_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
+    find_package(Threads REQUIRED)
+    include_directories(${THREADS_INCLUDE_DIRS})
+    target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
 endif()
 
 set_target_properties(${PROJECT_NAME}
@@ -301,9 +345,10 @@ target_link_libraries(${PROJECT_NAME} EThread)
 
 
 if(ASCIIR_LOG_VIEWER)
-add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
+    add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)
 endif()
 
+# add all the examples programmatically
 if(ASCIIR_EXAMPLES)
     foreach(EXAMPLE IN ITEMS ${EXAMPLES})
         add_subdirectory(${PROJECT_SOURCE_DIR}/Examples/${EXAMPLE} ${EXAMPLE})
