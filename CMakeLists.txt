@@ -320,14 +320,14 @@ set_target_properties(${PROJECT_NAME}
 
 # Eigen 3
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
 
 # OpenAL soft
 
 if(FALSE)
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "modules/OpenAL")
 
@@ -337,7 +337,7 @@ endif()
 # EThread
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
 
 set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/EThread PROPERTY FOLDER "modules/EThread")
 
