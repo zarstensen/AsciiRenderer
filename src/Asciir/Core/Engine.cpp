@@ -10,6 +10,7 @@
 namespace Asciir
 {
 	AREngine::AREngine()
+		: m_render_thread(&AREngine::render, this)
 	{
 		m_terminal.setEventCallback(AR_BIND_EVENT_CALLBACK(onEvent));
 	}
@@ -32,6 +33,8 @@ namespace Asciir
 
 		m_last_frame_start = m_engine_start;
 
+		m_render_thread.start();
+
 		run();
 	}
 
@@ -50,13 +53,11 @@ namespace Asciir
 			for (Layer* layer : m_layerStack)
 				layer->onUpdate(d_time);
 
-			if (m_render_thread.joinable())
-				m_render_thread.join();
+			m_render_thread.joinLoop();
 
 			Renderer::swapQueues();
 
-			// TODO: thread should only be created once.
-			m_render_thread = std::thread(&AREngine::render, this);
+			m_render_thread.startLoop();
 
 			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
 		}
@@ -110,7 +111,7 @@ namespace Asciir
 	}
 
 	// stop main loop on terminal close
-	bool AREngine::onTerminalClose(TerminalClosedEvent& e)
+	bool AREngine::onTerminalClose(TerminalClosedEvent&)
 	{
 		AR_CORE_INFO("Stopping main loop");
 		m_running = false;

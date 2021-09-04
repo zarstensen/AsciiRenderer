@@ -5,6 +5,7 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 #include "LayerStack.h"
+#include <ETH.h>
 
 namespace Asciir
 {
@@ -40,10 +41,10 @@ namespace Asciir
 		LayerStack m_layerStack;
 		duration m_last_frame_start;
 		duration m_engine_start;
-		size_t m_frame_count;
+		size_t m_frame_count = 0;
 
 		// thread gets started every time an update is finished, unless a thread already is running
-		std::thread m_render_thread;
+		ETH::LThread m_render_thread;
 
 		static AREngine* i_engine;
 	};
