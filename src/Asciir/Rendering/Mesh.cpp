@@ -62,7 +62,6 @@ namespace Asciir
 		m_vertices.resize(vert_count);
 		m_faces.reserve(vert_count);
 
-		size_t face_indx = 0;
 		size_t index_offset = 0;
 
 		addFace(index_offset);
@@ -417,7 +416,7 @@ namespace Asciir
 		}
 
 		AR_ASSERT_VOLATILE(false, "Face index is out of bounds");
-		return -1;
+		return SIZE_MAX;
 	}
 
 	// Returns the last index for a face list including the repeating index
@@ -431,7 +430,7 @@ namespace Asciir
 
 		// This should never be hit
 		AR_ASSERT_MSG(false, "A face list is missing an end index somehow");
-		return -1;
+		return SIZE_MAX;
 	}
 
 	// Streams the vertices and faces of a given mesh

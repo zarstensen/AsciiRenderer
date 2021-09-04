@@ -33,10 +33,10 @@ namespace Asciir
 
 	private:
 		template<size_t I = 0, typename ... T, std::enable_if_t<I == sizeof...(T), bool> = 0>
-		void write_tuple(std::stringstream& sstream, std::tuple<const T&...>&) {}
+		void write_tuple(std::stringstream&, std::tuple<const T&...>&) {}
 
 		template<size_t I = 0, typename ... T, std::enable_if_t<I < sizeof...(T), bool> = 0>
-			void write_tuple(std::stringstream& sstream, std::tuple<const T&...>& data) { sstream << std::get<I>(data) << ' '; write_tuple<I + 1, T...>(sstream, data); }
+		void write_tuple(std::stringstream& sstream, std::tuple<const T&...>& data) { sstream << std::get<I>(data) << ' '; write_tuple<I + 1, T...>(sstream, data); }
 	};
 }
 

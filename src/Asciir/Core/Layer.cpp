@@ -3,8 +3,10 @@
 
 namespace Asciir
 {
-	Asciir::Layer::Layer(const std::string& name)
+	Layer::Layer(const std::string& name)
 		:m_debugName(name) {}
 
-	Asciir::Layer::~Layer() {}
+	void Layer::onUpdate(DeltaTime) {}
+
+	void Layer::onEvent(Event&) {}
 }

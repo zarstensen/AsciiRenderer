@@ -16,7 +16,7 @@ namespace Asciir
 		~FileTexture() final override { if (loaded()) unload(); }
 
 		Size2D size() const final override { return m_size; }
-		Tile readTile(const Size2D& coord, const DeltaTime& time_since_start, const size_t& frames_since_start) const final override { return m_data(coord); }
+		Tile readTile(const Size2D& coord, const DeltaTime&, const size_t&) const final override { return m_data(coord); }
 
 		void load(const Path& dir);
 		void unload();

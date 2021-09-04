@@ -174,7 +174,7 @@ namespace Asciir
 	{
 		for (int button = 0; button < 5; button++)
 		{
-			WORD button_word = BIT_SHL(button);
+			WORD button_word = (WORD) BIT_SHL(button);
 
 			if (event.dwEventFlags & DOUBLE_CLICK)
 			{

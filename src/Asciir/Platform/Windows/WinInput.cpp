@@ -73,14 +73,12 @@ namespace Asciir
 	{
 		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
 		return key_toggled_state[(size_t)keycode - 1].is_toggled && key_data.is_down && isFocused();
-		return false;
 	}
 
 	bool Input::isKeyUntoggled(Key keycode)
 	{
 		EventListener::KeyInputData key_data = win_listener->getKeybdFromKeyCode(keycode);
 		return key_toggled_state[(size_t)keycode - 1].is_toggled && !key_data.is_down && isFocused();
-		return false;
 	}
 
 	bool Input::isMouseDown(MouseKey keycode)
@@ -97,14 +95,12 @@ namespace Asciir
 	{
 		EventListener::MouseInputData mouse_data = win_listener->getMouseFromKeyCode(keycode);
 		return mouse_toggled_state[(size_t)keycode - 1].is_toggled && mouse_data.is_down && isFocused();
-		return false;
 	}
 
 	bool Input::isMouseUntoggled(MouseKey keycode)
 	{
 		EventListener::MouseInputData mouse_data = win_listener->getMouseFromKeyCode(keycode);
 		return mouse_toggled_state[(size_t)keycode - 1].is_toggled && !mouse_data.is_down && isFocused();
-		return false;
 	}
 
 	bool Input::isMouseMoved()
@@ -127,6 +123,10 @@ namespace Asciir
 		return GetForegroundWindow() == GetConsoleWindow();
 	}
 
+// disable alignment warning C4324 for std::variant
+#pragma warning(push)
+#pragma warning(disable:4324)
+
 	std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> Input::getKeyEvent(Key keycode)
 	{
 		if (isKeyDown(keycode))
@@ -139,11 +139,6 @@ namespace Asciir
 
 	std::variant<std::monostate, MousePressedEvent, MouseReleasedEvent> Input::getMouseKeyEvent(MouseKey keycode)
 	{
-		// calculate mouse position on terminal by subtracting the terminal position and dividing by the font size
-		// also offset by 2 in the y and 1 in the x to get the correct cursor pos
-
-		const WinARAttr& s_attr_handler = dynamic_cast<const WinARAttr&>(AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
-
 		if (isMouseDown(keycode))
 		{
 			return MousePressedEvent(keycode, win_listener->getMousePos(), win_listener->getCursorPos(), win_listener->getMouseFromKeyCode(keycode).is_double_click);
@@ -156,6 +151,10 @@ namespace Asciir
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
+
+#pragma warning(pop)
+// enable alignment warning C4324
+
 
 	MouseMovedEvent Input::getMouseMovedEvent()
 	{
