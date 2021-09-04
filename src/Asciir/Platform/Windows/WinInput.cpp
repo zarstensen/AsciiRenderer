@@ -123,10 +123,6 @@ namespace Asciir
 		return GetForegroundWindow() == GetConsoleWindow();
 	}
 
-// disable alignment warning C4324 for std::variant
-#pragma warning(push)
-#pragma warning(disable:4324)
-
 	std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> Input::getKeyEvent(Key keycode)
 	{
 		if (isKeyDown(keycode))
@@ -151,9 +147,6 @@ namespace Asciir
 		AR_ASSERT_MSG(false, "Key was neither pressed or released (Terminal not in focus?)");
 		return {};
 	}
-
-#pragma warning(pop)
-// enable alignment warning C4324
 
 
 	MouseMovedEvent Input::getMouseMovedEvent()

@@ -126,17 +126,10 @@ namespace Asciir
 		return Mesh({ {0, 0}, {coord.x, 0}, coord, {0, coord.y} });
 	}
 
-// disable alignment warning C4324 for std::variant
-#pragma warning(push)
-#pragma warning(disable:4324)
-
 	void Renderer::submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform)
 	{
 		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));
 	}
-
-#pragma warning(pop)
-// enable alignment warning C4324
 
 	void Renderer::submitShader(Ref<Shader2D> texture, Transform transform)
 	{

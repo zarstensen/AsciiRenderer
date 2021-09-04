@@ -12,8 +12,7 @@ class TileShader : public Shader2D
 
 	Tile readTile(const Size2D& coord, const DeltaTime&, const size_t& frame) const final override
 	{
-		//srand(rand() % 1000 + frame);
-		if((coord.x + coord.y) % 2)
+		if((coord.x + coord.y + frame) % 2)
 			return Tile(BLACK8);
 		else
 			return Tile(IWHITE8);
@@ -28,7 +27,7 @@ class TextureLayer : public Asciir::Layer
 
 	void onAdd() final
 	{
-		texture->load(texture_path);
+		//texture->load(texture_path);
 		std::cout << sizeof(Asciir::Tile) << '\n';
 		std::cout << texture->size() << '\n';
 	}
@@ -41,8 +40,7 @@ class TextureLayer : public Asciir::Layer
 		texture_t.origin = (Coord)texture->size() / 2;
 
 		Renderer::submitShader(shader);
-		Renderer::submitShader(texture, texture_t);
-		//Renderer::resize({ 20, 20 });
+		//Renderer::submitShader(texture, texture_t);
 	}
 };
 

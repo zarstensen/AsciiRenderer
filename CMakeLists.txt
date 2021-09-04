@@ -258,7 +258,7 @@ if(MSVC)
 
     # set warning level
 
-    target_compile_options(${PROJECT_NAME} PRIVATE -W4 $<$<CONFIG:DEPLOYREL>:-WX>)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /external:anglebrackets /external:W0 $<$<CONFIG:DEPLOYREL>:/WX>)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
