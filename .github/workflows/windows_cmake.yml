@@ -4,15 +4,14 @@ on: [ push, pull_request ]
 
 jobs:
   build:
+    runs-on: windows_latest
+    
     strategy:
       fail-fast: false
       matrix:
         build_type: [Debug, Release, DeployRel]
-        win32: [true, false]
-
+        win32: [true, false]    
     
-    runs-on: windows_latest
-
     env:
       BUILD_TYPE: ${{ matrix.build_type }}
 
