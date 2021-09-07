@@ -13,6 +13,7 @@
 #include <chrono>
 #include <filesystem>
 #include <type_traits>
+#include <typeindex>
 #include <limits>
 
 #include <iostream>
@@ -21,6 +22,8 @@
 #include <sstream>
 #include <future>
 #include <vector>
+#include <unordered_set>
+#include <queue>
 #include <array>
 #include <tuple>
 #include <map>
@@ -29,9 +32,8 @@
 #include <csignal>
 
 #ifdef AR_WIN
+#define NOMINMAX
 #include <Windows.h>
-#undef min
-#undef max
 #else
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -41,5 +43,4 @@
 #include <unistd.h>
 
 #include <termios.h>
-
 #endif

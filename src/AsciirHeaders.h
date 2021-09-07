@@ -23,6 +23,8 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 
+#include "ASciir/Entities/ECS.h"
+
 #include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 

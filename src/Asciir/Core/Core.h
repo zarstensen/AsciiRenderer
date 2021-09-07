@@ -43,6 +43,9 @@ namespace Asciir
 		return (x >> bit) & 1U;
 	}
 
+	template<typename TDerived, typename TBase>
+	using enable_if_base_of = std::enable_if_t<std::is_base_of_v<TDerived, TBase>, bool>;
+
 	constexpr int SIG_CTRL_C = SIGINT;
 #ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;

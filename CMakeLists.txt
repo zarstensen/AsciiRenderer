@@ -107,6 +107,14 @@ set(HEADER_DIR_CORE
     src/Asciir/Core/AsciirLiterals.h
 )
 
+set(HEADER_DIR_ENTITIES
+    src/Asciir/Entities/ECS.h
+)
+
+set(SRC_DIR_ENTITIES
+    src/Asciir/Entities/ECS.cpp
+)
+
 set(DIR_EVENT
     src/Asciir/Event/Event.h
     src/Asciir/Event/KeyEvent.h
@@ -234,6 +242,9 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_CORE}
     ${SRC_DIR_CORE}
 
+    ${HEADER_DIR_ENTITIES}
+    ${SRC_DIR_ENTITIES}
+
     ${DIR_EVENT}
 
     ${DIR_INPUT}
@@ -266,6 +277,9 @@ endif()
 # organize the source files in the generated project
 source_group("core/header"        FILES ${HEADER_DIR_CORE})
 source_group("core/src"           FILES ${SRC_DIR_CORE})
+
+source_group("entities/header"    FILES ${HEADER_DIR_ENTITIES})
+source_group("entities/src"       FILES ${SRC_DIR_ENTITIES})
 
 source_group("event"              FILES ${DIR_EVENT})
 
