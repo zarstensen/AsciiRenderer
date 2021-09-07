@@ -162,6 +162,7 @@ namespace Asciir
 		void setState(Tile tile);
 		Tile getState() const;
 		Tile& getState();
+		// replaces the tile at pos with the current tile state
 		void drawTile(const TermVert& pos);
 		// blends the current tile state into the stored tile with the stored tile as the background
 		void blendTile(const TermVert& pos);

@@ -1,9 +1,9 @@
 #pragma once
 
-// Define this function in your program and return a heap allocated class derived from Asciir::Terminal
 
 namespace Asciir
 {
+	// Define this function in your program and return a custom class derived from Asciir::AREngine
 	extern AREngine* createEngine(std::vector<std::string> args);
 }
 

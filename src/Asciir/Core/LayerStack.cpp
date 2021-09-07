@@ -14,17 +14,17 @@ namespace Asciir
 			delete layer;
 	}
 
-	void LayerStack::PushLayer(Layer* layer)
+	void LayerStack::pushLayer(Layer* layer)
 	{
 		m_layerInsert = m_layers.emplace(m_layerInsert, layer);
 	}
 
-	void LayerStack::PushOverlay(Layer* overlay)
+	void LayerStack::pushOverlay(Layer* overlay)
 	{
 		m_layers.emplace_back(overlay);
 	}
 
-	void LayerStack::PopLayer(Layer* target_overlayer)
+	void LayerStack::popLayer(Layer* target_overlayer)
 	{
 		auto iter = std::find(begin(), end(), target_overlayer);
 
@@ -35,7 +35,7 @@ namespace Asciir
 		}
 	}
 
-	void LayerStack::PopOverlay(Layer* target_overlay)
+	void LayerStack::popOverlay(Layer* target_overlay)
 	{
 		auto iter = std::find(begin(), end(), target_overlay);
 

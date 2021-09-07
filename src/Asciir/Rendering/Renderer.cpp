@@ -54,13 +54,13 @@ namespace Asciir
 				{
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
 				}
-#ifdef AR_VISUALIZE_DRAW_BOX
+	#ifdef AR_VISUALIZE_DRAW_BOX
 				else {
 					s_renderer->setState(data.tile.color.inverse());
 					s_renderer->drawTile(TermVert(x, y));
 					s_renderer->setState(data.tile);
 				}
-#endif
+	#endif
 	}
 
 	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
@@ -94,6 +94,8 @@ namespace Asciir
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
 				{
+					// reverse the transform on the untransformed coordinates and use the new coords to read from the shader
+					// has the same effect as transforming the shader data and reading with the original coordinates
 					s_renderer->setState(data.shader->readTile(data.transform.reverseTransform({ x, y }), time_since_start, frames_since_start));
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
 				}

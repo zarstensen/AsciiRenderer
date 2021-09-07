@@ -86,7 +86,13 @@ namespace Asciir
 	void AREngine::PushLayer(Layer* layer)
 	{
 		layer->onAdd();
-		m_layerStack.PushLayer(layer);
+		m_layerStack.pushLayer(layer);
+	}
+
+	void AREngine::PushOverlay(Layer* overlay)
+	{
+		overlay->onAdd();
+		m_layerStack.pushOverlay(overlay);
 	}
 
 	void AREngine::create(AREngine* engine)
