@@ -31,6 +31,8 @@ namespace Asciir
 		std::enable_if_t<std::is_abstract_v<T>&& std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
 
 		using std::shared_ptr<T>::operator=;
+
+		bool operator==(const Ref<T>& other) { return this->get() == other->get(); }
 	};
 
 	constexpr int BIT_SHL(int x, int a = 1)
@@ -44,7 +46,13 @@ namespace Asciir
 	}
 
 	template<typename TDerived, typename TBase>
-	using enable_if_base_of = std::enable_if_t<std::is_base_of_v<TDerived, TBase>, bool>;
+	using enable_if_base_of = std::enable_if_t<std::is_base_of_v<TBase, std::decay_t<TDerived>>, bool>;
+
+	template<typename T, template<typename...> class TClass>
+	struct enable_if_same_template : std::false_type {};
+
+	template<typename ... Args, template<typename...> class TClass>
+	struct enable_if_same_template<TClass<Args...>, TClass> : std::true_type {};
 
 	constexpr int SIG_CTRL_C = SIGINT;
 #ifdef AR_WIN
