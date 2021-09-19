@@ -113,6 +113,7 @@ set(HEADER_DIR_ENTITIES
 
 set(SRC_DIR_ENTITIES
     src/Asciir/Entities/ECS.cpp
+    src/Asciir/Entities/ECS.ipp
 )
 
 set(DIR_EVENT
