@@ -150,21 +150,28 @@ namespace Asciir
 
 	class SystemEvent
 	{
+	public:
 		friend System;
-	
-		UID getEntityID() { return m_entity_id; }
+		
+		SystemEvent() = delete;
+		SystemEvent(std::type_index event_id) : m_event_id(event_id) {}
+
+		UID getEntUID() { return m_components->getEntUID(); }
 
 		template<typename TComp, enable_if_component<TComp> = false>
 		TComp& getComponent() { return getComponent(typeid(TComp)); }
 
-		Component& getComponent(std::type_index component) { return m_components[comopnent)]; }
+		Component& getComponent(std::type_index component) { return m_components->get(component); }
+
+		std::type_index getEventType() { return m_event_id; }
+
+		Scene& getScene() { return *m_scene; }
 
 	protected:
-		SystemEvent(std::map<std::type_index, Ref<Component>>& components, UID entity)
-			: m_components(components), m_entity_id(entity) {}
 
-		ComponentView& m_components;
-		UID m_entity_id;
+		ComponentView* m_components = nullptr;
+		Scene* m_scene = nullptr;
+		std::type_index m_event_id;
 	};
 
 	template<typename TEvent>
@@ -193,6 +200,7 @@ namespace Asciir
 		// user implemented function.
 		// whenever a system finds an entity that contains the specified components, process is called with the entity uid and components related to the entity.
 		// events should also be created inside process.
+		// IMPORTANT: components returned by getComponent or a SystemEvent should not be stored as a reference, as these get overwritten when a new process call is made.
 		virtual void process(Scene& scene) = 0;
 
 		// gets called when run is called and before any process call has been made
@@ -204,6 +212,9 @@ namespace Asciir
 		// gets called every time the active scene is changed.
 		// a scene is only changed when every possible componentview with the required components has been processed
 		virtual void onSceneChange() {}
+
+		// gets called when an event is dispatched to the system
+		virtual void onEventRecieve(SystemEvent&) {}
 
 		// should be called by the user when the system needs to start processing entities.
 		// this is not needed if the system only relies on events from other systems.
@@ -218,10 +229,7 @@ namespace Asciir
 
 		// automaticlly creates and populates an event of specified type and dispatches it to other systems in the associated scenes.
 		template<typename TEvent, enable_if_event<TEvent> = false>
-		void createEvent();
-
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void createEvent(TEvent s_event);
+		void createEvent(TEvent s_event = TEvent());
 
 
 		// if multiple components are required at once, the unordered_set will be resized once instead of every time a new component is inserted
@@ -242,6 +250,7 @@ namespace Asciir
 		// unasocciates a scene with the system
 		void removeScene(Scene& scene);
 
+		// subscribe should be called whenever a scene has been added
 		template<typename TEvent, enable_if_event<TEvent> = false>
 		void subscribe();
 		template<typename TEvent, enable_if_event<TEvent> = false>
@@ -259,6 +268,8 @@ namespace Asciir
 		std::unordered_set<std::type_index> m_system_components;
 		// what scenes the system is a part of
 		std::unordered_set<Scene*> m_system_scenes;
+
+		std::unordered_set<std::type_index> m_subscribed_events;
 
 		// stores a pointer for each component currently being processed.
 		ComponentView* m_active_components = nullptr;
@@ -451,12 +462,15 @@ namespace Asciir
 		size_t componentCount(std::type_index component);
 
 		template<typename TEvent, enable_if_event<TEvent> = false>
-		void subscribeSystem(Ref<System> system);
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void unsubscribeSystem(Ref<System> system);
+		void subscribeSystem(System& system) { subscribeSystem(system, typeid(TEvent)); }
+		void subscribeSystem(System& system, std::type_index event_id);
 
 		template<typename TEvent, enable_if_event<TEvent> = false>
-		void dispatchEvent(Ref<TEvent> s_event);
+		void unsubscribeSystem(System& system) { subscribeSystem(system, typeid(TEvent)); }
+		void unsubscribeSystem(System& system, std::type_index event_id);
+
+		template<typename TEvent, enable_if_event<TEvent> = false>
+		void dispatchEvent(TEvent& s_event);
 
 	protected:
 
@@ -471,7 +485,7 @@ namespace Asciir
 		std::unordered_map<std::type_index, ComponentBuffer> m_components;
 
 		// stores which systems are subscribed to which events
-		std::map<std::type_index, Ref<System>> m_event_subscribtions;
+		std::unordered_map<std::type_index, std::unordered_set<System*>> m_event_subscribtions;
 
 	};
 }

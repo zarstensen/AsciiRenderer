@@ -105,11 +105,23 @@ namespace Asciir
 
     void System::addScene(Scene& scene)
     {
+        // add event subscribtion information to new scene
+        for (std::type_index event_id : m_subscribed_events)
+        {
+            scene.subscribeSystem(*this, event_id);
+        }
+        
         m_system_scenes.insert(&scene);
     }
 
     void System::removeScene(Scene& scene)
     {
+        // remove all event subscribtions from removed scene
+        for (std::type_index event_id : m_subscribed_events)
+        {
+            scene.unsubscribeSystem(*this, event_id);
+        }
+
         m_system_scenes.erase(&scene);
     }
 
@@ -333,5 +345,15 @@ namespace Asciir
         if (m_components.find(component) == m_components.end()) return 0;
 
         return m_components[component].dataLength();
+    }
+
+    void Scene::subscribeSystem(System& system, std::type_index event_id)
+    {
+        m_event_subscribtions[event_id].insert(&system);
+    }
+
+    void Scene::unsubscribeSystem(System& system, std::type_index event_id)
+    {
+        m_event_subscribtions[event_id].erase(&system);
     }
 }

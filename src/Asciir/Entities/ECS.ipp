@@ -82,9 +82,33 @@ namespace Asciir
 	template<typename TEvent, enable_if_event<TEvent>>
 	void System::createEvent(TEvent s_event)
 	{
-		s_event.
+		s_event.m_components = m_active_components;
+		s_event.m_scene = m_active_scene;
+
+		m_active_scene->dispatchEvent(s_event);
 	}
 	
+	template<typename TEvent, enable_if_event<TEvent>>
+	void System::subscribe()
+	{
+		// update scenes
+		for (Scene* scene : m_system_scenes)
+			scene->subscribeSystem<TEvent>(*this);
+		
+		m_subscribed_events.insert(typeid(TEvent));
+	}
+
+	template<typename TEvent, enable_if_event<TEvent>>
+	void System::unsubscribe()
+	{
+		// update scenes
+		for (Scene* scene : m_system_scenes)
+			scene->unsubscribeSystem<TEvent>(*this);
+
+		m_subscribed_events.erase(typeid(TEvent));
+	}
+
+
     /*
     * SceneView and ComponentIterator definitions
     */
@@ -198,6 +222,15 @@ namespace Asciir
 	size_t Scene::componentCount()
 	{
 		return componentCount(typeid(TComp));
+	}
+
+	template<typename TEvent, enable_if_event<TEvent>>
+	void Scene::dispatchEvent(TEvent& s_event)
+	{
+		for (System* subscribed_system : m_event_subscribtions[typeid(TEvent)])
+		{
+			subscribed_system->onEventRecieve(s_event);
+		}
 	}
 
 	template<size_t index, typename TTuple>
