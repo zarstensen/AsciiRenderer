@@ -49,6 +49,7 @@ namespace Asciir
 
 	bool LogViewer::logLineOut(std::ostream& stream)
 	{
+		// it is not known wether other things has been printed after the last LogLineOut, so the ascii attributes must be cleared
 		m_log_attributes->clear();
 		size_t tmp_pos = m_pos;
 		std::string log;
