@@ -18,7 +18,7 @@ namespace Asciir
 {
 	class Input
 	{
-		friend Terminal;
+		friend TerminalEventHandler;
 
 	public:
 
@@ -62,7 +62,7 @@ namespace Asciir
 		static Coord s_last_terminal_pos;
 		static TermVert s_last_size;
 		static TermVert s_cur_pos, s_cur_diff;
-		static Terminal* i_terminal;
+		static TerminalEventHandler* i_terminal;
 		static TerminalRenderer::TRUpdateInfo s_info;
 		static Ref<EventListener> s_event_listener;
 	};
