@@ -3,7 +3,7 @@
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 #include "KeyCodeMap.h"
 
 namespace Asciir
@@ -26,7 +26,7 @@ namespace Asciir
 
 	void WinEventListener::start(EventCallbackFp callback)
 	{
-		m_attr = dynamic_cast<const WinARAttr*>(&AREngine::getEngine()->getTerminal().getRenderer().getAttrHandler());
+		m_attr = dynamic_cast<const WinARAttr*>(&ARApp::getApplication()->getTermRenderer().getAttrHandler());
 
 		m_last_term_pos = m_attr->terminalPos();
 		m_last_term_size = m_attr->terminalSize();

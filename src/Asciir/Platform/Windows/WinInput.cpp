@@ -1,7 +1,7 @@
 #include "arpch.h"
 #include "WinInput.h"
 #include "Asciir/Input/Input.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 #include "Asciir/Core/Terminal.h"
 #include "WinEventListener.h"
 #include "Asciir/Logging/Log.h"
@@ -110,12 +110,12 @@ namespace Asciir
 
 	bool Input::isTerminalMoved()
 	{
-		return AREngine::getEngine()->getTerminal().getPos() != s_last_terminal_pos;
+		return ARApp::getApplication()->getTermRenderer().pos() != s_last_terminal_pos;
 	}
 
 	bool Input::isTerminalResized()
 	{
-		return AREngine::getEngine()->getTerminal().getSize() != s_last_size;
+		return ARApp::getApplication()->getTermRenderer().termSize() != s_last_size;
 	}
 
 	bool Input::isFocused()
@@ -157,15 +157,15 @@ namespace Asciir
 	TerminalMovedEvent Input::getTerminalMovedEvent()
 	{
 		return TerminalMovedEvent(
-			AREngine::getEngine()->getTerminal().getPos(),
-			AREngine::getEngine()->getTerminal().getPos() - s_last_terminal_pos, false);
+			ARApp::getApplication()->getTermRenderer().pos(),
+			ARApp::getApplication()->getTermRenderer().pos() - s_last_terminal_pos, false);
 	}
 
 	TerminalResizedEvent Input::getTerminalResizedEvent()
 	{
 		return TerminalResizedEvent(
-			AREngine::getEngine()->getTerminal().getSize(),
-			AREngine::getEngine()->getTerminal().getSize() - s_last_size, false);
+			ARApp::getApplication()->getTermRenderer().termSize(),
+			ARApp::getApplication()->getTermRenderer().termSize() - s_last_size, false);
 	}
 
 	void Input::pollState(TerminalRenderer::TRUpdateInfo info)
@@ -177,8 +177,8 @@ namespace Asciir
 		s_cur_pos = win_listener->getCursorPos();
 
 		s_info = info;
-		s_last_terminal_pos = AREngine::getEngine()->getTerminal().getPos();
-		s_last_size = AREngine::getEngine()->getTerminal().getSize();
+		s_last_terminal_pos = ARApp::getApplication()->getTermRenderer().pos();
+		s_last_size = ARApp::getApplication()->getTermRenderer().termSize();
 
 		const auto& keybd_poll = win_listener->getKeybdPoll();
 		const auto& mouse_poll = win_listener->getMousePoll();
