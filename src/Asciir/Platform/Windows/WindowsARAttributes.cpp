@@ -27,10 +27,18 @@ namespace Asciir
 
 	std::string WinARAttr::ansiCode()
 	{
-		size_t size = 3 + (5 + 4 * 3) * 2;
+		// calculate the size in order to minimize allocations
+
+		// 2 bytes for the escape sequence start
+		// 1 byte for the reset attribute
+		// 5 bytes for the set color ';38/48;5'
+		// 4 bytes for a single channel 'xxx;' multiply by 3, as there are 3 channels (rgb)
+		// sets both foreground and background color
+		size_t size = 2 + 1 + (5 + 4 * 3) * 2;
 
 		for (size_t i = 1; i < 5; i++)
 		{
+			// each attribute will end up taking 2 bytes of space ';i' 
 			size += 2ULL * attributes[i];
 		}
 
