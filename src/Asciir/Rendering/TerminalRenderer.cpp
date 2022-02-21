@@ -48,8 +48,8 @@ namespace Asciir
 		return len;
 	}
 
-	TerminalRenderer::TerminalRenderer(const std::string& title, size_t buffer_size)
-		: m_title(title)
+	TerminalRenderer::TerminalRenderer(const TerminalRenderer::TerminalProps& term_props)
+		: m_title(term_props.title)
 	{
 #ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
@@ -57,7 +57,11 @@ namespace Asciir
 		m_attr_handler = std::make_shared(WinArAttr());
 #endif
 
-		m_buffer.reserve(buffer_size);
+		m_buffer.reserve(term_props.buffer_size);
+
+		if(term_props.size != TermVert(0, 0))
+			resize(term_props.size);
+		
 		update();
 	}
 
@@ -183,7 +187,8 @@ namespace Asciir
 	void TerminalRenderer::clearTerminal(Tile clear_tile)
 	{
 		m_tiles = m_tiles.unaryExpr([&](DrawTile cleared_tile) {
-			cleared_tile.current = clear_tile;
+			if(cleared_tile.current != clear_tile) // TODO: evaluate performance gain
+				cleared_tile.current = clear_tile;
 			return cleared_tile;
 			}).eval();
 	}

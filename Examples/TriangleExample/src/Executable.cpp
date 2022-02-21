@@ -18,8 +18,8 @@ class TriangleLayer : public Asciir::Layer
 
 	void onStart() final
 	{
-		Asciir::Renderer::resize({ 240, 63 });
-		Asciir::Renderer::setMinDT(Asciir::DeltaTime::FPS(60));
+		Asciir::Renderer::resize(Asciir::ARApp::getApplication()->getTermRenderer().maxSize());
+		Asciir::Renderer::setMinDT(Asciir::DeltaTime(60).fps());
 	}
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
@@ -42,17 +42,15 @@ class TriangleLayer : public Asciir::Layer
 		Asciir::Transform transform;
 		Asciir::Transform square_transform;
 
-		square_transform.pos.x = pos + 30;
-		square_transform.pos.y = 20;
-		square_transform.origin = square_mesh->getMedianVert();
+		square_transform.setPos(Asciir::Coord(pos + 30, 20));
+		square_transform.setOrigin(square_mesh->getMedianVert());
 		Asciir::Color square_color = Asciir::IRED8;
 		square_color.alpha = 100;
 
-		transform.pos.x = pos;
-		transform.pos.y = 0;
-		transform.scale.x = 1;
-		transform.origin = triangle_verts->getMedianVert();
-		transform.rotation = Asciir::degToRad(pos + 45);
+		transform.setPos(Asciir::Coord(pos, 0));
+		transform.setScale(Asciir::Coord(1, 1));
+		transform.setOrigin(triangle_verts->getMedianVert());
+		transform.setRotation(Asciir::degToRad(pos + 45));
 
 		Asciir::Color triangle_color = Asciir::YELLOW8;
 
@@ -64,20 +62,33 @@ class TriangleLayer : public Asciir::Layer
 
 		AR_CORE_NOTIFY(a, b);
 
-		Asciir::Renderer::resize({ 240, 63 });
+		Asciir::Renderer::resize(Asciir::ARApp::getApplication()->getTermRenderer().maxSize());
 	}
+	
+	void onRemove() final
+	{
+		AR_INFO("Removed layer from application");
+	}
+
 };
 
-class Exec : public Asciir::AREngine
+class Exec : public Asciir::ARApp
 {
 public:
-	Exec()
+	void start(const std::vector<std::string>& args) override
 	{
-		PushLayer(new TriangleLayer);
+
+		/*CONSOLE_FONT_INFOEX font_info;
+		font_info.cbSize = sizeof(font_info);
+
+		GetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &font_info);
+		
+		font_info.dwFontSize = COORD{ 1, 1};
+
+		SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &font_info);*/
+
+		pushLayer(new TriangleLayer);
 	}
 };
 
-Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
-{
-	return new Exec;
-}
+AR_DEFAULT_ENTRYPOINT(Exec)

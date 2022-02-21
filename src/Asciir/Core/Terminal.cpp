@@ -1,6 +1,6 @@
 #include "arpch.h"
 #include "Terminal.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 #include "Asciir/Logging/Log.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Event/TerminalEvent.h"
@@ -12,12 +12,8 @@
 
 namespace Asciir
 {
-	Terminal::Terminal(const TerminalProps& props)
-		: m_terminal_render(props.title, props.bufferSize)
+	TerminalEventHandler::TerminalEventHandler()
 	{
-		if (props.size.x > 0 && props.size.y > 0)
-			m_terminal_render.resize(props.size);
-
 #ifdef AR_WIN
 		m_event_listener = new WinEventListener();
 #elif defined(AR_LINUX)
@@ -25,58 +21,41 @@ namespace Asciir
 #endif
 	}
 
-	Terminal::~Terminal()
+	TerminalEventHandler::~TerminalEventHandler()
 	{
 		m_event_listener->stop();
 	}
 
-	void Terminal::onStart()
+	void TerminalEventHandler::onStart()
 	{
-		// Terminal close callbacks
+		// setup Terminal close callbacks
 		signal(SIG_CTRL_C, onCloseSignal);
 		signal(SIG_CMD_CLOSE, onCloseSignal);
+
+		// setup event listener
 		Input::setEventListener(m_event_listener);
 		m_event_listener->start(m_event_callback);
 	}
 
-	void Terminal::onUpdate()
-	{
-		m_terminal_render.draw();
-	}
-
-	void Terminal::pollInput()
+	void TerminalEventHandler::pollInput(const TerminalRenderer::TRUpdateInfo& terminal_udpate_info)
 	{
 		m_event_listener->pollState();
-		Input::pollState(m_terminal_render.update());
+		Input::pollState(terminal_udpate_info);
 	}
 
 	void onCloseSignal(int signal)
 	{
+		// pass the terminal closed event onto the application
 		TerminalClosedEvent event(signal);
-		AREngine::getEngine()->getTerminal().EventCallback(event);
+		ARApp::getApplication()->getTermEvtHandler().EventCallback(event);
 	}
 
-	TerminalRenderer& Terminal::getRenderer()
-	{
-		return m_terminal_render;
-	}
-
-	TermVert Terminal::getSize() const
-	{
-		return m_terminal_render.termSize();
-	}
-
-	Coord Terminal::getPos() const
-	{
-		return m_terminal_render.pos();
-	}
-
-	void Terminal::setEventCallback(const EventCallbackFp& callback)
+	void TerminalEventHandler::setEventCallback(const EventCallbackFp& callback)
 	{
 		m_event_callback = callback;
 	}
 
-	void Terminal::EventCallback(Event& e)
+	void TerminalEventHandler::EventCallback(Event& e)
 	{
 		m_event_callback(e);
 	}

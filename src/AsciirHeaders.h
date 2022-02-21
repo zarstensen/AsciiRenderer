@@ -6,7 +6,7 @@
 
 // Core
 #include "Asciir/Core/Core.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 #include "Asciir/Core/Terminal.h"
 #include "Asciir/Core/Timing.h"
 #include "Asciir/Core/Layer.h"

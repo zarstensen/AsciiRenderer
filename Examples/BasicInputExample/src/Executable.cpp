@@ -7,7 +7,7 @@ class ExampleLayer : public Asciir::Layer
 
 	void onStart()
 	{
-		Asciir::Renderer::setMinDT(Asciir::DeltaTime::FPS(60));
+		Asciir::Renderer::setMinDT(Asciir::DeltaTime(60).fps());
 	}
 
 	void onUpdate(Asciir::DeltaTime delta_time) final
@@ -30,19 +30,13 @@ class ExampleLayer : public Asciir::Layer
 	}
 };
 
-class Exec : public Asciir::AREngine
+class Exec : public Asciir::ARApp
 {
 public:
-	Exec()
+	void start(const std::vector<std::string>& args)
 	{
-		PushLayer(new ExampleLayer);
+		pushLayer(new ExampleLayer);
 	}
-
-	~Exec() {}
 };
 
-Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
-{
-
-	return new Exec;
-}
+AR_DEFAULT_ENTRYPOINT(Exec)

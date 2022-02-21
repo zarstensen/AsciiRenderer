@@ -1,6 +1,6 @@
 ﻿#include "pch/arpch.h"
 #include "Renderer.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 #include "Asciir/Math/Lines.h"
 #include "Asciir/Math/Vertices.h"
 
@@ -14,7 +14,7 @@ namespace Asciir
 
 	void Renderer::init()
 	{
-		s_renderer = &AREngine::getEngine()->getTerminal().getRenderer();
+		s_renderer = &ARApp::getApplication()->getTermRenderer();
 		s_attr_handler = &s_renderer->getAttrHandler();
 	}
 
@@ -128,6 +128,7 @@ namespace Asciir
 		return Mesh({ {0, 0}, {coord.x, 0}, coord, {0, coord.y} });
 	}
 
+	// should this be a ref to mesh???
 	void Renderer::submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform)
 	{
 		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));

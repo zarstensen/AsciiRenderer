@@ -35,21 +35,21 @@ class TextureLayer : public Asciir::Layer
 	void onUpdate(DeltaTime delta_time) final
 	{
 		Transform texture_t;
-		texture_t.pos = { 10, 10 };
-		texture_t.scale = { 1, 1 };
-		texture_t.origin = (Coord)texture->size() / 2;
+		texture_t.setPos({ 10, 10 });
+		texture_t.setScale({ 1, 1 });
+		texture_t.setOrigin((Coord)texture->size() / 2);
 
 		Renderer::submitShader(shader);
 		//Renderer::submitShader(texture, texture_t);
 	}
 };
 
-class TextureExample : public Asciir::AREngine
+class TextureExample : public Asciir::ARApp
 {
 public:
 	TextureExample()
 	{
-		PushLayer(new TextureLayer());
+		pushLayer(new TextureLayer());
 	}
 };
 
@@ -158,7 +158,9 @@ public:
 auto player_blueprint = EntityBlueprint<PositionComponent, HealthComponent>(PositionComponent(), HealthComponent(100));
 auto enemy_sniper_blueprint = EntityBlueprint<PositionComponent, TargetComponent, DamageComponent>(PositionComponent(), TargetComponent(), DamageComponent(10));
 
-Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
+
+
+int main()
 {
 	Scene scene;
 	
@@ -184,7 +186,6 @@ Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
 
 	sniper_system.run();
 	sniper_system.run();
-
-	//return new TextureExample();
-	exit(0);
 }
+
+//AR_DEFAULT_ENTRYPOINT(TextureExample)

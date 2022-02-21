@@ -126,6 +126,17 @@ namespace Asciir
 	class TerminalRenderer
 	{
 	public:
+		struct TerminalProps
+		{
+			std::string title;
+			TermVert size;
+			size_t buffer_size;
+
+			TerminalProps(const std::string& title = "Asciir App", TermVert size = { 0, 0 }, size_t buffer_size = 1024ULL * 512ULL)
+				: title(title), size(size), buffer_size(buffer_size)
+			{}
+		};
+
 		struct TRUpdateInfo
 		{
 			bool new_size = false;
@@ -147,7 +158,7 @@ namespace Asciir
 		std::string m_title;
 
 	public:
-		TerminalRenderer(const std::string& title, size_t buffer_size);
+		TerminalRenderer(const TerminalProps& term_props);
 
 		void color(Color color);
 		void backgroundColor(Color color);

@@ -4,13 +4,13 @@
 #include "TerminalRenderer.h"
 #include "Shader.h"
 #include "Asciir/Math/Vertices.h"
-#include "Asciir/Core/Engine.h"
+#include "Asciir/Core/Application.h"
 
 namespace Asciir
 {
 	class Renderer
 	{
-		friend AREngine;
+		friend ARApp;
 	public:
 		struct MeshData
 		{
@@ -81,7 +81,7 @@ namespace Asciir
 		static std::vector<QueueElem>* s_submit_queue;
 		static std::vector<QueueElem>* s_render_queue;
 
-		// the engine will wait until the minimum delta time is hit, after each update
+		// the app will wait until the minimum delta time is hit, after each update
 		// DEFAULT: no limit
 		static DeltaTime s_min_dt;
 	};

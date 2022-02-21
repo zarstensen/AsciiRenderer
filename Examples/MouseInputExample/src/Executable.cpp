@@ -31,16 +31,13 @@ public:
 	}
 };
 
-class Exec : public Asciir::AREngine
+class Exec : public Asciir::ARApp
 {
 public:
-	Exec()
+	void start(const std::vector<std::string>& args) override
 	{
-		PushLayer(new TriangleLayer);
+		pushLayer(new TriangleLayer);
 	}
 };
 
-Asciir::AREngine* Asciir::createEngine(std::vector<std::string> args)
-{
-	return new Exec;
-}
+AR_DEFAULT_ENTRYPOINT(Exec);
