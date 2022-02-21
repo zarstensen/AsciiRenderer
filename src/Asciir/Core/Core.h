@@ -83,10 +83,10 @@ namespace Asciir
 	template<typename ... Args, template<typename...> class TClass>
 	struct enable_if_same_template<TClass<Args...>, TClass> : std::true_type {};
 
-	/// @brief signal value for an CTRL C interrupt
+	/// @brief signal value for an CTRL + C interrupt
 	constexpr int SIG_CTRL_C = SIGINT;
 
-	/// @brief signal value for a command line close interrupt
+	/// @brief signal value for a command line close interrupt (the user has hit the X in the top right / left, in order to close the program)
 #ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;
 #else
