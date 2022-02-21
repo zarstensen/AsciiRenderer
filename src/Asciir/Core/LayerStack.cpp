@@ -5,18 +5,20 @@ namespace Asciir
 {
 	LayerStack::LayerStack()
 	{
-		m_layerInsert = begin();
+		m_overlay_start = begin();
 	}
 
 	LayerStack::~LayerStack()
 	{
+		// automaticly deallocate any layers passed to the layerstack
 		for (Layer* layer : m_layers)
 			delete layer;
 	}
 
 	void LayerStack::pushLayer(Layer* layer)
 	{
-		m_layerInsert = m_layers.emplace(m_layerInsert, layer);
+		// layer should be placed right before the overlays
+		m_overlay_start = m_layers.emplace(m_overlay_start, layer);
 	}
 
 	void LayerStack::pushOverlay(Layer* overlay)
@@ -31,7 +33,8 @@ namespace Asciir
 		if (iter != end())
 		{
 			m_layers.erase(iter);
-			m_layerInsert--;
+			// the position of the overlays will shrink by one, as a layer has been removed
+			m_overlay_start--;
 		}
 	}
 
