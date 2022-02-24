@@ -5,7 +5,10 @@
 
 namespace Asciir
 {
-	class WinEventListener : public EventListener
+namespace ELInterface
+{
+	template<>
+	class EventListenerImpl<IMPLS::WIN> : public EventListenerImpl<IMPLS::INTER>
 	{
 	protected:
 
@@ -23,13 +26,23 @@ namespace Asciir
 		INPUT_RECORD m_event_buffer[BUFF_LEN] = { 0 };
 
 	public:
-		WinEventListener();
-		~WinEventListener() final;
+		/// @brief sets up the windows terminal
+		EventListenerImpl();
+		/// @brief rolls back the windows terminal, so that any chagnes done to the terminal, are undone
+		~EventListenerImpl();
 
-		void start(EventCallbackFp callback) final;
-		void stop() final;
+		/// @brief sets initial values and starts the event listener thread
+		/// @see EventListenerImpl<IMPLS::INTER>::start()
+		void start(EventCallbackFp callback); // compiletime override
+		/// @brief stops the event listener thread
+		/// @see EventListenerImpl<IMPLS::INTER>::stop()
+		void stop(); // compiletime override
 
+		/// @brief gives information back about the given windows [Virtual-Key Code](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
+		/// 
+		/// @attention this function is windows specific, use getKeybdPoll() for a cross platform alternative
 		KeyInputData getKeybdFromWinCode(WORD code) const;
+		/// @see EventListenerImpl<IMPLS::INTER>::getKeybdFromKeyCode()
 		KeyInputData getKeybdFromKeyCode(Key code) const;
 
 		MouseInputData getMouseFromWinCode(WORD code) const;
@@ -46,4 +59,5 @@ namespace Asciir
 
 		std::atomic<bool> m_is_listening = false;
 	};
+}
 }
