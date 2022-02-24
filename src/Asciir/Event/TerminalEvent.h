@@ -143,7 +143,18 @@ namespace Asciir
 		}
 
 		/// @return returns wether the terminal has gained or lost focus. 
-		bool isFocused() { AR_EVENT_IS_VALID; return m_focused; }
+		bool isFocused() const { AR_EVENT_IS_VALID; return m_focused; }
+
+		/// @return string formatted as: "TerminalFocused: {isFocused()}" 
+		virtual std::string toString() const override
+		{
+			std::stringstream msg;
+
+			msg << "TerminalFocused: " << isFocused();
+
+			return msg.str();
+		}
+
 
 		AR_EVENT_CATEGORY_DEFINE(CategoryTerminal)
 		AR_EVENT_TYPE_DEFINE(TerminalFocus)

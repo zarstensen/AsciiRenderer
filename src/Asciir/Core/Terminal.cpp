@@ -5,17 +5,14 @@
 #include "Asciir/Input/Input.h"
 #include "Asciir/Event/TerminalEvent.h"
 
-#ifdef AR_WIN
-#include "Asciir/Platform/Windows/WinEventListener.h"
-#elif defined AR_LINUX
-#endif
+#include "Asciir/Input/EventListener.h"
 
 namespace Asciir
 {
 	TerminalEventHandler::TerminalEventHandler()
 	{
 #ifdef AR_WIN
-		m_event_listener = new WinEventListener();
+		m_event_listener = new EventListener();
 #elif defined(AR_LINUX)
 #error Events Not Implemented Yet
 #endif
