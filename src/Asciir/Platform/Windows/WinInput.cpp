@@ -3,7 +3,7 @@
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Application.h"
 #include "Asciir/Core/Terminal.h"
-#include "WinEventListener.h"
+#include "Asciir/Input/EventListener.h"
 #include "Asciir/Logging/Log.h"
 #include "WindowsARAttributes.h"
 #include "KeyCodeMap.h"
@@ -43,14 +43,14 @@ namespace Asciir
 		}
 	};
 
-	static Ref<WinEventListener> win_listener;
+	static Ref<EventListener> win_listener;
 	static std::array<WinInKeyData, KEY_CODE_COUNT>		key_toggled_state = { WinInKeyData() };
 	static std::array<WinInMouseData, MOUSE_CODE_COUNT>	mouse_toggled_state = { WinInMouseData() };
 
 	void Input::setEventListener(Ref<EventListener> listener)
 	{
 		s_event_listener = listener;
-		win_listener = s_event_listener.cast<WinEventListener>();
+		win_listener = listener;
 	}
 
 	bool Input::isKeyDown(Key keycode)
