@@ -17,13 +17,22 @@ namespace Asciir
 		};
 
 		/// @brief interface class for the Asciir::EventListener type
-		template<IMPLS = IMPLS::INTER>
+		template<IMPLS>
 		class EventListenerImpl;
 
 		/// @brief interface declaration for the EventListener interface, will contain no definitions,
 		/// as this class should be inherited by an implementation, where this is implemented as the interface
 		/// 
-		/// @attention this class should never be instantiated and should only be used as a base class for other implementations
+		/// use start() and stop() to control when the eventlistener is active.
+		/// 
+		/// the callback passed to start() will recieve any console input events (mouse, keyboard, focus)
+		/// 
+		/// the eventlistener also has a poll input interface.
+		/// use pollState() to poll the current input states of different input devices (mouse, keyboard).
+		/// this polled data can be accessed through getKeybdPoll() and getMousePoll()
+		/// 
+		/// @attention this class should never be instantiated and should only be used as a base class for other implementations.  
+		/// to get the current implementation type, use the typedef EventListener
 		template<>
 		class EventListenerImpl<IMPLS::INTER>
 		{
@@ -104,16 +113,21 @@ namespace Asciir
 			/// the index for a specific key, can be calculated as  
 			/// i = @link Key Key @endlink - 1
 			/// @see pollState
-			const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() { return keybd_poll_state; }
+			const std::array<KeyInputData, KIS_LEN>& getKeybdPoll() const { return keybd_poll_state; }
 			/// @return returns the latest mouse poll as an array, which stores all the individual mouse key states of mouse keys on the mouse.  
 			/// the index for a specific mouse key, can be calculated as  
 			/// i = @link MouseKey MouseKey @endlink - 1
 			/// @see pollState
-			const std::array<MouseInputData, MIS_LEN>& getMousePoll() { return mouse_poll_state; }
+			const std::array<MouseInputData, MIS_LEN>& getMousePoll() const { return mouse_poll_state; }
+
+			/// @brief return the latest polled key data for the given key code
+			const KeyInputData& getKeyFromCode(Key code) const { return getKeybdPoll()[(size_t)code - 1]; }
+			/// @brief return the latest polled mouse key data for the given mouse key code
+			const MouseInputData& getMouseKeyFromCode(MouseKey code) const { return getMousePoll()[(size_t)code - 1]; }
 
 			/// @return the mouse position at the time of the latest pollState() call. 
 			Coord getMousePosPoll() { return m_poll_mouse_pos; };
-			/// @return the current mouse position. 
+			/// @return the mouse position recieved from the latest mouse moved event. 
 			Coord getMousePos() { return m_mouse_pos; };
 
 			/// @return the cursor position at the time of the latest pollState() call.
@@ -122,17 +136,19 @@ namespace Asciir
 			/// @return the current cursor position.  
 			/// @note cursor refers to the terminal column and row the mouse cursor is inside
 			TermVert getCursorPos() { return m_cur_pos; };
-			/// @brief prompts the system for the current mouseposition, should return the same as getMousePos() 
-			static Coord getGlobalMousePos();
+			/// @brief prompts the system for the current mouseposition,
+			/// should return the same as getMousePos() if the pointer is inside the terminal window, else returns the position of the pointer outside the terminal window.
+			static Coord getCurrentMousePos();
 		};
 	}
-} // end Asciir
+} // end of Asciir namespace
 
 #ifdef AR_WIN
 	#include "Asciir/Platform/Windows/WinEventListener.h"
 	namespace Asciir
 	{
-		using EventListener = ELInterface::EventListenerImpl<ELInterface::IMPLS::WIN>;
+		/// @brief typedef of the currently implemented EventListenerImpl interface @see EventListenerImpl<IMPLS::INTER>
+		typedef ELInterface::EventListenerImpl<ELInterface::IMPLS::WIN> EventListener;
 	}
 #elif defined(AR_MAC)
 #elif defined(AR_LINUX)

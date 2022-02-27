@@ -7,6 +7,8 @@ namespace Asciir
 {
 namespace ELInterface
 {
+	/// @brief windows specific implementation of the EventListener class
+	/// @see EventListenerImpl<IMPLS::INTER>
 	template<>
 	class EventListenerImpl<IMPLS::WIN> : public EventListenerImpl<IMPLS::INTER>
 	{
@@ -40,13 +42,13 @@ namespace ELInterface
 
 		/// @brief gives information back about the given windows [Virtual-Key Code](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 		/// 
-		/// @attention this function is windows specific, use getKeybdPoll() for a cross platform alternative
-		KeyInputData getKeybdFromWinCode(WORD code) const;
-		/// @see EventListenerImpl<IMPLS::INTER>::getKeybdFromKeyCode()
-		KeyInputData getKeybdFromKeyCode(Key code) const;
+		/// @attention this function is windows specific, use getKeyFromCode() for a cross platform alternative
+		KeyInputData getKeyFromWinCode(WORD code) const;
 
-		MouseInputData getMouseFromWinCode(WORD code) const;
-		MouseInputData getMouseFromKeyCode(MouseKey code) const;
+		/// @brief returns input data about the given windows mouse key
+		///
+		/// @attention this function is windows specific, use getMouseKeyFromCode() for a cross platform alternative
+		MouseInputData getMouseKeyFromWinCode(WORD code) const;
 
 	protected:
 

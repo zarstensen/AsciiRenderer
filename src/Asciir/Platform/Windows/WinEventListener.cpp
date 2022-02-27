@@ -46,24 +46,14 @@ namespace ELInterface
 		m_input_thrd.join();
 	}
 
-	EventListenerImpl<IMPLS::WIN>::KeyInputData EventListenerImpl<IMPLS::WIN>::getKeybdFromWinCode(WORD code) const
+	EventListenerImpl<IMPLS::WIN>::KeyInputData EventListenerImpl<IMPLS::WIN>::getKeyFromWinCode(WORD code) const
 	{
-		return keybd_poll_state[(size_t)WinToKeyCodeMap.at(code) - 1];
+		return getKeyFromCode(WinToKeyCodeMap.at(code));
 	}
 
-	EventListenerImpl<IMPLS::WIN>::KeyInputData EventListenerImpl<IMPLS::WIN>::getKeybdFromKeyCode(Key code) const
+	EventListenerImpl<IMPLS::WIN>::MouseInputData EventListenerImpl<IMPLS::WIN>::getMouseKeyFromWinCode(WORD code) const
 	{
-		return keybd_poll_state[(size_t)code - 1];
-	}
-
-	EventListenerImpl<IMPLS::WIN>::MouseInputData EventListenerImpl<IMPLS::WIN>::getMouseFromWinCode(WORD code) const
-	{
-		return mouse_poll_state[(size_t)WinToKeyCodeMap.at(code) - 1];
-	}
-
-	EventListenerImpl<IMPLS::WIN>::MouseInputData EventListenerImpl<IMPLS::WIN>::getMouseFromKeyCode(MouseKey code) const
-	{
-		return mouse_poll_state[(size_t)code - 1];
+		return getMouseKeyFromCode(WinToMouseCodeMap.at(code));
 	}
 
 	void EventListenerImpl<IMPLS::WIN>::listenForInputs()
@@ -245,7 +235,7 @@ namespace ELInterface
 			}
 			else if (event.dwEventFlags & MOUSE_MOVED)
 			{
-				Coord pos = getGlobalMousePos(); // get the current position of the mouse
+				Coord pos = getCurrentMousePos(); // get the current position of the mouse
 				
 				TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
 
@@ -296,7 +286,7 @@ namespace ELInterface
 		m_last_term_pos = new_pos;
 	}
 
-	Coord EventListenerImpl<IMPLS::INTER>::getGlobalMousePos()
+	Coord EventListenerImpl<IMPLS::INTER>::getCurrentMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));
