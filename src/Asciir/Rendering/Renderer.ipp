@@ -1,5 +1,5 @@
 #include "Renderer.h"
-#include "Asciir/Math/Lines.h"
+#include "Asciir/Maths/Lines.h"
 
 namespace Asciir
 {

@@ -31,19 +31,30 @@ namespace Asciir
 	template<typename T>
 	void arMatrix<T>::resize(Size2D new_size)
 	{
-		Size2D prev_size = size();
 		Eigen::MatrixX<T>::conservativeResize(new_size.x, new_size.y);
+	}
+
+	template<typename T>
+	void arMatrix<T>::resizeClear(Size2D size)
+	{
+		Eigen::MatrixX<T>::resize(size.x, size.y);
 	}
 
 	template<typename T>
 	T& arMatrix<T>::operator[](size_t indx)
 	{
+		AR_ASSERT_MSG(indx < (size_t) Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
+
+		//return *(data() + indx);
 		return Eigen::MatrixX<T>::operator()(indx);
 	}
 
 	template<typename T>
-	T arMatrix<T>::operator[](size_t indx) const
+	const T& arMatrix<T>::operator[](size_t indx) const
 	{
+		AR_ASSERT_MSG(indx < Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
+
+		//return *(data() + indx);
 		return Eigen::MatrixX<T>::operator()(indx);
 	}
 
@@ -52,15 +63,18 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
+		//return *(data() + coord.y * cols() + coord.x);
 		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
 	}
 
 	template<typename T>
-	T arMatrix<T>::get(Size2D coord) const
+	const T& arMatrix<T>::get(Size2D coord) const
 	{
 		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
+		//return *(data() + coord.y * cols() + coord.x);
 		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
+
 	}
 
 	template<typename T>
@@ -68,11 +82,12 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 
+		// return *(data() + y * cols() + x);
 		return Eigen::MatrixX<T>::operator()(x, y);
 	}
 
 	template<typename T>
-	T arMatrix<T>::get(size_t x, size_t y) const
+	const T& arMatrix<T>::get(size_t x, size_t y) const
 	{
 		AR_ASSERT_MSG(x < size().x&& y < size().y, "Invalid coord: ", x, ',', y);
 

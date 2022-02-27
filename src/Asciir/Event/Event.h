@@ -2,7 +2,7 @@
 
 #include "Asciir/Core/Core.h"
 #include "Asciir/Logging/Log.h"
-#include "Asciir/Math/Vector.h"
+#include "Asciir/Maths/Vector.h"
 
 /*
 *	Events are passed to onEvent functions in the application and all of its enabled layers.

@@ -4,7 +4,7 @@ namespace Asciir
 {
 	template<typename T>
 	arTensor3D<T>::arTensor3D(size_t w, size_t h, size_t d)
-		: arMatrix<T>(w* h, d), m_width(w) {}
+		: arMatrix<T>(w * h, d), m_width(w) {}
 
 	template<typename T>
 	arTensor3D<T>::arTensor3D(Size3D size)
@@ -21,14 +21,6 @@ namespace Asciir
 		Size2D mat_size = arMatrix<T>::size();
 
 		return { m_width, mat_size.x / m_width, mat_size.y };
-	}
-
-	template<typename T>
-	void arTensor3D<T>::resize(Size3D size)
-	{
-		m_width = size.x;
-
-		arMatrix<T>::resize({ size.x * size.y, size.z });
 	}
 
 	template<typename T>

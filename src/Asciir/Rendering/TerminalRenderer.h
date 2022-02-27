@@ -2,9 +2,9 @@
 
 #include "AsciiAttributes.h"
 #include "RenderConsts.h"
-#include "Asciir/Math/Vertices.h"
-#include "Asciir/Math/Matrix.h"
-#include "Asciir/Math/Tensor.h"
+#include "Asciir/Maths/Vertices.h"
+#include "Asciir/Maths/Matrix.h"
+#include "Asciir/Maths/Tensor.h"
 
 namespace Asciir
 {
@@ -196,6 +196,8 @@ namespace Asciir
 		Coord pos() const;
 
 		void pushBuffer(const std::string& data);
+		void pushBuffer(const char* c_str);
+		void pushBuffer(const char* c_buff, size_t buff_len);
 		void pushBuffer(char c);
 		void flushBuffer();
 

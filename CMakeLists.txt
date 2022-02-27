@@ -87,7 +87,7 @@ set(INCLUDE_DIRS
 )
 
 set(SRC_DIR_CORE  
-    src/Asciir/Core/Engine.cpp
+    src/Asciir/Core/Application.cpp
     src/Asciir/Core/Layer.cpp 
     src/Asciir/Core/LayerStack.cpp 
     src/Asciir/Core/Terminal.cpp 
@@ -97,7 +97,7 @@ set(SRC_DIR_CORE
 
 set(HEADER_DIR_CORE 
     src/Asciir/Core/Core.h 
-    src/Asciir/Core/Engine.h 
+    src/Asciir/Core/Application.h 
     src/Asciir/Core/EntryPoint.h 
     src/Asciir/Core/Layer.h 
     src/Asciir/Core/LayerStack.h 
@@ -124,7 +124,11 @@ set(DIR_EVENT
 )
 
 
-set(DIR_INPUT
+set(SRC_DIR_INPUT
+	src/Asciir/Input/Input.cpp
+)
+
+set(HEADER_DIR_INPUT
     src/Asciir/Input/Input.h
     src/Asciir/Input/KeyCodes.h
     src/Asciir/Input/EventListener.h
@@ -142,42 +146,44 @@ set(HEADER_DIR_LOGGING
     src/Asciir/Logging/Log.h
 )
 
-set(SRC_DIR_MATH
-    src/Asciir/Math/Math.cpp
-    src/Asciir/Math/Lines.cpp
-    src/Asciir/Math/Lines.ipp
-    src/Asciir/Math/Vertices.ipp
-    src/Asciir/Math/Vector.ipp
-    src/Asciir/Math/Matrix.ipp
-    src/Asciir/Math/Tensor.ipp
+set(SRC_DIR_MATHS
+    src/Asciir/Maths/Maths.cpp
+    src/Asciir/Maths/Lines.cpp
+    src/Asciir/Maths/Lines.ipp
+    src/Asciir/Maths/Vertices.ipp
+    src/Asciir/Maths/Vector.ipp
+    src/Asciir/Maths/Matrix.ipp
+    src/Asciir/Maths/Tensor.ipp
 )
 
-set(HEADER_DIR_MATH
-    src/Asciir/Math/Math.h
-    src/Asciir/Math/Lines.h
-    src/Asciir/Math/Vertices.h
-    src/Asciir/Math/Vector.h
-    src/Asciir/Math/Matrix.h
-    src/Asciir/Math/Tensor.h
+set(HEADER_DIR_MATHS
+    src/Asciir/Maths/Maths.h
+    src/Asciir/Maths/Lines.h
+    src/Asciir/Maths/Vertices.h
+    src/Asciir/Maths/Vector.h
+    src/Asciir/Maths/Matrix.h
+    src/Asciir/Maths/Tensor.h
 )
 
 set(SRC_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.cpp 
     src/Asciir/Rendering/Mesh.cpp
+    src/Asciir/Rendering/Primitives.cpp
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
-    src/Asciir/Rendering/FileTexture.cpp
+    src/Asciir/Rendering/Texture.cpp
 )
 
 set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/AsciiAttributes.h
     src/Asciir/Rendering/Mesh.h
+    src/Asciir/Rendering/Primitives.h
     src/Asciir/Rendering/TerminalRenderer.h
     src/Asciir/Rendering/Renderer.h
     src/Asciir/Rendering/RenderConsts.h
     src/Asciir/Rendering/Shader.h
-    src/Asciir/Rendering/FileTexture.h
+    src/Asciir/Rendering/Texture.h
 )
 
 # platform specific files
@@ -248,13 +254,14 @@ add_library(${PROJECT_NAME} STATIC
 
     ${DIR_EVENT}
 
-    ${DIR_INPUT}
+    ${HEADER_DIR_INPUT}
+    ${SRC_DIR_INPUT}
 
     ${HEADER_DIR_LOGGING}
     ${SRC_DIR_LOGGING}
 
-    ${HEADER_DIR_MATH}
-    ${SRC_DIR_MATH}
+    ${HEADER_DIR_MATHS}
+    ${SRC_DIR_MATHS}
 
     ${HEADER_DIR_RENDERING}
     ${SRC_DIR_RENDERING}
@@ -284,22 +291,23 @@ source_group("entities/src"       FILES ${SRC_DIR_ENTITIES})
 
 source_group("event"              FILES ${DIR_EVENT})
 
-source_group("input"              FILES ${DIR_INPUT})
+source_group("input/header"		  FILES ${HEADER_DIR_INPUT})
+source_group("input/src"          FILES ${SRC_DIR_INPUT})
 
 source_group("logging/header"     FILES ${HEADER_DIR_LOGGING})
 source_group("logging/src"        FILES ${SRC_DIR_LOGGING})
 
-source_group("math/header"        FILES ${HEADER_DIR_MATH})
-source_group("math/src"           FILES ${SRC_DIR_MATH})
+source_group("maths/header"        FILES ${HEADER_DIR_MATHS})
+source_group("maths/src"           FILES ${SRC_DIR_MATHS})
 
 source_group("rendering/header"   FILES ${HEADER_DIR_RENDERING})
 source_group("rendering/src"      FILES ${SRC_DIR_RENDERING})
 
-source_group("platform/"           FILES src/Asciir/Platform/PlatformMacros.h)
+source_group("platform/"		  FILES src/Asciir/Platform/PlatformMacros.h)
 
 if(WIN32)
     source_group("platform/windows/header"  FILES ${HEADER_DIR_PLATFORM})
-    source_group("platform/windows/src"  FILES ${SRC_DIR_PLATFORM})
+    source_group("platform/windows/src"  	FILES ${SRC_DIR_PLATFORM})
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})

@@ -1,7 +1,7 @@
 #include "pch/arpch.h"
 #include "Mesh.h"
-#include "Asciir/Math/Matrix.h"
-#include "Asciir/Math/Math.h"
+#include "Asciir/Maths/Maths.h"
+#include "Asciir/Maths/Matrix.h"
 
 namespace Asciir
 {
@@ -9,15 +9,17 @@ namespace Asciir
 	{
 		// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
+		Eigen::Matrix<Real, 2, 1> transformed_coord = vec;
+		
+		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
 
-		Eigen::Matrix<Real, 2, 1> scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale) * origin_transform;
+		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform * origin_transformed;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transform = Eigen::Rotation2D<Real>(rotation) * scale_transform;
+		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform * scale_transformed;
 
-		Eigen::Matrix<Real, 2, 1> move_transform = Eigen::Translation<Real, 2>(pos) * rotation_transform;
+		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform * rotation_transformed;
 
-		Eigen::Matrix<Real, 2, 1> result = Eigen::Translation<Real, 2>(origin) * move_transform;
+		Coord result = origin_transform * move_transformed;
 
 		return result;
 	}
@@ -26,15 +28,15 @@ namespace Asciir
 	{
 		// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> origin_transform = Eigen::Translation<Real, 2>(origin).inverse() * vec;
+		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
 
-		Eigen::Matrix<Real, 2, 1> move_transform = Eigen::Translation<Real, 2>(pos).inverse() * origin_transform;
+		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform.inverse() * origin_transformed;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transform = Eigen::Rotation2D<Real>(rotation).inverse() * move_transform;
+		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform.inverse() * move_transformed;
 
-		Eigen::Matrix<Real, 2, 1> scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale).inverse() * rotation_transform;
+		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform.inverse() * rotation_transformed;
 
-		Eigen::Matrix<Real, 2, 1> result = Eigen::Translation<Real, 2>(origin) * scale_transform;
+		Coord result = origin_transform * scale_transformed;
 
 		return result;
 	}
@@ -127,6 +129,7 @@ namespace Asciir
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
 
+		// TODO: implement interator of getCornerVert?
 		return LineSegment::fromPoints(getCornerVert(face_index, index, transform), cgetCornerVert(face_index, index + 1, transform));
 	}
 

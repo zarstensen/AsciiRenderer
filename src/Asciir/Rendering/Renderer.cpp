@@ -1,8 +1,11 @@
 ﻿#include "pch/arpch.h"
+
 #include "Renderer.h"
+#include "Primitives.h"
+
 #include "Asciir/Core/Application.h"
-#include "Asciir/Math/Lines.h"
-#include "Asciir/Math/Vertices.h"
+#include "Asciir/Maths/Lines.h"
+#include "Asciir/Maths/Vertices.h"
 
 namespace Asciir
 {
@@ -65,7 +68,7 @@ namespace Asciir
 
 	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
 	{
-		Mesh texture_quad = coordToQuad(data.shader->size());
+		Quad texture_quad = Quad(data.shader->size());
 
 		Coord top_left_coord(size());
 		Coord bottom_right_coord(0, 0);
@@ -123,11 +126,6 @@ namespace Asciir
 		while (start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds() > getTime());
 	}
 
-	Mesh Renderer::coordToQuad(const Coord& coord)
-	{
-		return Mesh({ {0, 0}, {coord.x, 0}, coord, {0, coord.y} });
-	}
-
 	// should this be a ref to mesh???
 	void Renderer::submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform)
 	{
@@ -148,7 +146,7 @@ namespace Asciir
 		return rect;
 	}
 
-	void Renderer::submitTile(Coord pos, Tile tile)
+	void Renderer::submitTile(TermVert pos, Tile tile)
 	{
 		submitToQueue(TileData{ pos, tile });
 	}
@@ -165,10 +163,46 @@ namespace Asciir
 #endif
 	}
 
-	Tile Renderer::viewTile(Coord pos)
+	Tile Renderer::viewTile(TermVert pos)
 	{
-		AR_ASSERT_MSG(pos.x >= 0 && (size_t)pos.x < size().x&& pos.y >= 0 && (size_t)pos.y < size().y, "Cannot view tile outside of terminal size");
+		AR_ASSERT_MSG(pos.x >= 0 && (size_t)pos.x < size().x && pos.y >= 0 && (size_t)pos.y < size().y, "Cannot view tile outside of terminal size");
 		return s_renderer->getTile((TermVert)pos).current;
+	}
+
+	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
+	{
+		// check for invalid arguments
+		AR_ASSERT_MSG(rect_offset.x > 0 || rect_offset.x == -1 && rect_offset.y > 0 || rect_offset.y == -1,
+			"Invalid grab screen region. rect_offset has invalid values: ", rect_offset);
+
+		// grab region is out of bounds, return empty texture
+		if (rect_start.x >= Renderer::size().x || rect_start.y >= Renderer::size().y)
+			return {};
+
+		// set -1 to the end of the terminal, or clamp the grab region to fit inside the terminal
+
+		if (rect_offset.x == -1 || rect_start.x + rect_offset.x > Renderer::size().x)
+			rect_offset.x = (TInt) Renderer::size().x - rect_start.x - 1;
+
+
+		if (rect_offset.y == -1 || rect_start.y + rect_offset.y > Renderer::size().y)
+			rect_offset.y = (TInt) Renderer::size().y - rect_start.y - 1;
+
+
+		// grab the screen onto an Texture2D
+
+		Texture2D result(rect_offset);
+
+		for (TInt x = rect_start.x; x < rect_offset.x; x++)
+		{
+			for (TInt y = rect_start.y; y < rect_offset.y; y++)
+			{
+				AR_INFO(Renderer::size());
+				result.setTile(Size2D(x, y), Renderer::viewTile(TermVert(x, y)));
+			}
+		}
+
+		return result;
 	}
 
 	void Renderer::clear(Tile tile)

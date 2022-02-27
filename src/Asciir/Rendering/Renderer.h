@@ -2,8 +2,9 @@
 
 #include "Mesh.h"
 #include "TerminalRenderer.h"
-#include "Shader.h"
-#include "Asciir/Math/Vertices.h"
+#include "Texture.h"
+
+#include "Asciir/Maths/Vertices.h"
 #include "Asciir/Core/Application.h"
 
 namespace Asciir
@@ -27,7 +28,7 @@ namespace Asciir
 
 		struct TileData
 		{
-			Coord pos;
+			TermVert pos;
 			Tile tile;
 		};
 
@@ -41,10 +42,17 @@ namespace Asciir
 		// submit functions
 		static void submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
 		static void submitShader(Ref<Shader2D> shader, Transform transform = NoTransform);
-		static void submitTile(Coord pos, Tile tile);
+		static void submitTile(TermVert pos, Tile tile);
 		static void submitToQueue(QueueElem new_elem);
 		static Ref<Mesh> submitRect(s_Coords<2> verts, Tile tile);
-		static Tile viewTile(Coord pos);
+		static Tile viewTile(TermVert pos);
+		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
+		/// @param rect_start the top right corner of the section to be captured
+		/// @param rect_offset the bottom right corner of the section to be captured.
+		/// {-1, -1} defaults to the lower right of the terminal
+		/// @return a Shader2D containing a **COPY** of the terminal screen,
+		/// meaning any changes done afterwards to the terminal, will not be reflected in the captured section
+		static Texture2D grabScreen(TermVert rect_start = { 0, 0 }, TermVert rect_offset = { -1 , -1 });
 
 		// environment functions
 
@@ -74,12 +82,12 @@ namespace Asciir
 
 		static void waitMinDT(DeltaTime curr_dt);
 
-		static Mesh coordToQuad(const Coord& coord);
-
 		static TerminalRenderer* s_renderer;
 		static const AsciiAttr* s_attr_handler;
 		static std::vector<QueueElem>* s_submit_queue;
 		static std::vector<QueueElem>* s_render_queue;
+		/// @brief 
+		static arMatrix<Tile> s_visible_terminal;
 
 		// the app will wait until the minimum delta time is hit, after each update
 		// DEFAULT: no limit

@@ -37,6 +37,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(direction.x != 0, "Cannot get function of x on a vertical line");
 
+		// subtract the offset in order to calculate this 
 		return (x - offset.x) / direction.x * direction.y + offset.y;
 	}
 

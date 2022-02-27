@@ -238,10 +238,8 @@ namespace Asciir
 		if (verts.size() > 0)
 		{
 			for (size_t i = 0; i < (size_t)verts.size() - 1; i++)
-			{
 				stream << verts[i] << ',';
-			}
-
+			
 			stream << verts[verts.size() - 1];
 		}
 		else

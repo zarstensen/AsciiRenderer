@@ -1,21 +1,31 @@
 #pragma once
 
-#include "Asciir/Math/Vertices.h"
-#include "Asciir/Math/Lines.h"
+#include "Asciir/Maths/Vertices.h"
+#include "Asciir/Maths/Lines.h"
 
 namespace Asciir
 {
 	// struct containing transform data for a mesh
+	// TODO: reimplement transformation to only have one transformation matrix, and instead calculate it only when neccessarry, and reuse when possible.
 	struct Transform
 	{
-		Coord pos = { 0, 0 };
-		Scale2D scale = { 1, 1 };
-		Real rotation = 0;
-
-		Coord origin = { 0, 0 };
-
 		Coord applyTransform(const Coord& vec) const;
 		Coord reverseTransform(const Coord& vec) const;
+
+		// only set if used ???
+		void setOrigin(Coord origin) { origin_transform = Eigen::Translation<Real, 2>(origin); }
+		void setPos(Coord pos) { move_transform = Eigen::Translation<Real, 2>(pos); }
+		void setScale(Scale2D scale) { scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale); }
+		void setRotation(Real rotation) { rotation_transform = Eigen::Rotation2D<Real>(rotation).toRotationMatrix(); }
+
+		Eigen::Translation<Real, 2> origin_transform = Eigen::Translation<Real, 2>({0, 0});
+
+		Eigen::Translation<Real, 2> move_transform = Eigen::Translation<Real, 2>({0, 0});
+
+		Eigen::DiagonalMatrix<Real, 2> scale_transform = Eigen::DiagonalMatrix<Real, 2>({1, 1});
+
+		Eigen::Matrix<Real, 2, 2> rotation_transform = Eigen::Rotation2D<Real>(0).toRotationMatrix();
+
 	};
 
 	static const Transform NoTransform = Transform();

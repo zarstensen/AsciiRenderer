@@ -28,11 +28,11 @@
 #include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 
-#include "Asciir/Math/Math.h"
-#include "Asciir/Math/Vertices.h"
-#include "Asciir/Math/Matrix.h"
-#include "Asciir/Math/Tensor.h"
-#include "Asciir/Math/Lines.h"
+#include "Asciir/Maths/Maths.h"
+#include "Asciir/Maths/Vertices.h"
+#include "Asciir/Maths/Matrix.h"
+#include "Asciir/Maths/Tensor.h"
+#include "Asciir/Maths/Lines.h"
 
 #include "Asciir/Rendering/RenderConsts.h"
 #include "Asciir/Rendering/Renderer.h"

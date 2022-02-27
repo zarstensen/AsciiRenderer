@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Core/Core.h"
-#include "Asciir/Math/Vertices.h"
+#include "Asciir/Maths/Vertices.h"
 
 namespace Asciir
 {
@@ -96,13 +96,13 @@ namespace Asciir
 	* Strike
 	* Framed
 	* Encircled
-	* Overlined = Top
+	* Overlined (= Top)
 	*
 	* only windows supports
 	*
 	* Left
 	* Right
-	* Top = Overlined
+	* Top (= Overlined)
 	* Bottom
 	*
 	* All of the above = Framed
@@ -110,6 +110,25 @@ namespace Asciir
 
 	class TerminalRenderer;
 
+	//
+	// 
+	
+	//
+
+	/// @brief class for storing and modifying the ansi attributes of an ascii character
+	/// 
+	/// also generates the corresponding ansi code that should be printed to the terminal in order to apply the attributes
+	/// 
+	/// The generated ansi codes assume no other attributes have been applied to the terminal inbetween modifications (not true if resuilt is of string type)
+	/// 
+	/// This means if an attribute contains the attributes (Color: Orange, Text: Bold) generates the ascii code, and outputs it to the terminal
+	/// and is then later modified to contain the attributes (Color: Orange, Text: Underlined).
+	/// The next call to ansiCode will remove the bold attribute and apply the underlined attribute whilst doing nothing to the color, as it assumes it is still Orange.
+	/// 
+	/// a call to clear() will assume unknown modifications have happened, and generate the complete ansi code applying all the attributes whilst clearing all other.
+	/// 
+	/// @attention only some information is preserved on a newline in streams, so the is_newline parameter must be set accordingly in order to accomidate for this, when calling ansiCode().
+	///
 	class AsciiAttr
 	{
 	protected:
@@ -119,6 +138,7 @@ namespace Asciir
 		Color m_last_foreground;
 		Color m_last_background;
 
+		// used for calculating the only needed modifications to the next ansi code
 		std::array<bool, ATTR_COUNT> last_attributes;
 
 		TermVert m_pos;

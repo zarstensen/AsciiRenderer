@@ -123,9 +123,6 @@ namespace Asciir
 	};
 
 	
-	// 
-	// 
-	
 	/// @brief A Line class which takes the length and position of the line into account. 
 	/// The length of the direction vector represents the length of the segment
 	class LineSegment : public Line

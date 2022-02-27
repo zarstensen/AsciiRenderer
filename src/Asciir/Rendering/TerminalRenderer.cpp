@@ -1,6 +1,6 @@
 ﻿#include "arpch.h"
 #include "TerminalRenderer.h"
-#include "Asciir/Math/Lines.h"
+#include "Asciir/Maths/Lines.h"
 #include "Asciir/Logging/Log.h"
 
 #ifdef AR_WIN
@@ -346,7 +346,7 @@ namespace Asciir
 				m_attr_handler->setBackground(new_tile.background_color);
 				m_attr_handler->ansiCode(*this, x == 0);
 
-				pushBuffer(new_tile.symbol);
+				pushBuffer((const char*) new_tile.symbol);
 			}
 
 			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)
@@ -405,8 +405,24 @@ namespace Asciir
 
 		if (data.size() > m_buffer.capacity())
 			fwrite(data.c_str(), 1, data.size(), stdout);
+		else
+			m_buffer += data;
+	}
 
-		m_buffer += data;
+	void TerminalRenderer::pushBuffer(const char* c_str)
+	{
+		pushBuffer(c_str, strlen(c_str));
+	}
+
+	void TerminalRenderer::pushBuffer(const char* c_buff, size_t buff_len)
+	{
+		if (buff_len + m_buffer.size() > m_buffer.capacity())
+			flushBuffer();
+
+		if (buff_len > m_buffer.capacity())
+			fwrite(c_buff, 1, buff_len, stdout);
+		else
+			m_buffer += c_buff;
 	}
 
 	void TerminalRenderer::flushBuffer()
