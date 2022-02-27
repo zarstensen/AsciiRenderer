@@ -12,7 +12,7 @@ namespace Asciir
 		/// @brief increases the size of the texture without doing anything to the existing data
 		FILL,
 		/// @brief upscales the stored texture using the nearest neighbour technique
-		/// @important **this mod is not yet implemented**
+		/// @attention **this mode is not yet implemented**
 		NEAREST
 	};
 
@@ -34,7 +34,7 @@ namespace Asciir
 		/// @param coord the coordinate of the wanted tile
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		const Tile& readTile(const Size2D& coord, const DeltaTime& dt = 0, const size_t& df = 0) const override;
+		Tile readTile(const Size2D& coord, const DeltaTime& dt = 0, const size_t& df = 0) const override;
 		
 		/// @return the size of the texture 
 		Size2D size() const override;
@@ -84,7 +84,7 @@ namespace Asciir
 		~FileTexture() final override { if (loaded()) unload(); }
 
 		Size2D size() const final override { return m_size; }
-		const Tile& readTile(const Size2D& coord, const DeltaTime&, const size_t&) const final override { return m_data(coord); }
+		Tile readTile(const Size2D& coord, const DeltaTime&, const size_t&) const final override { return m_data(coord); }
 
 		void load(const Path& dir);
 		void unload();

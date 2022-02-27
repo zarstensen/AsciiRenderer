@@ -12,7 +12,7 @@ namespace Asciir
 	}
 
 	// dt and df is never used here
-	const Tile& Texture2D::readTile(const Size2D& coord, const DeltaTime&, const size_t&) const
+	Tile Texture2D::readTile(const Size2D& coord, const DeltaTime&, const size_t&) const
 	{
 		return m_texture(coord);
 	}

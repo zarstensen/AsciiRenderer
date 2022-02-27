@@ -2,6 +2,8 @@
 
 namespace Asciir
 {
+	/// @brief enum representing all the keys from the keyboard avaliable to the application.  
+	/// @note KP = keypad
 	enum class Key
 	{
 		UNKNOWN,
@@ -73,7 +75,10 @@ namespace Asciir
 		SCROLL_LOCK,
 		NUM_LOCK,
 		PRINT_SCREEN,
+		/// @brief same as Key::BREAK
 		PAUSE,
+		/// @brief same as Key::PAUSE
+		BREAK = PAUSE,
 		F1,
 		F2,
 		F3,
@@ -118,10 +123,12 @@ namespace Asciir
 		LEFT_SHIFT,
 		LEFT_CONTROL,
 		LEFT_ALT,
+		/// @brief left win key on windows keyboard
 		LEFT_SUPER,
 		RIGHT_SHIFT,
 		RIGHT_CONTROL,
 		RIGHT_ALT,
+		/// @brief right win key on windows keyboard
 		RIGHT_SUPER,
 		MENU,
 		VOLUME_MUTE,
@@ -130,11 +137,17 @@ namespace Asciir
 		STOP,
 		SKIP_BACKWARD,
 		PLAY_PAUSE,
-		SKIP_FORWARD
+		SKIP_FORWARD,
+		/// @brief the maximum possible value for a keycode
+		KEY_MAX = SKIP_FORWARD
 	};
 
-	constexpr int KEY_CODE_COUNT = 119;
+	/// @brief number of keys inside the Key enum
+	/// includes MouseKey::UNKNOWN  
+	/// excludes MouseKey::KEY_MAX and any duplicate values like MouseKey::BREAK
+	constexpr int KEY_CODE_COUNT = (int) Key::KEY_MAX + 1;
 
+	/// @brief enum representing all the mmouse keys from the mouse avaliable to the application.
 	enum class MouseKey
 	{
 		UNKNOWN,
@@ -142,8 +155,13 @@ namespace Asciir
 		RIGHT_BUTTON,
 		MIDDLE_BUTTON,
 		BUTTON_1,
-		BUTTON_2
+		BUTTON_2,
+		/// @brief the maximum possible value for a mouse keycode
+		KEY_MAX = BUTTON_2
 	};
 
-	constexpr int MOUSE_CODE_COUNT = 6;
+	/// @brief number of keys inside the MouseKey enum
+	/// includes MouseKey::UNKNOWN  
+	/// excludes MouseKey::KEY_MAX
+	constexpr int MOUSE_CODE_COUNT = (int) MouseKey::KEY_MAX + 1;
 }

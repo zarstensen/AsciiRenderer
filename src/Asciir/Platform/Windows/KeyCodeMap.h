@@ -5,6 +5,8 @@
 
 namespace Asciir
 {
+	/// @brief maps windows virtual keycodes to Asciir key codes
+	/// @attention this is windows specific, and should not be used by client applications
 	const std::map<WORD, Key> WinToKeyCodeMap = {
 		{VK_SPACE, Key::SPACE},
 
@@ -265,6 +267,8 @@ namespace Asciir
 		{ VK_MEDIA_NEXT_TRACK, Key::SKIP_FORWARD }
 	};
 
+	/// @brief maps windows mouse button states to Asciir mouse codes
+	/// @attention this is windows specific, and should not be used by client applications
 	const std::map<WORD, MouseKey> WinToMouseCodeMap = {
 		{FROM_LEFT_1ST_BUTTON_PRESSED, MouseKey::LEFT_BUTTON},
 

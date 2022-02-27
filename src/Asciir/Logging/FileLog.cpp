@@ -16,18 +16,14 @@ namespace Asciir
 	FileLog::~FileLog()
 	{
 		if (is_open)
-		{
 			close();
-		}
 	}
 
 	void FileLog::open(const std::string& log_name, bool save_file, bool append_logs)
 	{
 #ifdef AR_DEBUG
 		if (is_open)
-		{
 			throw std::runtime_error("Log is already open");
-		}
 #endif
 
 		is_open = true;
@@ -39,6 +35,7 @@ namespace Asciir
 
 		m_name = log_name;
 		m_save_file = save_file;
+		// boolean value should be written out as 'true/false' instead of '1/0'
 		m_log_file << std::boolalpha;
 	}
 
@@ -46,18 +43,16 @@ namespace Asciir
 	{
 #ifdef AR_DEBUG
 		if (!is_open)
-		{
 			throw std::runtime_error("Log is already closed");
-		}
 #endif
 
 		is_open = false;
 
 		m_log_file.close();
+
+		// delete log file if specified
 		if (!m_save_file)
-		{
 			std::filesystem::remove(m_name);
-		}
 	}
 
 	const std::string& FileLog::getName() const
