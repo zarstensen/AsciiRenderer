@@ -32,17 +32,20 @@ namespace Asciir
 		bool isInsideGrid(const Coord& boord, Real resolution, const Transform& transform = NoTransform) const;
 
 		/// @brief get the 4 vertices constructing the quad represented
-		s_arVertices2D<Real, 4> getVerts()
+		s_arVertices<Real, 2, 4> getVerts()
 		{
-			return { offset, Coord{ offset.x, size.y }, size, Coord{ size.x, offset.y } };
+			s_arVertices<Real, 2, 4> verts;
+			verts << offset, Coord(offset.x, size.y), size, Coord(size.x, offset.y);
+			return verts;
 		}
 
 	};
 
 	/// @brief outputs the offset and the quad size to the passed stream
-	std::ostream& operator<<(std::ostream& stream, const Quad& quad)
+	inline std::ostream& operator<<(std::ostream& stream, const Quad& quad)
 	{
 		stream << quad.offset << ' ' << quad.size;
+		return stream;
 	}
 
 }
