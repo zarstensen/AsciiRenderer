@@ -175,10 +175,6 @@ namespace Asciir
 		: s_arVertices<T, d, n>(other.eval().template cast<arVertex<T, d>>()) {}
 
 	template<typename T, size_t d, size_t n>
-	s_arVertices<T, d, n>::s_arVertices(const std::initializer_list<arVertex<T, d>>& other)
-		: Eigen::Vector<arVertex<T, d>, n>{ other } {}
-
-	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n> s_arVertices<T, d, n>::offset(const arVertex<T, d>& vec)
 	{
 		s_arVertices<T, d, n> res = *this;

@@ -140,6 +140,7 @@ namespace Asciir
 		size_t size() const;
 
 		using Eigen::VectorX<arVertex<T, d>>::operator[];
+		using Eigen::VectorX<arVertex<T, d>>::operator<<;
 	};
 
 	/// @brief staticly sized version of arVertices
@@ -154,7 +155,6 @@ namespace Asciir
 		template<typename TOther>
 		s_arVertices(const s_arVertices<TOther, d, n>& other);
 		s_arVertices(const Eigen::Vector<arVertex<T, d>, n>& other);
-		s_arVertices(const std::initializer_list<arVertex<T, d>>& other);
 
 		template<typename TOther>
 		s_arVertices(const Eigen::MatrixBase<TOther>& other);
@@ -169,6 +169,7 @@ namespace Asciir
 		constexpr size_t size() const;
 
 		using Eigen::Vector<arVertex<T, d>, n>::operator[];
+		using Eigen::Vector<arVertex<T, d>, n>::operator<<;
 	};
 
 	// typedef for arVertex
