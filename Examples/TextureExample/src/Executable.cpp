@@ -12,10 +12,20 @@ class TileShader : public Shader2D
 
 	Tile readTile(const Size2D& coord, const DeltaTime&, const size_t& frame) const final override
 	{
-		if((coord.x + coord.y + frame) % 2)
+		/*if((coord.x + coord.y + frame) % 2)
 			return Tile(BLACK8);
 		else
-			return Tile(IWHITE8);
+			return Tile(IWHITE8);*/
+
+		int size = 100;
+
+		Real dst = std::sqrtf(std::pow((int)coord.x - size, 2) + std::pow((int)coord.y * 2 - size, 2));
+
+		if (dst < frame % size)
+			return Tile(Colour((dst / (frame % size)) * 255, (int)((dst / (frame % size)) * 500) % 255, (int)((dst / (frame % size)) * 100) % 255));
+		else
+			return Tile(BLACK8);
+
 	}
 };
 
@@ -47,7 +57,7 @@ class TextureLayer : public Asciir::Layer
 class TextureExample : public Asciir::ARApp
 {
 public:
-	TextureExample()
+	void start(const std::vector<std::string>&) override
 	{
 		pushLayer(new TextureLayer());
 	}
@@ -160,10 +170,10 @@ auto enemy_sniper_blueprint = EntityBlueprint<PositionComponent, TargetComponent
 
 
 
-int main()
+/*int main()
 {
 	Scene scene;
-	
+
 	UID player = scene.createEntity(player_blueprint);
 	UID sniper = scene.createEntity(enemy_sniper_blueprint);
 
@@ -186,6 +196,6 @@ int main()
 
 	sniper_system.run();
 	sniper_system.run();
-}
+}*/
 
-//AR_DEFAULT_ENTRYPOINT(TextureExample)
+AR_DEFAULT_ENTRYPOINT(TextureExample)

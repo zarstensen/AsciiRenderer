@@ -44,18 +44,18 @@ class TriangleLayer : public Asciir::Layer
 
 		square_transform.setPos(Asciir::Coord(pos + 30, 20));
 		square_transform.setOrigin(square_mesh->getMedianVert());
-		Asciir::Color square_color = Asciir::IRED8;
-		square_color.alpha = 100;
+		Asciir::Colour square_colour = Asciir::IRED8;
+		square_colour.alpha = 100;
 
 		transform.setPos(Asciir::Coord(pos, 0));
 		transform.setScale(Asciir::Coord(1, 1));
 		transform.setOrigin(triangle_verts->getMedianVert());
-		transform.setRotation(Asciir::degToRad(pos + 45));
+		transform.setRotation(Asciir::degToRad(pos + 45_R));
 
-		Asciir::Color triangle_color = Asciir::YELLOW8;
+		Asciir::Colour triangle_colour = Asciir::YELLOW8;
 
-		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(triangle_color), transform);
-		//Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_color), square_transform);
+		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(triangle_colour), transform);
+		//Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_colour), square_transform);
 
 		int a = 2;
 		int b = 6;
