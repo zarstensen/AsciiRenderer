@@ -78,12 +78,12 @@ namespace Asciir
 	struct Tile
 	{
 		UTF8Char symbol = ' ';
-		Color color = WHITE8;
-		Color background_color = BLACK8;
+		Colour Colour = WHITE8;
+		Colour background_Colour = BLACK8;
 		bool is_empty = true;
 
-		Tile(Color background_color = BLACK8, Color color = WHITE8, UTF8Char symbol = ' ')
-			: symbol(symbol), color(color), background_color(background_color), is_empty(false) {}
+		Tile(Colour background_Colour = BLACK8, Colour Colour = WHITE8, UTF8Char symbol = ' ')
+			: symbol(symbol), Colour(Colour), background_Colour(background_Colour), is_empty(false) {}
 
 		static Tile emptyTile()
 		{
@@ -95,7 +95,7 @@ namespace Asciir
 		bool operator==(const Tile& other) const
 		{
 			if (!is_empty && !other.is_empty)
-				return background_color == other.background_color && color == other.color && symbol == other.symbol;
+				return background_Colour == other.background_Colour && Colour == other.Colour && symbol == other.symbol;
 			else
 				return false;
 		}
@@ -108,14 +108,14 @@ namespace Asciir
 				return false;
 		}
 
-		// blends the foreground and background color
+		// blends the foreground and background Colour
 		// the symbol is overwritten by the other tiles symbol, unless the symbol value is NULL ('\0')
 		Tile& blend(const Tile& other)
 		{
 			if (other.symbol != '\0') symbol = other.symbol;
-			// TODO should background color be blended here aswell?
-			color.blend(other.color);
-			background_color.blend(other.background_color);
+			// TODO should background Colour be blended here aswell?
+			Colour.blend(other.Colour);
+			background_Colour.blend(other.background_Colour);
 
 			return *this;
 		}
@@ -123,6 +123,7 @@ namespace Asciir
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile);
 
+	// TODO: this should definetly be a platform dependent interface
 	class TerminalRenderer
 	{
 	public:
@@ -160,8 +161,8 @@ namespace Asciir
 	public:
 		TerminalRenderer(const TerminalProps& term_props);
 
-		void color(Color color);
-		void backgroundColor(Color color);
+		void Colour(Colour Colour);
+		void backgroundColour(Colour Colour);
 		void symbol(char symbol);
 
 		void drawVertices(const TermVerts& vertices, DrawMode mode = DrawMode::Line);

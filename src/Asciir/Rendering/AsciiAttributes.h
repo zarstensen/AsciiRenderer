@@ -27,34 +27,34 @@ namespace Asciir
 
 	static constexpr size_t ATTR_MAX_SIZE = 48;
 
-	struct Color
+	struct Colour
 	{
 		unsigned char red, green, blue, alpha;
 
-		Color();
-		Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a = UCHAR_MAX);
-		Color(unsigned char gray, unsigned char a = UCHAR_MAX);
-		Color(const Color& other);
+		Colour();
+		Colour(unsigned char r, unsigned char g, unsigned char b, unsigned char a = UCHAR_MAX);
+		Colour(unsigned char gray, unsigned char a = UCHAR_MAX);
+		Colour(const Colour& other);
 
-		Color inverse() const;
+		Colour inverse() const;
 
-		bool operator==(const Color& other) const;
-		bool operator!=(const Color& other) const;
-		bool operator<(const Color& other) const;
-		bool operator>(const Color& other) const;
-		bool operator<=(const Color& other) const;
-		bool operator>=(const Color& other) const;
+		bool operator==(const Colour& other) const;
+		bool operator!=(const Colour& other) const;
+		bool operator<(const Colour& other) const;
+		bool operator>(const Colour& other) const;
+		bool operator<=(const Colour& other) const;
+		bool operator>=(const Colour& other) const;
 
-		// blends the two colors taking the alpha value into account
-		// uses the current color as the background and calculates the alpha result afterwards
-		Color& blend(const Color& other);
-		// blends the two colors taking the alpha value into account
-		static Color blend(const Color& background, const Color& color);
+		// blends the two Colours taking the alpha value into account
+		// uses the current Colour as the background and calculates the alpha result afterwards
+		Colour& blend(const Colour& other);
+		// blends the two Colours taking the alpha value into account
+		static Colour blend(const Colour& background, const Colour& Colour);
 	};
 
-	std::ostream& operator<<(std::ostream& stream, const Color& c);
+	std::ostream& operator<<(std::ostream& stream, const Colour& c);
 
-	typedef Color RGB24;
+	typedef Colour RGB24;
 
 	struct RGB8
 	{
@@ -63,8 +63,8 @@ namespace Asciir
 		RGB8(unsigned char r, unsigned char g, unsigned char b);
 		RGB8();
 
-		Color getColor();
-		operator Color();
+		Colour getColour();
+		operator Colour();
 	};
 
 	struct RGB4
@@ -74,8 +74,8 @@ namespace Asciir
 		RGB4();
 		RGB4(bool r, bool g, bool b, bool i = false);
 
-		Color getColor();
-		operator Color();
+		Colour getColour();
+		operator Colour();
 	};
 
 	struct GRAY8
@@ -85,8 +85,8 @@ namespace Asciir
 		GRAY8(unsigned char g);
 		GRAY8();
 
-		Color getColor();
-		operator Color();
+		Colour getColour();
+		operator Colour();
 	};
 
 	/*
@@ -110,20 +110,15 @@ namespace Asciir
 
 	class TerminalRenderer;
 
-	//
-	// 
-	
-	//
-
 	/// @brief class for storing and modifying the ansi attributes of an ascii character
 	/// 
 	/// also generates the corresponding ansi code that should be printed to the terminal in order to apply the attributes
 	/// 
 	/// The generated ansi codes assume no other attributes have been applied to the terminal inbetween modifications (not true if resuilt is of string type)
 	/// 
-	/// This means if an attribute contains the attributes (Color: Orange, Text: Bold) generates the ascii code, and outputs it to the terminal
-	/// and is then later modified to contain the attributes (Color: Orange, Text: Underlined).
-	/// The next call to ansiCode will remove the bold attribute and apply the underlined attribute whilst doing nothing to the color, as it assumes it is still Orange.
+	/// This means if an attribute contains the attributes (Colour: Orange, Text: Bold) generates the ascii code, and outputs it to the terminal
+	/// and is then later modified to contain the attributes (Colour: Orange, Text: Underlined).
+	/// The next call to ansiCode will remove the bold attribute and apply the underlined attribute whilst doing nothing to the Colour, as it assumes it is still Orange.
 	/// 
 	/// a call to clear() will assume unknown modifications have happened, and generate the complete ansi code applying all the attributes whilst clearing all other.
 	/// 
@@ -132,11 +127,11 @@ namespace Asciir
 	class AsciiAttr
 	{
 	protected:
-		Color m_foreground;
-		Color m_background;
+		Colour m_foreground;
+		Colour m_background;
 
-		Color m_last_foreground;
-		Color m_last_background;
+		Colour m_last_foreground;
+		Colour m_last_background;
 
 		// used for calculating the only needed modifications to the next ansi code
 		std::array<bool, ATTR_COUNT> last_attributes;
@@ -153,15 +148,15 @@ namespace Asciir
 		AsciiAttr() = default;
 		virtual ~AsciiAttr();
 
-		void setForeground(const Color& color);
-		Color getForeground();
-		void setBackground(const Color& color);
-		Color getBackground();
-		void setColor(const Color& foreground, const Color& background);
+		void setForeground(const Colour& Colour);
+		Colour getForeground();
+		void setBackground(const Colour& Colour);
+		Colour getBackground();
+		void setColour(const Colour& foreground, const Colour& background);
 
 		void clear();
 		void clearFormat();
-		void clearColor();
+		void clearColour();
 
 		void setAttribute(const ATTRI& attribute, bool val);
 
@@ -178,10 +173,14 @@ namespace Asciir
 		virtual std::string ansiCode() = 0;
 		virtual void ansiCode(std::string& dst) = 0;
 		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
+
+		// TODO: no reason to have this here, just make sure terminal renderer has a stream input class.
 		virtual void ansiCode(TerminalRenderer& dst, bool is_newline = false) = 0;
 
 		void moveCode(std::string& dst);
 		void moveCode(std::ostream& stream);
+
+		// TODO. same as ansiCode(TerminalRenderer)
 		void moveCode(TerminalRenderer& dst);
 
 		void setTitle(const std::string& name);

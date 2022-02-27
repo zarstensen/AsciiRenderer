@@ -10,7 +10,7 @@ namespace Asciir
 		std::unique_ptr<AsciiAttr> m_log_attributes;
 		std::filesystem::path m_log_dir;
 		std::ifstream m_log_file;
-		std::vector<Color> m_colors;
+		std::vector<Colour> m_Colours;
 		size_t m_pos = 0;
 
 	public:
@@ -18,14 +18,14 @@ namespace Asciir
 		// 
 		// 
 
-		/// @brief takes the path of the log file, as well as the color coding for each log level
+		/// @brief takes the path of the log file, as well as the Colour coding for each log level
 		/// 
 		/// log file can be appended to whilst it is open by a LogViewer
-		/// index of color = corresponding log level
+		/// index of Colour = corresponding log level
 		/// 
 		/// @param log_dir 
-		/// @param colors 
-		LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors);
+		/// @param Colours 
+		LogViewer(std::filesystem::path log_dir, const std::vector<Colour>& Colours);
 		~LogViewer();
 
 		/// @brief returns the current position in the log file

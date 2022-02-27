@@ -6,53 +6,53 @@
 
 namespace Asciir
 {
-	Color::Color()
+	Colour::Colour()
 		: red(0), green(0), blue(0), alpha(UCHAR_MAX)
 	{}
 
-	Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+	Colour::Colour(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 		: red(r), green(g), blue(b), alpha(a)
 	{}
 
-	Color::Color(unsigned char gray, unsigned char a)
+	Colour::Colour(unsigned char gray, unsigned char a)
 		: red(gray), green(gray), blue(gray), alpha(a)
 	{}
 
-	Color::Color(const Color& other)
+	Colour::Colour(const Colour& other)
 		: red(other.red), green(other.green), blue(other.blue), alpha(other.alpha)
 	{}
 
-	Color Color::inverse() const
+	Colour Colour::inverse() const
 	{
-		return Color(UCHAR_MAX - red, UCHAR_MAX - green, UCHAR_MAX - blue);
+		return Colour(UCHAR_MAX - red, UCHAR_MAX - green, UCHAR_MAX - blue);
 	}
 
-	bool Color::operator==(const Color& other) const
+	bool Colour::operator==(const Colour& other) const
 	{
 		return red == other.red && green == other.green && blue == other.blue;
 	}
-	bool Color::operator!=(const Color& other) const
+	bool Colour::operator!=(const Colour& other) const
 	{
 		return !operator==(other);
 	}
-	bool Color::operator<(const Color& other) const
+	bool Colour::operator<(const Colour& other) const
 	{
 		return (red + green + blue) / 3 < (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator>(const Color& other) const
+	bool Colour::operator>(const Colour& other) const
 	{
 		return (red + green + blue) / 3 > (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator<=(const Color& other) const
+	bool Colour::operator<=(const Colour& other) const
 	{
 		return (red + green + blue) / 3 <= (other.red + other.green + other.blue) / 3;
 	}
-	bool Color::operator>=(const Color& other) const
+	bool Colour::operator>=(const Colour& other) const
 	{
 		return (red + green + blue) / 3 >= (other.red + other.green + other.blue) / 3;
 	}
 
-	Color& Color::blend(const Color& other)
+	Colour& Colour::blend(const Colour& other)
 	{
 		Real foreground_alpha = (Real)other.alpha / UCHAR_MAX;
 
@@ -64,10 +64,10 @@ namespace Asciir
 		return *this;
 	}
 
-	Color Color::blend(const Color& background, const Color& color)
+	Colour Colour::blend(const Colour& background, const Colour& Colour)
 	{
-		Color result = background;
-		result.blend(color);
+		Colour result = background;
+		result.blend(Colour);
 		return result;
 	}
 
@@ -77,23 +77,23 @@ namespace Asciir
 		green = g;
 		blue = b;
 
-		AR_ASSERT_MSG(red < 6, "Red color value must be less than 6. value: ", red);
-		AR_ASSERT_MSG(green < 6, "Green color value must be less than 6. value: ", green);
-		AR_ASSERT_MSG(blue < 6, "Blue color value must be less than 6. value: ", blue);
+		AR_ASSERT_MSG(red < 6, "Red Colour value must be less than 6. value: ", red);
+		AR_ASSERT_MSG(green < 6, "Green Colour value must be less than 6. value: ", green);
+		AR_ASSERT_MSG(blue < 6, "Blue Colour value must be less than 6. value: ", blue);
 	}
 
 	RGB8::RGB8()
 		: red(0), green(0), blue(0)
 	{}
 
-	Color RGB8::getColor()
+	Colour RGB8::getColour()
 	{
-		return Color(CGRADIENT16[red], CGRADIENT16[green], CGRADIENT16[blue]);
+		return Colour(CGRADIENT16[red], CGRADIENT16[green], CGRADIENT16[blue]);
 	}
 
-	RGB8::operator Color()
+	RGB8::operator Colour()
 	{
-		return getColor();
+		return getColour();
 	}
 
 	GRAY8::GRAY8(unsigned char g)
@@ -106,15 +106,15 @@ namespace Asciir
 		: gray(0)
 	{}
 
-	Color GRAY8::getColor()
+	Colour GRAY8::getColour()
 	{
-		// converts gray color from range (0-23) to an 8 bit value (8-238)
+		// converts gray Colour from range (0-23) to an 8 bit value (8-238)
 		return 8 + gray * 10;
 	}
 
-	GRAY8::operator Color()
+	GRAY8::operator Colour()
 	{
-		return getColor();
+		return getColour();
 	}
 
 	RGB4::RGB4()
@@ -125,8 +125,8 @@ namespace Asciir
 		: red(r), green(g), blue(b), intensity(i)
 	{}
 
-	// determine the RGB values of 4 bit color system. The colors are platform dependent
-	Color RGB4::getColor()
+	// determine the RGB values of 4 bit Colour system. The Colours are platform dependent
+	Colour RGB4::getColour()
 	{
 		switch (BIT_SHL(0, red) | BIT_SHL(1, green) | BIT_SHL(2, blue) | BIT_SHL(intensity, 3))
 		{
@@ -173,41 +173,41 @@ namespace Asciir
 			return ICYAN8;
 			break;
 		default:
-			AR_ASSERT_MSG(false, "Invalid color");
+			AR_ASSERT_MSG(false, "Invalid Colour");
 			return {};
 		}
 	}
 
-	RGB4::operator Color()
+	RGB4::operator Colour()
 	{
-		return getColor();
+		return getColour();
 	}
 
 	// constructor and destructor is platform dependent
 
 	AsciiAttr::~AsciiAttr() {}
 
-	void AsciiAttr::setForeground(const Color& color)
+	void AsciiAttr::setForeground(const Colour& Colour)
 	{
-		m_foreground = color;
+		m_foreground = Colour;
 	}
 
-	Color AsciiAttr::getForeground()
+	Colour AsciiAttr::getForeground()
 	{
 		return m_foreground;
 	}
 
-	void AsciiAttr::setBackground(const Color& color)
+	void AsciiAttr::setBackground(const Colour& Colour)
 	{
-		m_background = color;
+		m_background = Colour;
 	}
 
-	Color AsciiAttr::getBackground()
+	Colour AsciiAttr::getBackground()
 	{
 		return m_background;
 	}
 
-	void AsciiAttr::setColor(const Color& foreground, const Color& background)
+	void AsciiAttr::setColour(const Colour& foreground, const Colour& background)
 	{
 		m_foreground = foreground;
 		m_background = background;
@@ -240,7 +240,7 @@ namespace Asciir
 	void AsciiAttr::clear()
 	{
 		clearFormat();
-		clearColor();
+		clearColour();
 		m_cleared = true;
 	}
 
@@ -249,7 +249,7 @@ namespace Asciir
 		memset(attributes.data(), false, ATTR_COUNT);
 	}
 
-	void AsciiAttr::clearColor()
+	void AsciiAttr::clearColour()
 	{
 		setForeground(WHITE8);
 		m_last_foreground = getForeground();
@@ -307,7 +307,7 @@ namespace Asciir
 		std::cout << AR_ANSIS_OSC << "0;" << name << '\a';
 	}
 
-	std::ostream& operator<<(std::ostream& stream, const Color& c)
+	std::ostream& operator<<(std::ostream& stream, const Colour& c)
 	{
 		stream << std::setfill(' ') << std::setw(3) << (int)c.red << ' '
 			<< std::setfill(' ') << std::setw(3) << (int)c.green << ' '

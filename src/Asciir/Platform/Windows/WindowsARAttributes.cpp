@@ -5,13 +5,27 @@
 
 namespace Asciir
 {
+	// helper function for converting an integer to a string, with known maximum integer length, in order to avoid heap allocation
+	template<size_t w, typename T>
+	void fixedToString(T value, char* out)
+	{
+		snprintf(out, w + 1, "%d", value);
+	}
+
+
 	WinARAttr::WinARAttr()
 		: m_hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 	{
 		// enable ansi code support
 		AR_WIN_VERIFY(GetConsoleMode(m_hConsole, &m_fallback_mode));
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole, m_fallback_mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
-		clearColor();
+		clearColour();
+
+		// use alternate screen buffer
+		// makes sure the text on the console before the application was started is not modified by the program.
+		// also makes sure any text never is scrolled outside the console window.
+		// this in turn means that console mouse events always report the correct y value.
+		std::cout << AR_ANSIS_CSI << "?1049h";
 
 		// enable UTF8 codepage
 		m_fallback_cp = GetConsoleOutputCP();
@@ -20,6 +34,9 @@ namespace Asciir
 
 	WinARAttr::~WinARAttr()
 	{
+		// go back to normal screen buffer
+		std::cout << AR_ANSIS_CSI << "?1049l";
+
 		// reset console mode
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole, m_fallback_mode));
 		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_cp));
@@ -31,9 +48,9 @@ namespace Asciir
 
 		// 2 bytes for the escape sequence start
 		// 1 byte for the reset attribute
-		// 5 bytes for the set color ';38/48;5'
+		// 5 bytes for the set Colour code ';38/48;5'
 		// 4 bytes for a single channel 'xxx;' multiply by 3, as there are 3 channels (rgb)
-		// sets both foreground and background color
+		// sets both foreground and background Colour
 		size_t size = 2 + 1 + (5 + 4 * 3) * 2;
 
 		for (size_t i = 1; i < 5; i++)
@@ -80,7 +97,10 @@ namespace Asciir
 		if (attributes[STRIKE])
 			dst += ";9";
 
-		// foreground color
+		// colour string buffer
+		char colour_buffer[4];
+
+		// foreground Colour
 
 		if (attributes[BOLD])
 		{
@@ -93,32 +113,41 @@ namespace Asciir
 			blue = blue > m_foreground.blue ? blue : 255;
 
 			dst += ";38;2;";
-			dst += std::to_string(red);
+			fixedToString<3>(red, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
-			dst += std::to_string(green);
+			fixedToString<3>(green, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
-			dst += std::to_string(blue);
+			fixedToString<3>(blue, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
 		}
 		else
 		{
 			dst += ";38;2;";
-			dst += std::to_string(m_foreground.red);
+			fixedToString<3>(m_foreground.red, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
-			dst += std::to_string(m_foreground.green);
+			fixedToString<3>(m_foreground.green, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
-			dst += std::to_string(m_foreground.blue);
+			fixedToString<3>(m_foreground.blue, colour_buffer);
+			dst += colour_buffer;
 			dst += ";";
 		}
 
-		// background color
+		// background Colour
 		dst += "48;2;";
-		dst += std::to_string(m_background.red);
+		fixedToString<3>(m_background.red, colour_buffer);
+		dst += colour_buffer;
 		dst += ";";
-		dst += std::to_string(m_background.green);
+		fixedToString<3>(m_background.green, colour_buffer);
+		dst += colour_buffer;
 		dst += ";";
-		dst += std::to_string(m_background.blue);
-		dst += 'm';
+		fixedToString<3>(m_background.blue, colour_buffer);
+		dst += colour_buffer;
+		dst += ";";
 	}
 
 	void WinARAttr::ansiCode(std::ostream& stream, bool is_newline)
@@ -176,8 +205,8 @@ namespace Asciir
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
 			stream << ";29";
 
-		// foreground color
-		// background color needs to be updated if the foreground color is changed
+		// foreground Colour
+		// background Colour needs to be updated if the foreground Colour is changed
 		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
 		{
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
@@ -220,7 +249,7 @@ namespace Asciir
 		}
 		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
-			// only background color
+			// only background Colour
 			stream << ";48;2;";
 			stream << std::to_string(m_background.red);
 			stream << ';';
@@ -269,6 +298,9 @@ namespace Asciir
 		// cursor
 		moveCode(dst);
 
+		// colour string buffer
+		char colour_buffer[4];
+
 		// formatting
 		dst.pushBuffer(AR_ANSIS_CSI);
 
@@ -292,8 +324,8 @@ namespace Asciir
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
 			dst.pushBuffer(";29");
 
-		// foreground color
-		// background color needs to be updated if the foreground color is changed
+		// foreground Colour
+		// background Colour needs to be updated if the foreground Colour is changed
 		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
 		{
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
@@ -305,44 +337,59 @@ namespace Asciir
 			blue = blue > m_foreground.blue ? blue : 255;
 
 			dst.pushBuffer(";38;2;");
-			dst.pushBuffer(std::to_string(red));
+			fixedToString<3>(red, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(green));
+			fixedToString<3>(green, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(blue));
+			fixedToString<3>(blue, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 
 			dst.pushBuffer(";48;2;");
-			dst.pushBuffer(std::to_string(m_background.red));
+			fixedToString<3>(m_background.red, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.green));
+			fixedToString<3>(m_background.green, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.blue));
+			fixedToString<3>(m_background.blue, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 		}
 		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
 		{
 			dst.pushBuffer(";38;2;");
-			dst.pushBuffer(std::to_string(m_foreground.red));
+			fixedToString<3>(m_foreground.red, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_foreground.green));
+			fixedToString<3>(m_foreground.green, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_foreground.blue));
+			fixedToString<3>(m_foreground.blue, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 
 			dst.pushBuffer(";48;2;");
-			dst.pushBuffer(std::to_string(m_background.red));
+			fixedToString<3>(m_background.red, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.green));
+			fixedToString<3>(m_background.green, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.blue));
+			fixedToString<3>(m_background.blue, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 		}
 		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
-			// only background color
+			// only background Colour
 			dst.pushBuffer(";48;2;");
-			dst.pushBuffer(std::to_string(m_background.red));
+			fixedToString<3>(m_background.red, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.green));
+			fixedToString<3>(m_background.green, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 			dst.pushBuffer(';');
-			dst.pushBuffer(std::to_string(m_background.blue));
+			fixedToString<3>(m_background.blue, colour_buffer);
+			dst.pushBuffer(colour_buffer);
 		}
 
 		dst.pushBuffer('m');

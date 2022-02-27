@@ -59,7 +59,7 @@ namespace Asciir
 				}
 	#ifdef AR_VISUALIZE_DRAW_BOX
 				else {
-					s_renderer->setState(data.tile.color.inverse());
+					s_renderer->setState(data.tile.Colour.inverse());
 					s_renderer->drawTile(TermVert(x, y));
 					s_renderer->setState(data.tile);
 				}
@@ -115,7 +115,7 @@ namespace Asciir
 
 	void Renderer::drawClearData(const ClearData& data)
 	{
-		AR_ASSERT_MSG(data.background_color.alpha == UCHAR_MAX, "Background color must be 100% opaque (alpha = 255), got: ", data.background_color.alpha, " as the alpha value");
+		AR_ASSERT_MSG(data.background_Colour.alpha == UCHAR_MAX, "Background Colour must be 100% opaque (alpha = 255), got: ", data.background_Colour.alpha, " as the alpha value");
 		s_renderer->clearTerminal(data);
 	}
 

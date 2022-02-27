@@ -18,9 +18,11 @@ namespace Asciir
 		void ansiCode(std::ostream& stream, bool is_newline = false) final;
 		void ansiCode(TerminalRenderer& dst, bool is_newline = false) final;
 
+		// TODO: should terminalPos, terminalSize and maxTerminalSize be here and not in TerminalRenderer instead?
 		Coord terminalPos() const final;
 		TermVert terminalSize() const final;
 		TermVert maxTerminalSize() const final;
+
 		Size2D fontSize() const final;
 	};
 }

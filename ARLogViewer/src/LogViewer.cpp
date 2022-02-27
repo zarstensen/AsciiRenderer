@@ -4,8 +4,8 @@
 
 namespace Asciir
 {
-	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Color>& colors)
-		: m_log_dir(log_dir), m_colors(colors)
+	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Colour>& Colours)
+		: m_log_dir(log_dir), m_Colours(Colours)
 	{
 #ifdef AR_WIN
 		m_log_attributes = std::make_unique<WinARAttr>();
@@ -83,7 +83,7 @@ namespace Asciir
 		// get log level
 		size_t level_indx = log_view.find(']');
 		size_t level = (size_t)std::stoull((std::string)log_view.substr(1, level_indx - 1));
-		level = (std::min)(level, m_colors.size() - 1);
+		level = (std::min)(level, m_Colours.size() - 1);
 		std::cout << level;
 
 		size_t time_indx = log_view.find(']', level_indx + 1);
@@ -92,7 +92,7 @@ namespace Asciir
 		size_t line_indx = log_view.find(']', type_indx + 1);
 		size_t file_indx = log_view.find(']', line_indx + 1);
 
-		m_log_attributes->setForeground(m_colors[level]);
+		m_log_attributes->setForeground(m_Colours[level]);
 		stream << *m_log_attributes << log.substr(level_indx + 1, time_indx - level_indx);
 
 		stream << log.substr(time_indx + 1, source_indx - time_indx) << ": ";
