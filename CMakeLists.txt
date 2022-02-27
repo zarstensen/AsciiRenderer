@@ -191,7 +191,6 @@ if(WIN32)
 
     set(SRC_DIR_PLATFORM
         # core
-        src/Asciir/Platform/Windows/WinInput.cpp
         src/Asciir/Platform/Windows/WinInit.cpp
 
         # rendering
@@ -203,7 +202,6 @@ if(WIN32)
 
     set(HEADER_DIR_PLATFORM
         # core
-        src/Asciir/Platform/Windows/WinInput.h
         src/Asciir/Platform/Windows/KeyCodeMap.h
         src/Asciir/Platform/Windows/WinInit.h
         
@@ -217,8 +215,6 @@ if(WIN32)
 elseif(UNIX)
 
     set(SRC_DIR_PLATFORM
-        # core
-        src/Asciir/Platform/Unix/UnixInput.cpp
 
         # rendering
         src/Asciir/Platform/Unix/UnixARAttributes.cpp
@@ -226,7 +222,6 @@ elseif(UNIX)
 
     set(HEADER_DIR_PLATFORM
         # core
-        src/Asciir/Platform/Unix/UnixInput.h
         src/Asciir/Platform/Unix/KeyCodeMap.h
 
         #rendering
