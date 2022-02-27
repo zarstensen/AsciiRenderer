@@ -65,17 +65,17 @@ namespace Asciir
 		update();
 	}
 
-	void TerminalRenderer::Colour(Colour Colour)
+	void TerminalRenderer::setColour(Colour colour)
 	{
-		m_tile_state.Colour = Colour;
+		m_tile_state.colour = colour;
 	}
 
-	void TerminalRenderer::backgroundColour(Colour Colour)
+	void TerminalRenderer::setBackgroundColour(Colour colour)
 	{
-		m_tile_state.background_Colour = Colour;
+		m_tile_state.background_colour = colour;
 	}
 
-	void TerminalRenderer::symbol(char symbol)
+	void TerminalRenderer::setSymbol(char symbol)
 	{
 		m_tile_state.symbol = symbol;
 	}
@@ -342,8 +342,8 @@ namespace Asciir
 					m_attr_handler->move({ x, y });
 				}
 
-				m_attr_handler->setForeground(new_tile.Colour);
-				m_attr_handler->setBackground(new_tile.background_Colour);
+				m_attr_handler->setForeground(new_tile.colour);
+				m_attr_handler->setBackground(new_tile.background_colour);
 				m_attr_handler->ansiCode(*this, x == 0);
 
 				pushBuffer((const char*) new_tile.symbol);
@@ -438,7 +438,7 @@ namespace Asciir
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
 	{
-		stream << (int)tile.symbol << " (" << tile.background_Colour << ") (" << tile.Colour << ") ";
+		stream << (int)tile.symbol << " (" << tile.background_colour << ") (" << tile.colour << ") ";
 		return stream;
 	}
 }

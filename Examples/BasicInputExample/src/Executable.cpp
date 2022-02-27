@@ -1,9 +1,11 @@
 ﻿#include <Asciir.h>
 
+using namespace Asciir::AsciirLiterals;
+
 class ExampleLayer : public Asciir::Layer
 {
 	Asciir::Coord pos = { 10, 10 };
-	static constexpr Asciir::Real speed = 0.025;
+	static constexpr Asciir::Real speed = 0.025_R;
 
 	void onStart()
 	{
@@ -14,7 +16,7 @@ class ExampleLayer : public Asciir::Layer
 	{
 		Asciir::Renderer::clear(Asciir::Tile({ 0, 0, 155 }, { 0, 0, 155 }, 219));
 
-		if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
+		/*if (Asciir::Input::isKeyDown(Asciir::Key::W) || Asciir::Input::isKeyDown(Asciir::Key::UP))
 			pos.y -= delta_time * speed;
 
 		if (Asciir::Input::isKeyDown(Asciir::Key::S) || Asciir::Input::isKeyDown(Asciir::Key::DOWN))
@@ -26,7 +28,7 @@ class ExampleLayer : public Asciir::Layer
 		if (Asciir::Input::isKeyDown(Asciir::Key::D) || Asciir::Input::isKeyDown(Asciir::Key::RIGHT))
 			pos.x += delta_time * speed;
 
-		Asciir::Renderer::submitTile(pos, Asciir::Tile(0, { (u_char)rand(), (u_char)rand(), (u_char)rand() }, 219));
+		Asciir::Renderer::submitTile(pos, Asciir::Tile(0, { (u_char)rand(), (u_char)rand(), (u_char)rand() }, 219));*/
 	}
 };
 

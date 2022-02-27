@@ -14,8 +14,8 @@ namespace Asciir
 		: red(r), green(g), blue(b), alpha(a)
 	{}
 
-	Colour::Colour(unsigned char gray, unsigned char a)
-		: red(gray), green(gray), blue(gray), alpha(a)
+	Colour::Colour(unsigned char grey, unsigned char a)
+		: red(grey), green(grey), blue(grey), alpha(a)
 	{}
 
 	Colour::Colour(const Colour& other)
@@ -27,30 +27,17 @@ namespace Asciir
 		return Colour(UCHAR_MAX - red, UCHAR_MAX - green, UCHAR_MAX - blue);
 	}
 
+
 	bool Colour::operator==(const Colour& other) const
 	{
 		return red == other.red && green == other.green && blue == other.blue;
 	}
+
 	bool Colour::operator!=(const Colour& other) const
 	{
 		return !operator==(other);
 	}
-	bool Colour::operator<(const Colour& other) const
-	{
-		return (red + green + blue) / 3 < (other.red + other.green + other.blue) / 3;
-	}
-	bool Colour::operator>(const Colour& other) const
-	{
-		return (red + green + blue) / 3 > (other.red + other.green + other.blue) / 3;
-	}
-	bool Colour::operator<=(const Colour& other) const
-	{
-		return (red + green + blue) / 3 <= (other.red + other.green + other.blue) / 3;
-	}
-	bool Colour::operator>=(const Colour& other) const
-	{
-		return (red + green + blue) / 3 >= (other.red + other.green + other.blue) / 3;
-	}
+
 
 	Colour& Colour::blend(const Colour& other)
 	{
@@ -64,10 +51,10 @@ namespace Asciir
 		return *this;
 	}
 
-	Colour Colour::blend(const Colour& background, const Colour& Colour)
+	Colour Colour::blend(const Colour& background, const Colour& colour)
 	{
 		Colour result = background;
-		result.blend(Colour);
+		result.blend(colour);
 		return result;
 	}
 
@@ -77,9 +64,9 @@ namespace Asciir
 		green = g;
 		blue = b;
 
-		AR_ASSERT_MSG(red < 6, "Red Colour value must be less than 6. value: ", red);
-		AR_ASSERT_MSG(green < 6, "Green Colour value must be less than 6. value: ", green);
-		AR_ASSERT_MSG(blue < 6, "Blue Colour value must be less than 6. value: ", blue);
+		AR_ASSERT_MSG(red < 6, "Red colour value must be less than 6. value: ", red);
+		AR_ASSERT_MSG(green < 6, "Green colour value must be less than 6. value: ", green);
+		AR_ASSERT_MSG(blue < 6, "Blue colour value must be less than 6. value: ", blue);
 	}
 
 	RGB8::RGB8()
@@ -97,19 +84,19 @@ namespace Asciir
 	}
 
 	GRAY8::GRAY8(unsigned char g)
-		: gray(g)
+		: grey(g)
 	{
-		AR_ASSERT_MSG(gray < 24, "Gray value must be less than 24. value: ", gray);
+		AR_ASSERT_MSG(grey < 24, "Gray value must be less than 24. value: ", grey);
 	}
 
 	GRAY8::GRAY8()
-		: gray(0)
+		: grey(0)
 	{}
 
 	Colour GRAY8::getColour()
 	{
-		// converts gray Colour from range (0-23) to an 8 bit value (8-238)
-		return 8 + gray * 10;
+		// converts grey colour from range (0-23) to an 8 bit value (8-238)
+		return 8 + grey * 10;
 	}
 
 	GRAY8::operator Colour()
@@ -125,7 +112,7 @@ namespace Asciir
 		: red(r), green(g), blue(b), intensity(i)
 	{}
 
-	// determine the RGB values of 4 bit Colour system. The Colours are platform dependent
+	// determine the RGB values of 4 bit colour system. The colours are platform dependent
 	Colour RGB4::getColour()
 	{
 		switch (BIT_SHL(0, red) | BIT_SHL(1, green) | BIT_SHL(2, blue) | BIT_SHL(intensity, 3))
@@ -187,9 +174,9 @@ namespace Asciir
 
 	AsciiAttr::~AsciiAttr() {}
 
-	void AsciiAttr::setForeground(const Colour& Colour)
+	void AsciiAttr::setForeground(const Colour& colour)
 	{
-		m_foreground = Colour;
+		m_foreground = colour;
 	}
 
 	Colour AsciiAttr::getForeground()
@@ -197,9 +184,9 @@ namespace Asciir
 		return m_foreground;
 	}
 
-	void AsciiAttr::setBackground(const Colour& Colour)
+	void AsciiAttr::setBackground(const Colour& colour)
 	{
-		m_background = Colour;
+		m_background = colour;
 	}
 
 	Colour AsciiAttr::getBackground()

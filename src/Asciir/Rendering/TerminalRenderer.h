@@ -78,12 +78,12 @@ namespace Asciir
 	struct Tile
 	{
 		UTF8Char symbol = ' ';
-		Colour Colour = WHITE8;
-		Colour background_Colour = BLACK8;
+		Colour colour = WHITE8;
+		Colour background_colour = BLACK8;
 		bool is_empty = true;
 
-		Tile(Colour background_Colour = BLACK8, Colour Colour = WHITE8, UTF8Char symbol = ' ')
-			: symbol(symbol), Colour(Colour), background_Colour(background_Colour), is_empty(false) {}
+		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ')
+			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(false) {}
 
 		static Tile emptyTile()
 		{
@@ -95,7 +95,7 @@ namespace Asciir
 		bool operator==(const Tile& other) const
 		{
 			if (!is_empty && !other.is_empty)
-				return background_Colour == other.background_Colour && Colour == other.Colour && symbol == other.symbol;
+				return background_colour == other.background_colour && colour == other.colour && symbol == other.symbol;
 			else
 				return false;
 		}
@@ -108,14 +108,14 @@ namespace Asciir
 				return false;
 		}
 
-		// blends the foreground and background Colour
+		// blends the foreground and background colour
 		// the symbol is overwritten by the other tiles symbol, unless the symbol value is NULL ('\0')
 		Tile& blend(const Tile& other)
 		{
 			if (other.symbol != '\0') symbol = other.symbol;
-			// TODO should background Colour be blended here aswell?
-			Colour.blend(other.Colour);
-			background_Colour.blend(other.background_Colour);
+			// TODO should background colour be blended here aswell?
+			colour.blend(other.colour);
+			background_colour.blend(other.background_colour);
 
 			return *this;
 		}
@@ -161,9 +161,9 @@ namespace Asciir
 	public:
 		TerminalRenderer(const TerminalProps& term_props);
 
-		void Colour(Colour Colour);
-		void backgroundColour(Colour Colour);
-		void symbol(char symbol);
+		void setColour(Colour colour);
+		void setBackgroundColour(Colour colour);
+		void setSymbol(char symbol);
 
 		void drawVertices(const TermVerts& vertices, DrawMode mode = DrawMode::Line);
 		void drawLine(const TermVert& a, const TermVert& b);

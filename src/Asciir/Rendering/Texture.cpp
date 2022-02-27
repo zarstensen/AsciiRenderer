@@ -107,9 +107,9 @@ namespace Asciir
 				texture_in.read((char*)elem.symbol, 1);
 				texture_in.read((char*)elem.symbol + 1, U8CharSize(elem.symbol) - 1);
 
-				texture_in.read((char*)&elem.Colour, sizeof(elem.Colour));
+				texture_in.read((char*)&elem.colour, sizeof(elem.colour));
 
-				texture_in.read((char*)&elem.background_Colour, sizeof(elem.background_Colour));
+				texture_in.read((char*)&elem.background_colour, sizeof(elem.background_colour));
 			}
 		}
 		else

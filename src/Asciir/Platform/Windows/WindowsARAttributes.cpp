@@ -48,9 +48,9 @@ namespace Asciir
 
 		// 2 bytes for the escape sequence start
 		// 1 byte for the reset attribute
-		// 5 bytes for the set Colour code ';38/48;5'
+		// 5 bytes for the set colour code ';38/48;5'
 		// 4 bytes for a single channel 'xxx;' multiply by 3, as there are 3 channels (rgb)
-		// sets both foreground and background Colour
+		// sets both foreground and background colour
 		size_t size = 2 + 1 + (5 + 4 * 3) * 2;
 
 		for (size_t i = 1; i < 5; i++)
@@ -100,7 +100,7 @@ namespace Asciir
 		// colour string buffer
 		char colour_buffer[4];
 
-		// foreground Colour
+		// foreground colour
 
 		if (attributes[BOLD])
 		{
@@ -137,7 +137,7 @@ namespace Asciir
 			dst += ";";
 		}
 
-		// background Colour
+		// background colour
 		dst += "48;2;";
 		fixedToString<3>(m_background.red, colour_buffer);
 		dst += colour_buffer;
@@ -205,8 +205,8 @@ namespace Asciir
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
 			stream << ";29";
 
-		// foreground Colour
-		// background Colour needs to be updated if the foreground Colour is changed
+		// foreground colour
+		// background colour needs to be updated if the foreground colour is changed
 		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
 		{
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
@@ -249,7 +249,7 @@ namespace Asciir
 		}
 		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
-			// only background Colour
+			// only background colour
 			stream << ";48;2;";
 			stream << std::to_string(m_background.red);
 			stream << ';';
@@ -324,8 +324,8 @@ namespace Asciir
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
 			dst.pushBuffer(";29");
 
-		// foreground Colour
-		// background Colour needs to be updated if the foreground Colour is changed
+		// foreground colour
+		// background colour needs to be updated if the foreground colour is changed
 		if (attributes[BOLD] && ((!last_attributes[BOLD] || m_foreground != m_last_foreground) || m_cleared || is_newline))
 		{
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
@@ -380,7 +380,7 @@ namespace Asciir
 		}
 		else if (m_background != m_last_background || m_cleared || is_newline)
 		{
-			// only background Colour
+			// only background colour
 			dst.pushBuffer(";48;2;");
 			fixedToString<3>(m_background.red, colour_buffer);
 			dst.pushBuffer(colour_buffer);
