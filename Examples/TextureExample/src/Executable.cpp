@@ -44,6 +44,7 @@ class TextureLayer : public Asciir::Layer
 
 	void onUpdate(DeltaTime delta_time) final
 	{
+		Renderer::clear();
 		Transform texture_t;
 		texture_t.setPos({ 10, 10 });
 		texture_t.setScale({ 1, 1 });

@@ -39,6 +39,8 @@ namespace Asciir
 
 		m_last_frame_start = m_app_start;
 
+		m_terminal_renderer.update();
+
 		m_render_thread.start();
 
 		// start the main loop
@@ -105,6 +107,8 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushLayer(layer);
 		layer->onAdd();
+
+		m_terminal_renderer.update();
 	}
 
 	void ARApp::popLayer(Layer* layer)
@@ -119,6 +123,8 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushOverlay(overlay);
 		overlay->onAdd();
+
+		m_terminal_renderer.update();
 	}
 
 	void ARApp::popOverlay(Layer* overlay)
