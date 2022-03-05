@@ -22,7 +22,8 @@ namespace Asciir
 
 	Real ceil(Real val, Real base)
 	{
-		return val - fmod(val, base) + base;
+		Real frac = fmod(val, base);
+		return val - frac + (frac == 0) ? 0 : base;
 	}
 
 	Coord ceil(const Coord& coord, Real base)
