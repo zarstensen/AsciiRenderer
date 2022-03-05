@@ -58,15 +58,15 @@ namespace Asciir
 
 	protected:
 
-		template<typename ... Args>
+		template<typename ... OArgs>
 		struct are_unique;
 
 		// check if all variadic arguments are of a unique type
-		template<typename TA, typename TB, typename ... Args>
-		struct are_unique<TA, TB, Args...>
+		template<typename TA, typename TB, typename ... OArgs>
+		struct are_unique<TA, TB, OArgs...>
 		{
 			//                            match TA and TB              match TA with the rest            match TB with the rest
-			static constexpr bool value = are_unique<TA, TB>::value && are_unique<TA, Args...>::value && are_unique<TB, Args...>::value;
+			static constexpr bool value = are_unique<TA, TB>::value && are_unique<TA, OArgs...>::value && are_unique<TB, OArgs...>::value;
 		};
 
 		template<typename TA, typename TB>

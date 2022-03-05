@@ -6,7 +6,7 @@ namespace Asciir
     Coord Quad::centrePoint(const Transform& transform) const
     {
         // simply get the centre of the quad as if it was not transformed, and then reverse the transformation to the resulting point.
-        return transform.applyTransform((size - offset) / 2);
+        return transform.applyTransform(offset + (size) / 2);
     }
 
     bool Quad::isInside(Coord coord, const Transform& transform) const

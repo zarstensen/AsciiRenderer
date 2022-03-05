@@ -243,12 +243,12 @@ namespace Asciir
 	};
 
 	/// @see is_vert
-	template<typename T, size_t d, typename TTest, template<typename T, size_t, typename> class TVert>
+	template<typename T, size_t d, typename TTest, template<typename, size_t, typename> class TVert>
 	struct is_vert<TVert<T, d, TTest>, std::enable_if_t<std::is_same_v<TVert<T, d, TTest>, arVertex<T, d>>>>
 	{
 		static constexpr bool value = true;
 	};
-
+	
 	/// @brief compile time check if passed type is a vertices type
 	template<typename T>
 	struct is_vertices

@@ -9,37 +9,77 @@
 
 namespace Asciir
 {
+	/// @brief the static class responsible for recieving renderable data structures, managing them, rendering them and supplying the rendered data to the TerminalRenderer instance.
+	/// 
+	/// list of renderable datastructures are:
+	/// Tile
+	/// Shader2D
+	/// Mesh
+	///	
+	/// these datastructures can be submitted through various submit functions
+	/// @see submitMesh(), submitShader(), submitTile(), submitToQueue()
+	///
+	/// the datastructures will not be rendered as soon as they are submitted, but only once onUpdate() has returned.
+	///
+	/// the last rendered frame can be accessed through viewTile().
+	///
+	///	implementation details:
+	/// 
+	/// the last rendered frame is stored seperatly from the TerminalRenderer,
+	/// instead of using the already supplied previous rendererd frame, as this frame is not guaranteed to have the correct information.
+	///
+	/// for example: if the terminal is resized, the last frame will be cleared, whereas the Renderer last frame will be preserved.
+	///
 	class Renderer
 	{
 		friend ARApp;
 	public:
+
+		/// @brief structure containing information for rendering a Mesh instance
+		/// @note this structure should only be instantiated by the Renderer itself, and a workflow where this is instantiated manually should be avoided
 		struct MeshData
 		{
+			/// @brief a referene to the mesh that should be rendered
 			Ref<Mesh> mesh;
+			/// @brief the tile the rendered mesh should be drawn with
 			Tile tile;
+			/// @brief the transformation the mesh should have.
 			Transform transform;
 		};
 
+		/// @brief structure containing information for rendering a Shader
+		/// @note this structure should only be instantiated by the Renderer itself, and a workflow where this is instantiated manually should be avoided
 		struct ShaderData
 		{
+			/// @brief a reference to the shader that should be rendered
 			Ref<Shader2D> shader;
+			/// @brief the transform the shader should have
 			Transform transform;
 		};
 
+		/// @brief structure containing information for rendering a single pixel / tile on the terminal
+		/// @note this structure should only be instantiated by the Renderer itself, and a workflow where this is instantiated manually should be avoided
 		struct TileData
 		{
-			TermVert pos;
+			/// @brief the tile that should be rendered
 			Tile tile;
+			/// @brief the position, in the terminal, of the tile
+			TermVert pos;
 		};
 
 		typedef Tile ClearData;
 
-		// mesh data, texture data, point data or clear data
-		typedef std::variant <MeshData, ShaderData, TileData, ClearData> QueueElem;
+		/// @brief the datatype used in the render queue
+		/// mesh data, texture data, point data or clear data
+		typedef std::variant<MeshData, ShaderData, TileData, ClearData> QueueElem;
 
+		/// @brief initialize the renderer.
+		/// setsup all the static references that have been setup before the renderer.
 		static void init();
 
 		// submit functions
+		/// @brief submits the given mesh data to the render queue
+		// TODO: should this be a reference? mesh might be modified whilst the renderer is rendering.
 		static void submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform = NoTransform);
 		static void submitShader(Ref<Shader2D> shader, Transform transform = NoTransform);
 		static void submitTile(TermVert pos, Tile tile);
@@ -68,8 +108,7 @@ namespace Asciir
 
 	protected:
 
-		template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool> = false>
-		static Coords projectCoordsToTerminal(const T& coords);
+		// TODO: is this used?
 
 		// swaps and reallocates queues if necesary
 		static void swapQueues();

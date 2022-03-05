@@ -18,8 +18,9 @@ namespace Asciir
 
 		/// @brief access the shader data from the shader
 		/// @param coord the coordinate of the wanted tile
+		/// @param uv (optional) uv coordinates relative to the size of the shader. Is automaticly calculated if passed throught Renderer::submitShader
 		/// @param time_since_start (optional) time value for the shader function. Is automaticly supplied if passed through Renderer::submitShader
 		/// @param frames_since_start (optional) frame value for the shader function. Is automaticly supplied if passed through Renderer::submitShader
-		virtual Tile readTile(const Size2D& coord, const DeltaTime& time_since_start = 0, const size_t& frames_since_start = 0) const = 0;
+		virtual Tile readTile(const Size2D& coord, Coord uv = Coord(0, 0), const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) const = 0;
 	};
 }

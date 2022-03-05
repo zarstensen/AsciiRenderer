@@ -13,7 +13,7 @@ namespace Asciir
 		m_log_attributes = std::make_unique<UnixARAttr>();
 #endif
 
-		m_log_attributes->setTitle("LogViewer");
+		m_log_attributes->setTitle(std::cout, "LogViewer");
 	}
 
 	LogViewer::~LogViewer()
@@ -25,7 +25,7 @@ namespace Asciir
 	{
 		return m_pos;
 	}
-
+	
 	size_t LogViewer::size()
 	{
 		size_t length = (size_t)std::filesystem::file_size(m_log_dir);

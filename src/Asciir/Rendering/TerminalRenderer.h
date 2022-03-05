@@ -33,7 +33,7 @@ namespace Asciir
 		UTF8Char(const char* c)
 		{
 			AR_ASSERT_MSG(u8Len(c) < 2, "u8 string must only contain one or less characters, found ", u8Len(c));
-			strcpy_s(m_data, c);
+			strcpy(m_data, c);
 		};
 
 		operator const char* () const

@@ -29,7 +29,7 @@ namespace Asciir
 
 	/// @brief colour gradient for 16 bit colour mode
 	constexpr unsigned char CGRADIENT16[] = { 0, 95, 135, 175, 215, 255 };
-
+	
 #ifdef AR_WIN
 
 	static constexpr WORD DEFAULT_FOREGROUND = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;

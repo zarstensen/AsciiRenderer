@@ -37,7 +37,7 @@ namespace Asciir
 			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
 			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
 		}
-
+		
 		top_left_coord = top_left_coord;
 		bottom_right_coord = bottom_right_coord;
 
@@ -97,9 +97,13 @@ namespace Asciir
 			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
 				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
 				{
+					Coord uv = Coord(
+						(bottom_right_coord.x - top_left_coord.x) / x,
+						(bottom_right_coord.y - top_left_coord.y) / y);
+
 					// reverse the transform on the untransformed coordinates and use the new coords to read from the shader
 					// has the same effect as transforming the shader data and reading with the original coordinates
-					s_renderer->setState(data.shader->readTile(data.transform.reverseTransform({ x, y }), time_since_start, frames_since_start));
+					s_renderer->setState(data.shader->readTile(data.transform.reverseTransform({ x, y }), uv, time_since_start, frames_since_start));
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
 				}
 	}
@@ -148,7 +152,7 @@ namespace Asciir
 
 	void Renderer::submitTile(TermVert pos, Tile tile)
 	{
-		submitToQueue(TileData{ pos, tile });
+		submitToQueue(TileData{ tile, pos });
 	}
 
 	void Renderer::submitToQueue(QueueElem new_elem)

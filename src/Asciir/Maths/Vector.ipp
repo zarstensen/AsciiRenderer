@@ -1,5 +1,5 @@
 #include "Vector.h"
-#include "Math.h"
+#include "Maths.h"
 
 namespace Asciir
 {

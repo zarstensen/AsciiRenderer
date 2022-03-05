@@ -32,9 +32,10 @@ namespace Asciir
 
 		/// @brief read a tile from the texture
 		/// @param coord the coordinate of the wanted tile
+		/// @param uv *reserved*
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		Tile readTile(const Size2D& coord, const DeltaTime& dt = 0, const size_t& df = 0) const override;
+		Tile readTile(const Size2D& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) const override;
 		
 		/// @return the size of the texture 
 		Size2D size() const override;
@@ -74,17 +75,13 @@ namespace Asciir
 	typedef std::filesystem::path Path;
 
 	// stores data from a .cart (compact asciir Texture) file
-	// TODO: should inherit from Texture2D
-	class FileTexture : public Shader2D
+	class FileTexture : public Texture2D
 	{
 	public:
 		FileTexture() = default;
 		FileTexture(const Path& file_dir) { load(file_dir); };
 
 		~FileTexture() final override { if (loaded()) unload(); }
-
-		Size2D size() const final override { return m_size; }
-		Tile readTile(const Size2D& coord, const DeltaTime&, const size_t&) const final override { return m_data(coord); }
 
 		void load(const Path& dir);
 		void unload();
@@ -97,10 +94,6 @@ namespace Asciir
 
 	protected:
 		Path m_file_dir;
-
-		Size2D m_size;
-
-		arMatrix<Tile> m_data;
 
 		bool m_is_loaded = false;
 	};

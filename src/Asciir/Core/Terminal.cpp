@@ -11,11 +11,7 @@ namespace Asciir
 {
 	TerminalEventHandler::TerminalEventHandler()
 	{
-#ifdef AR_WIN
 		m_event_listener = new EventListener();
-#elif defined(AR_LINUX)
-#error Events Not Implemented Yet
-#endif
 	}
 
 	TerminalEventHandler::~TerminalEventHandler()
