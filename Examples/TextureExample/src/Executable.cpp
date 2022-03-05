@@ -1,6 +1,7 @@
 ﻿#include <Asciir.h>
 
 using namespace Asciir;
+using namespace AsciirLiterals;
 
 class TileShader : public Shader2D
 {
@@ -10,29 +11,76 @@ class TileShader : public Shader2D
 		return Renderer::size();
 	}
 
-	Tile readTile(const Size2D& coord, const DeltaTime&, const size_t& frame) const final override
+	Tile readTile(const Size2D& coord, Coord, const DeltaTime& t, size_t frame) const final override
 	{
 		/*if((coord.x + coord.y + frame) % 2)
 			return Tile(BLACK8);
 		else
 			return Tile(IWHITE8);*/
 
-		int size = 100;
+		int size = 50;
 
 		Real dst = std::sqrtf(std::pow((int)coord.x - size, 2) + std::pow((int)coord.y * 2 - size, 2));
 
-		if (dst < frame % size)
-			return Tile(Colour((dst / (frame % size)) * 255, (int)((dst / (frame % size)) * 500) % 255, (int)((dst / (frame % size)) * 100) % 255));
-		else
-			return Tile(BLACK8);
+		int circle_exp = (int)(t.seconds() * 5) % size;
 
+		if (dst < circle_exp)
+			return Tile(Colour((dst / (circle_exp)) * 255, (int)((dst / (circle_exp)) * 500) % 255, (int)((dst / (circle_exp)) * 100) % 255));
+		else
+		{
+			Quad square(Asciir::Coord(30, 30), Asciir::Coord(100, 10));
+			Transform trans;
+
+			trans.setRotation(t / 10000_R);
+			trans.setOrigin(square.centrePoint());
+
+			if(square.isInside(coord, trans))
+				return IRED8;
+			return BLACK8;
+		}
+
+	}
+};
+
+
+
+class Mandelbrod : public Shader2D
+{
+	Size2D size() const final
+	{
+		return Size2D(300, 300);
+	}
+
+	Coord squareImaginary(Coord number) const {
+		return Coord(
+			std::pow(number.x, 2) - std::pow(number.y, 2),
+			2 * number.x * number.y
+		);
+	}
+
+	Tile readTile(const Size2D& coord, Coord uv, const DeltaTime&, size_t) const final
+	{
+		Coord z = Coord(0,0);
+
+		size_t maxIterations = 100;
+
+		for(size_t i = 0; i < maxIterations; i++){
+			z = squareImaginary(z) + uv;
+			if(z.norm() > 2)
+			{
+				Colour col = Colour(((Real)i / (Real)maxIterations) * 255);
+				return Tile(col);
+			}
+		}
+
+		return Colour(255);
 	}
 };
 
 class TextureLayer : public Asciir::Layer
 {
 	Ref<FileTexture> texture = FileTexture();
-	Ref<TileShader> shader = TileShader();
+	Ref<Shader2D> shader = new TileShader();
 	const Path texture_path = "./test.cart";
 
 	void onAdd() final
@@ -46,9 +94,8 @@ class TextureLayer : public Asciir::Layer
 	{
 		Renderer::clear();
 		Transform texture_t;
-		texture_t.setPos({ 10, 10 });
-		texture_t.setScale({ 1, 1 });
-		texture_t.setOrigin((Coord)texture->size() / 2);
+		// texture_t.setScale({ 1_R/5_R, 1_R/5_R });
+		// texture_t.setOrigin((Coord)texture->size() / 2);
 
 		Renderer::submitShader(shader);
 		//Renderer::submitShader(texture, texture_t);

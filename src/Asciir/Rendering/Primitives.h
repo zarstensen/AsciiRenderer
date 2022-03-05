@@ -20,7 +20,7 @@ namespace Asciir
 		Quad() = default;
 
 		Quad(Coord size, Coord offset = Coord(0, 0))
-			: size(size), offset(offset) {}
+			: offset(offset), size(size) {}
 
 
 		/// @brief retrieve the center point of the quad, with the passed transform

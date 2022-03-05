@@ -51,17 +51,18 @@ namespace Asciir
 	TerminalRenderer::TerminalRenderer(const TerminalRenderer::TerminalProps& term_props)
 		: m_title(term_props.title)
 	{
+
 #ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
-#elif defined AR_UNIX
-		m_attr_handler = std::make_shared(WinArAttr());
+#elif defined(AR_UNIX)
+		m_attr_handler = std::make_shared<UnixARAttr>();
 #endif
 
 		m_buffer.reserve(term_props.buffer_size);
 
 		if(term_props.size != TermVert(0, 0))
 			resize(term_props.size);
-		
+
 		update();
 	}
 
@@ -270,6 +271,7 @@ namespace Asciir
 		TRUpdateInfo r_info;
 
 		TermVert size = m_attr_handler->terminalSize();
+
 		Coord pos = m_attr_handler->terminalPos();
 
 		// \x1b[?25l = hide cursor
@@ -305,7 +307,7 @@ namespace Asciir
 
 		if (m_should_rename)
 		{
-			m_attr_handler->setTitle(m_title);
+			m_attr_handler->setTitle(std::cout, m_title);
 			m_should_rename = false;
 			r_info.new_name = true;
 		}
@@ -353,7 +355,7 @@ namespace Asciir
 				pushBuffer('\n');
 		}
 
-		m_attr_handler->move({ drawSize().x - 1, drawSize().y - 1 });
+		m_attr_handler->move(TermVert(drawSize().x - 1, drawSize().y - 1));
 		m_attr_handler->moveCode(*this);
 
 		flushBuffer();

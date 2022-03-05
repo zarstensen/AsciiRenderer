@@ -23,7 +23,7 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 
-#include "ASciir/Entities/ECS.h"
+#include "Asciir/Entities/ECS.h"
 
 #include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
@@ -37,6 +37,7 @@
 #include "Asciir/Rendering/RenderConsts.h"
 #include "Asciir/Rendering/Renderer.h"
 #include "Asciir/Rendering/Mesh.h"
+#include "Asciir/Rendering/Primitives.h"
 #include "Asciir/Rendering/Texture.h"
 
 #include "Asciir/Core/AsciirLiterals.h"

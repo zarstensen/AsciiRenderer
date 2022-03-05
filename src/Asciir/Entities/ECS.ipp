@@ -136,7 +136,7 @@ namespace Asciir
 
 		if constexpr (std::tuple_size_v<TBlueprint::CompList> > 0)
 		{
-			const TBlueprint::CompList& component_list = entity_blueprint.getComponentValues();
+			const typename TBlueprint::CompList& component_list = entity_blueprint.getComponentValues();
 			readBlueprint<0>(new_entity, component_list);
 		}
 
@@ -209,7 +209,7 @@ namespace Asciir
 	template<typename TComp, enable_if_component<TComp>>
 	TComp& Scene::getComponentIndexed(size_t index)
 	{
-		return getCOmponentIndexed(typeid(TComp), index);
+		return getComponentIndexed(index, typeid(TComp));
 	}
 
 	template<typename ...Args, std::enable_if_t<(sizeof...(Args) > 1), bool>>

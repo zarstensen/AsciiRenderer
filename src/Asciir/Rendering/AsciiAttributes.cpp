@@ -43,10 +43,10 @@ namespace Asciir
 	{
 		Real foreground_alpha = (Real)other.alpha / UCHAR_MAX;
 
-		red = unsigned char(foreground_alpha * other.red + (1 - foreground_alpha) * (Real)red);
-		green = unsigned char(foreground_alpha * other.green + (1 - foreground_alpha) * (Real)green);
-		blue = unsigned char(foreground_alpha * other.blue + (1 - foreground_alpha) * (Real)blue);
-		alpha = unsigned char(alpha + (1 - (Real)alpha / UCHAR_MAX) * foreground_alpha);
+		red = (unsigned char)(foreground_alpha * other.red + (1 - foreground_alpha) * (Real)red);
+		green = (unsigned char)(foreground_alpha * other.green + (1 - foreground_alpha) * (Real)green);
+		blue = (unsigned char)(foreground_alpha * other.blue + (1 - foreground_alpha) * (Real)blue);
+		alpha = (unsigned char)(alpha + (1 - (Real)alpha / UCHAR_MAX) * foreground_alpha);
 
 		return *this;
 	}
@@ -59,15 +59,17 @@ namespace Asciir
 	}
 
 	RGB8::RGB8(unsigned char r, unsigned char g, unsigned char b)
+		: red(r), green(g), blue(b)
 	{
-		red = r;
-		green = g;
-		blue = b;
-
 		AR_ASSERT_MSG(red < 6, "Red colour value must be less than 6. value: ", red);
 		AR_ASSERT_MSG(green < 6, "Green colour value must be less than 6. value: ", green);
 		AR_ASSERT_MSG(blue < 6, "Blue colour value must be less than 6. value: ", blue);
 	}
+
+	// TODO: double check this actually works.
+	RGB8::RGB8(const Colour& colour)
+		: red((colour.red * 6) / 255), green((colour.green * 6) / 255), blue((colour.blue * 6) / 255)
+	{}
 
 	RGB8::RGB8()
 		: red(0), green(0), blue(0)
@@ -81,6 +83,11 @@ namespace Asciir
 	RGB8::operator Colour()
 	{
 		return getColour();
+	}
+	
+	unsigned int RGB8::getIndx()
+	{
+		return blue + (green + red * 6) * 6;
 	}
 
 	GRAY8::GRAY8(unsigned char g)
@@ -289,9 +296,9 @@ namespace Asciir
 		}
 	}
 
-	void AsciiAttr::setTitle(const std::string& name)
+	void AsciiAttr::setTitle(std::ostream& stream, const std::string& name)
 	{
-		std::cout << AR_ANSIS_OSC << "0;" << name << '\a';
+		stream << AR_ANSIS_OSC << "0;" << name << '\a';
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const Colour& c)

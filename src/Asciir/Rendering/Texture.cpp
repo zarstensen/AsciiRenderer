@@ -11,8 +11,8 @@ namespace Asciir
 		m_texture.fill(new_tile);
 	}
 
-	// dt and df is never used here
-	Tile Texture2D::readTile(const Size2D& coord, const DeltaTime&, const size_t&) const
+	// uv, dt, and df is never used here
+	Tile Texture2D::readTile(const Size2D& coord, Coord, const DeltaTime&, size_t) const
 	{
 		return m_texture(coord);
 	}
@@ -94,22 +94,28 @@ namespace Asciir
 
 			// load the size into memory
 
-			texture_in.read((char*)&m_size.x, sizeof(m_size.x));
-			texture_in.read((char*)&m_size.y, sizeof(m_size.y));
+			size_t width;
+			size_t height;
+
+			texture_in.read((char*)&width, sizeof(size_t));
+			texture_in.read((char*)&height, sizeof(size_t));
 
 			// allocate memory for the texture
 
-			m_data.resize(m_size);
+			resize({width, height});
 
 			// load texture into memory
-			for (Tile& elem : m_data.reshaped())
+			for (auto& elem : m_texture.reshaped())
 			{
-				texture_in.read((char*)elem.symbol, 1);
-				texture_in.read((char*)elem.symbol + 1, U8CharSize(elem.symbol) - 1);
+				Tile tile_in;
+				texture_in.read((char*)tile_in.symbol, 1);
+				texture_in.read((char*)tile_in.symbol + 1, U8CharSize(tile_in.symbol) - 1);
 
-				texture_in.read((char*)&elem.colour, sizeof(elem.colour));
+				texture_in.read((char*)&tile_in.colour, sizeof(elem.colour));
 
-				texture_in.read((char*)&elem.background_colour, sizeof(elem.background_colour));
+				texture_in.read((char*)&tile_in.background_colour, sizeof(tile_in.background_colour));
+
+				elem = tile_in;
 			}
 		}
 		else
@@ -124,8 +130,7 @@ namespace Asciir
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
 		m_is_loaded = false;
 
-		m_data.resize({ 0, 0 });
-		m_size = { 0, 0 };
+		resize({ 0, 0 });
 	}
 
 	void FileTexture::reload()

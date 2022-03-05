@@ -2,7 +2,7 @@
 #include "UnixARAttributes.h"
 #include "Asciir/Rendering/AsciiAttributes.h"
 #include "Asciir/Rendering/RenderConsts.h"
-#include "Asciir/Rendering/TerminalRender.h"
+#include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Logging/Log.h"
 
 namespace Asciir
@@ -12,19 +12,24 @@ namespace Asciir
 		// X11 initialization
 
 		m_display = XOpenDisplay(NULL);
+
 		m_window = DefaultRootWindow(m_display);
 		int revert;
 
 		XGetInputFocus(m_display, &m_focus_win, &revert);
+
 		XSelectInput(m_display, m_focus_win, KeyPressMask | KeyReleaseMask | FocusChangeMask);
 
 		// disable echo
+
+		/*
 		termios term;
 		tcgetattr(STDIN_FILENO, &term);
 		term.c_lflag |= ~ECHO;
 		tcsetattr(STDIN_FILENO, TCSANOW, &term);
+		*/
 
-		clearColor();
+		clearColour();
 	}
 
 	UnixARAttr::~UnixARAttr()
@@ -223,7 +228,7 @@ namespace Asciir
 		m_cleared = false;
 	}
 
-	void UnixARAttr::ansiCode(TerminalRender& dst, bool is_newline)
+	void UnixARAttr::ansiCode(TerminalRenderer& dst, bool is_newline)
 	{
 		// if nothing has changed do not modify the stream
 		bool has_changed = false;
@@ -287,9 +292,9 @@ namespace Asciir
 
 			dst.pushBuffer(";38;2;");
 			dst.pushBuffer(std::to_string(red));
-			dst.pushBuffer(';');
+			dst.pushBuffer(";");
 			dst.pushBuffer(std::to_string(green));
-			dst.pushBuffer(';');
+			dst.pushBuffer(";");
 			dst.pushBuffer(std::to_string(blue));
 
 			dst.pushBuffer(";48;2;");
@@ -303,11 +308,11 @@ namespace Asciir
 		{
 			dst.pushBuffer(";38;2;");
 			dst.pushBuffer(std::to_string(m_foreground.red));
-			dst.pushBuffer(';');
+			dst.pushBuffer(";");
 			dst.pushBuffer(std::to_string(m_foreground.green));
-			dst.pushBuffer(';');
+			dst.pushBuffer(";");
 			dst.pushBuffer(std::to_string(m_foreground.blue));
-
+			
 			dst.pushBuffer(";48;2;");
 			dst.pushBuffer(std::to_string(m_background.red));
 			dst.pushBuffer(';');
@@ -336,20 +341,32 @@ namespace Asciir
 
 	Coord UnixARAttr::terminalPos() const
 	{
-		Coord pos;
-		XWindowAttributes win_info;
+		// Coord pos;
+		// XWindowAttributes win_info;
 
-		XGetWindowAttributes(m_display, m_window, &win_info);
+		// XGetWindowAttributes(m_display, m_window, &win_info);
 
-		return { win_info.x, win_info.y };
+		// return Coord(win_info.x, win_info.y);
+		return Coord();
 	}
+
+	//TODO: Very temprorary implementation
+
+	#include <fcntl.h> 
+	#include <string.h>
+	#include <errno.h>
 
 	TermVert UnixARAttr::terminalSize() const
 	{
 		winsize size;
 
-		ioctl(STDOUT_FILENO, TIOCGWINSZ, &size);
+		int result = ioctl(0, TIOCGWINSZ, &size);
+
+		AR_INFO(size.ws_col, size.ws_row);
 		
+		size.ws_col = 178;
+		size.ws_row = 47;
+
 		return TermVert(size.ws_col, size.ws_row);
 	}
 

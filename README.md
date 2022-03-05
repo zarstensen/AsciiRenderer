@@ -1,3 +1,4 @@
+(This readme is massively outdated, will be updated soon...)
 # AsciiRender
 a text / ascii based game engine that uses ansi escape codes and the terminal to render the game.
 Some of the engine is being built with the help of the [game engine tutorial series by The Cherno](https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT).
