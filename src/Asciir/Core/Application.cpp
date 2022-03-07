@@ -15,7 +15,6 @@ namespace Asciir
 	ARApp::ARApp(const std::string& title, TermVert term_size)
 		: m_render_thread(&ARApp::render, this), m_terminal_renderer(TerminalRenderer::TerminalProps(title, term_size))
 	{
-		std::cout << "SetEventCallback\n";
 		m_terminal_evt.setEventCallback(AR_TO_EVENT_CALLBACK(onEvent));
 	}
 

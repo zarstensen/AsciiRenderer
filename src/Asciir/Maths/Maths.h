@@ -19,8 +19,18 @@ namespace Asciir
 
 	// TODO: find a better method of doing this
 	/// @brief compare floats with a margin of error
-	bool fcompare(Real a, Real b, Real margin = 0);
+	bool compareMargin(Real a, Real b, Real margin = 0);
 
+	/// @brief test if two Reals are euqal, taking into account the possible error of floating point values.
+	/// 
+	/// @note this function may be similar to compareMargin, however this is intended to compare two floats and check if they are practicly equal, whereas comapre margin is intended to check wether two floats are within a fixed margin.
+	/// 
+	/// 
+	/// @param a first float to compare
+	/// @param b second float to compare
+	/// @param e the epsilon value for the comparison
+	/// @return wether a and b are equal
+	bool fequal(Real a, Real b, Real e = std::numeric_limits<Real>::epsilon());
 
 	/// @brief round the given real to the nearest value divisible by base.  
 	///	
