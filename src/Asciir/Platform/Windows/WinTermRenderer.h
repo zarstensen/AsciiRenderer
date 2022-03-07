@@ -16,13 +16,13 @@ namespace TRInterface
 		/// @brief reverts the console to before WinTerminalRenderer was instansiated
 		~WinTerminalRenderer();
 
-		/// @see TerminalRendererInterface::termSize();
+		/// @see TerminalRendererInterface::termSize()
 		TermVert termSize() const;
-		/// @see TerminalRendererInterface::maxSize();
+		/// @see TerminalRendererInterface::maxSize()
 		TermVert maxSize() const;
-		/// @see TerminalRendererInterface::pos();
+		/// @see TerminalRendererInterface::pos()
 		Coord pos() const;
-		/// @see TerminalRendererInterface::fontSize();
+		/// @see TerminalRendererInterface::fontSize()
 		Size2D fontSize() const;
 
 	protected:

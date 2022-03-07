@@ -143,8 +143,6 @@ namespace Asciir
 
 	
 
-	class TerminalRenderer;
-
 	/// @brief class for storing and modifying the ansi attributes of an ascii character
 	/// 
 	/// also generates the corresponding ansi code that should be printed to the terminal in order to apply the attributes
@@ -169,7 +167,7 @@ namespace Asciir
 		Colour m_last_background;
 
 		// used for calculating the only needed modifications to the next ansi code
-		std::array<bool, ATTR_COUNT> last_attributes;
+		std::array<bool, ATTR_COUNT> last_attributes = { false };
 
 		TermVert m_pos;
 
@@ -178,7 +176,7 @@ namespace Asciir
 
 	public:
 		/// @brief list of the attributes to be set / cleared on the next ansiCode() call.
-		std::array<bool, ATTR_COUNT> attributes;
+		std::array<bool, ATTR_COUNT> attributes = { false };
 
 		AsciiAttr() = default;
 		virtual ~AsciiAttr();
@@ -228,9 +226,6 @@ namespace Asciir
 		/// @param is_newline should be set to true if the stream has recieved a newline since the last call to ansiCode(std::ostream&, bool).
 		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
 
-		// TODO: no reason to have this here, just make sure terminal renderer has a stream output class.
-		virtual void ansiCode(TerminalRenderer& dst, bool is_newline = false) = 0;
-
 		/// @brief generates the ansi code that will move to the coord specified in move()
 		/// @param dst the string that will recieve the move code
 		void moveCode(std::string& dst);
@@ -238,20 +233,9 @@ namespace Asciir
 		/// @brief the ostream that will recieve the move code
 		void moveCode(std::ostream& stream);
 
-		// TODO. same as ansiCode(TerminalRenderer)
-		void moveCode(TerminalRenderer& dst);
-
 
 		/// @brief genereates the ansi coe that will change the name of the active console to the passed name, and puts it in to the specified stream.
 		void setTitle(std::ostream& stream, const std::string& name);
-
-		//TODO: these should be in the TerminalRenderer class instead.
-		virtual Coord terminalPos() const = 0;
-		virtual TermVert terminalSize() const = 0;
-		virtual TermVert maxTerminalSize() const = 0;
-
-		/// @brief gives the current size of a character in the terminal, resul is in (pixels x, pixels y)
-		virtual Size2D fontSize() const = 0;
 	};
 
 	/// @brief same as other.ansiCode(stream)

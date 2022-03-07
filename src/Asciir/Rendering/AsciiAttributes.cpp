@@ -274,6 +274,7 @@ namespace Asciir
 		}
 	}
 
+
 	void AsciiAttr::moveCode(std::ostream& stream)
 	{
 		if (m_should_move)
@@ -285,16 +286,6 @@ namespace Asciir
 		}
 	}
 
-	void AsciiAttr::moveCode(TerminalRenderer& dst)
-	{
-		if (m_should_move)
-		{
-			dst.pushBuffer(AR_ANSIS_CSI);
-			dst.pushBuffer(std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H');
-
-			m_should_move = false;
-		}
-	}
 
 	void AsciiAttr::setTitle(std::ostream& stream, const std::string& name)
 	{

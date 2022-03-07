@@ -289,8 +289,8 @@ namespace Asciir
 			};
 
 		public:
-			/// @brief sets up the terminal and TerminalRenderer with the specified terminal properties
-			TerminalRendererInterface(const TerminalProps& term_props);
+
+			TerminalRendererInterface() = delete;
 
 			/// @brief set the foregound colour of the currently active state tile
 			void setColour(Colour colour);
@@ -347,8 +347,8 @@ namespace Asciir
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
 			AR_INT_FUNC_R(TermVert termSize() const, {})
-				/// @brief get the size where the TerminalRenderer is able to draw.
-				TermVert drawSize() const;
+			/// @brief get the size where the TerminalRenderer is able to draw.
+			TermVert drawSize() const;
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
 			AR_INT_FUNC_R(TermVert maxSize() const, {})
 
@@ -377,6 +377,9 @@ namespace Asciir
 			std::array<bool, ATTR_COUNT>& attributes();
 
 		protected:
+			/// @brief sets up the terminal and TerminalRenderer with the specified terminal properties
+			TerminalRendererInterface(const TerminalProps& term_props);
+
 			/// @brief initializes the renderer by loading the terminal properties passed to it as a parameter.
 			/// this function should be used by the interface implementations when the terminal is ready to accept ansi codes,
 			/// as this function makes use of the ansi resize and rename escape sequance

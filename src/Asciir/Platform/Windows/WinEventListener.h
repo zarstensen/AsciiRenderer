@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Input/EventListener.h"
-#include "WindowsArAttributes.h"
+#include "Asciir/Rendering/TerminalRenderer.h"
 
 namespace Asciir
 {
@@ -22,7 +22,7 @@ namespace ELInterface
 		Coord m_last_term_pos = { 0, 0 };
 		TermVert m_last_term_size = { 0, 0 };
 
-		const WinARAttr* m_attr = nullptr;
+		const TerminalRenderer* m_trenderer = nullptr;
 
 		static constexpr size_t BUFF_LEN = 256;
 		INPUT_RECORD m_event_buffer[BUFF_LEN] = { 0 };

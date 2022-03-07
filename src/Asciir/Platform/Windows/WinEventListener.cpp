@@ -30,10 +30,10 @@ namespace ELInterface
 
 	void EventListenerImpl<IMPLS::WIN>::start(EventCallbackFp callback)
 	{
-		m_attr = dynamic_cast<const WinARAttr*>(&ARApp::getApplication()->getTermRenderer().getAttrHandler());
+		m_trenderer = &ARApp::getApplication()->getTermRenderer();
 
-		m_last_term_pos = m_attr->terminalPos();
-		m_last_term_size = m_attr->terminalSize();
+		m_last_term_pos = m_trenderer->pos();
+		m_last_term_size = m_trenderer->termSize();
 
 		m_callback = callback;
 		m_is_listening = true;
@@ -263,7 +263,7 @@ namespace ELInterface
 	{
 		// Resize event
 
-		TermVert new_size = m_attr->terminalSize();
+		TermVert new_size = m_trenderer->termSize();
 
 		if (new_size != m_last_term_size)
 		{
@@ -275,7 +275,7 @@ namespace ELInterface
 
 		// Move event
 
-		Coord new_pos = m_attr->terminalPos();
+		Coord new_pos = m_trenderer->pos();
 
 		if (new_pos != m_last_term_pos)
 		{

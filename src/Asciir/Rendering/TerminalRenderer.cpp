@@ -9,6 +9,11 @@
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
+// cast the TerminalRendererInterface this pointer to the current implementation,
+// allowing access to platform dependent function to be called inside the TerminalRendererInterface class.
+// should only be used inside the TerminalRendererInterface class
+#define AR_IMPL(obj) (*((TerminalRenderer*)obj))
+
 namespace Asciir
 {
 	size_t U8CharSize(const char* u8_str)
@@ -55,6 +60,7 @@ namespace TRInterface
 
 	#ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
+		AR_IMPL(this).update();
 	#elif defined(AR_UNIX)
 		m_attr_handler = std::make_shared<UnixARAttr>();
 	#endif
@@ -62,7 +68,6 @@ namespace TRInterface
 		if (term_props.size != TermVert(0, 0))
 			resize(term_props.size);
 
-		update();
 	}
 
 	void TerminalRendererInterface::setColour(Colour colour)
@@ -264,9 +269,8 @@ namespace TRInterface
 	{
 		TRUpdateInfo r_info;
 
-		TermVert size = m_attr_handler->terminalSize();
-
-		Coord pos = m_attr_handler->terminalPos();
+		TermVert size = AR_IMPL(this).termSize();
+		Coord position = AR_IMPL(this).pos();
 
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
@@ -293,9 +297,9 @@ namespace TRInterface
 			r_info.new_size = true;
 		}
 
-		if (m_pos != pos)
+		if (m_pos != position)
 		{
-			m_pos = pos;
+			m_pos = position;
 			r_info.new_pos = true;
 		}
 
