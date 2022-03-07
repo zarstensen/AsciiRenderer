@@ -7,25 +7,55 @@ namespace Asciir
 {
 	// struct containing transform data for a mesh
 	// TODO: reimplement transformation to only have one transformation matrix, and instead calculate it only when neccessarry, and reuse when possible.
+
+	/// @brief structure representing transformation data.
+	/// 
+	/// use setOrigin(), setPos(), setScale() and setRotation(), then the Transform structure itself will automaticly calculate the appropiate transformation matrix for the given values.
+	/// 
+	/// in order to apply the transformation, use applyTransform() and reverseTransform() on a coord;
+	/// 
+	/// implementation details:
+	/// 
+	/// the transformation stores both the transformations themselves as well as the transformation matrix.
+	/// However, the transformation matrix is only calculated if needed, meaning a call to setOrigin for example, will not produce an entirely new transformation matrix.
+	/// it is only on an transformation apply, that the matrix will be calculated.
+	/// optionally, the matrix can also forcibly be calculated using the calcMat method, however this is highly discouraged.
+	/// 
 	struct Transform
 	{
-		Coord applyTransform(const Coord& vec) const;
-		Coord reverseTransform(const Coord& vec) const;
+		Coord applyTransform(Coord vec);
+		Coord reverseTransform(Coord vec);
 
-		// only set if used ???
-		void setOrigin(Coord origin) { origin_transform = Eigen::Translation<Real, 2>(origin); }
-		void setPos(Coord pos) { move_transform = Eigen::Translation<Real, 2>(pos); }
-		void setScale(Scale2D scale) { scale_transform = Eigen::DiagonalMatrix<Real, 2>(scale); }
-		void setRotation(Real rotation) { rotation_transform = Eigen::Rotation2D<Real>(rotation).toRotationMatrix(); }
+		/// @brief sets the origin of the transformation matrix.  
+		/// only relevant for the scale and rotation part of the transformation matrix
+		void setOrigin(Coord origin) { if (m_origin != origin) { m_has_mat = false; m_origin = origin; } }
+		void setPos(Coord pos) { if (m_pos != pos) { m_has_mat = false; m_pos = pos; } }
+		void setScale(Scale2D scale) { if (m_scale != scale) { m_has_mat = false; m_scale = scale; } }
+		void setRotation(Real rotation) { if(!fequal(m_rotation, rotation)) { m_has_mat = false; m_rotation = rotation; } }
 
-		Eigen::Translation<Real, 2> origin_transform = Eigen::Translation<Real, 2>();
+		const Coord& getOrigin() { return m_origin; }
+		const Coord& getPos() { return m_pos; }
+		const Scale2D& getScale() { return m_scale; }
+		const Real& getRotation() { return m_rotation; }
 
-		Eigen::Translation<Real, 2> move_transform = Eigen::Translation<Real, 2>();
+		/// @brief calculates and stores the transformation matrix corresponding to the given transforms
+		void calcMat();
 
-		Eigen::DiagonalMatrix<Real, 2> scale_transform = Eigen::DiagonalMatrix<Real, 2>({1, 1});
+	protected:
 
-		Eigen::Matrix<Real, 2, 2> rotation_transform = Eigen::Rotation2D<Real>(0).toRotationMatrix();
+		typedef Eigen::Transform<Real, 2, Eigen::TransformTraits::Projective> TransformMat;
 
+		// the transformation matrix should only have scale (1, 1) and nothing else
+		TransformMat m_transform_matrix = TransformMat(Eigen::Scaling((Real)1));
+		TransformMat m_inv_transform = TransformMat(Eigen::Scaling((Real)1));
+
+		Coord m_origin;
+		Coord m_pos;
+		Scale2D m_scale = Scale2D(1, 1);
+		Real m_rotation = 0;
+
+		// this variable keeps track of wether the current transformation matrix corresponds to the stored attributes.
+		bool m_has_mat = true;
 	};
 
 	static const Transform NoTransform = Transform();
@@ -133,10 +163,12 @@ namespace Asciir
 		/// @brief offset all the vertices in the mesh by *offset*
 		Mesh& offset(Coord offset);
 		/// @brief get the vertex at the given index, using the passed transform.
-		Coord getVertex(size_t index, const Transform& transform = NoTransform) const;
+		Coord getVertex(size_t index, Transform& transform) const;
+		Coord getVertex(size_t index) const { Transform t; return getVertex(index, t); }
 		/// @brief mods the input index by the number of vertices
 		/// @see getVertex()
-		Coord cgetVertex(size_t index, const Transform& transform = NoTransform) const { return getVertex(index % vertCount(), transform); };
+		Coord cgetVertex(size_t index, Transform& transform) const { return getVertex(index % vertCount(), transform); };
+		Coord cgetVertex(size_t index) const { Transform t; return cgetVertex(index, t); };
 
 		/// @brief get the centre vertex / centre point of the mesh
 		Coord getMedianVert() const;
@@ -152,10 +184,12 @@ namespace Asciir
 		/// @see getCorner()
 		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index)); };
 		/// @brief gets the corners vertex
-		Coord getCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(getCorner(face_index, index), transform); }
+		Coord getCornerVert(size_t face_index, size_t index, Transform& transform) const { return getVertex(getCorner(face_index, index), transform); }
+		Coord getCornerVert(size_t face_index, size_t index) const { Transform t;  return getCornerVert(face_index, index, t); }
 		/// @brief mods the input index by the number of corners
 		/// @see getCornerVert()
-		Coord cgetCornerVert(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getVertex(cgetCorner(face_index, index), transform); }
+		Coord cgetCornerVert(size_t face_index, size_t index, Transform& transform) const { return getVertex(cgetCorner(face_index, index), transform); }
+		Coord cgetCornerVert(size_t face_index, size_t index) const { Transform t;  return cgetCornerVert(face_index, index, t); }
 		
 		/// @brief gets the linesegment representing the given face's edge at the given index.
 		/// the index of a face edge is the same as the starting corner of the edge. 
@@ -164,10 +198,12 @@ namespace Asciir
 		/// index 1 will be B and C.
 		/// index 2: C - D.
 		/// index 4: D - A.
-		LineSegment getEdge(size_t face_index, size_t index, const Transform& transform = NoTransform) const;
+		LineSegment getEdge(size_t face_index, size_t index, Transform& transform) const;
+		LineSegment getEdge(size_t face_index, size_t index) const { Transform t; return getEdge(face_index, index, t); }
 		/// @brief mods the index (not the face index) byt the number of corners in the face.
 		/// @see getEdge()
-		LineSegment cgetEdge(size_t face_index, size_t index, const Transform& transform = NoTransform) const { return getEdge(face_index, index % faceCornerCount(face_index), transform); };
+		LineSegment cgetEdge(size_t face_index, size_t index, Transform& transform) const { return getEdge(face_index, index % faceCornerCount(face_index), transform); };
+		LineSegment cgetEdge(size_t face_index, size_t index) const { Transform t; return cgetEdge(face_index, index, t); };
 
 		/// @brief gets the number of corners in a face.
 		size_t faceCornerCount(size_t face_index) const;
@@ -179,10 +215,12 @@ namespace Asciir
 		size_t vertCount() const { return m_vertices.size(); }
 
 		/// @brief determins wether the given coord will be inside the mesh, at the given transform.
-		bool isInside(const Coord& coord, const Transform& transform = NoTransform) const;
+		bool isInside(const Coord& coord, Transform& transform) const;
+		bool isInside(const Coord& coord) const { Transform t; return isInside(coord, t); }
 		/// @brief same as isInside(), except the mesh will be fitted to a grid with the given resolution.  
 		/// @note the fitting is performed **after** the mesh has been transformed.
-		bool isInsideGrid(const Coord& coord, Real resolution, const Transform& transform = NoTransform) const;
+		bool isInsideGrid(const Coord& coord, Real resolution, Transform& transform) const;
+		bool isInsideGrid(const Coord& coord, Real resolution) const { Transform t; return isInsideGrid(coord, resolution, t); }
 
 	protected:
 

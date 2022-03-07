@@ -5,40 +5,57 @@
 
 namespace Asciir
 {
-	Coord Transform::applyTransform(const Coord& vec) const
+	Coord Transform::applyTransform(Coord vec)
 	{
-		// uses Eigen transform matrices to perform the transformation
+		// only use transformation matrix if anything will be changed.
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 0 || m_scale.y != 0 || !fequal(m_rotation, (Real)0))
+		{
+			// only calculate the transformation matrix if it is actually needed
+			if (!m_has_mat)
+				calcMat();
 
-		Eigen::Matrix<Real, 2, 1> transformed_coord = vec;
-		
-		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
+			// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform * origin_transformed;
+			vec -= m_origin;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform * scale_transformed;
+			vec = m_transform_matrix.linear() * vec;
 
-		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform * rotation_transformed;
+			vec += m_origin;
+		}
 
-		Coord result = origin_transform * move_transformed;
-
-		return result;
+		return vec;
 	}
 
-	Coord Transform::reverseTransform(const Coord& vec) const
+	Coord Transform::reverseTransform(Coord vec)
 	{
-		// uses Eigen transform matrices to perform the transformation
+		// only use transformation matrix if anything will be changed.
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 0 || m_scale.y != 0 || !fequal(m_rotation, (Real)0))
+		{
+			// only calculate the transformation matrix if it is actually needed
+			if (!m_has_mat)
+				calcMat();
 
-		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
+			// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform.inverse() * origin_transformed;
+			vec -= m_origin;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform.inverse() * move_transformed;
+			vec = m_inv_transform.linear() * vec;
 
-		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform.inverse() * rotation_transformed;
+			vec += m_origin;
+		}
 
-		Coord result = origin_transform * scale_transformed;
+		return vec;
+	}
 
-		return result;
+	void Transform::calcMat()
+	{
+		m_transform_matrix = TransformMat(Eigen::Scaling(m_scale));
+		m_transform_matrix *= Eigen::Translation<Real, 2>(m_pos);
+		m_transform_matrix *= Eigen::Rotation2D<Real>(m_rotation);
+
+		m_inv_transform = m_transform_matrix.inverse();
+
+		m_has_mat = true;
 	}
 
 	Mesh::Mesh(const Coords& vertices)
@@ -124,7 +141,7 @@ namespace Asciir
 #endif
 	}
 
-	LineSegment Mesh::getEdge(size_t face_index, size_t index, const Transform& transform) const
+	LineSegment Mesh::getEdge(size_t face_index, size_t index, Transform& transform) const
 	{
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
@@ -292,7 +309,7 @@ namespace Asciir
 		return *this;
 	}
 
-	Coord Mesh::getVertex(size_t index, const Transform& transform) const
+	Coord Mesh::getVertex(size_t index, Transform& transform) const
 	{
 		AR_ASSERT_MSG(index < m_vertices.size(), "Index is out of bounds");
 		return transform.applyTransform(m_vertices[index]);
@@ -334,7 +351,7 @@ namespace Asciir
 		return m_faces[firstIndexFromFace(face_index) + index];
 	}
 
-	bool Mesh::isInside(const Coord& coord, const Transform& transform) const
+	bool Mesh::isInside(const Coord& coord, Transform& transform) const
 	{
 		Coord transformed_coord = transform.reverseTransform(coord);
 		Line ray = Line::horzLine(transformed_coord);
@@ -363,7 +380,7 @@ namespace Asciir
 		return winding_number > 0;
 	}
 
-	bool Mesh::isInsideGrid(const Coord& coord, Real resolution, const Transform& transform) const
+	bool Mesh::isInsideGrid(const Coord& coord, Real resolution, Transform& transform) const
 	{
 		Coord transformed_coord = transform.reverseTransform(coord);
 		Coord grid_coord(floor(transformed_coord.x, resolution), ceil(transformed_coord.y, resolution));
@@ -388,7 +405,7 @@ namespace Asciir
 
 					if (intersect.x < raw_ray.offset.x + width / 2)
 						winding_number += edge.direction.y <= 0 ? 1 : -1;
-					else if (intersects && fcompare(intersect.x, raw_ray.offset.x, width))
+					else if (intersects && compareMargin(intersect.x, raw_ray.offset.x, width))
 						winding_number += edge.intersects(transformed_coord, width) * (i > 0 ? -1 : 1);
 				}
 				else if (intersects)
