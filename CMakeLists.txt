@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.0.0)
 Project(Asciir)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_STANDARD 11)
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -274,7 +275,7 @@ if(MSVC)
 
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /external:anglebrackets /external:W0 $<$<CONFIG:DEPLOYREL>:/WX>)
 else()
-    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic ) # -Werror
 endif()
 
 # organize the source files in the generated project
@@ -318,12 +319,12 @@ $<$<BOOL:${ASCIIR_HIGH_PRECISSION_FLOAT}>:AR_HIGH_PRECISSION_FLOAT>)
 # packages
 if(${UNIX})
     find_package(X11 REQUIRED)
-    include_directories(${X11_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${X11_LIBRARIES})
-
+    include_directories(${X11_INCLUDE_DIR})
+    
     find_package(Threads REQUIRED)
     include_directories(${THREADS_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PUBLIC Threads::Threads)
+
+    target_link_libraries(${PROJECT_NAME} Threads::Threads ${X11_LIBRARIES})
 endif()
 
 set_target_properties(${PROJECT_NAME}
