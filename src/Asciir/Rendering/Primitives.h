@@ -24,12 +24,16 @@ namespace Asciir
 
 
 		/// @brief retrieve the center point of the quad, with the passed transform
-		Coord centrePoint(const Transform& transform = NoTransform) const;
+		Coord centrePoint(Transform& transform) const;
+		Coord centrePoint() { Transform t; return centrePoint(t); }
 
 		/// @brief checks if a coordinate is inside the quad with the passed transform applied
-		bool isInside(Coord coord, const Transform& transform = NoTransform) const;
+		bool isInside(Coord coord, Transform& transform) const;
+		bool isInside(Coord coord) { Transform t; return isInside(coord, t); }
+
 		/// @brief checks if a coordinate is inside the quad, fitted within a grid with the given resolution, and with the passed transform applied.
-		bool isInsideGrid(const Coord& boord, Real resolution, const Transform& transform = NoTransform) const;
+		bool isInsideGrid(Coord coord, Transform& transform, Real resolution = 1) const;
+		bool isInsideGrid(Coord coord, Real resolution = 1) const { Transform t; return isInsideGrid(coord, t, resolution); }
 
 		/// @brief get the 4 vertices constructing the quad represented
 		s_arVertices<Real, 2, 4> getVerts()
