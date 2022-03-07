@@ -73,5 +73,10 @@ namespace TRInterface
 
 		return { (size_t)f_info.dwFontSize.X, (size_t)f_info.dwFontSize.Y };
 	}
+
+	bool WinTerminalRenderer::isFocused() const
+	{
+		return GetForegroundWindow() == GetConsoleWindow();
+	}
 }
 }
