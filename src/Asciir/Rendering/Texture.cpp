@@ -12,7 +12,7 @@ namespace Asciir
 	}
 
 	// uv, dt, and df is never used here
-	Tile Texture2D::readTile(const Size2D& coord, Coord, const DeltaTime&, size_t) const
+	Tile Texture2D::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
 	{
 		return m_texture(coord);
 	}
@@ -27,9 +27,9 @@ namespace Asciir
 		m_texture(coord).blend(overlay_tile);
 	}
 
-	Size2D Texture2D::size() const
+	TermVert Texture2D::size() const
 	{
-		return Size2D(m_texture.rows(), m_texture.cols());
+		return TermVert((TInt) m_texture.rows(), (TInt) m_texture.cols());
 	}
 
 	void Texture2D::resize(const Size2D& new_size, RESIZE mode, const Tile& fill_tile)

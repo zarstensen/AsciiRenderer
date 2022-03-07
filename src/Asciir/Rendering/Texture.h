@@ -35,10 +35,10 @@ namespace Asciir
 		/// @param uv *reserved*
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		Tile readTile(const Size2D& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) const override;
+		Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) override;
 		
 		/// @return the size of the texture 
-		Size2D size() const override;
+		TermVert size() const override;
 
 		/// @brief resizes the size of the stored texture
 		/// @param new_size the size the texture should be resized to
