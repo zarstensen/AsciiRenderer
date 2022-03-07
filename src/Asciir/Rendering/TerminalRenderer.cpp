@@ -277,7 +277,6 @@ namespace Asciir
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
 		if (m_should_resize)
-
 		{
 			// reset stored tiles from last update
 			if (drawSize() != size)
@@ -318,8 +317,6 @@ namespace Asciir
 
 	void TerminalRenderer::draw()
 	{
-		m_attr_handler->clear();
-
 		bool skipped_tile = false;
 
 		m_attr_handler->move({ 0, 0 });
@@ -346,11 +343,12 @@ namespace Asciir
 
 				m_attr_handler->setForeground(new_tile.colour);
 				m_attr_handler->setBackground(new_tile.background_colour);
+				// the newline might not always be set, if the tile at position x == 0, is skipped
 				m_attr_handler->ansiCode(*this, x == 0);
 
 				pushBuffer((const char*) new_tile.symbol);
 
-				// m_tiles(x, y).last = new_tile;
+				old_tile = new_tile;
 			}
 
 			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)

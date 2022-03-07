@@ -92,6 +92,7 @@ class TextureLayer : public Asciir::Layer
 
 	void onUpdate(DeltaTime delta_time) final
 	{
+		Renderer::clear();
 		Transform texture_t;
 		// texture_t.setScale({ 1_R/5_R, 1_R/5_R });
 		// texture_t.setOrigin((Coord)texture->size() / 2);

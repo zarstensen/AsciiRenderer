@@ -275,6 +275,9 @@ namespace Asciir
 			| COMMON_LVB_GRID_RVERTICAL * attributes[RIGHT]);
 #endif
 
+		// cursor
+		moveCode(dst);
+
 		// if nothing has changed do not modify the stream
 		bool has_changed = false;
 		for (size_t i = 0; i < ATTR_COUNT; i++)
@@ -295,8 +298,6 @@ namespace Asciir
 
 		if (!has_changed)
 			return;
-		// cursor
-		moveCode(dst);
 
 		// colour string buffer
 		char colour_buffer[4];
