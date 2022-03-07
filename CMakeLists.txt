@@ -195,6 +195,7 @@ if(WIN32)
 
         # rendering
         src/Asciir/Platform/Windows/WindowsARAttributes.cpp
+        src/Asciir/Platform/Windows/WinTermRenderer.cpp
 
         # input
         src/Asciir/Platform/Windows/WinEventListener.cpp
@@ -207,6 +208,7 @@ if(WIN32)
         
         #rendering
         src/Asciir/Platform/Windows/WindowsARAttributes.h
+        src/Asciir/Platform/Windows/WinTermRenderer.h
 
         # input
         src/Asciir/Platform/Windows/WinEventListener.h
