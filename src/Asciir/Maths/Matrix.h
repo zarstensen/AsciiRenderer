@@ -23,8 +23,8 @@ namespace Asciir
 		template<typename TOther>
 		arMatrix(const Eigen::MatrixBase<TOther>& other);
 
-		/// @brief returns the 2D size of the array
-		Size2D size() const;
+		/// @brief returns the 2D size of the array (the dimentions)
+		Size2D dim() const;
 
 		/// @brief resize the matrix whilst preserving the data contained.
 		/// see resizeClear() for a faster but more destructive resize.
@@ -82,7 +82,7 @@ namespace Asciir
 		s_arMatrix(const Eigen::ReturnByValue<TOther>& other);
 
 		/// @see arMatrix::size()
-		static Size2D size();
+		static Size2D dim();
 
 		s_arMatrix<T, w, h> operator=(const s_arMatrix<T, w, h>& other);
 
