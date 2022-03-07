@@ -25,6 +25,9 @@ namespace TRInterface
 		/// @see TerminalRendererInterface::fontSize()
 		Size2D fontSize() const;
 
+		/// @see TerminalRendererInterface::isFocused()
+		bool isFocused() const;
+
 	protected:
 
 		// handle to the current console

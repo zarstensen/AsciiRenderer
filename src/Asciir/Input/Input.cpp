@@ -117,8 +117,7 @@ namespace Asciir
 
 	bool Input::isFocused()
 	{
-		// return GetForegroundWindow() == GetConsoleWindow(); // TODO: this should not be here, but in the terminal renderer
-		return false;
+		return ARApp::getApplication()->getTermRenderer().isFocused();
 	}
 
 	std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> Input::getKeyEvent(Key keycode)

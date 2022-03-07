@@ -223,6 +223,7 @@ namespace Asciir
 		// macro for defining a "virtual" function in the compile time interface.
 		// short for "ascii renderer interface function"
 		#define AR_INT_FUNC_R(signature, ret_val) signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); return ret_val; }
+		// TODO: is this needed?
 		#define AR_INT_FUNC(signature) signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); }
 
 		/// @brief interface class for the TerminalRenderer.  
@@ -243,7 +244,7 @@ namespace Asciir
 		/// the TerminalRenderer is also responsible for controlling different properties of the terminal, such as the title, size, position and so on.
 		/// 
 		/// 
-		/// the render() function updates the terminal properties (title, size, position ...) as well as outputing the currently drawn data to the terminal.
+		/// the render() function updates the terminal properties (title, size, position ...) as well as outputing the rendered frame to the terminal.
 		/// 
 		/// 
 		/// implementation details:
@@ -344,22 +345,32 @@ namespace Asciir
 			/// @brief calls update() and draw().
 			TRUpdateInfo render();
 
+			/// @brief defaults to number of avaliable threads on the system. @see setThreads()
+			void setThreads() { setThreads(std::thread::hardware_concurrency()); }
+			/// @brief sets the number of threads to be used when rendering the frame.
+			void setThreads(size_t thread_count) { m_render_thread_pool.resize(thread_count); }
+
+			/// @brief returns the number of threads used when rendering a frame.
+			size_t getThreads() { return m_render_thread_pool.size(); }
+
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
-			AR_INT_FUNC_R(TermVert termSize() const, {})
+			AR_INT_FUNC_R(TermVert termSize() const, {});
 			/// @brief get the size where the TerminalRenderer is able to draw.
 			TermVert drawSize() const;
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
-			AR_INT_FUNC_R(TermVert maxSize() const, {})
+			AR_INT_FUNC_R(TermVert maxSize() const, {});
 
 			/// @brief returns the current position of the terminal.
-			AR_INT_FUNC_R(Coord pos() const, {})
+			AR_INT_FUNC_R(Coord pos() const, {});
 			/// @brief returns the position of the terminal at the previous call to update() or render().
 			Coord lastPos() { return m_pos; }
 
 			/// @brief returns the current font size of the terminal.
 			/// @returns Size2D structure containing the width and height of a character, in pixels.
-			AR_INT_FUNC_R(Size2D fontSize() const, {})
+			AR_INT_FUNC_R(Size2D fontSize() const, {});
+
+			AR_INT_FUNC_R(bool isFocused() const, {});
 
 			/// TODO: should these still be here? 
 			void pushBuffer(const std::string& data);
@@ -376,6 +387,13 @@ namespace Asciir
 			/// @brief return array of attributes for the current state.
 			std::array<bool, ATTR_COUNT>& attributes();
 
+			/// @brief the number of tiles rendered by a render thread in a row.  
+			/// 
+			/// Example:
+			/// if a frame is 10 x 10, and there are 5 render frames, and the thread tile count is 10, the 5 threads will stoart by dividing the first 50 tiles inbetween them where each column will be given to a single thread,
+			/// as the thread tile count is the same as the height of the frame.
+			size_t m_thrd_tile_count;
+
 		protected:
 			/// @brief sets up the terminal and TerminalRenderer with the specified terminal properties
 			TerminalRendererInterface(const TerminalProps& term_props);
@@ -384,6 +402,15 @@ namespace Asciir
 			/// this function should be used by the interface implementations when the terminal is ready to accept ansi codes,
 			/// as this function makes use of the ansi resize and rename escape sequance
 			void initRenderer(const TerminalProps& term_props);
+
+			/// @brief renders a single tile of the frame.  
+			///	
+			/// only renders neccesary QueueElems, meaning it skips any elements that do not contain the tile, and also skips any elements that do not have an effect on the final result.  
+			/// a QueueElem is determined to have no effect, if the QueueElem above it has an alpha value of 255, and is not empty.
+			/// 
+			/// the QueueElems get rendered in order of last in, first out, meaning the latest submitted QueueElem will be rendered first.
+			/// 
+			void renderTile(TermVert tile_coord);
 
 		protected:
 			arMatrix<DrawTile> m_tiles;
@@ -396,8 +423,9 @@ namespace Asciir
 			std::ostream m_buff_stream;
 			bool m_should_resize = false;
 			bool m_should_rename = true;
+			
+			std::vector<std::thread> m_render_thread_pool;
 
-			friend AsciiAttr;
 		};
 
 		#undef AR_INT_FUNC
