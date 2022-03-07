@@ -21,7 +21,7 @@ namespace Asciir
 		s_attr_handler = &s_renderer->getAttrHandler();
 	}
 
-	void Renderer::drawMeshData(const Renderer::MeshData& data)
+	void Renderer::drawMeshData(Renderer::MeshData& data)
 	{
 		s_renderer->setState(data.tile);
 
@@ -51,8 +51,8 @@ namespace Asciir
 		bottom_right_coord.y = ceil(bottom_right_coord.y);
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
-		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
+		for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
+			for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
 				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform))
 				{
 					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
@@ -66,7 +66,7 @@ namespace Asciir
 	#endif
 	}
 
-	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
+	void Renderer::drawShaderData(ShaderData& data, const DeltaTime& time_since_start, size_t frames_since_start)
 	{
 		Quad texture_quad = Quad(data.shader->size());
 
@@ -93,9 +93,9 @@ namespace Asciir
 		bottom_right_coord.y = ceil(bottom_right_coord.y);
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
-		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
+		for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
+			for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
+				if (texture_quad.isInsideGrid({ x, y }, data.transform))
 				{
 					Coord uv = Coord(
 						(bottom_right_coord.x - top_left_coord.x) / x,
@@ -108,7 +108,7 @@ namespace Asciir
 				}
 	}
 
-	void Renderer::drawTileData(const TileData& data)
+	void Renderer::drawTileData(TileData& data)
 	{
 		if (data.pos.x >= 0 && (size_t)data.pos.x < size().x && data.pos.y >= 0 && (size_t)data.pos.y < size().y)
 		{
@@ -117,7 +117,7 @@ namespace Asciir
 		}
 	}
 
-	void Renderer::drawClearData(const ClearData& data)
+	void Renderer::drawClearData(ClearData& data)
 	{
 		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
 		s_renderer->clearTerminal(data);
@@ -251,9 +251,9 @@ namespace Asciir
 		}
 	}
 
-	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_start)
+	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, size_t frames_since_start)
 	{
-		for (const QueueElem& q_elem : *s_render_queue)
+		for (QueueElem& q_elem : *s_render_queue)
 		{
 			switch (q_elem.index())
 			{
