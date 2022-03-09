@@ -64,4 +64,9 @@ namespace Asciir
 	/// @brief rounds the given Coord down to the nearest value divisible by base
 	/// see round(Real, Real) for implementation details
 	Coord floor(const Coord& coord, Real base = 1);
+	/// @brief rounds the value with a bias towards higher numbers, meaning 0.5 round to 1 instead of 0.  
+	/// same as round()
+	inline Real roundu(Real val, Real base = 1) { return round(val, base);}
+	/// @brief rounds the value with a bias towards lower numbers, meaning 0.5 round to 0 instead of 1.  
+	inline Real roundl(Real val, Real base = 1) { return round(val - base / 2, base); }
 }

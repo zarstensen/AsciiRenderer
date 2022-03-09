@@ -162,13 +162,17 @@ namespace Asciir
 		void setVertex(size_t index, Coord new_val);
 		/// @brief offset all the vertices in the mesh by *offset*
 		Mesh& offset(Coord offset);
+		/// @brief applies the given transformation to the active mesh.
+		void transform(Transform& transformation) { for (Coord& vert : m_vertices) vert = transformation.applyTransform(vert); }
+		/// @brief applies the inverse of the passed transformation to the active mesh.
+		void revertTransform(Transform& transformation) { for (Coord& vert : m_vertices) vert = transformation.reverseTransform(vert); }
 		/// @brief get the vertex at the given index, using the passed transform.
-		Coord getVertex(size_t index, Transform& transform) const;
-		Coord getVertex(size_t index) const { Transform t; return getVertex(index, t); }
+		Coord& getVertex(size_t index);
+		const Coord& getVertex(size_t index) const;
 		/// @brief mods the input index by the number of vertices
 		/// @see getVertex()
-		Coord cgetVertex(size_t index, Transform& transform) const { return getVertex(index % vertCount(), transform); };
-		Coord cgetVertex(size_t index) const { Transform t; return cgetVertex(index, t); };
+		Coord& cgetVertex(size_t index) { return getVertex(index % vertCount()); };
+		const Coord& cgetVertex(size_t index) const { return getVertex(index % vertCount()); };
 
 		/// @brief get the centre vertex / centre point of the mesh
 		Coord getMedianVert() const;
@@ -184,13 +188,13 @@ namespace Asciir
 		/// @see getCorner()
 		size_t cgetCorner(size_t face_index, size_t index) const { return getCorner(face_index, index % faceCornerCount(face_index)); };
 		/// @brief gets the corners vertex
-		Coord getCornerVert(size_t face_index, size_t index, Transform& transform) const { return getVertex(getCorner(face_index, index), transform); }
-		Coord getCornerVert(size_t face_index, size_t index) const { Transform t;  return getCornerVert(face_index, index, t); }
+		Coord& getCornerVert(size_t face_index, size_t index) { return getVertex(getCorner(face_index, index)); }
+		const Coord& getCornerVert(size_t face_index, size_t index) const { return getVertex(getCorner(face_index, index)); }
 		/// @brief mods the input index by the number of corners
 		/// @see getCornerVert()
-		Coord cgetCornerVert(size_t face_index, size_t index, Transform& transform) const { return getVertex(cgetCorner(face_index, index), transform); }
-		Coord cgetCornerVert(size_t face_index, size_t index) const { Transform t;  return cgetCornerVert(face_index, index, t); }
-		
+		Coord& cgetCornerVert(size_t face_index, size_t index) { return getVertex(cgetCorner(face_index, index)); }
+		const Coord& cgetCornerVert(size_t face_index, size_t index) const { return getVertex(cgetCorner(face_index, index)); }
+
 		/// @brief gets the linesegment representing the given face's edge at the given index.
 		/// the index of a face edge is the same as the starting corner of the edge. 
 		/// meaning, if a face has the vertices A, B, C, and D.
@@ -198,12 +202,10 @@ namespace Asciir
 		/// index 1 will be B and C.
 		/// index 2: C - D.
 		/// index 4: D - A.
-		LineSegment getEdge(size_t face_index, size_t index, Transform& transform) const;
-		LineSegment getEdge(size_t face_index, size_t index) const { Transform t; return getEdge(face_index, index, t); }
+		LineSegment getEdge(size_t face_index, size_t index) const;
 		/// @brief mods the index (not the face index) byt the number of corners in the face.
 		/// @see getEdge()
-		LineSegment cgetEdge(size_t face_index, size_t index, Transform& transform) const { return getEdge(face_index, index % faceCornerCount(face_index), transform); };
-		LineSegment cgetEdge(size_t face_index, size_t index) const { Transform t; return cgetEdge(face_index, index, t); };
+		LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
 
 		/// @brief gets the number of corners in a face.
 		size_t faceCornerCount(size_t face_index) const;
@@ -214,13 +216,10 @@ namespace Asciir
 		/// @brief gets the number of vertices in the current mesh.
 		size_t vertCount() const { return m_vertices.size(); }
 
-		/// @brief determins wether the given coord will be inside the mesh, at the given transform.
-		bool isInside(const Coord& coord, Transform& transform) const;
-		bool isInside(const Coord& coord) const { Transform t; return isInside(coord, t); }
+		/// @brief determins wether the given coord will be inside the mesh.  
+		bool isInside(const Coord& coord) const;
 		/// @brief same as isInside(), except the mesh will be fitted to a grid with the given resolution.  
-		/// @note the fitting is performed **after** the mesh has been transformed.
-		bool isInsideGrid(const Coord& coord, Real resolution, Transform& transform) const;
-		bool isInsideGrid(const Coord& coord, Real resolution) const { Transform t; return isInsideGrid(coord, resolution, t); }
+		bool isInsideGrid(Coord coord, Real resolution) const;
 
 	protected:
 
