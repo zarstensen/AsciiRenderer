@@ -6,7 +6,7 @@ namespace Asciir
 
 	bool compareMargin(Real a, Real b, Real margin)
 	{
-		return  a < b + margin / 2 && a > b - margin / 2;
+		return  a <= b + margin / 2 && a >= b - margin / 2;
 	}
 
 	bool fequal(Real a, Real b, Real e)

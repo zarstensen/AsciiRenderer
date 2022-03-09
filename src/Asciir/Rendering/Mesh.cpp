@@ -18,7 +18,7 @@ namespace Asciir
 
 			vec -= m_origin;
 
-			vec = m_transform_matrix.linear() * vec;
+			vec = m_transform_matrix.linear() * vec + m_transform_matrix.translation();
 
 			vec += m_origin;
 		}
@@ -39,7 +39,7 @@ namespace Asciir
 
 			vec -= m_origin;
 
-			vec = m_inv_transform.linear() * vec;
+			vec = m_inv_transform.linear() * vec + m_inv_transform.translation();
 
 			vec += m_origin;
 		}
@@ -141,13 +141,13 @@ namespace Asciir
 #endif
 	}
 
-	LineSegment Mesh::getEdge(size_t face_index, size_t index, Transform& transform) const
+	LineSegment Mesh::getEdge(size_t face_index, size_t index) const
 	{
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
 
 		// TODO: implement interator of getCornerVert?
-		return LineSegment::fromPoints(getCornerVert(face_index, index, transform), cgetCornerVert(face_index, index + 1, transform));
+		return LineSegment::fromPoints(getCornerVert(face_index, index), cgetCornerVert(face_index, index + 1));
 	}
 
 	void Mesh::addVertex(Coord new_vert)
@@ -309,10 +309,16 @@ namespace Asciir
 		return *this;
 	}
 
-	Coord Mesh::getVertex(size_t index, Transform& transform) const
+	Coord& Mesh::getVertex(size_t index)
 	{
 		AR_ASSERT_MSG(index < m_vertices.size(), "Index is out of bounds");
-		return transform.applyTransform(m_vertices[index]);
+		return m_vertices[index];
+	}
+
+	const Coord& Mesh::getVertex(size_t index) const
+	{
+		AR_ASSERT_MSG(index < m_vertices.size(), "Index is out of bounds");
+		return m_vertices[index];
 	}
 
 	Coord Mesh::getMedianVert() const
@@ -351,10 +357,9 @@ namespace Asciir
 		return m_faces[firstIndexFromFace(face_index) + index];
 	}
 
-	bool Mesh::isInside(const Coord& coord, Transform& transform) const
+	bool Mesh::isInside(const Coord& coord) const
 	{
-		Coord transformed_coord = transform.reverseTransform(coord);
-		Line ray = Line::horzLine(transformed_coord);
+		Line ray = Line::horzLine(coord);
 		int winding_number = 0;
 
 		for (size_t i = 0; i < faceCount(); i++)
@@ -367,53 +372,54 @@ namespace Asciir
 				{
 					Coord intersect = edge.intersect(ray);
 
-					if (intersect.x < ray.offset.x)
+					if (intersect.x <= coord.x)
 						winding_number += edge.direction.y <= 0 ? 1 : -1;
-					else if (intersects && intersect.x == ray.offset.x)
-						winding_number += edge.intersects(transformed_coord) * (i > 0 ? -1 : 1);
 				}
 				else if (intersects)
-					winding_number += edge.intersects(transformed_coord) * (i > 0 ? -1 : 1);
+					winding_number += edge.intersects(coord) * (i > 0 ? -1 : 1);
 			}
 		}
 
 		return winding_number > 0;
 	}
 
-	bool Mesh::isInsideGrid(const Coord& coord, Real resolution, Transform& transform) const
+	// TODO: reimplement this, and use rounding instead of whatever this is
+	bool Mesh::isInsideGrid(Coord coord, Real resolution) const
 	{
-		Coord transformed_coord = transform.reverseTransform(coord);
-		Coord grid_coord(floor(transformed_coord.x, resolution), ceil(transformed_coord.y, resolution));
+		// use the cell centre closest to the passed coord
 
-		Line raw_ray = Line::horzLine(transformed_coord);
-		Line grid_ray = Line::horzLine(grid_coord);
-		int winding_number = 0;
+		coord.x = round(coord.x + (Real) resolution / 2) - (Real) resolution / 2;
+		coord.y = round(coord.y + (Real)resolution / 2) - (Real) resolution / 2;
 
-		for (size_t i = 0; i < faceCount(); i++)
-		{
-			for (size_t j = 0; j < faceCornerCount(i); j++)
-			{
-				LineSegment edge = getEdge(i, j);
+		return isInside(coord);
 
-				// calculate width based on the slope of the line
-				Real width = (Real)std::sin(std::acos((edge.direction.dot(RealVertex(1, 0))) / (edge.direction.norm() * std::sqrt(1)))) * resolution;
+		//Line ray = Line::horzLine(grid_coord);
+		//int winding_number = 0;
 
-				bool intersects = edge.intersects(grid_ray);
-				if (intersects && !edge.isPerpendicular(grid_ray))
-				{
-					Coord intersect = static_cast<Line>(edge).intersect(raw_ray);
+		//for (size_t i = 0; i < faceCount(); i++)
+		//{
+		//	for (size_t j = 0; j < faceCornerCount(i); j++)
+		//	{
+		//		LineSegment edge = getEdge(i, j);
+		//		bool intersects = edge.intersects(ray);
+		//		if (intersects && !edge.isPerpendicular(ray))
+		//		{
+		//			Coord intersect = edge.intersect(ray);
 
-					if (intersect.x < raw_ray.offset.x + width / 2)
-						winding_number += edge.direction.y <= 0 ? 1 : -1;
-					else if (intersects && compareMargin(intersect.x, raw_ray.offset.x, width))
-						winding_number += edge.intersects(transformed_coord, width) * (i > 0 ? -1 : 1);
-				}
-				else if (intersects)
-					winding_number += edge.intersects(transformed_coord, width) * (i > 0 ? -1 : 1);
-			}
-		}
+		//			intersect.x = round(intersect.x);
 
-		return winding_number > 0;
+		//			if (edge.direction.y <= 0 && intersect.x <= grid_coord.x)
+		//				winding_number++;
+		//			else if (edge.direction.y > 0 && intersect.x < grid_coord.x)
+		//				winding_number--;
+		//		}
+		//		// lines are perpendicular, and thus can intersect at multiple points, therefore, check if grid_coord is inside the entire edge, instead of the intersecting part of the edge.
+		//		else if (intersects)
+		//			winding_number += (grid_coord.x >= round(edge.offset.x) && grid_coord.x < round(edge.offset.x + edge.direction.x)) * (i > 0 ? -1 : 1);
+		//	}
+		//}
+
+		//return winding_number > 0;
 	}
 
 	// Returns the first index of a face list

@@ -22,6 +22,8 @@ namespace Asciir
 		Quad(Coord size, Coord offset = Coord(0, 0))
 			: offset(offset), size(size) {}
 
+		/// @brief constructs a quad from the given top left and bottom right coordinate
+		static Quad fromCorners(const Coord& top_left, const Coord& bottom_right) { return Quad(bottom_right - top_left, top_left); }
 
 		/// @brief retrieve the center point of the quad, with the passed transform
 		Coord centrePoint(Transform& transform) const;

@@ -258,8 +258,8 @@ namespace TRInterface
 
 	void TerminalRendererInterface::resize(TermVert size)
 	{
-		AR_ASSERT_MSG(size.x <= maxSize().x && size.x > 0 && size.y <= maxSize().y && size.y > 0,
-			"Size ", size, " is too large or negative. Max size: ", maxSize());
+		AR_ASSERT_MSG(size.x <= AR_IMPL(this).maxSize().x && size.x > 0 && size.y <= AR_IMPL(this).maxSize().y && size.y > 0,
+			"Size ", size, " is too large or negative. Max size: ", AR_IMPL(this).maxSize());
 
 		m_should_resize = true;
 		m_tiles.resize(size);
@@ -316,6 +316,8 @@ namespace TRInterface
 	void TerminalRendererInterface::draw()
 	{
 		bool skipped_tile = false;
+
+		m_attr_handler->clear();
 
 		m_attr_handler->move({ 0, 0 });
 		m_attr_handler->moveCode(getStream());
