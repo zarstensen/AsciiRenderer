@@ -4,11 +4,11 @@ using namespace Asciir::AsciirLiterals;
 
 class TriangleLayer : public Asciir::Layer
 {
-	Asciir::Ref<Asciir::Mesh> triangle_verts = Asciir::Mesh(
+	Asciir::Mesh triangle_verts = Asciir::Mesh(
 		{ { {20, 40}, {50, 10}, {80, 40} },
 		  { {35, 25}, {65, 25}, {50, 40} } });
 
-	Asciir::Ref<Asciir::Mesh> square_mesh = Asciir::Mesh({ {0, 0}, { 15, 0 }, {15, 15}, {0, 15} });
+	Asciir::Mesh square_mesh = Asciir::Mesh({ {0, 0}, { 15, 0 }, {15, 15}, {0, 15} });
 
 	Asciir::TInt pos = 0;
 	bool forward = true;
@@ -43,24 +43,19 @@ class TriangleLayer : public Asciir::Layer
 		Asciir::Transform square_transform;
 
 		square_transform.setPos(Asciir::Coord(pos + 30, 20));
-		square_transform.setOrigin(square_mesh->getMedianVert());
+		square_transform.setOrigin(square_mesh.getMedianVert());
 		Asciir::Colour square_colour = Asciir::IRED8;
 		square_colour.alpha = 100;
 
 		transform.setPos(Asciir::Coord(pos, 0));
 		transform.setScale(Asciir::Coord(1, 1));
-		transform.setOrigin(triangle_verts->getMedianVert());
+		transform.setOrigin(triangle_verts.getMedianVert());
 		transform.setRotation(Asciir::degToRad(pos + 45_R));
 
 		Asciir::Colour triangle_colour = Asciir::YELLOW8;
 
-		Asciir::Renderer::submitMesh(triangle_verts, Asciir::Tile(triangle_colour), transform);
+		Asciir::Renderer::submit(triangle_verts, Asciir::Tile(triangle_colour), transform);
 		//Asciir::Renderer::submitMesh(square_mesh, Asciir::Tile(square_colour), square_transform);
-
-		int a = 2;
-		int b = 6;
-
-		AR_CORE_NOTIFY(a, b);
 
 		Asciir::Renderer::resize(Asciir::ARApp::getApplication()->getTermRenderer().maxSize());
 	}
