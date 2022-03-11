@@ -19,6 +19,8 @@
 # Mono auto generated files
 mono_crash.*
 
+[Dd]ocs/
+
 # Build results
 bin/
 int/

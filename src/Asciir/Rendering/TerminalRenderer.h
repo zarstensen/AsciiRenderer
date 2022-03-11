@@ -318,8 +318,12 @@ namespace Asciir
 			Tile& getState();
 			/// @brief replaces the tile at pos with the current tile state
 			void drawTile(const TermVert& pos);
+			/// @brief replaces the tile at pos with the specified tile. does not modify the current tile state.
+			void drawTile(const TermVert& pos, const Tile& tile);
 			/// @brief blends the current tile state into the stored tile with the stored tile as the background
 			void blendTile(const TermVert& pos);
+			/// @brief blends the tile at pos with the specified tile. does not modify the current tile state.
+			void blendTile(const TermVert& pos, const Tile& tile);
 			/// @brief retrieve the DrawTile at the passed position
 			/// @return the current and previosly rendered tile at the specified position
 			DrawTile& getTile(const TermVert& pos);
@@ -344,14 +348,6 @@ namespace Asciir
 			void draw();
 			/// @brief calls update() and draw().
 			TRUpdateInfo render();
-
-			/// @brief defaults to number of avaliable threads on the system. @see setThreads()
-			void setThreads() { setThreads(std::thread::hardware_concurrency()); }
-			/// @brief sets the number of threads to be used when rendering the frame.
-			void setThreads(size_t thread_count) { m_render_thread_pool.resize(thread_count); }
-
-			/// @brief returns the number of threads used when rendering a frame.
-			size_t getThreads() { return m_render_thread_pool.size(); }
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
@@ -387,13 +383,6 @@ namespace Asciir
 			/// @brief return array of attributes for the current state.
 			std::array<bool, ATTR_COUNT>& attributes();
 
-			/// @brief the number of tiles rendered by a render thread in a row.  
-			/// 
-			/// Example:
-			/// if a frame is 10 x 10, and there are 5 render frames, and the thread tile count is 10, the 5 threads will stoart by dividing the first 50 tiles inbetween them where each column will be given to a single thread,
-			/// as the thread tile count is the same as the height of the frame.
-			size_t m_thrd_tile_count;
-
 		protected:
 			/// @brief sets up the terminal and TerminalRenderer with the specified terminal properties
 			TerminalRendererInterface(const TerminalProps& term_props);
@@ -402,15 +391,6 @@ namespace Asciir
 			/// this function should be used by the interface implementations when the terminal is ready to accept ansi codes,
 			/// as this function makes use of the ansi resize and rename escape sequance
 			void initRenderer(const TerminalProps& term_props);
-
-			/// @brief renders a single tile of the frame.  
-			///	
-			/// only renders neccesary QueueElems, meaning it skips any elements that do not contain the tile, and also skips any elements that do not have an effect on the final result.  
-			/// a QueueElem is determined to have no effect, if the QueueElem above it has an alpha value of 255, and is not empty.
-			/// 
-			/// the QueueElems get rendered in order of last in, first out, meaning the latest submitted QueueElem will be rendered first.
-			/// 
-			void renderTile(TermVert tile_coord);
 
 		protected:
 			arMatrix<DrawTile> m_tiles;
@@ -423,9 +403,6 @@ namespace Asciir
 			std::ostream m_buff_stream;
 			bool m_should_resize = false;
 			bool m_should_rename = true;
-			
-			std::vector<std::thread> m_render_thread_pool;
-
 		};
 
 		#undef AR_INT_FUNC

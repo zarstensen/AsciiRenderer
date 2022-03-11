@@ -218,18 +218,28 @@ namespace TRInterface
 
 	void TerminalRendererInterface::drawTile(const TermVert& pos)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
-
-		m_tiles(pos.x, pos.y).current = m_tile_state;
+		drawTile(pos, m_tile_state);
 	}
 
-	void TerminalRendererInterface::blendTile(const TermVert& pos)
+	void TerminalRendererInterface::drawTile(const TermVert& pos, const Tile& tile)
 	{
 		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
 			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current.blend(m_tile_state);
+		m_tiles(pos.x, pos.y).current = tile;
+	}
+
+	void TerminalRendererInterface::blendTile(const TermVert& pos)
+	{
+		blendTile(pos, m_tile_state);
+	}
+
+	void TerminalRendererInterface::blendTile(const TermVert& pos, const Tile& tile)
+	{
+		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
+			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+
+		m_tiles(pos.x, pos.y).current.blend(tile);
 	}
 
 	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(const TermVert& pos)

@@ -129,6 +129,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
 		m_is_loaded = false;
+		m_file_dir = "";
 
 		resize({ 0, 0 });
 	}
