@@ -74,26 +74,33 @@ namespace Asciir
 
 	typedef std::filesystem::path Path;
 
-	// stores data from a .cart (compact asciir Texture) file
+	/// @brief stores data from a .cart (compact asciir Texture) file
 	class FileTexture : public Texture2D
 	{
 	public:
 		FileTexture() = default;
+		/// @brief autoloads the passed file
 		FileTexture(const Path& file_dir) { load(file_dir); };
 
 		~FileTexture() final override { if (loaded()) unload(); }
 
+		/// @brief load the passed file path into memory
 		void load(const Path& dir);
+		/// @brief unload the texture and free the previosly loaded memory
 		void unload();
 
+		/// @brief reread the file texture into memory
 		void reload();
 
+		/// @brief returns wether the FileTexture currently has a texture loaded
 		bool loaded() const { return m_is_loaded; }
 
+		/// @brief the currently loaded texture file.  
+		/// returns an empty path, if no file is currently loaded.
 		Path dir() const { return m_file_dir; };
 
 	protected:
-		Path m_file_dir;
+		Path m_file_dir = "";
 
 		bool m_is_loaded = false;
 	};
