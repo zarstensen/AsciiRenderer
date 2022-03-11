@@ -58,8 +58,6 @@ namespace Asciir
 			// calculate the timeinterval from the last frame to the current frame
 			duration curr_frame_start = getTime();
 			DeltaTime d_time(castRealMilli(curr_frame_start - m_last_frame_start));
-			m_last_frame_start = curr_frame_start;
-			m_frame_count++;
 
 			// update all layers on the layer stack
 			for (Layer* layer : m_layerStack)
@@ -67,6 +65,8 @@ namespace Asciir
 
 			// wait for rendering to finish
 			m_render_thread.joinLoop();
+			m_last_frame_start = curr_frame_start;
+			m_frame_count++;
 
 			// swap the render queues
 			Renderer::swapQueues();
