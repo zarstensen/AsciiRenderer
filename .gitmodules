@@ -10,3 +10,6 @@
 [submodule "modules/EThread"]
 	path = modules/EThread
 	url = https://github.com/karstensensensen/EThread.git
+[submodule "modules/ChrTrcProfiler"]
+	path = modules/ChrTrcProfiler
+	url = https://github.com/karstensensensen/ChrTrcProfiler
