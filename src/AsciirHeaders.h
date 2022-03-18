@@ -50,3 +50,7 @@
 #elif defined(AR_UNIX)
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
+
+// tools
+#include "Asciir/Tools/ProfileLayer.h"
+// tools

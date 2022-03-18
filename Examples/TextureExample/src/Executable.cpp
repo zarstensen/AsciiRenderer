@@ -44,13 +44,13 @@ protected:
 
 		if (dst < circle_exp)
 			result.background_colour = Colour((dst / (circle_exp)) * 255, (int)((dst / (circle_exp)) * 500) % 255, (int)((dst / (circle_exp)) * 100) % 255);
-		else
+		/*else
 		{
 			square_trans.setRotation(t / 10_R);
 
 			if(square.isInsideGrid(coord, square_trans))
 				result.background_colour = IRED8;
-		}
+		}*/
 
 		return result;
 	}
@@ -99,6 +99,7 @@ class TextureLayer : public Asciir::Layer
 
 	void onAdd() final
 	{
+		Renderer::setMinDT(DeltaTime(60).fps());
 		//texture->load(texture_path);
 	}
 
@@ -108,6 +109,7 @@ class TextureLayer : public Asciir::Layer
 
 	void onUpdate(DeltaTime delta_time) final
 	{
+		ARApp::getApplication()->getTermRenderer().setTitle(std::to_string(delta_time.fps()));
 		Renderer::clear();
 		// texture_t.setScale({ 1_R/5_R, 1_R/5_R });
 		texture_t.setOrigin(square.getMedianVert());
@@ -116,17 +118,24 @@ class TextureLayer : public Asciir::Layer
 		texture_t.setRotation(rot);
 
 		Renderer::submit(shader);
-		Renderer::submit(square, IYELLOW8, texture_t);
+		//Renderer::submit(square, IYELLOW8, texture_t);
 		//Renderer::submitShader(texture, texture_t);
 	}
 };
+
+void foo()
+{}
 
 class TextureExample : public Asciir::ARApp
 {
 public:
 	void start(const std::vector<std::string>&) override
 	{
+		Renderer::setThreads();
+		Renderer::thrd_tile_count = 128;
+
 		pushLayer(new TextureLayer());
+		pushOverlay(new Tools::ProfilingLayer(1024 * 1024));
 	}
 };
 

@@ -11,6 +11,7 @@ namespace Asciir
 	class DeltaTime
 	{
 		/// @brief stored as Real to reduce overhead at the cost of precission
+		// TODO: maybe not?
 		Real m_time_ms = 0;
 	public:
 
