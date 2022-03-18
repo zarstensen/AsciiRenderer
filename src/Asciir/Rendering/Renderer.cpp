@@ -7,6 +7,8 @@
 #include "Asciir/Maths/Lines.h"
 #include "Asciir/Maths/Vertices.h"
 
+#include <ChrTrc.h>
+
 namespace Asciir
 {
 	TerminalRenderer* Renderer::s_renderer = nullptr;
@@ -71,7 +73,6 @@ namespace Asciir
 
 	void Renderer::drawClearData(ClearData& data)
 	{
-
 		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
 		s_renderer->clearTerminal(data);
 	}
@@ -224,6 +225,8 @@ namespace Asciir
 
 	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
 	{
+		CT_MEASURE_N("Grab Screen");
+
 		// check for invalid arguments
 		AR_ASSERT_MSG(rect_offset.x > 0 || rect_offset.x == -1 && rect_offset.y > 0 || rect_offset.y == -1,
 			"Invalid grab screen region. rect_offset has invalid values: ", rect_offset);
@@ -302,7 +305,7 @@ namespace Asciir
 
 	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, size_t frames_since_start)
 	{
-		AR_INFO("RENDER FRAME");
+		AR_CORE_INFO("RENDER FRAME");
 		// if only one thread is needed, avoid creating a seperate thread
 		if ((uint32_t) s_renderer->drawSize().x * (uint32_t) s_renderer->drawSize().y <= thrd_tile_count || m_render_thread_pool.size() == 0)
 		{
@@ -321,14 +324,12 @@ namespace Asciir
 			// the thread count should not go above the thread pool size
 			thrds = std::min((uint32_t) m_render_thread_pool.size(), thrds);
 
-			AR_CORE_WARN("Using ", thrds, " threads to render the current frame!");
+			AR_CORE_INFO("Using ", thrds, " threads to render the current frame!");
 			
 			m_avaliable_tile = 0;
 
 			m_curr_dt = time_since_start;
 			m_curr_df = frames_since_start;
-
-			AR_CORE_INFO(m_curr_dt);
 
 			for (uint32_t i = 0; i < thrds; i++)
 				m_render_thread_pool[i].startLoop();
@@ -356,8 +357,6 @@ namespace Asciir
 				current_tile = m_avaliable_tile;
 				m_avaliable_tile += thrd_tile_count;
 			}
-
-			AR_INFO("Now rendering from tile at ", current_tile);
 
 			// the loop should never go outside the draw range, so this is here to make sure it does not do that :)
 			uint32_t end = std::min(current_tile + thrd_tile_count, (uint32_t) s_renderer->drawSize().x * (uint32_t) s_renderer->drawSize().y);

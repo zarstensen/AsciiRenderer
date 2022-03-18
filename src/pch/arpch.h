@@ -2,8 +2,6 @@
 
 #include "Asciir/Platform/PlatformMacros.h"
 
-#include <Eigen/Eigen>
-
 #include <functional>
 #include <memory>
 #include <algorithm>
@@ -46,3 +44,10 @@
 
 #include <termios.h>
 #endif
+
+// Modules
+#include <Eigen/Eigen>
+#include <ChrTrcProfiler.h>
+#include <ChrTrcCompileTimeString.h>
+#include <ETH.h>
+// Modules

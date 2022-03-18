@@ -1,8 +1,10 @@
 #pragma once
 
+#include <ChrTrc.h>
 
 namespace Asciir
 {
+
 	/// @brief sets up the asciir environment from the passed arguments
 	/// 
 	/// acts as the entry point for the Asciir library. The thread the function is called in will also contain the main application loop.
@@ -49,13 +51,22 @@ namespace Asciir
 
 		// setup the passed ARApp as the main asciir app
 		Asciir::ARApp::load(app);
-
+		
+		{
+		CT_MEASURE_N("Renderer Init");
 		Asciir::Renderer::init();
+		}
 
+		{
+		CT_MEASURE_N("App Init");
 		Asciir::ARApp::getApplication()->start(args);
+		}
 		Asciir::ARApp::getApplication()->startMainLoop();
 
+		{
+		CT_MEASURE_N("App shutdown");
 		delete Asciir::ARApp::getApplication();
+		}
 	}
 }
 

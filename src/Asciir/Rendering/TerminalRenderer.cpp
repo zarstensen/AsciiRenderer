@@ -57,7 +57,7 @@ namespace TRInterface
 
 	void TerminalRendererInterface::initRenderer(const TerminalProps& term_props)
 	{
-
+		// TODO: no need for this to be a pointer
 	#ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
 		AR_IMPL(this).update();

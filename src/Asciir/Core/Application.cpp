@@ -7,6 +7,8 @@
 #include "Asciir/Event/TerminalEvent.h"
 #include "Asciir/Rendering/Renderer.h"
 
+#include <ChrTrc.h>
+
 // macro shortcut for converting an ARApp method to a event callback function
 #define AR_TO_EVENT_CALLBACK(e) std::bind(&ARApp::e, this, std::placeholders::_1)
 
@@ -19,8 +21,6 @@ namespace Asciir
 	}
 
 	ARApp* ARApp::i_app = nullptr;
-
-	ARApp::~ARApp() {}
 
 	void ARApp::startMainLoop()
 	{
@@ -55,13 +55,18 @@ namespace Asciir
 
 		while (m_running)
 		{
+			CT_MEASURE_N("Main Loop");
+
 			// calculate the timeinterval from the last frame to the current frame
 			duration curr_frame_start = getTime();
 			DeltaTime d_time(castRealMilli(curr_frame_start - m_last_frame_start));
 
+			{
+			CT_MEASURE_N("Layer Updates");
 			// update all layers on the layer stack
 			for (Layer* layer : m_layerStack)
 				layer->onUpdate(d_time);
+			}
 
 			// wait for rendering to finish
 			m_render_thread.joinLoop();
@@ -80,12 +85,18 @@ namespace Asciir
 
 	void ARApp::render()
 	{
+		{
+		CT_MEASURE_N("Print To Console");
 		// print the current queue to the terminal
 		Renderer::flushRenderQueue(DeltaTime(castRealMilli(m_last_frame_start - m_app_start)), m_frame_count);
+		}
 
+		{
+		CT_MEASURE_N("Render Frame");
 		// as a new frame is shown, any previous inputs to the terminal should be relative to the last frame, so poll the terminal inputs
 		// this is done in the render thread, as this function is dependent on info from the render call
 		m_terminal_evt.pollInput(m_terminal_renderer.render());
+		}
 	}
 
 	void ARApp::onEvent(Event& e)
