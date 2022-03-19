@@ -358,17 +358,23 @@ set_target_properties(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
 
-# OpenAL soft
+# SFML
 
-if(FALSE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
+set(BUILD_SHARED_LIBS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "modules/OpenAL")
+set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-target_link_libraries(${PROJECT_NAME} OpenAL)
-endif()
+set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+set(SFML_BUILD_WINDOW FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
+
+set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/SFML PROPERTY FOLDER "modules/SFML")
+
+target_link_libraries(${PROJECT_NAME} SFML)
 
 # EThread
 
