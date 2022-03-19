@@ -43,7 +43,7 @@ namespace Asciir
 	Tile Renderer::drawShaderData(ShaderData& data, const TermVert& coord, const DeltaTime& time_since_start, size_t frames_since_start)
 	{
 		// shader has no bounds
-		if (data.shader->size() == TermVert(-1, -1))
+		if (data.shader->size().x == -1 && data.shader->size().y == -1)
 		{
 			// TODO: what should the uv be here?
 			return data.shader->readTile(data.transform.applyTransform(coord), Coord(1, 1), time_since_start, frames_since_start);

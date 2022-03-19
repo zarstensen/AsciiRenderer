@@ -57,6 +57,7 @@ namespace TRInterface
 	Coord WinTerminalRenderer::pos() const
 	{
 		RECT pos;
+		// TODO: only call GetConsoleWindow once and store it?
 		AR_WIN_VERIFY(GetWindowRect(GetConsoleWindow(), &pos));
 
 		long long x = pos.left;

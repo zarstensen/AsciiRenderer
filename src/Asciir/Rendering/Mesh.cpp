@@ -8,7 +8,7 @@ namespace Asciir
 	Coord Transform::applyTransform(Coord vec)
 	{
 		// only use transformation matrix if anything will be changed.
-		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 0 || m_scale.y != 0 || !fequal(m_rotation, (Real)0))
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 1 || m_scale.y != 1 || !fequal(m_rotation, (Real)0))
 		{
 			// only calculate the transformation matrix if it is actually needed
 			if (!m_has_mat)
@@ -29,7 +29,7 @@ namespace Asciir
 	Coord Transform::reverseTransform(Coord vec)
 	{
 		// only use transformation matrix if anything will be changed.
-		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 0 || m_scale.y != 0 || !fequal(m_rotation, (Real)0))
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 1 || m_scale.y != 1 || !fequal(m_rotation, (Real)0))
 		{
 			// only calculate the transformation matrix if it is actually needed
 			if (!m_has_mat)
