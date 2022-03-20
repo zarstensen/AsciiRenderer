@@ -54,7 +54,7 @@ namespace Asciir
 		/// @brief resize function for the RESIZE::FILL mode
 		void resizeFill(const Size2D& new_size, const Tile& fill_tile);
 		/// @brief resize function for the RESIZE::NEAREST mode
-		void resizeNearest(const Size2D& new_size) {};
+		void resizeNearest(const Size2D& new_size) {} // TODO: implement this
 
 		/// @brief sets tile values inside the texture
 		/// @param coord the coordinate of the target tile in the texture

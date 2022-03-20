@@ -47,6 +47,18 @@ namespace Asciir
 		template<typename TOther>
 		std::enable_if_t<std::is_abstract_v<T>&& std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
 
+		/// @brief allocates the specified type and stores it in the refrence.  
+		/// 
+		/// this function should only be used to initialize a refrence pointing to nothing.
+		/// 
+		/// @tparam TOther the type to allocate
+		/// @param args arguments passed to TOther's constructor
+		template<typename TOther = T, typename ... Args, std::enable_if_t<std::is_base_of_v<TOther, T> || std::is_same_v<TOther, T>, bool> = false>
+		void allocate(Args ... args)
+		{
+			*this = new TOther(args...);
+		}
+
 		using std::shared_ptr<T>::operator=;
 
 		/// @brief compare the value of two references

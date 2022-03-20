@@ -134,6 +134,14 @@ set(HEADER_DIR_INPUT
     src/Asciir/Input/EventListener.h
 )
 
+set(SRC_DIR_AUDIO
+    src/Asciir/Audio/Audio.cpp
+)
+
+set(HEADER_DIR_AUDIO
+    src/Asciir/Audio/Audio.h
+)
+
 set(SRC_DIR_LOGGING
     src/Asciir/Logging/FileLog.cpp 
     src/Asciir/Logging/FileLog.ipp
@@ -262,6 +270,9 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_INPUT}
     ${SRC_DIR_INPUT}
 
+    ${HEADER_DIR_AUDIO}
+    ${SRC_DIR_AUDIO}
+
     ${HEADER_DIR_LOGGING}
     ${SRC_DIR_LOGGING}
 
@@ -302,6 +313,9 @@ source_group("event"                FILES ${DIR_EVENT})
 source_group("input/header"		    FILES ${HEADER_DIR_INPUT})
 source_group("input/src"            FILES ${SRC_DIR_INPUT})
 
+source_group("audio/header"         FILES ${HEADER_DIR_AUDIO})
+source_group("audio/src"            FILES ${SRC_DIR_AUDIO})
+
 source_group("logging/header"       FILES ${HEADER_DIR_LOGGING})
 source_group("logging/src"          FILES ${SRC_DIR_LOGGING})
 
@@ -323,7 +337,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_precompile_headers(${PROJECT_NAME} PUBLIC "src/pch/arpch.h")
+target_precompile_headers(${PROJECT_NAME} PRIVATE "src/pch/arpch.h")
 
 # set compile definitions depending on configuration
 target_compile_definitions(${PROJECT_NAME} PUBLIC
@@ -364,17 +378,17 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
 
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-set(SFML_USE_STATIC_STD_LIBS TRUE CACHE BOOL "ASCIIR specific default value" FORCE)
-
 set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_WINDOW FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/SFML PROPERTY FOLDER "modules/SFML")
+set_property(TARGET sfml-audio PROPERTY FOLDER "modules/SFML")
+set_property(TARGET sfml-main PROPERTY FOLDER "modules/SFML")
+set_property(TARGET sfml-system PROPERTY FOLDER "modules/SFML")
 
-target_link_libraries(${PROJECT_NAME} SFML)
+target_link_libraries(${PROJECT_NAME} SFML::Audio)
 
 # EThread
 
@@ -382,7 +396,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/EThread PROPERTY FOLDER "modules/EThread")
+set_property(TARGET EThread PROPERTY FOLDER "modules/EThread")
 
 target_link_libraries(${PROJECT_NAME} EThread)
 
@@ -392,7 +406,7 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler ChrTrcProfiler)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler/include)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler PROPERTY FOLDER "modules/ChrTrcProfiler")
+set_property(TARGET ChrTrcProfiler PROPERTY FOLDER "modules/ChrTrcProfiler")
 
 target_link_libraries(${PROJECT_NAME} ChrTrcProfiler)
 
