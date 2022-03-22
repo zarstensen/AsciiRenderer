@@ -62,7 +62,6 @@ namespace TRInterface
 		// TODO: no need for this to be a pointer
 	#ifdef AR_WIN
 		m_attr_handler = std::make_shared<WinARAttr>();
-		AR_IMPL(this).update();
 	#elif defined(AR_UNIX)
 		m_attr_handler = std::make_shared<UnixARAttr>();
 	#endif
@@ -278,20 +277,27 @@ namespace TRInterface
 	}
 
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
-	{
-		CT_MEASURE_N("Renderer Update");
-		
+	{	
+		CT_MEASURE();
+
 		TRUpdateInfo r_info;
 
-		Size2D size = AR_IMPL(this).termSize();
-		Coord position = AR_IMPL(this).pos();
+		TermVert size;
+		Coord position;
 
+		{
+			CT_MEASURE_N("Win Funcs");
+			position = AR_IMPL(this).pos();
+			size = AR_IMPL(this).termSize();
+		}
+		
+		CT_MEASURE_N("Other");
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
 		if (m_should_resize)
 		{
 			// reset stored tiles from last update
-			if (drawSize() != size)
+			if (size.x != drawWidth() && size.y != drawHeight())
 				clearRenderTiles();
 
 			m_should_resize = false;
@@ -300,10 +306,10 @@ namespace TRInterface
 
 			r_info.new_size = true;
 		}
-		else if (size != drawSize())
+		else if (size.x != drawWidth() && size.y != drawHeight())
 		{
 			m_buff_stream << "\x1b[?25l";
-			m_tiles.resize(size);
+			m_tiles.resize(size.y, size.x);
 
 			// reset stored tiles from last update
 			clearRenderTiles();
@@ -331,12 +337,16 @@ namespace TRInterface
 	{
 		bool skipped_tile = false;
 
-		m_attr_handler->clear();
+		{
+			CT_MEASURE_N("Before Draw loop");
+			m_attr_handler->clear();
 
-		m_attr_handler->move({ 0, 0 });
-		m_attr_handler->moveCode(getStream());
+			m_attr_handler->move({ 0, 0 });
+			m_attr_handler->moveCode(getStream());
+		}
 
-		// TODO: this is waaaay too slow.
+		{
+		CT_MEASURE_N("Draw loop");
 
 		// this loop needs to access the matrix as row first, then column, even though it is stored as column major,
 		// as the terminal expects the buffer to be ordered as "row major", meaning newlines define where each row begins and ends.
@@ -344,8 +354,9 @@ namespace TRInterface
 		{
 			for (TInt x = 0; (size_t)x < drawWidth(); x++)
 			{
-				Tile& new_tile = m_tiles(y, x).current;
-				Tile& old_tile = m_tiles(y, x).last;
+				DrawTile& tile = m_tiles(y, x);
+				Tile& new_tile = tile.current;
+				Tile& old_tile = tile.last;
 
 				if (new_tile == old_tile)
 				{
@@ -373,6 +384,7 @@ namespace TRInterface
 			if ((size_t)y < (size_t)drawHeight() - 1 && !skipped_tile)
 				m_buff_stream << '\n';
 		}
+		}
 
 		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
 		m_attr_handler->moveCode(getStream());
@@ -384,7 +396,12 @@ namespace TRInterface
 	
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::render()
 	{
-		TRUpdateInfo r_info = update();
+		TRUpdateInfo r_info;
+		{
+			CT_MEASURE_N("Update");
+			r_info = update();
+		}
+
 		draw();
 
 		return r_info;

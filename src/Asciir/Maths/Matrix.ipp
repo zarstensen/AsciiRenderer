@@ -5,93 +5,93 @@
 
 namespace Asciir
 {
-	template<typename T>
+	template<typename T, int order>
+	template<typename TOther, int order_other>
+	arMatrix<T, order>::arMatrix(const arMatrix<TOther, order_other>& other)
+		: EgMatrixX<T, order>((Eigen::MatrixX<T>)other) {}
+
+	template<typename T, int order>
 	template<typename TOther>
-	arMatrix<T>::arMatrix(const arMatrix<TOther>& other)
-		: Eigen::MatrixX<T>((Eigen::MatrixX<T>)other) {}
+	arMatrix<T, order>::arMatrix(const Eigen::MatrixBase<TOther>& other)
+		: EgMatrixX<T, order>(other.template cast<T>()) {}
 
-	template<typename T>
-	template<typename TOther>
-	arMatrix<T>::arMatrix(const Eigen::MatrixBase<TOther>& other)
-		: Eigen::MatrixX<T>(other.template cast<T>()) {}
+	template<typename T, int order>
+	arMatrix<T, order>::arMatrix(Size2D size)
+		: EgMatrixX<T, order>(size.y, size.x) {}
 
-	template<typename T>
-	arMatrix<T>::arMatrix(Size2D size)
-		: Eigen::MatrixX<T>(size.y, size.x) {}
-
-	template<typename T>
-	Size2D arMatrix<T>::dim() const
+	template<typename T, int order>
+	Size2D arMatrix<T, order>::dim() const
 	{
-		size_t width = (size_t)Eigen::MatrixX<T>::cols();
-		size_t height = (size_t)Eigen::MatrixX<T>::rows();
+		size_t width = (size_t)EgMatrixX<T, order>::cols();
+		size_t height = (size_t)EgMatrixX<T, order>::rows();
 
 		return { width, height };
 	}
 
-	template<typename T>
-	void arMatrix<T>::resize(Size2D new_size)
+	template<typename T, int order>
+	void arMatrix<T, order>::resize(size_t h, size_t w)
 	{
-		Eigen::MatrixX<T>::conservativeResize(new_size.y, new_size.x);
+		EgMatrixX<T, order>::conservativeResize(h, w);
 	}
 
-	template<typename T>
-	void arMatrix<T>::resizeClear(Size2D size)
+	template<typename T, int order>
+	void arMatrix<T, order>::resizeClear(size_t h, size_t w)
 	{
-		Eigen::MatrixX<T>::resize(size.y, size.x);
+		EgMatrixX<T, order>::resize(h, w);
 	}
 
-	template<typename T>
-	T& arMatrix<T>::operator[](size_t indx)
+	template<typename T, int order>
+	T& arMatrix<T, order>::operator[](size_t indx)
 	{
-		AR_ASSERT_MSG(indx < (size_t) Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
+		AR_ASSERT_MSG(indx < (size_t)Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
 
 		//return *(data() + indx);
-		return Eigen::MatrixX<T>::operator()(indx);
+		return EgMatrixX<T, order>::operator()(indx);
 	}
 
-	template<typename T>
-	const T& arMatrix<T>::operator[](size_t indx) const
+	template<typename T, int order>
+	const T& arMatrix<T, order>::operator[](size_t indx) const
 	{
 		AR_ASSERT_MSG(indx < Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
 
 		//return *(data() + indx);
-		return Eigen::MatrixX<T>::operator()(indx);
+		return EgMatrixX<T, order>::operator()(indx);
 	}
 
-	template<typename T>
-	T& arMatrix<T>::get(Size2D coord)
+	template<typename T, int order>
+	T& arMatrix<T, order>::get(Size2D coord)
 	{
 		AR_ASSERT_MSG(coord.x < dim().x&& coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
-		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
+		return EgMatrixX<T, order>::operator()(coord.x, coord.y);
 	}
 
-	template<typename T>
-	const T& arMatrix<T>::get(Size2D coord) const
+	template<typename T, int order>
+	const T& arMatrix<T, order>::get(Size2D coord) const
 	{
 		AR_ASSERT_MSG(coord.x < dim().x&& coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
-		return Eigen::MatrixX<T>::operator()(coord.x, coord.y);
+		return EgMatrixX<T, order>::operator()(coord.x, coord.y);
 
 	}
 
-	template<typename T>
-	T& arMatrix<T>::get(size_t y, size_t x)
+	template<typename T, int order>
+	T& arMatrix<T, order>::get(size_t y, size_t x)
 	{
 		AR_ASSERT_MSG(x < width() && y < height(), "Invalid coord: ", x, ',', y);
 
 		// return *(data() + y * cols() + x);
-		return Eigen::MatrixX<T>::operator()(y, x);
+		return EgMatrixX<T, order>::operator()(y, x);
 	}
 
-	template<typename T>
-	const T& arMatrix<T>::get(size_t y, size_t x) const
+	template<typename T, int order>
+	const T& arMatrix<T, order>::get(size_t y, size_t x) const
 	{
 		AR_ASSERT_MSG(x < width() && y < height(), "Invalid coord: ", x, ',', y);
 
-		return Eigen::MatrixX<T>::operator()(y, x);
+		return EgMatrixX<T, order>::operator()(y, x);
 	}
 
 	template<typename T, size_t w, size_t h>

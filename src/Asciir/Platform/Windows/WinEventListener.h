@@ -9,8 +9,7 @@ namespace ELInterface
 {
 	/// @brief windows specific implementation of the EventListener class
 	/// @see EventListenerImpl<IMPLS::INTER>
-	template<>
-	class EventListenerImpl<IMPLS::WIN> : public EventListenerImpl<IMPLS::INTER>
+	class WinEventListener : public EventListenerImpl
 	{
 	protected:
 
@@ -29,9 +28,9 @@ namespace ELInterface
 
 	public:
 		/// @brief sets up the windows terminal
-		EventListenerImpl();
+		WinEventListener();
 		/// @brief rolls back the windows terminal, so that any chagnes done to the terminal, are undone
-		~EventListenerImpl();
+		~WinEventListener();
 
 		/// @brief sets initial values and starts the event listener thread
 		/// @see EventListenerImpl<IMPLS::INTER>::start()
@@ -43,12 +42,15 @@ namespace ELInterface
 		/// @brief gives information back about the given windows [Virtual-Key Code](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 		/// 
 		/// @attention this function is windows specific, use getKeyFromCode() for a cross platform alternative
-		KeyInputData getKeyFromWinCode(WORD code) const;
+		KeyInputData winGetKeyFromWinCode(WORD code) const;
 
 		/// @brief returns input data about the given windows mouse key
 		///
 		/// @attention this function is windows specific, use getMouseKeyFromCode() for a cross platform alternative
-		MouseInputData getMouseKeyFromWinCode(WORD code) const;
+		MouseInputData winGetMouseKeyFromWinCode(WORD code) const;
+
+		/// @brief retrieves the latest recieved terminal screen buffer resize event.
+		TermVert winLastTermSize() const { return m_term_size; }
 
 	protected:
 
@@ -60,6 +62,11 @@ namespace ELInterface
 		void sendTermEvents();
 
 		std::atomic<bool> m_is_listening = false;
+		TermVert m_term_size;
 	};
 }
+
+/// @brief typedef of the currently implemented EventListenerImpl interface @see EventListenerImpl<IMPLS::INTER>
+typedef ELInterface::WinEventListener EventListener;
+
 }

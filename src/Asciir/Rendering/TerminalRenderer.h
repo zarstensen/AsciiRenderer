@@ -90,18 +90,15 @@ namespace Asciir
 		Colour background_colour = BLACK8;
 		bool is_empty = true;
 
-		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ')
-			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(false) {}
+		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ', bool is_empty = false)
+			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(is_empty) {}
 
-		static Tile emptyTile()
+		static inline Tile emptyTile()
 		{
-			Tile tile;
-			tile.is_empty = true;
-			return tile;
+			return Tile(BLACK8, WHITE8, ' ', true);
 		}
 
 		/// @brief checks if the attribues of the tile are all equal.
-		/// @return 
 		bool eqAttr(const Tile& other)
 		{
 			return !is_empty && !other.is_empty && colour == other.colour && background_colour == other.background_colour;
@@ -109,18 +106,12 @@ namespace Asciir
 
 		bool operator==(const Tile& other) const
 		{
-			if (!is_empty && !other.is_empty)
-				return background_colour == other.background_colour && colour == other.colour && symbol == other.symbol;
-			else
-				return false;
+			return !is_empty && !other.is_empty && background_colour == other.background_colour && colour == other.colour && symbol == other.symbol;
 		}
 
 		bool operator!=(const Tile& other) const
 		{
-			if (!is_empty && !other.is_empty)
-				return !(*this == other);
-			else
-				return false;
+			return !(*this == other);
 		}
 
 		// blends the foreground and background colour
@@ -402,7 +393,7 @@ namespace Asciir
 			void initRenderer(const TerminalProps& term_props);
 
 		protected:
-			arMatrix<DrawTile> m_tiles;
+			arMatrix<DrawTile, Eigen::RowMajor> m_tiles;
 			Coord m_pos;
 			Tile m_tile_state = Tile();
 			std::string m_title;

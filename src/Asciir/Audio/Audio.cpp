@@ -22,7 +22,7 @@ namespace Asciir
 		if (!m_fx_buffer)
 		{
 			m_fx_buffer.allocate();
-			AR_VERIFY_MSG(m_fx_buffer->loadFromFile(m_audio_file), "Failed to load audio file: ", m_audio_file);
+			AR_ASSERT_VOLATILE(m_fx_buffer->loadFromFile(m_audio_file), "Failed to load audio file: ", m_audio_file);
 		}
 	}
 	

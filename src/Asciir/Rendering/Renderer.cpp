@@ -21,6 +21,8 @@ namespace Asciir
 	{
 		s_renderer = &ARApp::getApplication()->getTermRenderer();
 		s_attr_handler = &s_renderer->getAttrHandler();
+
+		ARApp::getApplication()->getTermRenderer().update();
 	}
 
 

@@ -4,19 +4,24 @@
 
 namespace Asciir
 {
+
+	template<typename T, int order = Eigen::ColMajor>
+	using EgMatrixX = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::AutoAlign | order>;
+
 	/// @brief A wrapper for MatrixX that overloads functions like size() to return Asciir types instead of Eigen types.
 	/// @tparam T datatype stored in the matrix
-	template<typename T>
-	struct arMatrix : public Eigen::MatrixX<T>
+	template<typename T, int order = Eigen::ColMajor>
+	struct arMatrix : public EgMatrixX<T, order>
 	{
-		using Eigen::MatrixX<T>::MatrixX;
+
+		using EgMatrixX<T, order>::Matrix;
 
 		/// @brief Constructor taking a size parameter defining the size of the dynamic array
 		arMatrix(Size2D size);
 
 		/// @brief copy constructor
-		template<typename TOther>
-		arMatrix(const arMatrix<TOther>& other);
+		template<typename TOther, int order_other>
+		arMatrix(const arMatrix<TOther, order_other>& other);
 
 
 		/// @brief constructor for eigen generic expressions
@@ -31,11 +36,16 @@ namespace Asciir
 
 		/// @brief resize the matrix whilst preserving the data contained.
 		/// see resizeClear() for a faster but more destructive resize.
-		void resize(Size2D size);
+		void resize(size_t h, size_t w);
+		/// @see resize(size_t, size_t)
+		void resize(Size2D size) { resize(size.y, size.x); }
+
 
 		/// @brief cheaper version of resize, but does not retain the matrix data
 		/// @param size new size of the matrix
-		void resizeClear(Size2D size);
+		void resizeClear(size_t h, size_t w);
+		/// @see resizeClear(size_t, size_t)
+		void resizeClear(Size2D size) { resize(size.y, size.x); }
 
 		/// @brief access the n'th element in the flattened matrix
 		/// @return reference to the element at indx

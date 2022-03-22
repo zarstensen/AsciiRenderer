@@ -1,4 +1,5 @@
 #include "arpch.h"
+
 #include "Application.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Logging/Log.h"
@@ -79,6 +80,8 @@ namespace Asciir
 			// begin rendering next frame
 			m_render_thread.startLoop();
 
+			CT_MEASURE_N("WAIT");
+
 			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
 		}
 	}
@@ -125,8 +128,6 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushLayer(layer);
 		layer->onAdd();
-
-		m_terminal_renderer.update();
 	}
 
 	void ARApp::popLayer(Layer* layer)
@@ -141,8 +142,6 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushOverlay(overlay);
 		overlay->onAdd();
-
-		m_terminal_renderer.update();
 	}
 
 	void ARApp::popOverlay(Layer* overlay)

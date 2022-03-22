@@ -1,5 +1,7 @@
 #include "WinTermRenderer.h"
 
+#include "Asciir/Core/Application.h"
+
 #include <Windows.h>
 
 namespace Asciir
@@ -36,17 +38,12 @@ namespace TRInterface
 		AR_WIN_VERIFY(SetConsoleMode(m_console, m_fallback_console_mode));
 		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_codepage));
 	}
-
+	
 	TermVert WinTerminalRenderer::termSize() const
 	{
-		CONSOLE_SCREEN_BUFFER_INFO console_info;
-		AR_WIN_VERIFY(GetConsoleScreenBufferInfo(m_console, &console_info));
-		TInt width = console_info.srWindow.Right - console_info.srWindow.Left + 1;
-		TInt height = console_info.srWindow.Bottom - console_info.srWindow.Top + 1;
-
-		return { width, height };
+		return ARApp::getApplication()->getTermEvtHandler().getEvtListener().winLastTermSize();
 	}
-	
+
 	TermVert WinTerminalRenderer::maxSize() const
 	{
 		COORD max_size = GetLargestConsoleWindowSize(m_console);
