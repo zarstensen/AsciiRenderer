@@ -277,6 +277,8 @@ namespace TRInterface
 
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
 	{
+		CT_MEASURE_N("Renderer Update");
+		
 		TRUpdateInfo r_info;
 
 		TermVert size = AR_IMPL(this).termSize();
