@@ -32,30 +32,30 @@ namespace Asciir
 			thrd.start();
 	}
 
-	Tile Renderer::drawMeshData(Renderer::MeshData& data, const TermVert& coord)
+	Tile Renderer::drawMeshData(Renderer::MeshData& data, TInt x, TInt y)
 	{
-		if (data.visible.isInsideGrid(coord, 1) && data.mesh.isInsideGrid({ coord.x, coord.y }, 1))
+		if (data.visible.isInsideGrid(Coord(x, y), 1) && data.mesh.isInsideGrid(Coord(x, y), 1))
 			return data.tile;
 		else
 			return Tile::emptyTile();
 	}
 
-	Tile Renderer::drawShaderData(ShaderData& data, const TermVert& coord, const DeltaTime& time_since_start, size_t frames_since_start)
+	Tile Renderer::drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start)
 	{
 		// shader has no bounds
 		if (data.shader->size().x == -1 && data.shader->size().y == -1)
 		{
 			// TODO: what should the uv be here?
-			return data.shader->readTile(data.transform.applyTransform(coord), Coord(1, 1), time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.applyTransform(x, y), Coord(1, 1), time_since_start, frames_since_start);
 		}
 		// shader has bounds, check if inside visible quad before doing anything else
-		else if (data.visible.isInsideGrid(coord) && Quad(data.shader->size()).isInsideGrid(coord, data.transform))
+		else if (data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
 		{
 			Coord uv = Coord(
-				coord.x / data.shader->size().x,
-				coord.y / data.shader->size().y);
+				x / data.shader->size().x,
+				y / data.shader->size().y);
 
-			return data.shader->readTile(data.transform.applyTransform(coord), uv, time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.applyTransform(x, y), uv, time_since_start, frames_since_start);
 		}
 		else
 		{
@@ -63,9 +63,9 @@ namespace Asciir
 		}
 	}
 
-	Tile Renderer::drawTileData(TileData& data, const TermVert& coord)
+	Tile Renderer::drawTileData(TileData& data, TInt x, TInt y)
 	{
-		if (data.pos == coord)
+		if (data.pos.x == x && data.pos.y == y)
 			return data.tile;
 		else
 			return Tile::emptyTile();
@@ -77,7 +77,7 @@ namespace Asciir
 		s_renderer->clearTerminal(data);
 	}
 
-	void Renderer::drawTile(TermVert tile_coord, const DeltaTime& dt, size_t df)
+	void Renderer::drawTile(TInt x, TInt y, const DeltaTime& dt, size_t df)
 	{
 		Tile result_tile = Tile::emptyTile();
 
@@ -87,13 +87,13 @@ namespace Asciir
 			switch (s_render_queue->at(ri).index())
 			{
 				case 0:
-					result_tile = drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), tile_coord).blend(result_tile);
+					result_tile = drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), y, x).blend(result_tile);
 					break;
 				case 1:
-					result_tile = drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), tile_coord, dt, df).blend(result_tile);
+					result_tile = drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), y, x, dt, df).blend(result_tile);
 					break;
 				case 2:
-					result_tile = drawTileData(std::get<TileData>(s_render_queue->at(ri)), tile_coord).blend(result_tile);
+					result_tile = drawTileData(std::get<TileData>(s_render_queue->at(ri)), y, x).blend(result_tile);
 					break;
 				case 3:
 					result_tile = std::get<ClearData>(s_render_queue->at(ri));
@@ -105,7 +105,7 @@ namespace Asciir
 				break;
 		}
 		
-		s_renderer->drawTile(tile_coord, result_tile);
+		s_renderer->drawTile(y, x, result_tile);
 	}
 
 	void Renderer::waitMinDT(DeltaTime curr_dt)
@@ -276,6 +276,16 @@ namespace Asciir
 		return s_renderer->drawSize();
 	}
 
+	size_t Renderer::width()
+	{
+		return s_renderer->drawWidth();
+	}
+
+	size_t Renderer::height()
+	{
+		return s_renderer->drawHeight();
+	}
+
 	void Renderer::swapQueues()
 	{
 		std::swap(s_submit_queue, s_render_queue);
@@ -307,19 +317,19 @@ namespace Asciir
 	{
 		AR_CORE_INFO("RENDER FRAME");
 		// if only one thread is needed, avoid creating a seperate thread
-		if ((uint32_t) s_renderer->drawSize().x * (uint32_t) s_renderer->drawSize().y <= thrd_tile_count || m_render_thread_pool.size() == 0)
+		if ((uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight() <= thrd_tile_count || m_render_thread_pool.size() == 0)
 		{
-			for (TInt x = 0; x < s_renderer->drawSize().x; x++)
+			for (TInt x = 0; x < s_renderer->drawWidth(); x++)
 			{
-				for (TInt y = 0; y < s_renderer->drawSize().y; y++)
+				for (TInt y = 0; y < s_renderer->drawHeight(); y++)
 				{
-					drawTile(TermVert(x, y), time_since_start, frames_since_start);
+					drawTile(y, x, time_since_start, frames_since_start);
 				}
 			}
 		}
 		else
 		{
-			uint32_t thrds = ((uint32_t)s_renderer->drawSize().x * (uint32_t)s_renderer->drawSize().y) / thrd_tile_count;
+			uint32_t thrds = ((uint32_t)s_renderer->drawWidth() * (uint32_t)s_renderer->drawHeight()) / thrd_tile_count;
 
 			// the thread count should not go above the thread pool size
 			thrds = std::min((uint32_t) m_render_thread_pool.size(), thrds);
@@ -351,7 +361,7 @@ namespace Asciir
 			{
 				std::unique_lock<std::mutex> lock(m_mutex);
 				
-				if (!(m_avaliable_tile < (uint32_t)s_renderer->drawSize().x * (uint32_t)s_renderer->drawSize().y))
+				if (!(m_avaliable_tile < (uint32_t)s_renderer->drawWidth() * (uint32_t)s_renderer->drawHeight()))
 					break;
 
 				current_tile = m_avaliable_tile;
@@ -359,12 +369,12 @@ namespace Asciir
 			}
 
 			// the loop should never go outside the draw range, so this is here to make sure it does not do that :)
-			uint32_t end = std::min(current_tile + thrd_tile_count, (uint32_t) s_renderer->drawSize().x * (uint32_t) s_renderer->drawSize().y);
+			uint32_t end = std::min(current_tile + thrd_tile_count, (uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight());
 
 			for (uint32_t i = current_tile; i < end; i++)
 			{
 				//       calculate the x and y coordinates from the index
-				drawTile(TermVert(i / s_renderer->drawSize().y, i % s_renderer->drawSize().y), m_curr_dt, m_curr_df);
+				drawTile((TInt)(i % s_renderer->drawHeight()), (TInt)(i / s_renderer->drawHeight()), m_curr_dt, m_curr_df);
 			}
 		}
 	}

@@ -147,6 +147,11 @@ namespace Asciir
 		/// @brief retrieves the current size of the terminal, for the previously rendered fram size, see lastSize()
 		static Size2D size();
 
+		/// @brief retreives the current width of the terminal
+		static size_t width();
+		/// @brief retreives the current height of the terminal
+		static size_t height();
+
 		/// @brief returns the size of the previously rendered frame.
 		static Size2D lastSize()
 		{
@@ -177,11 +182,11 @@ namespace Asciir
 
 		// TODO: these should be modified to return a tile, instead of rendering the entire thing.
 		/// @brief render the given mesh data
-		static Tile drawMeshData(MeshData& data, const TermVert& coord);
+		static Tile drawMeshData(MeshData& data, TInt x, TInt y);
 		/// @brief render the given shader data
-		static Tile drawShaderData(ShaderData& data, const TermVert& coord, const DeltaTime& time_since_start, size_t frames_since_start);
+		static Tile drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start);
 		/// @brief render the given tile data
-		static Tile drawTileData(TileData& data, const TermVert& coord);
+		static Tile drawTileData(TileData& data, TInt x, TInt y);
 		/// @brief render the given clear data
 		static void drawClearData(ClearData& data);
 
@@ -192,7 +197,7 @@ namespace Asciir
 		/// 
 		/// the QueueElems get rendered in order of last in, first out, meaning the latest submitted QueueElem will be rendered first.
 		/// 
-		static void drawTile(TermVert tile_coord, const DeltaTime& dt, size_t df);
+		static void drawTile(TInt y, TInt x, const DeltaTime& dt, size_t df);
 
 		/// @brief waits until the minimum delta time is hit, assuming the passed time has already passed
 		/// 

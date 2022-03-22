@@ -9,6 +9,8 @@
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
+#include <ChrTrcMacros.h>
+
 // cast the TerminalRendererInterface this pointer to the current implementation,
 // allowing access to platform dependent function to be called inside the TerminalRendererInterface class.
 // should only be used inside the TerminalRendererInterface class
@@ -216,38 +218,38 @@ namespace TRInterface
 		return m_tile_state;
 	}
 
-	void TerminalRendererInterface::drawTile(const TermVert& pos)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y)
 	{
-		drawTile(pos, m_tile_state);
+		drawTile(x, y, m_tile_state);
 	}
 
-	void TerminalRendererInterface::drawTile(const TermVert& pos, const Tile& tile)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y, const Tile& tile)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current = tile;
+		m_tiles(y, x).current = tile;
 	}
 
-	void TerminalRendererInterface::blendTile(const TermVert& pos)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y)
 	{
-		blendTile(pos, m_tile_state);
+		blendTile(x, y, m_tile_state);
 	}
 
-	void TerminalRendererInterface::blendTile(const TermVert& pos, const Tile& tile)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y, const Tile& tile)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current.blend(tile);
+		m_tiles(y, x).current.blend(tile);
 	}
 
-	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(const TermVert& pos)
+	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(TInt x, TInt y)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		return m_tiles(pos.x, pos.y);
+		return m_tiles(y, x);
 	}
 
 	void TerminalRendererInterface::setTitle(const std::string& title)
@@ -279,7 +281,7 @@ namespace TRInterface
 	{
 		TRUpdateInfo r_info;
 
-		TermVert size = AR_IMPL(this).termSize();
+		Size2D size = AR_IMPL(this).termSize();
 		Coord position = AR_IMPL(this).pos();
 
 		// \x1b[?25l = hide cursor
@@ -291,7 +293,7 @@ namespace TRInterface
 				clearRenderTiles();
 
 			m_should_resize = false;
-			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
+			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawHeight()) + ';' + std::to_string(drawWidth()) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
 			r_info.new_size = true;
@@ -332,14 +334,16 @@ namespace TRInterface
 		m_attr_handler->move({ 0, 0 });
 		m_attr_handler->moveCode(getStream());
 
+		// TODO: this is waaaay too slow.
+
 		// this loop needs to access the matrix as row first, then column, even though it is stored as column major,
 		// as the terminal expects the buffer to be ordered as "row major", meaning newlines define where each row begins and ends.
-		for (TInt y = 0; (size_t)y < drawSize().y; y++)
+		for (TInt y = 0; (size_t)y < drawHeight(); y++)
 		{
-			for (TInt x = 0; (size_t)x < drawSize().x; x++)
+			for (TInt x = 0; (size_t)x < drawWidth(); x++)
 			{
-				Tile& new_tile = m_tiles(x, y).current;
-				Tile& old_tile = m_tiles(x, y).last;
+				Tile& new_tile = m_tiles(y, x).current;
+				Tile& old_tile = m_tiles(y, x).last;
 
 				if (new_tile == old_tile)
 				{
@@ -364,16 +368,18 @@ namespace TRInterface
 				old_tile = new_tile;
 			}
 
-			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)
+			if ((size_t)y < (size_t)drawHeight() - 1 && !skipped_tile)
 				m_buff_stream << '\n';
 		}
 
-		m_attr_handler->move(TermVert(drawSize().x - 1, drawSize().y - 1));
+		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
 		m_attr_handler->moveCode(getStream());
+
+		CT_MEASURE_N("Buffer Flush");
 
 		flushBuffer();
 	}
-
+	
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::render()
 	{
 		TRUpdateInfo r_info = update();
@@ -382,10 +388,10 @@ namespace TRInterface
 		return r_info;
 	}
 
-	TermVert TerminalRendererInterface::drawSize() const
+	Size2D TerminalRendererInterface::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return (TermVert)m_tiles.dim();
+		return m_tiles.dim();
 	}
 
 	void TerminalRendererInterface::pushBuffer(char c)

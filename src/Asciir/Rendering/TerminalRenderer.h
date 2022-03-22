@@ -317,16 +317,23 @@ namespace Asciir
 			/// @brief get the current tile state
 			Tile& getState();
 			/// @brief replaces the tile at pos with the current tile state
-			void drawTile(const TermVert& pos);
+			void drawTile(TInt x, TInt y);
+			/// @see drawTile(TInt, TInt)
+			void drawTile(const TermVert& pos) { drawTile(pos.x, pos.y); }
 			/// @brief replaces the tile at pos with the specified tile. does not modify the current tile state.
-			void drawTile(const TermVert& pos, const Tile& tile);
+			void drawTile(TInt x, TInt y, const Tile& tile);
+			/// @brief  @see drawTile(TInt, TInt)
+			void drawTile(const TermVert& pos, const Tile& tile) { drawTile(pos.x, pos.y, tile); }
 			/// @brief blends the current tile state into the stored tile with the stored tile as the background
-			void blendTile(const TermVert& pos);
+			void blendTile(TInt x, TInt y);
+			void blendTile(const TermVert& pos) { blendTile(pos.x, pos.y); }
 			/// @brief blends the tile at pos with the specified tile. does not modify the current tile state.
-			void blendTile(const TermVert& pos, const Tile& tile);
+			void blendTile(TInt x, TInt y, const Tile& tile);
+			void blendTile(const TermVert& pos, const Tile& tile) { blendTile(pos.x, pos.y, tile); }
 			/// @brief retrieve the DrawTile at the passed position
 			/// @return the current and previosly rendered tile at the specified position
-			DrawTile& getTile(const TermVert& pos);
+			DrawTile& getTile(TInt x, TInt y);
+			DrawTile& getTile(const TermVert& pos) { return getTile(pos.x, pos.y); }
 			/// @brief set the title of the terminal
 			/// @note the title will only be changed on the terminal once it has been rendered
 			void setTitle(const std::string& title);
@@ -353,7 +360,9 @@ namespace Asciir
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
 			AR_INT_FUNC_R(TermVert termSize() const, {});
 			/// @brief get the size where the TerminalRenderer is able to draw.
-			TermVert drawSize() const;
+			Size2D drawSize() const;
+			size_t drawWidth() const { return m_tiles.width(); }
+			size_t drawHeight() const { return m_tiles.height(); }
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
 			AR_INT_FUNC_R(TermVert maxSize() const, {});
 

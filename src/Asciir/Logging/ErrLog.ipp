@@ -26,7 +26,7 @@
 		AR_JOIN_NAME(ret_val, __LINE__); }
 	#else
 
-	#define AR_WIN_VERIFY(x) x
+	#define AR_WIN_VERIFY(x) {x;}
 
 	#endif
 	
@@ -54,7 +54,7 @@
 		AR_DEBUG_BREAK; \
 	}}
 #else
-#define AR_VERIFY_MSG(x, ...) {x}
+#define AR_VERIFY_MSG(x, ...) {x;}
 #endif
 
 /// @brief verifies function passed (x)
@@ -63,7 +63,7 @@
 #ifdef AR_DEBUG
 #define AR_VERIFY(x) AR_VERIFY_MSG(x, "Verify failed!")
 #else
-#define AR_VERIFY(x) {x}
+#define AR_VERIFY(x) {x;}
 #endif
 
 /// @brief same as AR_VERIFY_MSG
