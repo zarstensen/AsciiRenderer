@@ -335,8 +335,6 @@ namespace Asciir
 			/// @brief get the AsciiAttr instance for the current terminal
 			const AsciiAttr& getAttrHandler();
 
-			/// @brief set the terminal to the specified size
-			void resize(TermVert size);
 
 			/// @brief updates the terminal properties.  
 			/// this function updates the size, title, and fontsize (TODO: implement font size)
@@ -346,6 +344,9 @@ namespace Asciir
 			void draw();
 			/// @brief calls update() and draw().
 			TRUpdateInfo render();
+			
+			/// @brief set the terminal to the specified size
+			void resize(TermVert size);
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().

@@ -61,7 +61,7 @@ namespace TRInterface
 	{
 		// TODO: no need for this to be a pointer
 	#ifdef AR_WIN
-		m_attr_handler = std::make_shared<WinARAttr>();
+		m_attr_handler = std::make_shared<AsciiAttr>();
 	#elif defined(AR_UNIX)
 		m_attr_handler = std::make_shared<UnixARAttr>();
 	#endif
@@ -306,7 +306,7 @@ namespace TRInterface
 
 			r_info.new_size = true;
 		}
-		else if (size.x != drawWidth() && size.y != drawHeight())
+		else if (size.x != drawWidth() || size.y != drawHeight())
 		{
 			m_buff_stream << "\x1b[?25l";
 			m_tiles.resize(size.y, size.x);

@@ -97,6 +97,12 @@ namespace Asciir
 		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
 		static void setThreads(uint32_t thread_count);
 
+		/// @brief defaults to number of avaliable threads on the system. @see setDrawThrds()
+		static void setDrawThrds() { setDrawThrds(std::thread::hardware_concurrency()); }
+		/// @brief sets the number of threads to be used when processing the rendered frame and generating the output string buffer.
+		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
+		static void setDrawThrds(uint32_t thread_count);
+
 		/// @brief returns the number of threads used when rendering a frame.
 		static uint32_t getThreads() { return (uint32_t) m_render_thread_pool.size(); }
 
@@ -119,6 +125,9 @@ namespace Asciir
 		static void submitToQueue(QueueElem new_elem);
 		static void submitRect(s_Coords<2> verts, Tile tile);
 		static Tile viewTile(TermVert pos);
+
+		/// @brief sets the title of the terminal
+		static void setTitle(const std::string& title) { s_renderer->setTitle(title); }
 
 		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
 		/// @param rect_start the top right corner of the section to be captured

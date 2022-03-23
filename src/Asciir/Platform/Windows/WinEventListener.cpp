@@ -100,6 +100,7 @@ namespace ELInterface
 						case WINDOW_BUFFER_SIZE_EVENT:
 							COORD size = event_r.Event.WindowBufferSizeEvent.dwSize;
 							m_term_size = { size.X, size.Y };
+							AR_INFO(size.X, size.Y);
 							break;
 						case MENU_EVENT:
 							break;
