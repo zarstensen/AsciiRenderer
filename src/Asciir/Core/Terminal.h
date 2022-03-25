@@ -40,9 +40,11 @@ namespace Asciir
 		/// @param callback callback function to recieve the event 
 		void setEventCallback(const EventCallbackFp& callback);
 
+		EventListener& getEvtListener() { return m_event_listener; }
+
 	protected:
 		/// @brief refrence to the platform specific event listener
-		Ref<EventListener> m_event_listener;
+		EventListener m_event_listener;
 		EventCallbackFp m_event_callback;
 	};
 

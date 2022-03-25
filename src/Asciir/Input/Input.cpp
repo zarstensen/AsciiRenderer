@@ -7,10 +7,11 @@
 
 namespace Asciir
 {
+	// TODO: inline?
 	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
 	TerminalRenderer::TRUpdateInfo Input::s_info;
-	Ref<EventListener> Input::s_event_listener;
+	EventListener* Input::s_event_listener = nullptr;
 
 	// structure storing polled event listener data, as well as storing a toggled attribute,
 	// that allows the input class to detect when the key is toggled on / off, relative to the event listener polls.
@@ -45,9 +46,9 @@ namespace Asciir
 	static std::array<KeyToggledData, KEY_CODE_COUNT>		key_toggled_state = { KeyToggledData() };
 	static std::array<MouseToggledData, MOUSE_CODE_COUNT>	mouse_toggled_state = { MouseToggledData() };
 
-	void Input::setEventListener(Ref<EventListener> listener)
+	void Input::setEventListener(EventListener& listener)
 	{
-		s_event_listener = listener;
+		s_event_listener = &listener;
 	}
 
 	bool Input::isKeyDown(Key keycode)

@@ -24,7 +24,9 @@ namespace Asciir
 	struct Transform
 	{
 		Coord applyTransform(Coord vec);
+		Coord applyTransform(TInt x, TInt y) { return applyTransform(Coord(x, y)); }
 		Coord reverseTransform(Coord vec);
+		Coord reverseTransform(TInt x, TInt y) { return reverseTransform(Coord(x, y)); }
 
 		/// @brief sets the origin of the transformation matrix.  
 		/// only relevant for the scale and rotation part of the transformation matrix

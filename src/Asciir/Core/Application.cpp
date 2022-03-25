@@ -1,4 +1,5 @@
 #include "arpch.h"
+
 #include "Application.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Logging/Log.h"
@@ -79,6 +80,8 @@ namespace Asciir
 			// begin rendering next frame
 			m_render_thread.startLoop();
 
+			CT_MEASURE_N("WAIT");
+
 			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
 		}
 	}
@@ -86,16 +89,23 @@ namespace Asciir
 	void ARApp::render()
 	{
 		{
-		CT_MEASURE_N("Print To Console");
+		CT_MEASURE_N("Render Frame");
 		// print the current queue to the terminal
 		Renderer::flushRenderQueue(DeltaTime(castRealMilli(m_last_frame_start - m_app_start)), m_frame_count);
 		}
 
+		TerminalRenderer::TRUpdateInfo update_info;
+
 		{
-		CT_MEASURE_N("Render Frame");
+		CT_MEASURE_N("Print To Console");
+		update_info = m_terminal_renderer.render();
+		}
+		
 		// as a new frame is shown, any previous inputs to the terminal should be relative to the last frame, so poll the terminal inputs
 		// this is done in the render thread, as this function is dependent on info from the render call
-		m_terminal_evt.pollInput(m_terminal_renderer.render());
+		{
+		CT_MEASURE_N("Poll Input");
+		m_terminal_evt.pollInput(update_info);
 		}
 	}
 
@@ -118,8 +128,6 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushLayer(layer);
 		layer->onAdd();
-
-		m_terminal_renderer.update();
 	}
 
 	void ARApp::popLayer(Layer* layer)
@@ -134,8 +142,6 @@ namespace Asciir
 		// generate appropiate events
 		m_layerStack.pushOverlay(overlay);
 		overlay->onAdd();
-
-		m_terminal_renderer.update();
 	}
 
 	void ARApp::popOverlay(Layer* overlay)

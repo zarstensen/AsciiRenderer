@@ -97,6 +97,12 @@ namespace Asciir
 		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
 		static void setThreads(uint32_t thread_count);
 
+		/// @brief defaults to number of avaliable threads on the system. @see setDrawThrds()
+		static void setDrawThrds() { setDrawThrds(std::thread::hardware_concurrency()); }
+		/// @brief sets the number of threads to be used when processing the rendered frame and generating the output string buffer.
+		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
+		static void setDrawThrds(uint32_t thread_count);
+
 		/// @brief returns the number of threads used when rendering a frame.
 		static uint32_t getThreads() { return (uint32_t) m_render_thread_pool.size(); }
 
@@ -119,6 +125,9 @@ namespace Asciir
 		static void submitToQueue(QueueElem new_elem);
 		static void submitRect(s_Coords<2> verts, Tile tile);
 		static Tile viewTile(TermVert pos);
+
+		/// @brief sets the title of the terminal
+		static void setTitle(const std::string& title) { s_renderer->setTitle(title); }
 
 		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
 		/// @param rect_start the top right corner of the section to be captured
@@ -146,6 +155,11 @@ namespace Asciir
 		static void resize(Size2D size);
 		/// @brief retrieves the current size of the terminal, for the previously rendered fram size, see lastSize()
 		static Size2D size();
+
+		/// @brief retreives the current width of the terminal
+		static size_t width();
+		/// @brief retreives the current height of the terminal
+		static size_t height();
 
 		/// @brief returns the size of the previously rendered frame.
 		static Size2D lastSize()
@@ -177,11 +191,11 @@ namespace Asciir
 
 		// TODO: these should be modified to return a tile, instead of rendering the entire thing.
 		/// @brief render the given mesh data
-		static Tile drawMeshData(MeshData& data, const TermVert& coord);
+		static Tile drawMeshData(MeshData& data, TInt x, TInt y);
 		/// @brief render the given shader data
-		static Tile drawShaderData(ShaderData& data, const TermVert& coord, const DeltaTime& time_since_start, size_t frames_since_start);
+		static Tile drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start);
 		/// @brief render the given tile data
-		static Tile drawTileData(TileData& data, const TermVert& coord);
+		static Tile drawTileData(TileData& data, TInt x, TInt y);
 		/// @brief render the given clear data
 		static void drawClearData(ClearData& data);
 
@@ -192,7 +206,7 @@ namespace Asciir
 		/// 
 		/// the QueueElems get rendered in order of last in, first out, meaning the latest submitted QueueElem will be rendered first.
 		/// 
-		static void drawTile(TermVert tile_coord, const DeltaTime& dt, size_t df);
+		static void drawTile(TInt y, TInt x, const DeltaTime& dt, size_t df);
 
 		/// @brief waits until the minimum delta time is hit, assuming the passed time has already passed
 		/// 

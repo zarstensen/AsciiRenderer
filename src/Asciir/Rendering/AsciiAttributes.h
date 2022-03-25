@@ -5,7 +5,7 @@
 
 namespace Asciir
 {
-	static constexpr size_t ATTR_COUNT = 8;
+	static constexpr size_t ATTR_COUNT = 7;
 
 	typedef unsigned short ATTRI;
 
@@ -39,7 +39,7 @@ namespace Asciir
 	/// same as OVERLINED
 	static constexpr ATTRI TOP = 7;
 	/// same as TOP
-	static constexpr ATTRI OVERLINED = 7;
+	static constexpr ATTRI OVERLINED = TOP;
 	/// same as UNDERLINE
 	static constexpr ATTRI BOTTOM = 2;
 #ifdef AR_WIN
@@ -54,8 +54,14 @@ namespace Asciir
 	static constexpr ATTRI ENCIRCLED = 6;
 #endif
 
-	/// @brief the maximum size (in bytes) for a single ansi code that will enable / disable the specified attributes
-	static constexpr size_t ATTR_MAX_SIZE = 48;
+	/// @brief the maximum length, in bytes, an ansi escape sequence will be, for any combination of attributes.
+	// 2 bytes for the escape sequence start
+	// 5 bytes for the set colour code ';38/48;5'
+	// 4 bytes for a single channel 'xxx;' multiply by 3, as there are 3 channels (rgb)
+	// sets both foreground and background colour
+	// length of attribute count * 3, considering a single attribute should at maximum take up "nn;"
+	// 1 byte for the ending m
+	static constexpr size_t ATTR_MAX_SIZE = 2 + (5 + 4 * 3) * 2 + ATTR_COUNT * 3 + 1;
 
 	/// @brief structure representing a 32 bit rgba colour value.
 	struct Colour
@@ -142,7 +148,6 @@ namespace Asciir
 	};
 
 	
-
 	/// @brief class for storing and modifying the ansi attributes of an ascii character
 	/// 
 	/// also generates the corresponding ansi code that should be printed to the terminal in order to apply the attributes
@@ -157,6 +162,7 @@ namespace Asciir
 	/// 
 	/// @attention only some information is preserved on a newline in streams, so the is_newline parameter must be set accordingly in order to accomidate for this, when calling ansiCode().
 	///
+	// TODO: this class should be an abstract class, each implementation should produce different ansi codes, as not all terminals supports the codes currently used.
 	class AsciiAttr
 	{
 	protected:
@@ -179,7 +185,7 @@ namespace Asciir
 		std::array<bool, ATTR_COUNT> attributes = { false };
 
 		AsciiAttr() = default;
-		virtual ~AsciiAttr();
+		~AsciiAttr();
 
 		void setForeground(const Colour& colour);
 		Colour getForeground();
@@ -204,7 +210,6 @@ namespace Asciir
 
 #ifdef AR_WIN
 
-		
 		void setBoxed(bool val);
 		void setLR(bool val);
 		void setTB(bool val);
@@ -212,9 +217,9 @@ namespace Asciir
 #endif
 
 		/// @brief returns the ansi code sequence that will set / unset the specified attributes.
-		virtual std::string ansiCode() = 0;
+		std::string ansiCode();
 		/// @brief appends return value of ansiCode(), to dst.
-		virtual void ansiCode(std::string& dst) = 0;
+		void ansiCode(std::string& dst);
 		/// @brief puts the shortest possible ansi code sequence that will set / unset the specified attributes, taking into account the previous attributes set.
 		/// 
 		/// this function should always be used with the same stream, as it assumes the previous attributes put into the last stream, also are set in this stream.
@@ -224,7 +229,11 @@ namespace Asciir
 		/// if a new stream is used, call clear() before using this function.
 		///
 		/// @param is_newline should be set to true if the stream has recieved a newline since the last call to ansiCode(std::ostream&, bool).
-		virtual void ansiCode(std::ostream& stream, bool is_newline = false) = 0;
+		void ansiCode(std::ostream& stream, bool is_newline = false);
+
+		/// @brief acts as if ansiCode has been called, without actually generating an ansi escape sequence.  
+		/// this simply stores the current state of the attributes, as the last state.
+		void silentStore();
 
 		/// @brief generates the ansi code that will move to the coord specified in move()
 		/// @param dst the string that will recieve the move code

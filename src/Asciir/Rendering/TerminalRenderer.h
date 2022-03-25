@@ -90,18 +90,15 @@ namespace Asciir
 		Colour background_colour = BLACK8;
 		bool is_empty = true;
 
-		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ')
-			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(false) {}
+		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ', bool is_empty = false)
+			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(is_empty) {}
 
-		static Tile emptyTile()
+		static inline Tile emptyTile()
 		{
-			Tile tile;
-			tile.is_empty = true;
-			return tile;
+			return Tile(BLACK8, WHITE8, ' ', true);
 		}
 
 		/// @brief checks if the attribues of the tile are all equal.
-		/// @return 
 		bool eqAttr(const Tile& other)
 		{
 			return !is_empty && !other.is_empty && colour == other.colour && background_colour == other.background_colour;
@@ -109,18 +106,12 @@ namespace Asciir
 
 		bool operator==(const Tile& other) const
 		{
-			if (!is_empty && !other.is_empty)
-				return background_colour == other.background_colour && colour == other.colour && symbol == other.symbol;
-			else
-				return false;
+			return !is_empty && !other.is_empty && background_colour == other.background_colour && colour == other.colour && symbol == other.symbol;
 		}
 
 		bool operator!=(const Tile& other) const
 		{
-			if (!is_empty && !other.is_empty)
-				return !(*this == other);
-			else
-				return false;
+			return !(*this == other);
 		}
 
 		// blends the foreground and background colour
@@ -317,16 +308,23 @@ namespace Asciir
 			/// @brief get the current tile state
 			Tile& getState();
 			/// @brief replaces the tile at pos with the current tile state
-			void drawTile(const TermVert& pos);
+			void drawTile(TInt x, TInt y);
+			/// @see drawTile(TInt, TInt)
+			void drawTile(const TermVert& pos) { drawTile(pos.x, pos.y); }
 			/// @brief replaces the tile at pos with the specified tile. does not modify the current tile state.
-			void drawTile(const TermVert& pos, const Tile& tile);
+			void drawTile(TInt x, TInt y, const Tile& tile);
+			/// @brief  @see drawTile(TInt, TInt)
+			void drawTile(const TermVert& pos, const Tile& tile) { drawTile(pos.x, pos.y, tile); }
 			/// @brief blends the current tile state into the stored tile with the stored tile as the background
-			void blendTile(const TermVert& pos);
+			void blendTile(TInt x, TInt y);
+			void blendTile(const TermVert& pos) { blendTile(pos.x, pos.y); }
 			/// @brief blends the tile at pos with the specified tile. does not modify the current tile state.
-			void blendTile(const TermVert& pos, const Tile& tile);
+			void blendTile(TInt x, TInt y, const Tile& tile);
+			void blendTile(const TermVert& pos, const Tile& tile) { blendTile(pos.x, pos.y, tile); }
 			/// @brief retrieve the DrawTile at the passed position
 			/// @return the current and previosly rendered tile at the specified position
-			DrawTile& getTile(const TermVert& pos);
+			DrawTile& getTile(TInt x, TInt y);
+			DrawTile& getTile(const TermVert& pos) { return getTile(pos.x, pos.y); }
 			/// @brief set the title of the terminal
 			/// @note the title will only be changed on the terminal once it has been rendered
 			void setTitle(const std::string& title);
@@ -337,8 +335,6 @@ namespace Asciir
 			/// @brief get the AsciiAttr instance for the current terminal
 			const AsciiAttr& getAttrHandler();
 
-			/// @brief set the terminal to the specified size
-			void resize(TermVert size);
 
 			/// @brief updates the terminal properties.  
 			/// this function updates the size, title, and fontsize (TODO: implement font size)
@@ -348,12 +344,17 @@ namespace Asciir
 			void draw();
 			/// @brief calls update() and draw().
 			TRUpdateInfo render();
+			
+			/// @brief set the terminal to the specified size
+			void resize(TermVert size);
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
 			AR_INT_FUNC_R(TermVert termSize() const, {});
 			/// @brief get the size where the TerminalRenderer is able to draw.
-			TermVert drawSize() const;
+			Size2D drawSize() const;
+			size_t drawWidth() const { return m_tiles.width(); }
+			size_t drawHeight() const { return m_tiles.height(); }
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
 			AR_INT_FUNC_R(TermVert maxSize() const, {});
 
@@ -393,7 +394,7 @@ namespace Asciir
 			void initRenderer(const TerminalProps& term_props);
 
 		protected:
-			arMatrix<DrawTile> m_tiles;
+			arMatrix<DrawTile, Eigen::RowMajor> m_tiles;
 			Coord m_pos;
 			Tile m_tile_state = Tile();
 			std::string m_title;

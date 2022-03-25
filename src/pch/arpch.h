@@ -47,7 +47,11 @@
 
 // Modules
 #include <Eigen/Eigen>
+
 #include <ChrTrcProfiler.h>
 #include <ChrTrcCompileTimeString.h>
+
 #include <ETH.h>
+
+#include <SFML/Audio.hpp>
 // Modules

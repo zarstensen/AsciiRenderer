@@ -9,14 +9,11 @@
 
 namespace Asciir
 {
-	TerminalEventHandler::TerminalEventHandler()
-	{
-		m_event_listener = new EventListener();
-	}
+	TerminalEventHandler::TerminalEventHandler() {}
 
 	TerminalEventHandler::~TerminalEventHandler()
 	{
-		m_event_listener->stop();
+		m_event_listener.stop();
 	}
 
 	void TerminalEventHandler::onStart()
@@ -27,12 +24,12 @@ namespace Asciir
 
 		// setup event listener
 		Input::setEventListener(m_event_listener);
-		m_event_listener->start(m_event_callback);
+		m_event_listener.start(m_event_callback);
 	}
 
 	void TerminalEventHandler::pollInput(const TerminalRenderer::TRUpdateInfo& terminal_udpate_info)
 	{
-		m_event_listener->pollState();
+		m_event_listener.pollState();
 		Input::pollState(terminal_udpate_info);
 	}
 

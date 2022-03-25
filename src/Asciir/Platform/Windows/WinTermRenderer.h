@@ -6,11 +6,16 @@ namespace Asciir
 {
 namespace TRInterface
 {
+	namespace ELInterface { class WinEventListener; }
+
 	/// @brief Windows specific implementation of TerminalRenderer.   
 	/// makes use of the windows api in order to retrieve information about the terminal size and position
 	class WinTerminalRenderer: public TerminalRendererInterface
 	{
 	public:
+
+		friend ELInterface::WinEventListener;
+
 		/// @brief sets up the windows console to accept ansi codes
 		WinTerminalRenderer(const WinTerminalRenderer::TerminalProps& props);
 		/// @brief reverts the console to before WinTerminalRenderer was instansiated

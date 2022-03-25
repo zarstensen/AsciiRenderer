@@ -9,6 +9,8 @@
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
+#include <ChrTrcMacros.h>
+
 // cast the TerminalRendererInterface this pointer to the current implementation,
 // allowing access to platform dependent function to be called inside the TerminalRendererInterface class.
 // should only be used inside the TerminalRendererInterface class
@@ -59,8 +61,7 @@ namespace TRInterface
 	{
 		// TODO: no need for this to be a pointer
 	#ifdef AR_WIN
-		m_attr_handler = std::make_shared<WinARAttr>();
-		AR_IMPL(this).update();
+		m_attr_handler = std::make_shared<AsciiAttr>();
 	#elif defined(AR_UNIX)
 		m_attr_handler = std::make_shared<UnixARAttr>();
 	#endif
@@ -216,38 +217,38 @@ namespace TRInterface
 		return m_tile_state;
 	}
 
-	void TerminalRendererInterface::drawTile(const TermVert& pos)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y)
 	{
-		drawTile(pos, m_tile_state);
+		drawTile(x, y, m_tile_state);
 	}
 
-	void TerminalRendererInterface::drawTile(const TermVert& pos, const Tile& tile)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y, const Tile& tile)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current = tile;
+		m_tiles(y, x).current = tile;
 	}
 
-	void TerminalRendererInterface::blendTile(const TermVert& pos)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y)
 	{
-		blendTile(pos, m_tile_state);
+		blendTile(x, y, m_tile_state);
 	}
 
-	void TerminalRendererInterface::blendTile(const TermVert& pos, const Tile& tile)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y, const Tile& tile)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current.blend(tile);
+		m_tiles(y, x).current.blend(tile);
 	}
 
-	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(const TermVert& pos)
+	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(TInt x, TInt y)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x&& pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		return m_tiles(pos.x, pos.y);
+		return m_tiles(y, x);
 	}
 
 	void TerminalRendererInterface::setTitle(const std::string& title)
@@ -276,32 +277,39 @@ namespace TRInterface
 	}
 
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
-	{
-		CT_MEASURE_N("Renderer Update");
-		
+	{	
+		CT_MEASURE();
+
 		TRUpdateInfo r_info;
 
-		TermVert size = AR_IMPL(this).termSize();
-		Coord position = AR_IMPL(this).pos();
+		TermVert size;
+		Coord position;
 
+		{
+			CT_MEASURE_N("Win Funcs");
+			position = AR_IMPL(this).pos();
+			size = AR_IMPL(this).termSize();
+		}
+		
+		CT_MEASURE_N("Other");
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
 		if (m_should_resize)
 		{
 			// reset stored tiles from last update
-			if (drawSize() != size)
+			if (size.x != drawWidth() && size.y != drawHeight())
 				clearRenderTiles();
 
 			m_should_resize = false;
-			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
+			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawHeight()) + ';' + std::to_string(drawWidth()) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
 			r_info.new_size = true;
 		}
-		else if (size != drawSize())
+		else if (size.x != drawWidth() || size.y != drawHeight())
 		{
 			m_buff_stream << "\x1b[?25l";
-			m_tiles.resize(size);
+			m_tiles.resize(size.y, size.x);
 
 			// reset stored tiles from last update
 			clearRenderTiles();
@@ -329,19 +337,26 @@ namespace TRInterface
 	{
 		bool skipped_tile = false;
 
-		m_attr_handler->clear();
+		{
+			CT_MEASURE_N("Before Draw loop");
+			m_attr_handler->clear();
 
-		m_attr_handler->move({ 0, 0 });
-		m_attr_handler->moveCode(getStream());
+			m_attr_handler->move({ 0, 0 });
+			m_attr_handler->moveCode(getStream());
+		}
+
+		{
+		CT_MEASURE_N("Draw loop");
 
 		// this loop needs to access the matrix as row first, then column, even though it is stored as column major,
 		// as the terminal expects the buffer to be ordered as "row major", meaning newlines define where each row begins and ends.
-		for (TInt y = 0; (size_t)y < drawSize().y; y++)
+		for (TInt y = 0; (size_t)y < drawHeight(); y++)
 		{
-			for (TInt x = 0; (size_t)x < drawSize().x; x++)
+			for (TInt x = 0; (size_t)x < drawWidth(); x++)
 			{
-				Tile& new_tile = m_tiles(x, y).current;
-				Tile& old_tile = m_tiles(x, y).last;
+				DrawTile& tile = m_tiles(y, x);
+				Tile& new_tile = tile.current;
+				Tile& old_tile = tile.last;
 
 				if (new_tile == old_tile)
 				{
@@ -366,28 +381,36 @@ namespace TRInterface
 				old_tile = new_tile;
 			}
 
-			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)
+			if ((size_t)y < (size_t)drawHeight() - 1 && !skipped_tile)
 				m_buff_stream << '\n';
 		}
+		}
 
-		m_attr_handler->move(TermVert(drawSize().x - 1, drawSize().y - 1));
+		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
 		m_attr_handler->moveCode(getStream());
+
+		CT_MEASURE_N("Buffer Flush");
 
 		flushBuffer();
 	}
-
+	
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::render()
 	{
-		TRUpdateInfo r_info = update();
+		TRUpdateInfo r_info;
+		{
+			CT_MEASURE_N("Update");
+			r_info = update();
+		}
+
 		draw();
 
 		return r_info;
 	}
 
-	TermVert TerminalRendererInterface::drawSize() const
+	Size2D TerminalRendererInterface::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return (TermVert)m_tiles.dim();
+		return m_tiles.dim();
 	}
 
 	void TerminalRendererInterface::pushBuffer(char c)
