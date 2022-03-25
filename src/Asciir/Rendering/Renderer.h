@@ -96,13 +96,6 @@ namespace Asciir
 		/// @brief sets the number of threads to be used when rendering the frame.
 		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
 		static void setThreads(uint32_t thread_count);
-
-		/// @brief defaults to number of avaliable threads on the system. @see setDrawThrds()
-		static void setDrawThrds() { setDrawThrds(std::thread::hardware_concurrency()); }
-		/// @brief sets the number of threads to be used when processing the rendered frame and generating the output string buffer.
-		/// @note everytime this function is called, all the threads are reallocated and restarted, so call this function as little as possible, preferably only once at the application start.
-		static void setDrawThrds(uint32_t thread_count);
-
 		/// @brief returns the number of threads used when rendering a frame.
 		static uint32_t getThreads() { return (uint32_t) m_render_thread_pool.size(); }
 
