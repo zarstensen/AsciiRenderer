@@ -5,7 +5,7 @@
 
 namespace Asciir
 {
-	static constexpr size_t ATTR_COUNT = 8;
+	static constexpr size_t ATTR_COUNT = 7;
 
 	typedef unsigned short ATTRI;
 
@@ -39,7 +39,7 @@ namespace Asciir
 	/// same as OVERLINED
 	static constexpr ATTRI TOP = 7;
 	/// same as TOP
-	static constexpr ATTRI OVERLINED = 7;
+	static constexpr ATTRI OVERLINED = TOP;
 	/// same as UNDERLINE
 	static constexpr ATTRI BOTTOM = 2;
 #ifdef AR_WIN
@@ -54,8 +54,14 @@ namespace Asciir
 	static constexpr ATTRI ENCIRCLED = 6;
 #endif
 
-	/// @brief the maximum size (in bytes) for a single ansi code that will enable / disable the specified attributes
-	static constexpr size_t ATTR_MAX_SIZE = 48;
+	/// @brief the maximum length, in bytes, an ansi escape sequence will be, for any combination of attributes.
+	// 2 bytes for the escape sequence start
+	// 5 bytes for the set colour code ';38/48;5'
+	// 4 bytes for a single channel 'xxx;' multiply by 3, as there are 3 channels (rgb)
+	// sets both foreground and background colour
+	// length of attribute count * 3, considering a single attribute should at maximum take up "nn;"
+	// 1 byte for the ending m
+	static constexpr size_t ATTR_MAX_SIZE = 2 + (5 + 4 * 3) * 2 + ATTR_COUNT * 3 + 1;
 
 	/// @brief structure representing a 32 bit rgba colour value.
 	struct Colour

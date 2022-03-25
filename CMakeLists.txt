@@ -1,11 +1,15 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.9.0)
 Project(Asciir)
 
 set(CMAKE_CXX_STANDARD 17)
 
+include(CheckIPOSupported)
+
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
+
+check_ipo_supported(RESULT ipo_supported OUTPUT error)
 
 if(${MSVC})
     set(CMAKE_CONFIGURATION_TYPES "Debug;InlineDebug;Release;MinSizeRel;RelWithDebInfo;DeployRel" CACHE STRING "" FORCE)
@@ -50,6 +54,16 @@ if(${MSVC})
         set(CMAKE_EXE_LINKER_FLAGS_DEPLOYREL            "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
     endif()
 endif()
+
+# the /ZI option is incompatible with whole program optimization, and as this is not modifyable directly by cmake,
+# as well as it being on by default, whole program optimization will need to be enabled manually,
+# whilst overriding the /ZI option with /Zi.
+#
+# this does create a bunch of warnings because of overriding the /ZI option.
+if(ipo_supported AND ${MSVC})
+add_compile_options("$<$<CONFIG:DEPLOYREL,RELEASE,RELWITHDEBINFO>:/Zi /GL>")
+endif()
+
 
 # options
 option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
@@ -289,6 +303,12 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_TOOLS}
 )
 
+if(ipo_supported AND NOT ${MSVC})
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_DEPLOYREL TRUE)
+endif()
+
 # compile options
 if(MSVC)
 
@@ -374,13 +394,13 @@ target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/mod
 
 # SFML
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
-
 set(BUILD_SHARED_LIBS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
 set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_WINDOW FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
 

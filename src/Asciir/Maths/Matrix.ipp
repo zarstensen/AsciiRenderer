@@ -43,7 +43,7 @@ namespace Asciir
 	template<typename T, int order>
 	T& arMatrix<T, order>::operator[](size_t indx)
 	{
-		AR_ASSERT_MSG(indx < (size_t)Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
+		AR_ASSERT_MSG((indx < (size_t)EgMatrixX<T, order>::size()), "Index out of range: ", indx);
 
 		//return *(data() + indx);
 		return EgMatrixX<T, order>::operator()(indx);
@@ -52,7 +52,7 @@ namespace Asciir
 	template<typename T, int order>
 	const T& arMatrix<T, order>::operator[](size_t indx) const
 	{
-		AR_ASSERT_MSG(indx < Eigen::MatrixX<T>::size(), "Index out of range: ", indx);
+		AR_ASSERT_MSG((indx < EgMatrixX<T, order>::size()), "Index out of range: ", indx);
 
 		//return *(data() + indx);
 		return EgMatrixX<T, order>::operator()(indx);
@@ -61,7 +61,7 @@ namespace Asciir
 	template<typename T, int order>
 	T& arMatrix<T, order>::get(Size2D coord)
 	{
-		AR_ASSERT_MSG(coord.x < dim().x&& coord.y < dim().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < dim().x && coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
 		return EgMatrixX<T, order>::operator()(coord.x, coord.y);
@@ -70,7 +70,7 @@ namespace Asciir
 	template<typename T, int order>
 	const T& arMatrix<T, order>::get(Size2D coord) const
 	{
-		AR_ASSERT_MSG(coord.x < dim().x&& coord.y < dim().y, "Invalid coord: ", coord);
+		AR_ASSERT_MSG(coord.x < dim().x && coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
 		return EgMatrixX<T, order>::operator()(coord.x, coord.y);

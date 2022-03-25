@@ -39,7 +39,7 @@ namespace Asciir
 		else
 		{
 			m_audio_src = new sf::Music;
-			AR_VERIFY_MSG(((sf::Music*)m_audio_src)->openFromFile(src.getFile()), "Failed to load audio file: ", src.getFile());
+			AR_ASSERT_VOLATILE(((sf::Music*)m_audio_src)->openFromFile(src.getFile()), "Failed to load audio file: ", src.getFile());
 		}
 
 		m_has_loaded = true;
@@ -58,5 +58,4 @@ namespace Asciir
 		sf::Vector3f pos = getSrc().getPosition();
 		return Coord(pos.x, pos.z);
 	}
-	
 }

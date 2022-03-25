@@ -17,6 +17,7 @@ namespace Asciir
 	///		WAV
 	///		OGG
 	///		FLAC
+	///		?? MP3 ??
 	/// 
 	/// the AudioSource is not required to exists whilst the AudioPlayer has the sound loaded. It is only required on the load function.
 	/// this also means any subsequent changes to the AudioSource will not be reflected in the AudioPlayer, unless it is reloaded.
