@@ -27,8 +27,8 @@ namespace Asciir
         Quad grid_quad(Coord(ceil(size.x, resolution), floor(size.y, resolution)), Coord(floor(offset.x, resolution), ceil(offset.y, resolution)));
 
         coord = transform.reverseTransform(coord) - offset;
-        coord.x = round(coord.x, resolution) + 0.5;
-        coord.y = round(coord.y, resolution) + 0.5;
+        coord.x = round(coord.x, resolution) + (Real)0.5;
+        coord.y = round(coord.y, resolution) + (Real)0.5;
 
         return    0 <= coord.x && coord.x <= size.x
                && 0 <= coord.y && coord.y <= size.y;
