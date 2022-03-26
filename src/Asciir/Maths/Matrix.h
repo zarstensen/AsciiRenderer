@@ -19,10 +19,13 @@ namespace Asciir
 		/// @brief Constructor taking a size parameter defining the size of the dynamic array
 		arMatrix(Size2D size);
 
-		/// @brief copy constructor
-		template<typename TOther, int order_other>
+		/// @brief cast constructor
+		template<typename TOther = T, int order_other = order>
 		arMatrix(const arMatrix<TOther, order_other>& other);
-
+		
+		/// @brief copy constructor
+		arMatrix(const arMatrix<T, order>& other)
+			: EgMatrixX<T, order>(other) {}
 
 		/// @brief constructor for eigen generic expressions
 		template<typename TOther>
@@ -62,6 +65,13 @@ namespace Asciir
 		T& operator()(size_t y, size_t x) { return get(y, x); }
 		/// @brief same as, operator()(Size2D) const
 		const T& operator()(size_t y, size_t x) const { return get(y, x); }
+
+		/// @brief move assignment operator
+		arMatrix<T, order>& operator=(arMatrix<T, order>&& other)
+		{
+			EgMatrixX<T, order>::operator=(std::move(other));
+			return *this;
+		}
 
 		/// @see operator()(Size2D)
 		T& get(Size2D coord);

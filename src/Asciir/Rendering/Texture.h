@@ -29,6 +29,13 @@ namespace Asciir
 		/// @param new_tile Tile the texture should be filled with
 		Texture2D(const Size2D& new_size, const Tile& new_tile = Tile());
 
+		/// @brief copy constructor
+		Texture2D(const Texture2D& other)
+			: m_texture(other.m_texture) {}
+
+		/// @brief move constructor
+		Texture2D(Texture2D&& other) noexcept
+			: m_texture(std::move(other.m_texture)) {}
 
 		/// @brief read a tile from the texture
 		/// @param coord the coordinate of the wanted tile
@@ -54,7 +61,7 @@ namespace Asciir
 		/// @brief resize function for the RESIZE::FILL mode
 		void resizeFill(const Size2D& new_size, const Tile& fill_tile);
 		/// @brief resize function for the RESIZE::NEAREST mode
-		void resizeNearest(const Size2D& new_size) {} // TODO: implement this
+		void resizeNearest(const Size2D& new_size);
 
 		/// @brief sets tile values inside the texture
 		/// @param coord the coordinate of the target tile in the texture
@@ -67,6 +74,13 @@ namespace Asciir
 		/// @param coord the coordinate of the target tile in the texture
 		/// @param overlay_tile the tile to be blended onto the target tile.
 		void blendTile(const Size2D& coord, const Tile& overlay_tile);
+
+		/// @brief move assignment operator.
+		Texture2D& operator=(Texture2D&& other)
+		{
+			m_texture = std::move(other.m_texture);
+			return *this;
+		}
 
 	protected:
 		arMatrix<Tile> m_texture;

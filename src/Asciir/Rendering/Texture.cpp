@@ -79,6 +79,26 @@ namespace Asciir
 		}
 	}
 
+	void Texture2D::resizeNearest(const Size2D& new_size)
+	{
+		Texture2D new_img(new_size);
+
+		Real ratio_x = m_texture.width() / (Real)new_size.x;
+		Real ratio_y = m_texture.height() / (Real)new_size.y;
+
+		for (size_t i = 0; i < new_size.x; i++)
+		{
+			for (size_t j = 0; j < new_size.y; j++)
+			{
+				Size2D coord(std::floor(i * ratio_x), std::floor(j * ratio_y));
+
+				new_img.setTile({ i, j }, m_texture(coord));
+			}
+		}
+
+		*this = std::move(new_img);
+	}
+
 	// ============ FileTexture ============
 	void FileTexture::load(const Path& dir)
 	{
