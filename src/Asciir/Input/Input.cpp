@@ -5,6 +5,8 @@
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Logging/Log.h"
 
+#include <ChrTrc.h>
+
 namespace Asciir
 {
 	// TODO: inline?
@@ -181,30 +183,37 @@ namespace Asciir
 		const auto& keybd_poll = s_event_listener->getKeybdPoll();
 		const auto& mouse_poll = s_event_listener->getMousePoll();
 
-		for (size_t i = 0; i < KEY_CODE_COUNT; i++)
 		{
-			const EventListener::KeyInputData& poll_data = keybd_poll[i];
-			KeyToggledData& input_key_data = key_toggled_state[i];
+			CT_MEASURE_N("STORE KEYBD");
+			for (size_t i = 0; i < KEY_CODE_COUNT; i++)
+			{
+				const EventListener::KeyInputData& poll_data = keybd_poll[i];
+				KeyToggledData& input_key_data = key_toggled_state[i];
 
-			if (poll_data.is_down != input_key_data.is_down)
-				input_key_data.is_toggled = true;
-			else if (poll_data.is_down == input_key_data.is_down)
-				input_key_data.is_toggled = false;
+				if (poll_data.is_down != input_key_data.is_down)
+					input_key_data.is_toggled = true;
+				else if (poll_data.is_down == input_key_data.is_down)
+					input_key_data.is_toggled = false;
 
-			input_key_data = poll_data;
+				input_key_data = poll_data;
+			}
 		}
 
-		for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
 		{
-			EventListener::MouseInputData poll_data = mouse_poll[i];
-			MouseToggledData& input_mouse_data = mouse_toggled_state[i];
+			CT_MEASURE_N("STORE MOUSE");
 
-			if (poll_data.is_down != input_mouse_data.is_down)
-				input_mouse_data.is_toggled = true;
-			else if (poll_data.is_down == input_mouse_data.is_down)
-				input_mouse_data.is_toggled = false;
+			for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
+			{
+				EventListener::MouseInputData poll_data = mouse_poll[i];
+				MouseToggledData& input_mouse_data = mouse_toggled_state[i];
 
-			input_mouse_data = poll_data;
+				if (poll_data.is_down != input_mouse_data.is_down)
+					input_mouse_data.is_toggled = true;
+				else if (poll_data.is_down == input_mouse_data.is_down)
+					input_mouse_data.is_toggled = false;
+
+				input_mouse_data = poll_data;
+			}
 		}
 	}
 

@@ -288,8 +288,8 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("Win Funcs");
 			position = AR_IMPL(this).pos();
-			size = AR_IMPL(this).termSize();
 		}
+			size = AR_IMPL(this).termSize();
 		
 		CT_MEASURE_N("Other");
 		// \x1b[?25l = hide cursor

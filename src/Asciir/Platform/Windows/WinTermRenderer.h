@@ -37,6 +37,8 @@ namespace TRInterface
 
 		// handle to the current console
 		HANDLE m_console;
+		// handle to the current console window
+		HWND m_console_hwin;
 		// console mode before constructor
 		DWORD m_fallback_console_mode;
 		// codepage before constructor

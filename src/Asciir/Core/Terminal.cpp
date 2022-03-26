@@ -7,6 +7,8 @@
 
 #include "Asciir/Input/EventListener.h"
 
+#include <ChrTrc.h>
+
 namespace Asciir
 {
 	TerminalEventHandler::TerminalEventHandler() {}
@@ -29,8 +31,15 @@ namespace Asciir
 
 	void TerminalEventHandler::pollInput(const TerminalRenderer::TRUpdateInfo& terminal_udpate_info)
 	{
-		m_event_listener.pollState();
-		Input::pollState(terminal_udpate_info);
+		{
+			CT_MEASURE_N("EVTL POLL");
+			m_event_listener.pollState();
+		}
+
+		{
+			CT_MEASURE_N("INPUT POLL");
+			Input::pollState(terminal_udpate_info);
+		}
 	}
 
 	void onCloseSignal(int signal)

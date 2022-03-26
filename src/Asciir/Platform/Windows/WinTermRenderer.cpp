@@ -9,7 +9,7 @@ namespace Asciir
 namespace TRInterface
 {
 	WinTerminalRenderer::WinTerminalRenderer(const WinTerminalRenderer::TerminalProps& props)
-		: TerminalRendererInterface(props), m_console(GetStdHandle(STD_OUTPUT_HANDLE))
+		: TerminalRendererInterface(props), m_console(GetStdHandle(STD_OUTPUT_HANDLE)), m_console_hwin(GetConsoleWindow())
 	{
 		// enable ansi code support
 		AR_WIN_VERIFY(GetConsoleMode(m_console, &m_fallback_console_mode));
@@ -54,8 +54,7 @@ namespace TRInterface
 	Coord WinTerminalRenderer::pos() const
 	{
 		RECT pos;
-		// TODO: only call GetConsoleWindow once and store it?
-		AR_WIN_VERIFY(GetWindowRect(GetConsoleWindow(), &pos));
+		AR_WIN_VERIFY(GetWindowRect(m_console_hwin, &pos));
 
 		long long x = pos.left;
 		long long y = pos.top;
