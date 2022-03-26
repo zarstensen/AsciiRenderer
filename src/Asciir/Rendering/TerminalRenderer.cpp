@@ -9,7 +9,7 @@
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
-#include <ChrTrcMacros.h>
+#include <ChrTrc.h>
 
 // cast the TerminalRendererInterface this pointer to the current implementation,
 // allowing access to platform dependent function to be called inside the TerminalRendererInterface class.
