@@ -282,7 +282,8 @@ namespace Asciir
 
 		public:
 
-			TerminalRendererInterface() = delete;
+			TerminalRendererInterface() = default;
+			~TerminalRendererInterface();
 
 			/// @brief set the foregound colour of the currently active state tile
 			void setColour(Colour colour);
@@ -398,6 +399,8 @@ namespace Asciir
 			Coord m_pos;
 			Tile m_tile_state = Tile();
 			std::string m_title;
+
+			ETH::LThread m_print_thrd;
 
 			Ref<AsciiAttr> m_attr_handler;
 			TermRendererBuffer m_buffer;

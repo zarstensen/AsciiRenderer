@@ -42,7 +42,7 @@ namespace TRInterface
 		// console mode before constructor
 		DWORD m_fallback_console_mode;
 		// codepage before constructor
-		UINT m_fallback_codepage;
+		std::pair<UINT, UINT> m_fallback_codepage;
 	};
 }
 

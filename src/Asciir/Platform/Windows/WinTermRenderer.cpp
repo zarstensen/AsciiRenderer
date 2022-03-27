@@ -23,8 +23,9 @@ namespace TRInterface
 		std::cout << AR_ANSIS_CSI << "?1049h";
 
 		// enable UTF8 codepage
-		m_fallback_codepage = GetConsoleOutputCP();
+		m_fallback_codepage = { GetConsoleOutputCP(), GetConsoleCP() };
 		AR_WIN_VERIFY(SetConsoleOutputCP(CP_UTF8));
+		AR_WIN_VERIFY(SetConsoleCP(CP_UTF8));
 
 		initRenderer(props);
 	}
@@ -36,7 +37,8 @@ namespace TRInterface
 
 		// reset console mode
 		AR_WIN_VERIFY(SetConsoleMode(m_console, m_fallback_console_mode));
-		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_codepage));
+		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_codepage.first));
+		AR_WIN_VERIFY(SetConsoleCP(m_fallback_codepage.second));
 	}
 	
 	TermVert WinTerminalRenderer::termSize() const
