@@ -60,7 +60,7 @@ namespace Asciir
 
 			// calculate the timeinterval from the last frame to the current frame
 			duration curr_frame_start = getTime();
-			DeltaTime d_time(castRealMilli(curr_frame_start - m_last_frame_start));
+			DeltaTime d_time(curr_frame_start - m_last_frame_start);
 
 			{
 			CT_MEASURE_N("Layer Updates");
