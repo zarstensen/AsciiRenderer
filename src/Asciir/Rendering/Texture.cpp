@@ -14,22 +14,52 @@ namespace Asciir
 	// uv, dt, and df is never used here
 	Tile Texture2D::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
 	{
+		if (m_tiled_size != TermVert(-1, -1))
+		{
+			AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Coordinate out of bounds for Texture2D read.\nCoordinate: ", coord,
+				"\nTiled size: ", m_tiled_size,
+				"\nTexture size: ", m_texture.dim());
+
+			coord.x %= m_texture.width();
+			coord.y %= m_texture.height();
+		}
+
 		return m_texture(coord);
 	}
 
 	void Texture2D::setTile(const Size2D& coord, const Tile& new_tile)
 	{
+		if (m_tiled_size != TermVert(-1, -1))
+		{
+			AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Coordinate out of bounds for Texture2D read.\nCoordinate: ", coord,
+				"\nTiled size: ", m_tiled_size,
+				"\nTexture size: ", m_texture.dim());
+
+			coord.x %= m_texture.width();
+			coord.y %= m_texture.height();
+		}
+
 		m_texture(coord) = new_tile;
 	}
 
 	void Texture2D::blendTile(const Size2D& coord, const Tile& overlay_tile)
 	{
+		if (m_tiled_size != TermVert(-1, -1))
+		{
+			AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Coordinate out of bounds for Texture2D read.\nCoordinate: ", coord,
+				"\nTiled size: ", m_tiled_size,
+				"\nTexture size: ", m_texture.dim());
+
+			coord.x %= m_texture.width();
+			coord.y %= m_texture.height();
+		}
+
 		m_texture(coord).blend(overlay_tile);
 	}
 
 	TermVert Texture2D::size() const
 	{
-		return TermVert((TInt) m_texture.rows(), (TInt) m_texture.cols());
+		return m_tiled_size == TermVert(-1, -1) ? textureSize() : m_tiled_size;
 	}
 
 	void Texture2D::resize(const Size2D& new_size, RESIZE mode, const Tile& fill_tile)

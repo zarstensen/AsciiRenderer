@@ -148,6 +148,8 @@ namespace Asciir
 		static void resize(Size2D size);
 		/// @brief retrieves the current size of the terminal, for the previously rendered fram size, see lastSize()
 		static Size2D size();
+		/// @brief retrieves the maximum possible size of the terminal, for the current font configuration.
+		static Size2D maxSize() { return s_renderer->maxSize(); }
 
 		/// @brief retreives the current width of the terminal
 		static size_t width();

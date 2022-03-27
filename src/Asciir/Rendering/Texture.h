@@ -37,15 +37,22 @@ namespace Asciir
 		Texture2D(Texture2D&& other) noexcept
 			: m_texture(std::move(other.m_texture)) {}
 
-		/// @brief read a tile from the texture
+		/// @brief read a tile from the texture. if the coordinate is out of bounds, the texture will be tiled.
 		/// @param coord the coordinate of the wanted tile
 		/// @param uv *reserved*
 		/// @param dt *reserved*
 		/// @param df *reserved*
 		Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) override;
 		
-		/// @return the size of the texture 
+		/// @return the size of the texture, including tiling.
 		TermVert size() const override;
+
+		/// @brief sets the size of the texture, when tiled.
+		/// if this new_size is greater than size(), the texture will be tiled, when using readTile().
+		/// if set to (-1, -1), the tiled size will match the texture size.
+		void setTiledSize(TermVert new_size) { m_tiled_size = new_size; }
+		/// @brief gets the size of the stored texture.
+		Size2D textureSize() const { return m_texture.dim(); }
 
 		/// @brief resizes the size of the stored texture
 		/// @param new_size the size the texture should be resized to
@@ -63,20 +70,21 @@ namespace Asciir
 		/// @brief resize function for the RESIZE::NEAREST mode
 		void resizeNearest(const Size2D& new_size);
 
-		/// @brief sets tile values inside the texture
+
+		/// @brief sets tile values inside the texture. If the coord is out of bounds for the texture size, the coordinate will be mapped back to the texture, as if it was tiled.
 		/// @param coord the coordinate of the target tile in the texture
 		/// @param new_tile the value of the tile to be placed at the coords
 		void setTile(const Size2D& coord, const Tile& new_tile);
 
-		/// @brief blends new tiles onto the texture
-		/// 
+		/// @brief blends new tiles onto the texture.
+		/// Out of bounds: same as setTile().
 		/// if overlay_tile has an opacity of 100% this has the same fucntionality as setTile(), although is still more expensive to call.
 		/// @param coord the coordinate of the target tile in the texture
 		/// @param overlay_tile the tile to be blended onto the target tile.
 		void blendTile(const Size2D& coord, const Tile& overlay_tile);
 
 		/// @brief move assignment operator.
-		Texture2D& operator=(Texture2D&& other)
+		Texture2D& operator=(Texture2D&& other) noexcept
 		{
 			m_texture = std::move(other.m_texture);
 			return *this;
@@ -84,6 +92,7 @@ namespace Asciir
 
 	protected:
 		arMatrix<Tile> m_texture;
+		TermVert m_tiled_size = {-1, -1};
 	};
 
 	typedef std::filesystem::path Path;

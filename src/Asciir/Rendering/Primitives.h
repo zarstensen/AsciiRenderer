@@ -45,6 +45,11 @@ namespace Asciir
 			return verts;
 		}
 
+		bool operator==(const Quad& other)
+		{
+			return offset == other.offset && size == other.size;
+		}
+
 	};
 
 	/// @brief outputs the offset and the quad size to the passed stream

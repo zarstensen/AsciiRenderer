@@ -64,7 +64,7 @@ namespace Asciir
 		AR_ASSERT_MSG(coord.x < dim().x && coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
-		return EgMatrixX<T, order>::operator()(coord.x, coord.y);
+		return EgMatrixX<T, order>::operator()(coord.y, coord.x);
 	}
 
 	template<typename T, int order>
@@ -73,7 +73,7 @@ namespace Asciir
 		AR_ASSERT_MSG(coord.x < dim().x && coord.y < dim().y, "Invalid coord: ", coord);
 
 		//return *(data() + coord.y * cols() + coord.x);
-		return EgMatrixX<T, order>::operator()(coord.x, coord.y);
+		return EgMatrixX<T, order>::operator()(coord.y, coord.x);
 
 	}
 
@@ -138,7 +138,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
-		return Eigen::Matrix<T, w, h>::operator()(coord.x, coord.y);
+		return Eigen::Matrix<T, w, h>::operator()(coord.y, coord.x);
 	}
 
 	template<typename T, size_t w, size_t h>
@@ -146,7 +146,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Invalid coord: ", coord);
 
-		return Eigen::Matrix<T, w, h>::operator()(coord.x, coord.y);
+		return Eigen::Matrix<T, w, h>::operator()(coord.y, coord.x);
 	}
 
 	template<typename T, size_t w, size_t h>

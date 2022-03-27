@@ -406,25 +406,28 @@ namespace Asciir
 		moveCode(stream);
 
 		// if nothing has changed do not modify the stream
-		bool has_changed = false;
-		for (size_t i = 0; i < ATTR_COUNT; i++)
-			if (attributes[i] != last_attributes[i])
-			{
+		if (!m_cleared)
+		{
+			bool has_changed = false;
+			for (size_t i = 0; i < ATTR_COUNT; i++)
+				if (attributes[i] != last_attributes[i])
+				{
+					has_changed = true;
+					break;
+				}
+
+			if (!has_changed && m_foreground != m_last_foreground)
 				has_changed = true;
-				break;
-			}
 
-		if (!has_changed && m_foreground != m_last_foreground)
-			has_changed = true;
+			if (!has_changed && m_background != m_last_background)
+				has_changed = true;
 
-		if (!has_changed && m_background != m_last_background)
-			has_changed = true;
+			if (m_cleared)
+				has_changed = true;
 
-		if (m_cleared)
-			has_changed = true;
-
-		if (!has_changed)
-			return;
+			if (!has_changed)
+				return;
+		}
 
 		// colour string buffer
 		char colour_buffer[4];
@@ -453,7 +456,7 @@ namespace Asciir
 			stream << ";29";
 
 		// foreground colour
-		else if (m_foreground != m_last_foreground || m_cleared || is_newline)
+		if (m_foreground != m_last_foreground || m_cleared || is_newline)
 		{
 
 			unsigned char red = m_foreground.red + AR_BOLD_DIFF;

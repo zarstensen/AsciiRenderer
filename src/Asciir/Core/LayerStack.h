@@ -18,17 +18,18 @@ namespace Asciir
 	/// >
 	/// >             layer part       overlay part  
 	/// >             v                v  
-	/// > layerstack: [l1, l2, l3, l4, ol1, ol2, ol3, ol4]  
+	/// > layerstack: [l4, l3, l2, l1, ol4, ol3, ol2, ol1]  
 	/// >
 	/// > push l5  
 	/// >             layer part         overlay part  
 	/// >             v                  v   
-	/// > layerstack: [l1, l2, l3, l4, l5, ol1, ol2, ol3, ol4]  
+	/// > layerstack: [l5, l4, l3, l2, l1, ol4, ol3, ol2, ol1]  
 	/// >
 	/// > push ol5  
 	/// >             layer part         overlay part
 	/// >             v                  v  
-	/// > layerstack: [l1, l2, l3, l4, l5, ol1, ol2, ol3, ol4, ol5]
+	/// > layerstack: [l5, l4, l3, l2, l1, ol5, ol4, ol3, ol2, ol1]
+	/// 
 	/// 
 	/// should only be used through an application, as the layerstack do not generate any events.
 	/// @see ARApp::pushLayer
@@ -50,9 +51,11 @@ namespace Asciir
 		void pushOverlay(Layer* overlay);
 		/// @brief removes passed layer from the layerstack.
 		/// does nothing if layer does not exist on the layerstack.
+		/// @note layer is not automaticly deallocated if pop is used.
 		/// @param layer layer to remove
 		void popLayer(Layer* layer);
 		/// @brief removes passed overlay from the layerstack.
+		/// @note layer is not automaticly deallocated if pop is used.
 		/// @param overlay overlay to remove.
 		void popOverlay(Layer* overlay);
 

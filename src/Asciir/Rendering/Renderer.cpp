@@ -48,7 +48,7 @@ namespace Asciir
 		if (data.shader->size().x == -1 && data.shader->size().y == -1)
 		{
 			// TODO: what should the uv be here?
-			return data.shader->readTile(data.transform.applyTransform(x, y), Coord(1, 1), time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransform(x, y), Coord(1, 1), time_since_start, frames_since_start);
 		}
 		// shader has bounds, check if inside visible quad before doing anything else
 		else if (data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
@@ -57,7 +57,7 @@ namespace Asciir
 				x / data.shader->size().x,
 				y / data.shader->size().y);
 
-			return data.shader->readTile(data.transform.applyTransform(x, y), uv, time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransform(x, y), uv, time_since_start, frames_since_start);
 		}
 		else
 		{

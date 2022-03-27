@@ -18,12 +18,12 @@ namespace Asciir
 	void LayerStack::pushLayer(Layer* layer)
 	{
 		// layer should be placed right before the overlays
-		m_overlay_start = m_layers.emplace(m_overlay_start, layer);
+		m_overlay_start = m_layers.emplace(m_overlay_start, layer) + 1;
 	}
 
 	void LayerStack::pushOverlay(Layer* overlay)
 	{
-		m_layers.emplace_back(overlay);
+		m_layers.push_back(overlay);
 	}
 
 	void LayerStack::popLayer(Layer* target_overlayer)
