@@ -5,14 +5,32 @@ using namespace AsciirLiterals;
 
 class TileShader : public Shader2D
 {
-
-	Size2D size() const final override
+public:
+	TileShader()
 	{
-		return Renderer::size();
+		square_trans.setOrigin(square.centrePoint());
 	}
 
-	Tile readTile(const Size2D& coord, Coord, const DeltaTime& t, size_t frame) const final override
+	TermVert size() const final override
 	{
+		return {-1, -1};
+	}
+
+protected:
+	Transform square_trans;
+	Quad square = Quad(Asciir::Coord(30, 30), Asciir::Coord(100, 10));
+
+
+	Tile readTile(const TermVert& coord, Coord, const DeltaTime& t, size_t frame) final override
+	{
+
+		Tile result;
+
+		if (coord.y == 0 && coord.x < 10)
+			result.symbol = std::to_string(coord.x)[0];
+		else if(coord.x == 0 && coord.y < 10)
+			result.symbol = std::to_string(coord.y)[0];
+
 		/*if((coord.x + coord.y + frame) % 2)
 			return Tile(BLACK8);
 		else
@@ -25,20 +43,16 @@ class TileShader : public Shader2D
 		int circle_exp = (int)(t.seconds() * 5) % size;
 
 		if (dst < circle_exp)
-			return Tile(Colour((dst / (circle_exp)) * 255, (int)((dst / (circle_exp)) * 500) % 255, (int)((dst / (circle_exp)) * 100) % 255));
-		else
+			result.background_colour = Colour((dst / (circle_exp)) * 255, (int)((dst / (circle_exp)) * 500) % 255, (int)((dst / (circle_exp)) * 100) % 255);
+		/*else
 		{
-			Quad square(Asciir::Coord(30, 30), Asciir::Coord(100, 10));
-			Transform trans;
+			square_trans.setRotation(t / 10_R);
 
-			trans.setRotation(t / 10000_R);
-			trans.setOrigin(square.centrePoint());
+			if(square.isInsideGrid(coord, square_trans))
+				result.background_colour = IRED8;
+		}*/
 
-			if(square.isInside(coord, trans))
-				return IRED8;
-			return BLACK8;
-		}
-
+		return result;
 	}
 };
 
@@ -46,9 +60,9 @@ class TileShader : public Shader2D
 
 class Mandelbrod : public Shader2D
 {
-	Size2D size() const final
+	TermVert size() const final
 	{
-		return Size2D(300, 300);
+		return TermVert(300, 300);
 	}
 
 	Coord squareImaginary(Coord number) const {
@@ -58,7 +72,7 @@ class Mandelbrod : public Shader2D
 		);
 	}
 
-	Tile readTile(const Size2D& coord, Coord uv, const DeltaTime&, size_t) const final
+	Tile readTile(const TermVert& coord, Coord uv, const DeltaTime&, size_t) final override
 	{
 		Coord z = Coord(0,0);
 
@@ -85,29 +99,43 @@ class TextureLayer : public Asciir::Layer
 
 	void onAdd() final
 	{
+		Renderer::setMinDT(DeltaTime(60).fps());
 		//texture->load(texture_path);
-		std::cout << sizeof(Asciir::Tile) << '\n';
-		std::cout << texture->size() << '\n';
 	}
+
+	Mesh square = std::vector<Coords>({ Coords({{5, 0}, {10, 0}, {20, 10}, {0, 10}}), Coords({{6, 3}, {10, 3}, {11, 7}, {6, 7}}) });
+	Transform texture_t;
+	Real rot = 0_R;
 
 	void onUpdate(DeltaTime delta_time) final
 	{
+		ARApp::getApplication()->getTermRenderer().setTitle(std::to_string(delta_time.fps()));
 		Renderer::clear();
-		Transform texture_t;
 		// texture_t.setScale({ 1_R/5_R, 1_R/5_R });
-		// texture_t.setOrigin((Coord)texture->size() / 2);
+		texture_t.setOrigin(square.getMedianVert());
+		rot += delta_time * 3;
+		texture_t.setPos({15, 15});
+		texture_t.setRotation(rot);
 
-		Renderer::submitShader(shader);
+		Renderer::submit(shader);
+		//Renderer::submit(square, IYELLOW8, texture_t);
 		//Renderer::submitShader(texture, texture_t);
 	}
 };
+
+void foo()
+{}
 
 class TextureExample : public Asciir::ARApp
 {
 public:
 	void start(const std::vector<std::string>&) override
 	{
+		Renderer::setThreads();
+		Renderer::thrd_tile_count = 128;
+
 		pushLayer(new TextureLayer());
+		pushOverlay(new Tools::ProfilingLayer(1024 * 1024));
 	}
 };
 
@@ -247,3 +275,36 @@ auto enemy_sniper_blueprint = EntityBlueprint<PositionComponent, TargetComponent
 }*/
 
 AR_DEFAULT_ENTRYPOINT(TextureExample)
+
+//struct EW : public Eigen::Vector2<Real>
+//{
+//	EW(Real a, Real b)
+//		: Eigen::Vector2<Real>(a, b) {}
+//};
+//
+//int main()
+//{
+//	constexpr size_t iter = 100000000000;
+//	constexpr size_t aaaa = 2073600;
+//
+//	
+//
+//	duration start = getTime();
+//
+//	for (size_t i = 0; i < iter; i++)
+//		Eigen::Vector2<Real> c = Eigen::Vector2<Real>(i, i);
+//
+//	duration end = getTime();
+//
+//	std::cout << "Eigen coord took: " << DeltaTime(end - start) << '\n';
+//
+//	start = getTime();
+//
+//	for (size_t i = 0; i < iter; i++)
+//		Coord c = Coord(i, i);
+//
+//	end = getTime();
+//
+//	std::cout << "Custom coord took: " << DeltaTime(end - start) << '\n';
+//
+//}

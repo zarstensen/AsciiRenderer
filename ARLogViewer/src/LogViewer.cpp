@@ -8,7 +8,7 @@ namespace Asciir
 		: m_log_dir(log_dir), m_colours(colours)
 	{
 #ifdef AR_WIN
-		m_log_attributes = std::make_unique<WinARAttr>();
+		m_log_attributes = std::make_unique<AsciiAttr>();
 #elif defined(AR_UNIX)
 		m_log_attributes = std::make_unique<UnixARAttr>();
 #endif

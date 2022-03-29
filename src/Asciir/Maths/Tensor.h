@@ -29,7 +29,7 @@ namespace Asciir
 		arTensor3D(const Eigen::MatrixBase<TOther>& other);
 
 		/// @brief returns the width, height and depth of the tensor
-		Size3D size() const;
+		Size3D dim() const;
 		void resize(Size3D size) { arMatrix<T>::resize(size.x * size.y, size.z); m_width = size.x; }
 
 		/// @brief cheaper version of resize, but does not retain the matrix data
