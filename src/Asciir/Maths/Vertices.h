@@ -11,6 +11,10 @@ namespace Asciir
 	template<typename T, size_t n>
 	struct arVertBase : public Eigen::Vector<T, n>
 	{
+	protected:
+		using Eigen::Vector<T, n>::Vector;
+
+	public:
 		arVertBase() = default;
 		template<typename TOther>
 		/// @brief copy constructor

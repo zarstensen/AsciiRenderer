@@ -7,6 +7,8 @@
 #include "Asciir/Maths/Lines.h"
 #include "Asciir/Maths/Vertices.h"
 
+#include <ChrTrc.h>
+
 namespace Asciir
 {
 	TerminalRenderer* Renderer::s_renderer = nullptr;
@@ -19,25 +21,123 @@ namespace Asciir
 	{
 		s_renderer = &ARApp::getApplication()->getTermRenderer();
 		s_attr_handler = &s_renderer->getAttrHandler();
+
+		ARApp::getApplication()->getTermRenderer().update();
 	}
 
-	void Renderer::drawMeshData(const Renderer::MeshData& data)
+
+	void Renderer::setThreads(uint32_t thread_count)
 	{
-		s_renderer->setState(data.tile);
+		m_render_thread_pool.resize(thread_count, ETH::LThread(&renderThrd));
+
+		for (ETH::LThread& thrd : m_render_thread_pool)
+			thrd.start();
+	}
+
+	Tile Renderer::drawMeshData(Renderer::MeshData& data, TInt x, TInt y)
+	{
+		if (data.visible.isInsideGrid(Coord(x, y), 1) && data.mesh.isInsideGrid(Coord(x, y), 1))
+			return data.tile;
+		else
+			return Tile::emptyTile();
+	}
+
+	Tile Renderer::drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start)
+	{
+		// shader has no bounds
+		if (data.shader->size().x == -1 && data.shader->size().y == -1)
+		{
+			// TODO: what should the uv be here?
+			return data.shader->readTile(data.transform.applyTransform(x, y), Coord(1, 1), time_since_start, frames_since_start);
+		}
+		// shader has bounds, check if inside visible quad before doing anything else
+		else if (data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
+		{
+			Coord uv = Coord(
+				x / data.shader->size().x,
+				y / data.shader->size().y);
+
+			return data.shader->readTile(data.transform.applyTransform(x, y), uv, time_since_start, frames_since_start);
+		}
+		else
+		{
+			return Tile::emptyTile();
+		}
+	}
+
+	Tile Renderer::drawTileData(TileData& data, TInt x, TInt y)
+	{
+		if (data.pos.x == x && data.pos.y == y)
+			return data.tile;
+		else
+			return Tile::emptyTile();
+	}
+
+	void Renderer::drawClearData(ClearData& data)
+	{
+		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
+		s_renderer->clearTerminal(data);
+	}
+
+	void Renderer::drawTile(TInt x, TInt y, const DeltaTime& dt, size_t df)
+	{
+		Tile result_tile = Tile::emptyTile();
+
+		for (size_t i = 0; i < s_render_queue->size(); i++)
+		{
+			size_t ri = (s_render_queue->size() - 1 - i);
+			switch (s_render_queue->at(ri).index())
+			{
+				case 0:
+					result_tile = drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), y, x).blend(result_tile);
+					break;
+				case 1:
+					result_tile = drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), y, x, dt, df).blend(result_tile);
+					break;
+				case 2:
+					result_tile = drawTileData(std::get<TileData>(s_render_queue->at(ri)), y, x).blend(result_tile);
+					break;
+				case 3:
+					result_tile = std::get<ClearData>(s_render_queue->at(ri));
+					break;
+			}
+
+			// if this is true, no matter what the next tile will be, it will have no effect on the final result, so just skip the rest of the render queue.
+			if (!result_tile.is_empty && result_tile.background_colour.alpha == 255 && result_tile.colour.alpha == 255 && result_tile.symbol != '\0')
+				break;
+		}
+		
+		s_renderer->drawTile(y, x, result_tile);
+	}
+
+	void Renderer::waitMinDT(DeltaTime curr_dt)
+	{
+		duration start_time = getTime();
+		auto d_val = start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds();
+		while (start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds() > getTime());
+	}
+
+	// should this be a ref to mesh???
+	void Renderer::submit(const Mesh& mesh, Tile tile, Transform transform)
+	{
+		MeshData data = MeshData{ mesh, tile };
+
+		data.mesh.transform(transform);
+
+		// calculate visible quad
 
 		Coord top_left_coord(size());
 		Coord bottom_right_coord(0, 0);
 
-		for (const Coord& vert : data.mesh->getVerts())
+		for (const Coord& vert : data.mesh.getVerts())
 		{
-			Coord transformed_vert = data.transform.applyTransform(vert);
-			top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
-			top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
+			top_left_coord.x = std::min(top_left_coord.x, vert.x);
+			top_left_coord.y = std::min(top_left_coord.y, vert.y);
 
-			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
-			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
+			bottom_right_coord.x = std::max(bottom_right_coord.x, vert.x);
+			bottom_right_coord.y = std::max(bottom_right_coord.y, vert.y);
 		}
-		
+
 		top_left_coord = top_left_coord;
 		bottom_right_coord = bottom_right_coord;
 
@@ -51,106 +151,58 @@ namespace Asciir
 		bottom_right_coord.y = ceil(bottom_right_coord.y);
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
-		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (data.mesh->isInsideGrid({ x, y }, 1, data.transform))
-				{
-					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
-				}
-	#ifdef AR_VISUALIZE_DRAW_BOX
-				else {
-					s_renderer->setState(data.tile.colour.inverse());
-					s_renderer->drawTile(TermVert(x, y));
-					s_renderer->setState(data.tile);
-				}
-	#endif
+		data.visible = Quad::fromCorners(top_left_coord, bottom_right_coord);
+
+		submitToQueue(data);
 	}
 
-	void Renderer::drawShaderData(const ShaderData& data, const DeltaTime& time_since_start, const size_t& frames_since_start)
+	void Renderer::submit(Ref<Shader2D> shader, Transform transform)
 	{
-		Quad texture_quad = Quad(data.shader->size());
+		ShaderData data{ shader, transform };
 
-		Coord top_left_coord(size());
-		Coord bottom_right_coord(0, 0);
-
-		for (const Coord& vert : texture_quad.getVerts())
+		// calculate visible quad
+		if (shader->size() != TermVert(-1, -1))
 		{
-			Coord transformed_vert = data.transform.applyTransform(vert);
-			top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
-			top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
+			// TODO: optimize this if necessary
+			Quad texture_quad = Quad(data.shader->size());
 
-			bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
-			bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
+			Coord top_left_coord(size());
+			Coord bottom_right_coord(0, 0);
+
+			for (const Coord& vert : texture_quad.getVerts())
+			{
+				Coord transformed_vert = data.transform.applyTransform(vert);
+				top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
+				top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
+
+				bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
+				bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
+			}
+
+			// make sure the area is inside the terminal
+
+			top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
+			top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
+
+			bottom_right_coord.x = ceil(bottom_right_coord.x);
+			bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x : bottom_right_coord.x;
+			bottom_right_coord.y = ceil(bottom_right_coord.y);
+			bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
+
+			data.visible = Quad::fromCorners(top_left_coord, bottom_right_coord);
 		}
 
-		// make sure the area is inside the terminal
-
-		top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
-		top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
-
-		bottom_right_coord.x = ceil(bottom_right_coord.x);
-		bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x : bottom_right_coord.x;
-		bottom_right_coord.y = ceil(bottom_right_coord.y);
-		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
-
-		for (Real y = top_left_coord.y; y < bottom_right_coord.y; y++)
-			for (Real x = top_left_coord.x; x < bottom_right_coord.x; x++)
-				if (texture_quad.isInsideGrid({ x, y }, 1, data.transform))
-				{
-					Coord uv = Coord(
-						(bottom_right_coord.x - top_left_coord.x) / x,
-						(bottom_right_coord.y - top_left_coord.y) / y);
-
-					// reverse the transform on the untransformed coordinates and use the new coords to read from the shader
-					// has the same effect as transforming the shader data and reading with the original coordinates
-					s_renderer->setState(data.shader->readTile(data.transform.reverseTransform({ x, y }), uv, time_since_start, frames_since_start));
-					s_renderer->blendTile(TermVert((TInt)x, (TInt)y));
-				}
+		submitToQueue(data);
 	}
 
-	void Renderer::drawTileData(const TileData& data)
+	void Renderer::submitRect(s_Coords<2> verts, Tile tile)
 	{
-		if (data.pos.x >= 0 && (size_t)data.pos.x < size().x && data.pos.y >= 0 && (size_t)data.pos.y < size().y)
-		{
-			s_renderer->setState(data.tile);
-			s_renderer->blendTile((TermVert)data.pos);
-		}
+		Mesh rect = Mesh({ verts[0], {verts[1].x, verts[0].y }, verts[1], {verts[0].x, verts[1].x} });
+
+		submit(rect, tile);
 	}
 
-	void Renderer::drawClearData(const ClearData& data)
-	{
-		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
-		s_renderer->clearTerminal(data);
-	}
-
-	void Renderer::waitMinDT(DeltaTime curr_dt)
-	{
-		duration start_time = getTime();
-		auto d_val = start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds();
-		while (start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds() > getTime());
-	}
-
-	// should this be a ref to mesh???
-	void Renderer::submitMesh(Ref<Mesh> mesh, Tile tile, Transform transform)
-	{
-		submitToQueue(QueueElem(MeshData{ mesh, tile, transform }));
-	}
-
-	void Renderer::submitShader(Ref<Shader2D> texture, Transform transform)
-	{
-		submitToQueue(ShaderData{ texture, transform });
-	}
-
-	Ref<Mesh> Renderer::submitRect(s_Coords<2> verts, Tile tile)
-	{
-		Ref<Mesh> rect = Mesh({ verts[0], {verts[1].x, verts[0].y }, verts[1], {verts[0].x, verts[1].x} });
-
-		submitMesh(rect, tile);
-
-		return rect;
-	}
-
-	void Renderer::submitTile(TermVert pos, Tile tile)
+	void Renderer::submit(TermVert pos, Tile tile)
 	{
 		submitToQueue(TileData{ tile, pos });
 	}
@@ -175,6 +227,8 @@ namespace Asciir
 
 	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
 	{
+		CT_MEASURE_N("Grab Screen");
+
 		// check for invalid arguments
 		AR_ASSERT_MSG(rect_offset.x > 0 || rect_offset.x == -1 && rect_offset.y > 0 || rect_offset.y == -1,
 			"Invalid grab screen region. rect_offset has invalid values: ", rect_offset);
@@ -224,6 +278,16 @@ namespace Asciir
 		return s_renderer->drawSize();
 	}
 
+	size_t Renderer::width()
+	{
+		return s_renderer->drawWidth();
+	}
+
+	size_t Renderer::height()
+	{
+		return s_renderer->drawHeight();
+	}
+
 	void Renderer::swapQueues()
 	{
 		std::swap(s_submit_queue, s_render_queue);
@@ -251,27 +315,70 @@ namespace Asciir
 		}
 	}
 
-	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, const size_t& frames_since_start)
+	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, size_t frames_since_start)
 	{
-		for (const QueueElem& q_elem : *s_render_queue)
+		AR_CORE_INFO("RENDER FRAME");
+		// if only one thread is needed, avoid creating a seperate thread
+		if ((uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight() <= thrd_tile_count || m_render_thread_pool.size() == 0)
 		{
-			switch (q_elem.index())
+			for (TInt x = 0; x < s_renderer->drawWidth(); x++)
 			{
-			case 0:
-				drawMeshData(std::get<MeshData>(q_elem));
-				break;
-			case 1:
-				drawShaderData(std::get<ShaderData>(q_elem), time_since_start, frames_since_start);
-				break;
-			case 2:
-				drawTileData(std::get<TileData>(q_elem));
-				break;
-			case 3:
-				drawClearData(std::get<ClearData>(q_elem));
-				break;
+				for (TInt y = 0; y < s_renderer->drawHeight(); y++)
+				{
+					drawTile(y, x, time_since_start, frames_since_start);
+				}
 			}
+		}
+		else
+		{
+			uint32_t thrds = ((uint32_t)s_renderer->drawWidth() * (uint32_t)s_renderer->drawHeight()) / thrd_tile_count;
+
+			// the thread count should not go above the thread pool size
+			thrds = std::min((uint32_t) m_render_thread_pool.size(), thrds);
+
+			AR_CORE_INFO("Using ", thrds, " threads to render the current frame!");
+			
+			m_avaliable_tile = 0;
+
+			m_curr_dt = time_since_start;
+			m_curr_df = frames_since_start;
+
+			for (uint32_t i = 0; i < thrds; i++)
+				m_render_thread_pool[i].startLoop();
+
+			for (uint32_t i = 0; i < thrds; i++)
+				m_render_thread_pool[i].joinLoop();
 		}
 
 		s_render_queue->clear();
 	}
+
+	void Renderer::renderThrd()
+	{
+		// should run until the avaliable tiles have run out
+		while (true)
+		{
+			uint32_t current_tile;
+
+			{
+				std::unique_lock<std::mutex> lock(m_mutex);
+				
+				if (!(m_avaliable_tile < (uint32_t)s_renderer->drawWidth() * (uint32_t)s_renderer->drawHeight()))
+					break;
+
+				current_tile = m_avaliable_tile;
+				m_avaliable_tile += thrd_tile_count;
+			}
+
+			// the loop should never go outside the draw range, so this is here to make sure it does not do that :)
+			uint32_t end = std::min(current_tile + thrd_tile_count, (uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight());
+
+			for (uint32_t i = current_tile; i < end; i++)
+			{
+				//       calculate the x and y coordinates from the index
+				drawTile((TInt)(i % s_renderer->drawHeight()), (TInt)(i / s_renderer->drawHeight()), m_curr_dt, m_curr_df);
+			}
+		}
+	}
+
 }

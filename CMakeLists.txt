@@ -1,12 +1,16 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.9.0)
 Project(Asciir)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
+include(CheckIPOSupported)
+
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
+
+check_ipo_supported(RESULT ipo_supported OUTPUT error)
 
 if(${MSVC})
     set(CMAKE_CONFIGURATION_TYPES "Debug;InlineDebug;Release;MinSizeRel;RelWithDebInfo;DeployRel" CACHE STRING "" FORCE)
@@ -51,6 +55,16 @@ if(${MSVC})
         set(CMAKE_EXE_LINKER_FLAGS_DEPLOYREL            "${CMAKE_EXE_LINKER_FLAGS_RELEASE}" CACHE STRING "" FORCE)
     endif()
 endif()
+
+# the /ZI option is incompatible with whole program optimization, and as this is not modifyable directly by cmake,
+# as well as it being on by default, whole program optimization will need to be enabled manually,
+# whilst overriding the /ZI option with /Zi.
+#
+# this does create a bunch of warnings because of overriding the /ZI option.
+if(ipo_supported AND ${MSVC})
+add_compile_options("$<$<CONFIG:DEPLOYREL,RELEASE,RELWITHDEBINFO>:/Zi /GL>")
+endif()
+
 
 # options
 option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
@@ -135,6 +149,14 @@ set(HEADER_DIR_INPUT
     src/Asciir/Input/EventListener.h
 )
 
+set(SRC_DIR_AUDIO
+    src/Asciir/Audio/Audio.cpp
+)
+
+set(HEADER_DIR_AUDIO
+    src/Asciir/Audio/Audio.h
+)
+
 set(SRC_DIR_LOGGING
     src/Asciir/Logging/FileLog.cpp 
     src/Asciir/Logging/FileLog.ipp
@@ -187,6 +209,14 @@ set(HEADER_DIR_RENDERING
     src/Asciir/Rendering/Texture.h
 )
 
+set(SRC_DIR_TOOLS
+    src/Asciir/Tools/ProfileLayer.cpp
+)
+
+set(HEADER_DIR_TOOLS
+    src/Asciir/Tools/ProfileLayer.h
+)
+
 # platform specific files
 if(WIN32)
 
@@ -196,6 +226,7 @@ if(WIN32)
 
         # rendering
         src/Asciir/Platform/Windows/WindowsARAttributes.cpp
+        src/Asciir/Platform/Windows/WinTermRenderer.cpp
 
         # input
         src/Asciir/Platform/Windows/WinEventListener.cpp
@@ -208,6 +239,7 @@ if(WIN32)
         
         #rendering
         src/Asciir/Platform/Windows/WindowsARAttributes.h
+        src/Asciir/Platform/Windows/WinTermRenderer.h
 
         # input
         src/Asciir/Platform/Windows/WinEventListener.h
@@ -253,6 +285,9 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_INPUT}
     ${SRC_DIR_INPUT}
 
+    ${HEADER_DIR_AUDIO}
+    ${SRC_DIR_AUDIO}
+
     ${HEADER_DIR_LOGGING}
     ${SRC_DIR_LOGGING}
 
@@ -264,7 +299,16 @@ add_library(${PROJECT_NAME} STATIC
 
     ${SRC_DIR_PLATFORM}
     ${HEADER_DIR_PLATFORM}
+
+    ${SRC_DIR_TOOLS}
+    ${HEADER_DIR_TOOLS}
 )
+
+if(ipo_supported AND NOT ${MSVC})
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
+set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_DEPLOYREL TRUE)
+endif()
 
 # compile options
 if(MSVC)
@@ -279,27 +323,33 @@ else()
 endif()
 
 # organize the source files in the generated project
-source_group("core/header"        FILES ${HEADER_DIR_CORE})
-source_group("core/src"           FILES ${SRC_DIR_CORE})
+source_group("core/header"          FILES ${HEADER_DIR_CORE})
+source_group("core/src"             FILES ${SRC_DIR_CORE})
 
-source_group("entities/header"    FILES ${HEADER_DIR_ENTITIES})
-source_group("entities/src"       FILES ${SRC_DIR_ENTITIES})
+source_group("entities/header"      FILES ${HEADER_DIR_ENTITIES})
+source_group("entities/src"         FILES ${SRC_DIR_ENTITIES})
 
-source_group("event"              FILES ${DIR_EVENT})
+source_group("event"                FILES ${DIR_EVENT})
 
-source_group("input/header"		  FILES ${HEADER_DIR_INPUT})
-source_group("input/src"          FILES ${SRC_DIR_INPUT})
+source_group("input/header"		    FILES ${HEADER_DIR_INPUT})
+source_group("input/src"            FILES ${SRC_DIR_INPUT})
 
-source_group("logging/header"     FILES ${HEADER_DIR_LOGGING})
-source_group("logging/src"        FILES ${SRC_DIR_LOGGING})
+source_group("audio/header"         FILES ${HEADER_DIR_AUDIO})
+source_group("audio/src"            FILES ${SRC_DIR_AUDIO})
 
-source_group("maths/header"        FILES ${HEADER_DIR_MATHS})
-source_group("maths/src"           FILES ${SRC_DIR_MATHS})
+source_group("logging/header"       FILES ${HEADER_DIR_LOGGING})
+source_group("logging/src"          FILES ${SRC_DIR_LOGGING})
 
-source_group("rendering/header"   FILES ${HEADER_DIR_RENDERING})
-source_group("rendering/src"      FILES ${SRC_DIR_RENDERING})
+source_group("maths/header"         FILES ${HEADER_DIR_MATHS})
+source_group("maths/src"            FILES ${SRC_DIR_MATHS})
 
-source_group("platform/"		  FILES src/Asciir/Platform/PlatformMacros.h)
+source_group("rendering/header"     FILES ${HEADER_DIR_RENDERING})
+source_group("rendering/src"        FILES ${SRC_DIR_RENDERING})
+
+source_group("tools/header"         FILES ${HEADER_DIR_TOOLS})
+source_group("tools/src"            FILES ${SRC_DIR_TOOLS})
+
+source_group("platform/"		    FILES src/Asciir/Platform/PlatformMacros.h)
 
 if(WIN32)
     source_group("platform/windows/header"  FILES ${HEADER_DIR_PLATFORM})
@@ -307,6 +357,8 @@ if(WIN32)
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE "src/pch/arpch.h")
 
 # set compile definitions depending on configuration
 target_compile_definitions(${PROJECT_NAME} PUBLIC
@@ -341,27 +393,43 @@ set_target_properties(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
 
-# OpenAL soft
+# SFML
 
-if(FALSE)
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/openal-soft OpenAL)
+set(BUILD_SHARED_LIBS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/openal-soft/include)
+set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+set(SFML_BUILD_WINDOW FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
+set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/openal-soft PROPERTY FOLDER "modules/OpenAL")
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
 
-target_link_libraries(${PROJECT_NAME} OpenAL)
-endif()
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
+
+set_property(TARGET sfml-audio PROPERTY FOLDER "modules/SFML")
+set_property(TARGET sfml-main PROPERTY FOLDER "modules/SFML")
+set_property(TARGET sfml-system PROPERTY FOLDER "modules/SFML")
+
+target_link_libraries(${PROJECT_NAME} SFML::Audio)
 
 # EThread
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
 
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
 
-set_property(DIRECTORY ${CMAKE_SOURCE_DIR}/modules/EThread PROPERTY FOLDER "modules/EThread")
+set_property(TARGET EThread PROPERTY FOLDER "modules/EThread")
 
 target_link_libraries(${PROJECT_NAME} EThread)
 
+# ChrTrcProfiler
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler ChrTrcProfiler)
+
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler/include)
+
+set_property(TARGET ChrTrcProfiler PROPERTY FOLDER "modules/ChrTrcProfiler")
+
+target_link_libraries(${PROJECT_NAME} ChrTrcProfiler)
 
 if(ASCIIR_LOG_VIEWER)
     add_subdirectory(${PROJECT_SOURCE_DIR}/ARLogViewer ARLogViewer)

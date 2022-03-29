@@ -12,7 +12,7 @@ namespace Asciir
 	}
 
 	// uv, dt, and df is never used here
-	Tile Texture2D::readTile(const Size2D& coord, Coord, const DeltaTime&, size_t) const
+	Tile Texture2D::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
 	{
 		return m_texture(coord);
 	}
@@ -27,9 +27,9 @@ namespace Asciir
 		m_texture(coord).blend(overlay_tile);
 	}
 
-	Size2D Texture2D::size() const
+	TermVert Texture2D::size() const
 	{
-		return Size2D(m_texture.rows(), m_texture.cols());
+		return TermVert((TInt) m_texture.rows(), (TInt) m_texture.cols());
 	}
 
 	void Texture2D::resize(const Size2D& new_size, RESIZE mode, const Tile& fill_tile)
@@ -77,6 +77,26 @@ namespace Asciir
 				m_texture.block(0, prev_size.x, new_size.y, new_size.x - prev_size.x).fill(fill_tile);
 			}
 		}
+	}
+
+	void Texture2D::resizeNearest(const Size2D& new_size)
+	{
+		Texture2D new_img(new_size);
+
+		Real ratio_x = m_texture.width() / (Real)new_size.x;
+		Real ratio_y = m_texture.height() / (Real)new_size.y;
+
+		for (size_t i = 0; i < new_size.x; i++)
+		{
+			for (size_t j = 0; j < new_size.y; j++)
+			{
+				Size2D coord(std::floor(i * ratio_x), std::floor(j * ratio_y));
+
+				new_img.setTile({ i, j }, m_texture(coord));
+			}
+		}
+
+		*this = std::move(new_img);
 	}
 
 	// ============ FileTexture ============
@@ -129,6 +149,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
 		m_is_loaded = false;
+		m_file_dir = "";
 
 		resize({ 0, 0 });
 	}

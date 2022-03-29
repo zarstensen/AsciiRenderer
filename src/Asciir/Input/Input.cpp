@@ -5,12 +5,15 @@
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Logging/Log.h"
 
+#include <ChrTrc.h>
+
 namespace Asciir
 {
+	// TODO: inline?
 	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
 	TerminalRenderer::TRUpdateInfo Input::s_info;
-	Ref<EventListener> Input::s_event_listener;
+	EventListener* Input::s_event_listener = nullptr;
 
 	// structure storing polled event listener data, as well as storing a toggled attribute,
 	// that allows the input class to detect when the key is toggled on / off, relative to the event listener polls.
@@ -45,9 +48,9 @@ namespace Asciir
 	static std::array<KeyToggledData, KEY_CODE_COUNT>		key_toggled_state = { KeyToggledData() };
 	static std::array<MouseToggledData, MOUSE_CODE_COUNT>	mouse_toggled_state = { MouseToggledData() };
 
-	void Input::setEventListener(Ref<EventListener> listener)
+	void Input::setEventListener(EventListener& listener)
 	{
-		s_event_listener = listener;
+		s_event_listener = &listener;
 	}
 
 	bool Input::isKeyDown(Key keycode)
@@ -117,8 +120,7 @@ namespace Asciir
 
 	bool Input::isFocused()
 	{
-		// return GetForegroundWindow() == GetConsoleWindow(); // TODO: this should not be here, but in the terminal renderer
-		return false;
+		return ARApp::getApplication()->getTermRenderer().isFocused();
 	}
 
 	std::variant<std::monostate, KeyPressedEvent, KeyReleasedEvent> Input::getKeyEvent(Key keycode)
@@ -181,30 +183,37 @@ namespace Asciir
 		const auto& keybd_poll = s_event_listener->getKeybdPoll();
 		const auto& mouse_poll = s_event_listener->getMousePoll();
 
-		for (size_t i = 0; i < KEY_CODE_COUNT; i++)
 		{
-			const EventListener::KeyInputData& poll_data = keybd_poll[i];
-			KeyToggledData& input_key_data = key_toggled_state[i];
+			CT_MEASURE_N("STORE KEYBD");
+			for (size_t i = 0; i < KEY_CODE_COUNT; i++)
+			{
+				const EventListener::KeyInputData& poll_data = keybd_poll[i];
+				KeyToggledData& input_key_data = key_toggled_state[i];
 
-			if (poll_data.is_down != input_key_data.is_down)
-				input_key_data.is_toggled = true;
-			else if (poll_data.is_down == input_key_data.is_down)
-				input_key_data.is_toggled = false;
+				if (poll_data.is_down != input_key_data.is_down)
+					input_key_data.is_toggled = true;
+				else if (poll_data.is_down == input_key_data.is_down)
+					input_key_data.is_toggled = false;
 
-			input_key_data = poll_data;
+				input_key_data = poll_data;
+			}
 		}
 
-		for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
 		{
-			EventListener::MouseInputData poll_data = mouse_poll[i];
-			MouseToggledData& input_mouse_data = mouse_toggled_state[i];
+			CT_MEASURE_N("STORE MOUSE");
 
-			if (poll_data.is_down != input_mouse_data.is_down)
-				input_mouse_data.is_toggled = true;
-			else if (poll_data.is_down == input_mouse_data.is_down)
-				input_mouse_data.is_toggled = false;
+			for (size_t i = 0; i < MOUSE_CODE_COUNT; i++)
+			{
+				EventListener::MouseInputData poll_data = mouse_poll[i];
+				MouseToggledData& input_mouse_data = mouse_toggled_state[i];
 
-			input_mouse_data = poll_data;
+				if (poll_data.is_down != input_mouse_data.is_down)
+					input_mouse_data.is_toggled = true;
+				else if (poll_data.is_down == input_mouse_data.is_down)
+					input_mouse_data.is_toggled = false;
+
+				input_mouse_data = poll_data;
+			}
 		}
 	}
 

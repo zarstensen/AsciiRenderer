@@ -37,10 +37,7 @@ namespace Asciir
 
 	template<typename T>
 	arVertex<T, 2>::arVertex(T x, T y)
-	{
-		this->x = x;
-		this->y = y;
-	}
+		: arVertBase<T, 2>(x, y) {}
 
 	template<typename T>
 	arVertex<T, 2>::arVertex(const arVertex<T, 2>& other)
@@ -79,11 +76,7 @@ namespace Asciir
 
 	template<typename T>
 	arVertex<T, 3>::arVertex(T x, T y, T z)
-	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-	}
+		: arVertBase<T, 3>(x, y, z) {}
 
 	template<typename T>
 	arVertex<T, 3>::arVertex(const arVertex<T, 3>& other)

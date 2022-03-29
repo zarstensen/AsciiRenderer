@@ -19,6 +19,8 @@
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Input/KeyCodes.h"
 
+#include "Asciir/Audio/Audio.h"
+
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
@@ -50,3 +52,7 @@
 #elif defined(AR_UNIX)
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
+
+// tools
+#include "Asciir/Tools/ProfileLayer.h"
+// tools

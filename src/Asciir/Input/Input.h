@@ -126,7 +126,7 @@ namespace Asciir
 		static Coord getMousePos();
 
 		/// @brief sets the eventlistener to be used for polling events
-		static void setEventListener(Ref<EventListener> listener);
+		static void setEventListener(EventListener& listener);
 
 		static Coord s_mouse_pos, s_mouse_diff;
 		static Coord s_last_terminal_pos;
@@ -134,6 +134,6 @@ namespace Asciir
 		static TermVert s_cur_pos, s_cur_diff;
 		static TerminalEventHandler* i_terminal;
 		static TerminalRenderer::TRUpdateInfo s_info;
-		static Ref<EventListener> s_event_listener;
+		static EventListener* s_event_listener;
 	};
 }

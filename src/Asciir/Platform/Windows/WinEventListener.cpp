@@ -2,6 +2,7 @@
 
 #include "WinEventListener.h"
 #include "KeyCodeMap.h"
+#include "WinTermRenderer.h"
 
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
@@ -12,7 +13,7 @@ namespace Asciir
 {
 namespace ELInterface
 {
-	EventListenerImpl<IMPLS::WIN>::EventListenerImpl()
+	WinEventListener::WinEventListener()
 	{
 		m_hConsole_in = GetStdHandle(STD_INPUT_HANDLE);
 		m_hConsole_out = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -21,42 +22,51 @@ namespace ELInterface
 
 		AR_WIN_VERIFY(GetConsoleMode(m_hConsole_in, &m_hcin_fallback));
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole_in, m_hcin_fallback & ~ENABLE_QUICK_EDIT_MODE | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT));
+		
+		// get the size of the terminal
+
+		CONSOLE_SCREEN_BUFFER_INFOEX buff_info{ sizeof(CONSOLE_SCREEN_BUFFER_INFOEX) };
+
+		AR_WIN_VERIFY(GetConsoleScreenBufferInfoEx(m_hConsole_out, &buff_info));
+
+		m_term_size = TermVert(buff_info.dwSize.X, buff_info.dwSize.Y);
+
 	}
 
-	EventListenerImpl<IMPLS::WIN>::~EventListenerImpl()
+	WinEventListener::~WinEventListener()
 	{
 		AR_WIN_VERIFY(SetConsoleMode(m_hConsole_in, m_hcin_fallback));
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::start(EventCallbackFp callback)
+	void WinEventListener::start(EventCallbackFp callback)
 	{
-		m_attr = dynamic_cast<const WinARAttr*>(&ARApp::getApplication()->getTermRenderer().getAttrHandler());
+		m_trenderer = &ARApp::getApplication()->getTermRenderer();
 
-		m_last_term_pos = m_attr->terminalPos();
-		m_last_term_size = m_attr->terminalSize();
+		m_last_term_pos = m_trenderer->pos();
+		m_last_term_size = m_trenderer->termSize();
 
 		m_callback = callback;
 		m_is_listening = true;
-		m_input_thrd = std::thread(&EventListenerImpl<IMPLS::WIN>::listenForInputs, this);
+		m_input_thrd = std::thread(&WinEventListener::listenForInputs, this);
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::stop()
+	void WinEventListener::stop()
 	{
 		m_is_listening = false;
 		m_input_thrd.join();
 	}
-
-	EventListenerImpl<IMPLS::WIN>::KeyInputData EventListenerImpl<IMPLS::WIN>::getKeyFromWinCode(WORD code) const
+	
+	WinEventListener::KeyInputData WinEventListener::winGetKeyFromWinCode(WORD code) const
 	{
 		return getKeyFromCode(WinToKeyCodeMap.at(code));
 	}
 
-	EventListenerImpl<IMPLS::WIN>::MouseInputData EventListenerImpl<IMPLS::WIN>::getMouseKeyFromWinCode(WORD code) const
+	WinEventListener::MouseInputData WinEventListener::winGetMouseKeyFromWinCode(WORD code) const
 	{
 		return getMouseKeyFromCode(WinToMouseCodeMap.at(code));
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::listenForInputs()
+	void WinEventListener::listenForInputs()
 	{
 		while (m_is_listening)
 		{
@@ -88,6 +98,9 @@ namespace ELInterface
 							sendFocusEvent(event_r.Event.FocusEvent);
 							break;
 						case WINDOW_BUFFER_SIZE_EVENT:
+							COORD size = event_r.Event.WindowBufferSizeEvent.dwSize;
+							m_term_size = { size.X, size.Y };
+							AR_INFO(size.X, size.Y);
 							break;
 						case MENU_EVENT:
 							break;
@@ -102,10 +115,10 @@ namespace ELInterface
 		}
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::sendKeybdEvent(KEY_EVENT_RECORD event)
+	void WinEventListener::sendKeybdEvent(KEY_EVENT_RECORD event)
 	{
 	#ifdef AR_SAFE_RELEASE
-		if (!WinToKeyCodeMap.count((size_t)event.wVirtualKeyCode - 1) == 0)
+		if (WinToKeyCodeMap.count(event.wVirtualKeyCode) == 0)
 		{
 			AR_CORE_WARN("Unknown key recieved: ", event.wVirtualKeyCode);
 			return;
@@ -169,7 +182,7 @@ namespace ELInterface
 	}
 
 	// mouse pos on the screen is found when the event is recieved so it might be off compared to when the event was sent
-	void EventListenerImpl<IMPLS::WIN>::sendMouseEvent(MOUSE_EVENT_RECORD event)
+	void WinEventListener::sendMouseEvent(MOUSE_EVENT_RECORD event)
 	{
 		for (int button = 0; button < 5; button++)
 		{
@@ -253,17 +266,17 @@ namespace ELInterface
 		}
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::sendFocusEvent(FOCUS_EVENT_RECORD event)
+	void WinEventListener::sendFocusEvent(FOCUS_EVENT_RECORD event)
 	{
 		TerminalFocusEvent e(event.bSetFocus);
 		m_callback(e);
 	}
 
-	void EventListenerImpl<IMPLS::WIN>::sendTermEvents()
+	void WinEventListener::sendTermEvents()
 	{
 		// Resize event
 
-		TermVert new_size = m_attr->terminalSize();
+		TermVert new_size = m_trenderer->termSize();
 
 		if (new_size != m_last_term_size)
 		{
@@ -275,7 +288,7 @@ namespace ELInterface
 
 		// Move event
 
-		Coord new_pos = m_attr->terminalPos();
+		Coord new_pos = m_trenderer->pos();
 
 		if (new_pos != m_last_term_pos)
 		{
@@ -286,7 +299,7 @@ namespace ELInterface
 		m_last_term_pos = new_pos;
 	}
 
-	Coord EventListenerImpl<IMPLS::INTER>::getCurrentMousePos()
+	Coord EventListenerImpl::getCurrentMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));

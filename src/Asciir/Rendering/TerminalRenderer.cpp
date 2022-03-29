@@ -1,4 +1,5 @@
 ﻿#include "arpch.h"
+
 #include "TerminalRenderer.h"
 #include "Asciir/Maths/Lines.h"
 #include "Asciir/Logging/Log.h"
@@ -8,6 +9,13 @@
 #elif defined AR_UNIX
 #include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
+
+#include <ChrTrc.h>
+
+// cast the TerminalRendererInterface this pointer to the current implementation,
+// allowing access to platform dependent function to be called inside the TerminalRendererInterface class.
+// should only be used inside the TerminalRendererInterface class
+#define AR_IMPL(obj) (*((TerminalRenderer*)obj))
 
 namespace Asciir
 {
@@ -37,51 +45,55 @@ namespace Asciir
 
 	size_t U8Len(const char* u8_str)
 	{
-		size_t len = 0;
+		int len = 0;
 
-		for (size_t i = 0; i < strlen(u8_str);)
-		{
-			i += U8CharSize(u8_str + i);
-			len++;
-		}
+		while (*u8_str)
+			len += (*u8_str++ & 0xc0) != 0x80;
 
 		return len;
 	}
 
-	TerminalRenderer::TerminalRenderer(const TerminalRenderer::TerminalProps& term_props)
-		: m_title(term_props.title)
+namespace TRInterface
+{
+	TerminalRendererInterface::TerminalRendererInterface(const TerminalRendererInterface::TerminalProps& term_props)
+		: m_title(term_props.title), m_buffer(term_props.buffer_size), m_buff_stream(&m_buffer), m_print_thrd(&TerminalRendererInterface::flushBuffer, this) {}
+
+	void TerminalRendererInterface::initRenderer(const TerminalProps& term_props)
 	{
-
-#ifdef AR_WIN
-		m_attr_handler = std::make_shared<WinARAttr>();
-#elif defined(AR_UNIX)
+		// TODO: no need for this to be a pointer
+	#ifdef AR_WIN
+		m_attr_handler = std::make_shared<AsciiAttr>();
+	#elif defined(AR_UNIX)
 		m_attr_handler = std::make_shared<UnixARAttr>();
-#endif
+	#endif
 
-		m_buffer.reserve(term_props.buffer_size);
-
-		if(term_props.size != TermVert(0, 0))
+		if (term_props.size != TermVert(0, 0))
 			resize(term_props.size);
 
-		update();
+		m_print_thrd.start();
 	}
 
-	void TerminalRenderer::setColour(Colour colour)
+	TerminalRendererInterface::~TerminalRendererInterface()
+	{
+		m_print_thrd.join();
+	}
+
+	void TerminalRendererInterface::setColour(Colour colour)
 	{
 		m_tile_state.colour = colour;
 	}
 
-	void TerminalRenderer::setBackgroundColour(Colour colour)
+	void TerminalRendererInterface::setBackgroundColour(Colour colour)
 	{
 		m_tile_state.background_colour = colour;
 	}
 
-	void TerminalRenderer::setSymbol(char symbol)
+	void TerminalRendererInterface::setSymbol(char symbol)
 	{
 		m_tile_state.symbol = symbol;
 	}
 
-	void TerminalRenderer::drawVertices(const TermVerts& vertices, DrawMode mode)
+	void TerminalRendererInterface::drawVertices(const TermVerts& vertices, DrawMode mode)
 	{
 		if (mode == DrawMode::Line)
 		{
@@ -180,118 +192,134 @@ namespace Asciir
 		}
 	}
 
-	void TerminalRenderer::drawLine(const TermVert& a, const TermVert& b)
+	void TerminalRendererInterface::drawLine(const TermVert& a, const TermVert& b)
 	{
 		drawVertices({ a, b }, DrawMode::Line);
 	}
 
-	void TerminalRenderer::clearTerminal(Tile clear_tile)
+	void TerminalRendererInterface::clearTerminal(Tile clear_tile)
 	{
-		m_tiles = m_tiles.unaryExpr([&](DrawTile cleared_tile) {
-			if(cleared_tile.current != clear_tile) // TODO: evaluate performance gain
-				cleared_tile.current = clear_tile;
-			return cleared_tile;
-			}).eval();
+		for (size_t i = 0; i < (size_t)m_tiles.size(); i++)
+			m_tiles.data()[i].current = clear_tile;
 	}
 
-	void TerminalRenderer::clearRenderTiles()
+	void TerminalRendererInterface::clearRenderTiles()
 	{
-		m_tiles = m_tiles.unaryExpr([&](DrawTile cleared_tile) {
-			cleared_tile.last = Tile::emptyTile();
-			return cleared_tile;
-			});
+		for (size_t i = 0; i < (size_t)m_tiles.size(); i++)
+			m_tiles.data()[i].last = Tile::emptyTile();
 	}
 
-	void TerminalRenderer::setState(Tile tile)
+	void TerminalRendererInterface::setState(Tile tile)
 	{
 		m_tile_state = tile;
 	}
 
-	Tile& TerminalRenderer::getState()
+	Tile& TerminalRendererInterface::getState()
 	{
 		return m_tile_state;
 	}
 
-	Tile TerminalRenderer::getState() const
+	Tile TerminalRendererInterface::getState() const
 	{
 		return m_tile_state;
 	}
 
-	void TerminalRenderer::drawTile(const TermVert& pos)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
-
-		m_tiles(pos.x, pos.y).current = m_tile_state;
+		drawTile(x, y, m_tile_state);
 	}
 
-	void TerminalRenderer::blendTile(const TermVert& pos)
+	void TerminalRendererInterface::drawTile(TInt x, TInt y, const Tile& tile)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
 
-		m_tiles(pos.x, pos.y).current.blend(m_tile_state);
+		m_tiles(y, x).current = tile;
 	}
 
-	TerminalRenderer::DrawTile& TerminalRenderer::getTile(const TermVert& pos)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y)
 	{
-		AR_ASSERT_MSG(pos.x < drawSize().x && pos.x >= 0 && pos.y < drawSize().y&& pos.y >= 0,
-			"Position ", pos, " is out of bounds. Bounds: ", drawSize());
-
-		return m_tiles(pos.x, pos.y);
+		blendTile(x, y, m_tile_state);
 	}
 
-	void TerminalRenderer::setTitle(const std::string& title)
+	void TerminalRendererInterface::blendTile(TInt x, TInt y, const Tile& tile)
+	{
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
+
+		m_tiles(y, x).current.blend(tile);
+	}
+
+	TerminalRendererInterface::DrawTile& TerminalRendererInterface::getTile(TInt x, TInt y)
+	{
+		AR_ASSERT_MSG(x < drawWidth() && x >= 0 && y < drawHeight() && y >= 0,
+			"Position ", TermVert(x, y), " is out of bounds. Bounds: ", drawSize());
+
+		return m_tiles(y, x);
+	}
+
+	void TerminalRendererInterface::setTitle(const std::string& title)
 	{
 		m_title = title;
 		m_should_rename = true;
 	}
 
-	std::string TerminalRenderer::getTitle() const
+	std::string TerminalRendererInterface::getTitle() const
 	{
 		return m_title;
 	}
 
-	const AsciiAttr& TerminalRenderer::getAttrHandler()
+	const AsciiAttr& TerminalRendererInterface::getAttrHandler()
 	{
 		return *m_attr_handler;
 	}
 
-	void TerminalRenderer::resize(TermVert size)
+	void TerminalRendererInterface::resize(TermVert size)
 	{
-		AR_ASSERT_MSG(size.x <= maxSize().x && size.x > 0 && size.y <= maxSize().y && size.y > 0,
-			"Size ", size, " is too large or negative. Max size: ", maxSize());
+		AR_ASSERT_MSG(size.x <= AR_IMPL(this).maxSize().x && size.x > 0 && size.y <= AR_IMPL(this).maxSize().y && size.y > 0,
+			"Size ", size, " is too large or negative. Max size: ", AR_IMPL(this).maxSize());
 
 		m_should_resize = true;
 		m_tiles.resize(size);
 	}
 
-	TerminalRenderer::TRUpdateInfo TerminalRenderer::update()
-	{
+	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
+	{	
+		CT_MEASURE();
+
 		TRUpdateInfo r_info;
 
-		TermVert size = m_attr_handler->terminalSize();
+		TermVert size;
+		Coord position;
 
-		Coord pos = m_attr_handler->terminalPos();
-
+		{
+			CT_MEASURE_N("Win Funcs");
+			position = AR_IMPL(this).pos();
+		}
+			size = AR_IMPL(this).termSize();
+		
+		CT_MEASURE_N("Other");
 		// \x1b[?25l = hide cursor
 		// the cursor will have to be rehidden every time the terminal gets resized
 		if (m_should_resize)
 		{
+			CT_MEASURE_N("RESIZE");
 			// reset stored tiles from last update
-			if (drawSize() != size)
+			if (size.x != drawWidth() && size.y != drawHeight())
 				clearRenderTiles();
 
 			m_should_resize = false;
-			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawSize().y) + ';' + std::to_string(drawSize().x) + 't';
+			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawHeight()) + ';' + std::to_string(drawWidth()) + 't';
 			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
 
 			r_info.new_size = true;
 		}
-		else if (size != drawSize())
+		else if (size.x != drawWidth() || size.y != drawHeight())
 		{
-			pushBuffer("\x1b[?25l");
-			m_tiles.resize(size);
+			CT_MEASURE_N("UPDATE SIZE");
+
+			m_buff_stream << "\x1b[?25l";
+			m_tiles.resize(size.y, size.x);
 
 			// reset stored tiles from last update
 			clearRenderTiles();
@@ -299,14 +327,18 @@ namespace Asciir
 			r_info.new_size = true;
 		}
 
-		if (m_pos != pos)
+		if (m_pos != position)
 		{
-			m_pos = pos;
+			CT_MEASURE_N("CHANGED POSITION");
+
+			m_pos = position;
 			r_info.new_pos = true;
 		}
 
 		if (m_should_rename)
 		{
+			CT_MEASURE_N("RENAMING");
+
 			m_attr_handler->setTitle(std::cout, m_title);
 			m_should_rename = false;
 			r_info.new_name = true;
@@ -315,19 +347,33 @@ namespace Asciir
 		return r_info;
 	}
 
-	void TerminalRenderer::draw()
+	void TerminalRendererInterface::draw()
 	{
+
+		m_print_thrd.joinLoop();
+
 		bool skipped_tile = false;
 
-		m_attr_handler->move({ 0, 0 });
-		m_attr_handler->moveCode(*this);
-
-		for (TInt y = 0; (size_t)y < drawSize().y; y++)
 		{
-			for (TInt x = 0; (size_t)x < drawSize().x; x++)
+			CT_MEASURE_N("Before Draw loop");
+			m_attr_handler->clear();
+
+			m_attr_handler->move({ 0, 0 });
+			m_attr_handler->moveCode(getStream());
+		}
+
+		{
+		CT_MEASURE_N("Draw loop");
+
+		// this loop needs to access the matrix as row first, then column, even though it is stored as column major,
+		// as the terminal expects the buffer to be ordered as "row major", meaning newlines define where each row begins and ends.
+		for (TInt y = 0; (size_t)y < drawHeight(); y++)
+		{
+			for (TInt x = 0; (size_t)x < drawWidth(); x++)
 			{
-				Tile& new_tile = m_tiles(x, y).current;
-				Tile& old_tile = m_tiles(x, y).last;
+				DrawTile& tile = m_tiles(y, x);
+				Tile& new_tile = tile.current;
+				Tile& old_tile = tile.last;
 
 				if (new_tile == old_tile)
 				{
@@ -344,97 +390,77 @@ namespace Asciir
 				m_attr_handler->setForeground(new_tile.colour);
 				m_attr_handler->setBackground(new_tile.background_colour);
 				// the newline might not always be set, if the tile at position x == 0, is skipped
-				m_attr_handler->ansiCode(*this, x == 0);
+				m_attr_handler->ansiCode(getStream(), x == 0);
 
-				pushBuffer((const char*) new_tile.symbol);
+				if (!new_tile.eqAttr(old_tile) || new_tile.symbol != old_tile.symbol)
+					m_buff_stream << (const char*)new_tile.symbol;
 
 				old_tile = new_tile;
 			}
 
-			if ((size_t)y < (size_t)drawSize().y - 1 && !skipped_tile)
-				pushBuffer('\n');
+			if ((size_t)y < (size_t)drawHeight() - 1 && !skipped_tile)
+				m_buff_stream << '\n';
+		}
 		}
 
-		m_attr_handler->move(TermVert(drawSize().x - 1, drawSize().y - 1));
-		m_attr_handler->moveCode(*this);
+		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
+		m_attr_handler->moveCode(getStream());
 
-		flushBuffer();
+		m_print_thrd.startLoop();
 	}
-
-	TerminalRenderer::TRUpdateInfo TerminalRenderer::render()
+	
+	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::render()
 	{
-		TRUpdateInfo r_info = update();
+		TRUpdateInfo r_info;
+		{
+			CT_MEASURE_N("Update");
+			r_info = update();
+		}
+
 		draw();
 
 		return r_info;
 	}
 
-	TermVert TerminalRenderer::termSize() const
-	{
-		return m_attr_handler->terminalSize();
-	}
-
-	TermVert TerminalRenderer::drawSize() const
+	Size2D TerminalRendererInterface::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return (TermVert)m_tiles.size();
+		return m_tiles.dim();
 	}
 
-	TermVert TerminalRenderer::maxSize() const
+	void TerminalRendererInterface::pushBuffer(char c)
 	{
-		return m_attr_handler->maxTerminalSize();
+		m_buffer.sputc(c);
 	}
 
-	Coord TerminalRenderer::pos() const
+	void TerminalRendererInterface::pushBuffer(const std::string& str)
 	{
-		return m_attr_handler->terminalPos();
+		m_buffer.sputn(str.data(), str.size());
 	}
 
-	void TerminalRenderer::pushBuffer(char c)
+	void TerminalRendererInterface::pushBuffer(const char* c_str)
 	{
-		if (m_buffer.size() + 1 > m_buffer.capacity())
-			flushBuffer();
-
-		m_buffer += c;
+		m_buffer.sputn(c_str, strlen(c_str));
 	}
 
-	void TerminalRenderer::pushBuffer(const std::string& data)
+	void TerminalRendererInterface::pushBuffer(const char* c_buff, size_t buff_len)
 	{
-		if (data.size() + m_buffer.size() > m_buffer.capacity())
-			flushBuffer();
-
-		if (data.size() > m_buffer.capacity())
-			fwrite(data.c_str(), 1, data.size(), stdout);
-		else
-			m_buffer += data;
+		m_buffer.sputn(c_buff, buff_len);
 	}
 
-	void TerminalRenderer::pushBuffer(const char* c_str)
+	void TerminalRendererInterface::flushBuffer()
 	{
-		pushBuffer(c_str, strlen(c_str));
+		CT_MEASURE_N("Buffer Flush");
+
+		m_buffer.pubsync();
 	}
 
-	void TerminalRenderer::pushBuffer(const char* c_buff, size_t buff_len)
-	{
-		if (buff_len + m_buffer.size() > m_buffer.capacity())
-			flushBuffer();
-
-		if (buff_len > m_buffer.capacity())
-			fwrite(c_buff, 1, buff_len, stdout);
-		else
-			m_buffer += c_buff;
-	}
-
-	void TerminalRenderer::flushBuffer()
-	{
-		fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
-		m_buffer.clear();
-	}
-
-	std::array<bool, ATTR_COUNT>& TerminalRenderer::attributes()
+	std::array<bool, ATTR_COUNT>& TerminalRendererInterface::attributes()
 	{
 		return m_attr_handler->attributes;
 	}
+	
+} // TRInterface
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
 	{

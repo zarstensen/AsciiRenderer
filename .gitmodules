@@ -1,12 +1,15 @@
 [submodule "modules/eigen"]
 	path = modules/eigen
 	url = https://gitlab.com/libeigen/eigen.git
-[submodule "modules/openal-soft"]
-	path = modules/openal-soft
-	url = https://github.com/kcat/openal-soft.git
 [submodule "scripts/ArtToCart"]
 	path = scripts/ArtToCart
 	url = https://github.com/karstensensensen/ArtToCart.git
 [submodule "modules/EThread"]
 	path = modules/EThread
 	url = https://github.com/karstensensensen/EThread.git
+[submodule "modules/ChrTrcProfiler"]
+	path = modules/ChrTrcProfiler
+	url = https://github.com/karstensensensen/ChrTrcProfiler
+[submodule "modules/SFML"]
+	path = modules/SFML
+	url = https://github.com/SFML/SFML.git

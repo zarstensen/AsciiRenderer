@@ -7,18 +7,6 @@ namespace Asciir
 {
 	namespace ELInterface // short for EventListenerInterface
 	{
-		/// @brief enum for the different possible implementations of the EventListener interface
-		enum class IMPLS
-		{
-			INTER, // interface version, all other implementations should inherit from this
-			WIN,
-			MAC,
-			LINUX
-		};
-
-		/// @brief interface class for the Asciir::EventListener type
-		template<IMPLS>
-		class EventListenerImpl;
 
 		/// @brief interface declaration for the EventListener interface, will contain no definitions,
 		/// as this class should be inherited by an implementation, where this is implemented as the interface
@@ -33,8 +21,7 @@ namespace Asciir
 		/// 
 		/// @attention this class should never be instantiated and should only be used as a base class for other implementations.  
 		/// to get the current implementation type, use the typedef EventListener
-		template<>
-		class EventListenerImpl<IMPLS::INTER>
+		class EventListenerImpl
 		{
 		public:
 			using EventCallbackFp = std::function<void(Event&)>;
@@ -145,11 +132,6 @@ namespace Asciir
 
 #ifdef AR_WIN
 	#include "Asciir/Platform/Windows/WinEventListener.h"
-	namespace Asciir
-	{
-		/// @brief typedef of the currently implemented EventListenerImpl interface @see EventListenerImpl<IMPLS::INTER>
-		typedef ELInterface::EventListenerImpl<ELInterface::IMPLS::WIN> EventListener;
-	}
 #elif defined(AR_MAC)
 #elif defined(AR_LINUX)
 #else

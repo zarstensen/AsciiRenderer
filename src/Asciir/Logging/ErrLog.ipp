@@ -26,7 +26,7 @@
 		AR_JOIN_NAME(ret_val, __LINE__); }
 	#else
 
-	#define AR_WIN_VERIFY(x) x
+	#define AR_WIN_VERIFY(x) {x;}
 
 	#endif
 	
@@ -46,27 +46,42 @@
 	#endif
 #endif
 
-/// @brief verifies function passed (x)
-/// assumes return value should be true in order of success
-/// if failed, log that this faileda and hit breakpoint
+/// @brief same as AR_VERIFY, but a custom message is appended to the error message.
 #ifdef AR_DEBUG
-#define AR_VERIFY(x) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
+#define AR_VERIFY_MSG(x, ...) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
 	if(!AR_JOIN_NAME(ret_val, __LINE__)) { \
-		AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__); \
+		AR_CORE_ERR("line: ", __LINE__, " File: ", __FILE__, '\n', __VA_ARGS__); \
 		AR_DEBUG_BREAK; \
 	}}
 #else
-#define AR_VERIFY(x) x;
+#define AR_VERIFY_MSG(x, ...) {x;}
+#endif
+
+/// @brief verifies function passed (x)
+/// assumes return value should be true in order of success
+/// if failed, log that this failed and hit breakpoint
+#ifdef AR_DEBUG
+#define AR_VERIFY(x) AR_VERIFY_MSG(x, "Verify failed!")
+#else
+#define AR_VERIFY(x) {x;}
+#endif
+
+/// @brief same as AR_VERIFY_MSG
+/// also assigns var to the value returned by x
+#ifdef AR_DEBUG
+#define AR_VERIFY_ASGM_MSG(var, x, ...) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
+	if(!AR_JOIN_NAME(ret_val, __LINE__)) { \
+		AR_CORE_ERR("line: ", __LINE__, " File: ", __FILE__, '\n', __VA_ARGS__); \
+		AR_DEBUG_BREAK; \
+	}} var = AR_JOIN_NAME(ret_val, __LINE__)
+#else
+#define AR_VERIFY_ASGM_MSG(var, x, ...) var = x
 #endif
 
 /// @brief same as AR_VERIFY
 /// also assigns var to the value returned by x
 #ifdef AR_DEBUG
-#define AR_VERIFY_ASGM(var, x) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
-	if(!AR_JOIN_NAME(ret_val, __LINE__)) { \
-		AR_CORE_ERR("Verify failed at line: ", __LINE__, " File: ", __FILE__); \
-		AR_DEBUG_BREAK; \
-	}} var = AR_JOIN_NAME(ret_val, __LINE__)
+#define AR_VERIFY_ASGM(var, x) AR_VERIFY_ASGM_MSG(var, x, "Verify failed!")
 #else
 #define AR_VERIFY_ASGM(var, x) var = x
 #endif

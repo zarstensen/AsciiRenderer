@@ -5,6 +5,7 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 #include "LayerStack.h"
+
 #include <ETH.h>
 
 namespace Asciir
@@ -24,7 +25,7 @@ namespace Asciir
 		/// @param title the title of the console
 		/// @param term_size the size of the console in characters
 		ARApp(const std::string& title = "Commandline Application", TermVert term_size = { 0, 0 });
-		virtual ~ARApp();
+		virtual ~ARApp() {}
 
 		/// @brief entry point for the user defined application
 		/// 
@@ -75,7 +76,7 @@ namespace Asciir
 		void popLayer(Layer* layer);
 		/// @brief pushes a overlay onto the layer stack
 		/// 
-		/// an overlay will always be untop of all other layers, otherwise they function the same.
+		/// an overlay will always be ontop of all other layers, otherwise they function the same.
 		/// @param overlay overlay to be pushed
 		void pushOverlay(Layer* overlay);
 		/// @brief pops the overlay from the layerstack

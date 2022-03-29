@@ -19,8 +19,18 @@ namespace Asciir
 
 	// TODO: find a better method of doing this
 	/// @brief compare floats with a margin of error
-	bool fcompare(Real a, Real b, Real margin = 0);
+	bool compareMargin(Real a, Real b, Real margin = 0);
 
+	/// @brief test if two Reals are euqal, taking into account the possible error of floating point values.
+	/// 
+	/// @note this function may be similar to compareMargin, however this is intended to compare two floats and check if they are practicly equal, whereas comapre margin is intended to check wether two floats are within a fixed margin.
+	/// 
+	/// 
+	/// @param a first float to compare
+	/// @param b second float to compare
+	/// @param e the epsilon value for the comparison
+	/// @return wether a and b are equal
+	bool fequal(Real a, Real b, Real e = std::numeric_limits<Real>::epsilon());
 
 	/// @brief round the given real to the nearest value divisible by base.  
 	///	
@@ -54,4 +64,9 @@ namespace Asciir
 	/// @brief rounds the given Coord down to the nearest value divisible by base
 	/// see round(Real, Real) for implementation details
 	Coord floor(const Coord& coord, Real base = 1);
+	/// @brief rounds the value with a bias towards higher numbers, meaning 0.5 round to 1 instead of 0.  
+	/// same as round()
+	inline Real roundu(Real val, Real base = 1) { return round(val, base);}
+	/// @brief rounds the value with a bias towards lower numbers, meaning 0.5 round to 0 instead of 1.  
+	inline Real roundl(Real val, Real base = 1) { return round(val - base / 2, base); }
 }

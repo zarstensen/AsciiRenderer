@@ -29,16 +29,23 @@ namespace Asciir
 		/// @param new_tile Tile the texture should be filled with
 		Texture2D(const Size2D& new_size, const Tile& new_tile = Tile());
 
+		/// @brief copy constructor
+		Texture2D(const Texture2D& other)
+			: m_texture(other.m_texture) {}
+
+		/// @brief move constructor
+		Texture2D(Texture2D&& other) noexcept
+			: m_texture(std::move(other.m_texture)) {}
 
 		/// @brief read a tile from the texture
 		/// @param coord the coordinate of the wanted tile
 		/// @param uv *reserved*
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		Tile readTile(const Size2D& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) const override;
+		Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) override;
 		
 		/// @return the size of the texture 
-		Size2D size() const override;
+		TermVert size() const override;
 
 		/// @brief resizes the size of the stored texture
 		/// @param new_size the size the texture should be resized to
@@ -54,7 +61,7 @@ namespace Asciir
 		/// @brief resize function for the RESIZE::FILL mode
 		void resizeFill(const Size2D& new_size, const Tile& fill_tile);
 		/// @brief resize function for the RESIZE::NEAREST mode
-		void resizeNearest(const Size2D& new_size) {};
+		void resizeNearest(const Size2D& new_size);
 
 		/// @brief sets tile values inside the texture
 		/// @param coord the coordinate of the target tile in the texture
@@ -68,32 +75,46 @@ namespace Asciir
 		/// @param overlay_tile the tile to be blended onto the target tile.
 		void blendTile(const Size2D& coord, const Tile& overlay_tile);
 
+		/// @brief move assignment operator.
+		Texture2D& operator=(Texture2D&& other)
+		{
+			m_texture = std::move(other.m_texture);
+			return *this;
+		}
+
 	protected:
 		arMatrix<Tile> m_texture;
 	};
 
 	typedef std::filesystem::path Path;
 
-	// stores data from a .cart (compact asciir Texture) file
+	/// @brief stores data from a .cart (compact asciir Texture) file
 	class FileTexture : public Texture2D
 	{
 	public:
 		FileTexture() = default;
+		/// @brief autoloads the passed file
 		FileTexture(const Path& file_dir) { load(file_dir); };
 
 		~FileTexture() final override { if (loaded()) unload(); }
 
+		/// @brief load the passed file path into memory
 		void load(const Path& dir);
+		/// @brief unload the texture and free the previosly loaded memory
 		void unload();
 
+		/// @brief reread the file texture into memory
 		void reload();
 
+		/// @brief returns wether the FileTexture currently has a texture loaded
 		bool loaded() const { return m_is_loaded; }
 
+		/// @brief the currently loaded texture file.  
+		/// returns an empty path, if no file is currently loaded.
 		Path dir() const { return m_file_dir; };
 
 	protected:
-		Path m_file_dir;
+		Path m_file_dir = "";
 
 		bool m_is_loaded = false;
 	};

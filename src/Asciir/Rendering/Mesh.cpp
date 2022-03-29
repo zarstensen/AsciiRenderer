@@ -5,40 +5,57 @@
 
 namespace Asciir
 {
-	Coord Transform::applyTransform(const Coord& vec) const
+	Coord Transform::applyTransform(Coord vec)
 	{
-		// uses Eigen transform matrices to perform the transformation
+		// only use transformation matrix if anything will be changed.
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 1 || m_scale.y != 1 || !fequal(m_rotation, (Real)0))
+		{
+			// only calculate the transformation matrix if it is actually needed
+			if (!m_has_mat)
+				calcMat();
 
-		Eigen::Matrix<Real, 2, 1> transformed_coord = vec;
-		
-		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
+			// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform * origin_transformed;
+			vec -= m_origin;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform * scale_transformed;
+			vec = m_transform_matrix.linear() * vec + m_transform_matrix.translation();
 
-		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform * rotation_transformed;
+			vec += m_origin;
+		}
 
-		Coord result = origin_transform * move_transformed;
-
-		return result;
+		return vec;
 	}
 
-	Coord Transform::reverseTransform(const Coord& vec) const
+	Coord Transform::reverseTransform(Coord vec)
 	{
-		// uses Eigen transform matrices to perform the transformation
+		// only use transformation matrix if anything will be changed.
+		if (m_pos.x != 0 || m_pos.y != 0 || m_scale.x != 1 || m_scale.y != 1 || !fequal(m_rotation, (Real)0))
+		{
+			// only calculate the transformation matrix if it is actually needed
+			if (!m_has_mat)
+				calcMat();
 
-		Eigen::Matrix<Real, 2, 1> origin_transformed = origin_transform.inverse() * vec;
+			// uses Eigen transform matrices to perform the transformation
 
-		Eigen::Matrix<Real, 2, 1> move_transformed = move_transform.inverse() * origin_transformed;
+			vec -= m_origin;
 
-		Eigen::Matrix<Real, 2, 1> rotation_transformed = rotation_transform.inverse() * move_transformed;
+			vec = m_inv_transform.linear() * vec + m_inv_transform.translation();
 
-		Eigen::Matrix<Real, 2, 1> scale_transformed = scale_transform.inverse() * rotation_transformed;
+			vec += m_origin;
+		}
 
-		Coord result = origin_transform * scale_transformed;
+		return vec;
+	}
 
-		return result;
+	void Transform::calcMat()
+	{
+		m_transform_matrix = TransformMat(Eigen::Scaling(m_scale));
+		m_transform_matrix *= Eigen::Translation<Real, 2>(m_pos);
+		m_transform_matrix *= Eigen::Rotation2D<Real>(m_rotation);
+
+		m_inv_transform = m_transform_matrix.inverse();
+
+		m_has_mat = true;
 	}
 
 	Mesh::Mesh(const Coords& vertices)
@@ -124,13 +141,13 @@ namespace Asciir
 #endif
 	}
 
-	LineSegment Mesh::getEdge(size_t face_index, size_t index, const Transform& transform) const
+	LineSegment Mesh::getEdge(size_t face_index, size_t index) const
 	{
 		AR_ASSERT_MSG(face_index < m_face_count, "Face index is out of bounds");
 		AR_ASSERT_MSG(index < faceCornerCount(face_index), "Edge index is out of bounds");
 
 		// TODO: implement interator of getCornerVert?
-		return LineSegment::fromPoints(getCornerVert(face_index, index, transform), cgetCornerVert(face_index, index + 1, transform));
+		return LineSegment::fromPoints(getCornerVert(face_index, index), cgetCornerVert(face_index, index + 1));
 	}
 
 	void Mesh::addVertex(Coord new_vert)
@@ -292,10 +309,16 @@ namespace Asciir
 		return *this;
 	}
 
-	Coord Mesh::getVertex(size_t index, const Transform& transform) const
+	Coord& Mesh::getVertex(size_t index)
 	{
 		AR_ASSERT_MSG(index < m_vertices.size(), "Index is out of bounds");
-		return transform.applyTransform(m_vertices[index]);
+		return m_vertices[index];
+	}
+
+	const Coord& Mesh::getVertex(size_t index) const
+	{
+		AR_ASSERT_MSG(index < m_vertices.size(), "Index is out of bounds");
+		return m_vertices[index];
 	}
 
 	Coord Mesh::getMedianVert() const
@@ -334,10 +357,9 @@ namespace Asciir
 		return m_faces[firstIndexFromFace(face_index) + index];
 	}
 
-	bool Mesh::isInside(const Coord& coord, const Transform& transform) const
+	bool Mesh::isInside(const Coord& coord) const
 	{
-		Coord transformed_coord = transform.reverseTransform(coord);
-		Line ray = Line::horzLine(transformed_coord);
+		Line ray = Line::horzLine(coord);
 		int winding_number = 0;
 
 		for (size_t i = 0; i < faceCount(); i++)
@@ -350,53 +372,54 @@ namespace Asciir
 				{
 					Coord intersect = edge.intersect(ray);
 
-					if (intersect.x < ray.offset.x)
+					if (intersect.x <= coord.x)
 						winding_number += edge.direction.y <= 0 ? 1 : -1;
-					else if (intersects && intersect.x == ray.offset.x)
-						winding_number += edge.intersects(transformed_coord) * (i > 0 ? -1 : 1);
 				}
 				else if (intersects)
-					winding_number += edge.intersects(transformed_coord) * (i > 0 ? -1 : 1);
+					winding_number += edge.intersects(coord) * (i > 0 ? -1 : 1);
 			}
 		}
 
 		return winding_number > 0;
 	}
 
-	bool Mesh::isInsideGrid(const Coord& coord, Real resolution, const Transform& transform) const
+	// TODO: reimplement this, and use rounding instead of whatever this is
+	bool Mesh::isInsideGrid(Coord coord, Real resolution) const
 	{
-		Coord transformed_coord = transform.reverseTransform(coord);
-		Coord grid_coord(floor(transformed_coord.x, resolution), ceil(transformed_coord.y, resolution));
+		// use the cell centre closest to the passed coord
 
-		Line raw_ray = Line::horzLine(transformed_coord);
-		Line grid_ray = Line::horzLine(grid_coord);
-		int winding_number = 0;
+		coord.x = round(coord.x + (Real) resolution / 2) - (Real) resolution / 2;
+		coord.y = round(coord.y + (Real)resolution / 2) - (Real) resolution / 2;
 
-		for (size_t i = 0; i < faceCount(); i++)
-		{
-			for (size_t j = 0; j < faceCornerCount(i); j++)
-			{
-				LineSegment edge = getEdge(i, j);
+		return isInside(coord);
 
-				// calculate width based on the slope of the line
-				Real width = (Real)std::sin(std::acos((edge.direction.dot(RealVertex(1, 0))) / (edge.direction.norm() * std::sqrt(1)))) * resolution;
+		//Line ray = Line::horzLine(grid_coord);
+		//int winding_number = 0;
 
-				bool intersects = edge.intersects(grid_ray);
-				if (intersects && !edge.isPerpendicular(grid_ray))
-				{
-					Coord intersect = static_cast<Line>(edge).intersect(raw_ray);
+		//for (size_t i = 0; i < faceCount(); i++)
+		//{
+		//	for (size_t j = 0; j < faceCornerCount(i); j++)
+		//	{
+		//		LineSegment edge = getEdge(i, j);
+		//		bool intersects = edge.intersects(ray);
+		//		if (intersects && !edge.isPerpendicular(ray))
+		//		{
+		//			Coord intersect = edge.intersect(ray);
 
-					if (intersect.x < raw_ray.offset.x + width / 2)
-						winding_number += edge.direction.y <= 0 ? 1 : -1;
-					else if (intersects && fcompare(intersect.x, raw_ray.offset.x, width))
-						winding_number += edge.intersects(transformed_coord, width) * (i > 0 ? -1 : 1);
-				}
-				else if (intersects)
-					winding_number += edge.intersects(transformed_coord, width) * (i > 0 ? -1 : 1);
-			}
-		}
+		//			intersect.x = round(intersect.x);
 
-		return winding_number > 0;
+		//			if (edge.direction.y <= 0 && intersect.x <= grid_coord.x)
+		//				winding_number++;
+		//			else if (edge.direction.y > 0 && intersect.x < grid_coord.x)
+		//				winding_number--;
+		//		}
+		//		// lines are perpendicular, and thus can intersect at multiple points, therefore, check if grid_coord is inside the entire edge, instead of the intersecting part of the edge.
+		//		else if (intersects)
+		//			winding_number += (grid_coord.x >= round(edge.offset.x) && grid_coord.x < round(edge.offset.x + edge.direction.x)) * (i > 0 ? -1 : 1);
+		//	}
+		//}
+
+		//return winding_number > 0;
 	}
 
 	// Returns the first index of a face list

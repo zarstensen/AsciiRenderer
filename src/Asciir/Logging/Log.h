@@ -112,35 +112,35 @@ namespace Asciir
 
 // Core macros
 
-/// brief automaticly sets the line and file arguments @see Log::coreInfo()
+/// @brief automaticly sets the line and file arguments @see Log::coreInfo()
 #if AR_CORE_VERBOSITY >= 4
 #define AR_CORE_INFO(...)	::Asciir::Log::coreInfo(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_CORE_INFO(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::coreNotify()
+/// @brief automaticly sets the line and file arguments @see Log::coreNotify()
 #if AR_CORE_VERBOSITY >= 3
 #define AR_CORE_NOTIFY(...) ::Asciir::Log::coreNotify(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_CORE_NOTIFY(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::coreWarning()
+/// @brief automaticly sets the line and file arguments @see Log::coreWarning()
 #if AR_CORE_VERBOSITY >= 2
 #define AR_CORE_WARN(...)	::Asciir::Log::coreWarning(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_CORE_WARN(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::coreCritical()
+/// @brief automaticly sets the line and file arguments @see Log::coreCritical()
 #if AR_CORE_VERBOSITY >= 1
 #define AR_CORE_CRIT(...)	::Asciir::Log::coreCritical(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_CORE_CRIT(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::coreError()
+/// @brief automaticly sets the line and file arguments @see Log::coreError()
 #if AR_CORE_VERBOSITY >= 0
 #define AR_CORE_ERR(...)	::Asciir::Log::coreError(__LINE__, __FILE__, __VA_ARGS__)
 #else
@@ -156,28 +156,28 @@ namespace Asciir
 #define AR_INFO(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::clientnotify()
+/// @brief automaticly sets the line and file arguments @see Log::clientnotify()
 #if AR_CLIENT_VERBOSITY >= 3
 #define AR_NOTIFY(...) ::Asciir::Log::clientNotify(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_NOTIFY(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::clientWarning()
+/// @brief automaticly sets the line and file arguments @see Log::clientWarning()
 #if AR_CLIENT_VERBOSITY >= 2
 #define AR_WARN(...)	::Asciir::Log::clientWarning(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_WARN(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::clientCritical()
+/// @brief automaticly sets the line and file arguments @see Log::clientCritical()
 #if AR_CLIENT_VERBOSITY >= 1
 #define AR_CRIT(...)	::Asciir::Log::clientCritical(__LINE__, __FILE__, __VA_ARGS__)
 #else
 #define AR_CRIT(...)	{__VA_ARGS__;}
 #endif
 
-/// brief automaticly sets the line and file arguments @see Log::clientError()
+/// @brief automaticly sets the line and file arguments @see Log::clientError()
 #if AR_CLIENT_VERBOSITY >= 0
 #define AR_ERR(...)	::Asciir::Log::clientError(__LINE__, __FILE__, __VA_ARGS__)
 #else

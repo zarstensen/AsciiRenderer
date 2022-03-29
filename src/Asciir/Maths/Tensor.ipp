@@ -16,9 +16,9 @@ namespace Asciir
 		: arMatrix<T>(other.template cast<T>()) {}
 
 	template<typename T>
-	Size3D arTensor3D<T>::size() const
+	Size3D arTensor3D<T>::dim() const
 	{
-		Size2D mat_size = arMatrix<T>::size();
+		Size2D mat_size = arMatrix<T>::dim();
 
 		return { m_width, mat_size.x / m_width, mat_size.y };
 	}

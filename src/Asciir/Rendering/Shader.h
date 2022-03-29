@@ -13,14 +13,26 @@ namespace Asciir
 	public:
 		virtual ~Shader2D() {};
 
-		/// @brief get the size of the shader from which data can be read from.  
-		virtual Size2D size() const = 0;
+		/// @brief get the size of the shader from which data can be read from.
+		/// @return the maximum coord that can be put into readTile().
+		/// (-1, -1) = no limit
+		virtual TermVert size() const = 0;
 
 		/// @brief access the shader data from the shader
 		/// @param coord the coordinate of the wanted tile
 		/// @param uv (optional) uv coordinates relative to the size of the shader. Is automaticly calculated if passed throught Renderer::submitShader
 		/// @param time_since_start (optional) time value for the shader function. Is automaticly supplied if passed through Renderer::submitShader
 		/// @param frames_since_start (optional) frame value for the shader function. Is automaticly supplied if passed through Renderer::submitShader
-		virtual Tile readTile(const Size2D& coord, Coord uv = Coord(0, 0), const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) const = 0;
+		virtual Tile readTile(const TermVert& coord, Coord uv = Coord(0, 0), const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) = 0;
+		
+		/// @brief maps the given coordinate to a 0-1 range in the x and y dimension.
+		/// 
+		/// (0, 0) will be the top left of the shader and (1, 1) will be the bottom right of the shader
+		///  
+		/// 
+		/// @param coord 
+		/// @return 
+		Coord toUV(const TermVert& coord);
+
 	};
 }
