@@ -83,7 +83,7 @@ namespace Asciir
 					if (!has_corner[j + visiblity * 2])
 					{
 						has_corner[j + visiblity * 2] = true;
-						result[res_indx] = { (long long)(j * term_size.x), (long long)(i * term_size.y) };
+						result[res_indx] = Coord((long long)(j * term_size.x), (long long)(i * term_size.y));
 						res_indx++;
 						coord = last_coord;
 						is_corner = true;

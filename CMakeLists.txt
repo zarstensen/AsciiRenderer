@@ -213,6 +213,17 @@ if(WIN32)
         src/Asciir/Platform/Windows/WinEventListener.h
     )
 
+elseif(APPLE)
+    set(SRC_DIR_PLATFORM
+
+        # rendering
+        src/Asciir/Platform/Mac/MacTermRenderer.cpp
+    )
+
+    set(HEADER_DIR_PLATFORM
+        #rendering
+        src/Asciir/Platform/Mac/MacTermRenderer.h
+    )
 elseif(UNIX)
 
     set(SRC_DIR_PLATFORM
