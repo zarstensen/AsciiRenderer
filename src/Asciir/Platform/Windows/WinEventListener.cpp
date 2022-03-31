@@ -299,11 +299,13 @@ namespace ELInterface
 		m_last_term_pos = new_pos;
 	}
 
+#ifdef AR_WIN
 	Coord EventListenerImpl::getCurrentMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));
 		return pos;
 	}
+#endif
 }
 }

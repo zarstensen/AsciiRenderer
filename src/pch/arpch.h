@@ -38,6 +38,9 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
+#undef Success
+#undef Status
+
 // for terminal size
 #include <sys/ioctl.h>
 #include <unistd.h>

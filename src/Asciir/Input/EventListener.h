@@ -133,7 +133,9 @@ namespace Asciir
 #ifdef AR_WIN
 	#include "Asciir/Platform/Windows/WinEventListener.h"
 #elif defined(AR_MAC)
+	#include "Asciir/Platform/Mac/MacEventListener.h"
 #elif defined(AR_LINUX)
+#error Linux is not yet a supported platform
 #else
 #error platform not specified, unable to decide on interface implementaion for EventListener
 #endif

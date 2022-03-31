@@ -1,14 +1,10 @@
 ﻿#include "arpch.h"
 
 #include "TerminalRenderer.h"
+
 #include "Asciir/Maths/Lines.h"
 #include "Asciir/Logging/Log.h"
 
-#ifdef AR_WIN
-#include "Asciir/Platform/Windows/WindowsARAttributes.h"
-#elif defined AR_UNIX
-#include "Asciir/Platform/Unix/UnixARAttributes.h"
-#endif
 
 #include <ChrTrc.h>
 
@@ -56,16 +52,12 @@ namespace Asciir
 namespace TRInterface
 {
 	TerminalRendererInterface::TerminalRendererInterface(const TerminalRendererInterface::TerminalProps& term_props)
-		: m_title(term_props.title), m_buffer(term_props.buffer_size), m_buff_stream(&m_buffer), m_print_thrd(&TerminalRendererInterface::flushBuffer, this) {}
+		: m_title(term_props.title), m_print_thrd(&TerminalRendererInterface::flushBuffer, this), m_buffer(term_props.buffer_size), m_buff_stream(&m_buffer) {}
 
 	void TerminalRendererInterface::initRenderer(const TerminalProps& term_props)
 	{
 		// TODO: no need for this to be a pointer
-	#ifdef AR_WIN
 		m_attr_handler = std::make_shared<AsciiAttr>();
-	#elif defined(AR_UNIX)
-		m_attr_handler = std::make_shared<UnixARAttr>();
-	#endif
 
 		if (term_props.size != TermVert(0, 0))
 			resize(term_props.size);
@@ -182,7 +174,7 @@ namespace TRInterface
 
 					is_inside = tmp_inside;
 
-					if (!(is_corner && is_inside) && (is_corner && !is_inside || is_inside || was_inside))
+					if (!(is_corner && is_inside) && ((is_corner && !is_inside) || is_inside || was_inside))
 					{
 						was_inside = false;
 						drawTile({ x, line });
@@ -367,9 +359,9 @@ namespace TRInterface
 
 		// this loop needs to access the matrix as row first, then column, even though it is stored as column major,
 		// as the terminal expects the buffer to be ordered as "row major", meaning newlines define where each row begins and ends.
-		for (TInt y = 0; (size_t)y < drawHeight(); y++)
+		for (TInt y = 0; y < drawHeight(); y++)
 		{
-			for (TInt x = 0; (size_t)x < drawWidth(); x++)
+			for (TInt x = 0; x < drawWidth(); x++)
 			{
 				DrawTile& tile = m_tiles(y, x);
 				Tile& new_tile = tile.current;
@@ -398,7 +390,7 @@ namespace TRInterface
 				old_tile = new_tile;
 			}
 
-			if ((size_t)y < (size_t)drawHeight() - 1 && !skipped_tile)
+			if (y < drawHeight() - 1 && !skipped_tile)
 				m_buff_stream << '\n';
 		}
 		}
@@ -422,10 +414,10 @@ namespace TRInterface
 		return r_info;
 	}
 
-	Size2D TerminalRendererInterface::drawSize() const
+	TermVert TerminalRendererInterface::drawSize() const
 	{
 		// x is the index for what matrix to acsess so y and z is equivalent to x and y.
-		return m_tiles.dim();
+		return (TermVert) m_tiles.dim();
 	}
 
 	void TerminalRendererInterface::pushBuffer(char c)

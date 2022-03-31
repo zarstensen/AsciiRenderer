@@ -4,6 +4,24 @@ Project(Asciir)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
+# =========== FUNCTIONS ==========
+
+function(get_targets result sub_directory)
+
+    get_property(SUBDIRS DIRECTORY "${sub_directory}" PROPERTY SUBDIRECTORIES)
+
+    foreach(subdir IN LISTS SUBDIRS)
+        get_targets(${result} "${subdir}")
+    endforeach()
+
+    get_directory_property(DIR_TARGETS DIRECTORY "${sub_directory}" BUILDSYSTEM_TARGETS)
+
+    set(${result} ${${result}} ${DIR_TARGETS} PARENT_SCOPE )
+
+endfunction()
+
+# ======== CONFIGURATION =========
+
 include(CheckIPOSupported)
 
 # place all predefined target projects into a filter
@@ -61,7 +79,7 @@ endif()
 # whilst overriding the /ZI option with /Zi.
 #
 # this does create a bunch of warnings because of overriding the /ZI option.
-if(ipo_supported AND ${MSVC})
+if("${ipo_supported}" AND "${MSVC}")
 add_compile_options("$<$<CONFIG:DEPLOYREL,RELEASE,RELWITHDEBINFO>:/Zi /GL>")
 endif()
 
@@ -176,7 +194,7 @@ set(SRC_DIR_MATHS
     src/Asciir/Maths/Vertices.ipp
     src/Asciir/Maths/Vector.ipp
     src/Asciir/Maths/Matrix.ipp
-    src/Asciir/Maths/Tensor.ipp
+    # src/Asciir/Maths/Tensor.ipp
 )
 
 set(HEADER_DIR_MATHS
@@ -185,7 +203,7 @@ set(HEADER_DIR_MATHS
     src/Asciir/Maths/Vertices.h
     src/Asciir/Maths/Vector.h
     src/Asciir/Maths/Matrix.h
-    src/Asciir/Maths/Tensor.h
+    # src/Asciir/Maths/Tensor.h
 )
 
 set(SRC_DIR_RENDERING
@@ -225,7 +243,6 @@ if(WIN32)
         src/Asciir/Platform/Windows/WinInit.cpp
 
         # rendering
-        src/Asciir/Platform/Windows/WindowsARAttributes.cpp
         src/Asciir/Platform/Windows/WinTermRenderer.cpp
 
         # input
@@ -238,7 +255,6 @@ if(WIN32)
         src/Asciir/Platform/Windows/WinInit.h
         
         #rendering
-        src/Asciir/Platform/Windows/WindowsARAttributes.h
         src/Asciir/Platform/Windows/WinTermRenderer.h
 
         # input
@@ -250,18 +266,25 @@ elseif(APPLE)
 
         # rendering
         src/Asciir/Platform/Mac/MacTermRenderer.cpp
+
+        # input
+        src/Asciir/Platform/Mac/MacEventListener.cpp
+        src/Asciir/Platform/Mac/MacEventListener.mm
     )
 
     set(HEADER_DIR_PLATFORM
         #rendering
         src/Asciir/Platform/Mac/MacTermRenderer.h
+
+        #input
+        src/Asciir/Platform/Mac/MacEventListener.h
+        src/Asciir/Platform/Mac/MacEventListener-objc.h
     )
 elseif(UNIX)
 
     set(SRC_DIR_PLATFORM
 
         # rendering
-        src/Asciir/Platform/Unix/UnixARAttributes.cpp
     )
 
     set(HEADER_DIR_PLATFORM
@@ -269,7 +292,6 @@ elseif(UNIX)
         src/Asciir/Platform/Unix/KeyCodeMap.h
 
         #rendering
-        src/Asciir/Platform/Unix/UnixARAttributes.h
     )
 
 else()
@@ -369,7 +391,7 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${INCLUDE_DIRS})
 
-target_precompile_headers(${PROJECT_NAME} PRIVATE "src/pch/arpch.h")
+# target_precompile_headers(${PROJECT_NAME} PRIVATE "src/pch/arpch.h")
 
 # set compile definitions depending on configuration
 target_compile_definitions(${PROJECT_NAME} PUBLIC
@@ -399,6 +421,13 @@ set_target_properties(${PROJECT_NAME}
     ARCHIVE_OUTPUT_DIRECTORY_DEPLOYREL ${CMAKE_BINARY_DIR}/bin/DeployRelease-${ARCH}
 )
 
+if(${APPLE})
+# obj-c libraries
+target_link_libraries(${PROJECT_NAME}
+    "-framework Cocoa"
+    "-framework Foundation"
+)
+endif()
 
 # Eigen 3
 
@@ -414,11 +443,16 @@ set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
 
+get_targets(sfml_targets "${CMAKE_SOURCE_DIR}/modules/SFML")
+
+
+get_directory_property(PROJ_TARGETS BUILDSYSTEM_TARGETS)
+
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
 
-set_property(TARGET sfml-audio PROPERTY FOLDER "modules/SFML")
-set_property(TARGET sfml-main PROPERTY FOLDER "modules/SFML")
-set_property(TARGET sfml-system PROPERTY FOLDER "modules/SFML")
+foreach(sfml_target IN LISTS ${sfml_targets})
+    set_property(TARGET ${sfml_target} PROPERTY FOLDER "modules/SFML")
+endforeach()
 
 target_link_libraries(${PROJECT_NAME} SFML::Audio)
 

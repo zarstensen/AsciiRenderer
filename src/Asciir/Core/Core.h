@@ -61,6 +61,12 @@ namespace Asciir
 
 		using std::shared_ptr<T>::operator=;
 
+		Ref<T>& operator=(std::nullptr_t)
+		{
+			*this = (T*)nullptr;
+			return *this;
+		}
+
 		/// @brief compare the value of two references
 		bool operator==(const Ref<T>& other) { return this->get() == other->get(); }
 	};

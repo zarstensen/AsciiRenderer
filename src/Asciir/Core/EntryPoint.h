@@ -38,7 +38,7 @@ namespace Asciir
 	#elif defined(AR_LINUX)
 		Asciir::LinuxInit();
 	#elif defined(AR_MAC)
-		Asciir::MacInit();
+		// Asciir::MacInit();
 	#endif
 
 		// pass the rest of the arguments to the user defined entry point

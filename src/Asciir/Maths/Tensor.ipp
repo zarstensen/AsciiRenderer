@@ -40,7 +40,7 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(index.x < size().x&& index.y < size().y&& index.z < size().z, "Index out of bounds: ", index, " bounds: ", size());
 
-		return arMatrix<T>::operator()(index.x * size().y + index.y, index.z);
+		return arMatrix<T>::operator()(index.x * EgMatrixX<T, order>::size().y + index.y, index.z);
 	}
 
 	template<typename T>

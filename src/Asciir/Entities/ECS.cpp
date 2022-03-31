@@ -173,7 +173,7 @@ namespace Asciir
     }
 
     SceneView::ComponentIterator::ComponentIterator(SceneView& scene_view, size_t start_index)
-        : m_scene_view(scene_view), m_current_index(start_index)
+        : m_current_index(start_index), m_scene_view(scene_view)
     {
         findNextEntity();
     }

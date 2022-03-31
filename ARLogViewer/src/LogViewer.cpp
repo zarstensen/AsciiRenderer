@@ -7,11 +7,7 @@ namespace Asciir
 	LogViewer::LogViewer(std::filesystem::path log_dir, const std::vector<Colour>& colours)
 		: m_log_dir(log_dir), m_colours(colours)
 	{
-#ifdef AR_WIN
 		m_log_attributes = std::make_unique<AsciiAttr>();
-#elif defined(AR_UNIX)
-		m_log_attributes = std::make_unique<UnixARAttr>();
-#endif
 
 		m_log_attributes->setTitle(std::cout, "LogViewer");
 	}

@@ -4,7 +4,7 @@
 #include "RenderConsts.h"
 #include "Asciir/Maths/Vertices.h"
 #include "Asciir/Maths/Matrix.h"
-#include "Asciir/Maths/Tensor.h"
+// #include "Asciir/Maths/Tensor.h"
 
 namespace Asciir
 {
@@ -282,7 +282,7 @@ namespace Asciir
 
 		public:
 
-			TerminalRendererInterface() = default;
+			TerminalRendererInterface() = delete;
 			~TerminalRendererInterface();
 
 			/// @brief set the foregound colour of the currently active state tile
@@ -353,9 +353,9 @@ namespace Asciir
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
 			AR_INT_FUNC_R(TermVert termSize() const, {});
 			/// @brief get the size where the TerminalRenderer is able to draw.
-			Size2D drawSize() const;
-			size_t drawWidth() const { return m_tiles.width(); }
-			size_t drawHeight() const { return m_tiles.height(); }
+			TermVert drawSize() const;
+			TInt drawWidth() const { return (TInt) m_tiles.width(); }
+			TInt drawHeight() const { return (TInt) m_tiles.height(); }
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
 			AR_INT_FUNC_R(TermVert maxSize() const, {});
 
@@ -416,7 +416,7 @@ namespace Asciir
 #ifdef AR_WIN
 #include "Asciir/Platform/Windows/WinTermRenderer.h"
 #elif defined(AR_MAC)
-#error mac is not yet supported
+#include "Asciir/Platform/Mac/MacTermRenderer.h"
 #elif defined(AR_LINUX)
 #error linux is not yet supported
 #else

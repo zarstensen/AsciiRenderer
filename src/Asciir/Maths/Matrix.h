@@ -14,10 +14,10 @@ namespace Asciir
 	struct arMatrix : public EgMatrixX<T, order>
 	{
 
-		using EgMatrixX<T, order>::Matrix;
+		using typename EgMatrixX<T, order>::Matrix;
 
 		/// @brief Constructor taking a size parameter defining the size of the dynamic array
-		arMatrix(Size2D size);
+		arMatrix(Size2D size = {0, 0});
 
 		/// @brief cast constructor
 		template<typename TOther = T, int order_other = order>
@@ -34,8 +34,8 @@ namespace Asciir
 		/// @brief returns the 2D size of the array (the dimentions)
 		Size2D dim() const;
 
-		size_t width() const { return cols(); }
-		size_t height() const{ return rows(); }
+		size_t width() const { return EgMatrixX<T, order>::cols(); }
+		size_t height() const{ return EgMatrixX<T, order>::rows(); }
 
 		/// @brief resize the matrix whilst preserving the data contained.
 		/// see resizeClear() for a faster but more destructive resize.

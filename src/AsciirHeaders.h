@@ -33,7 +33,7 @@
 #include "Asciir/Maths/Maths.h"
 #include "Asciir/Maths/Vertices.h"
 #include "Asciir/Maths/Matrix.h"
-#include "Asciir/Maths/Tensor.h"
+// #include "Asciir/Maths/Tensor.h"
 #include "Asciir/Maths/Lines.h"
 
 #include "Asciir/Rendering/RenderConsts.h"
@@ -47,10 +47,8 @@
 // Platform specific headers
 
 #ifdef AR_WIN
-#include "Asciir/Platform/Windows/WindowsARAttributes.h"
 #include "Asciir/Platform/Windows/WinInit.h"
 #elif defined(AR_UNIX)
-#include "Asciir/Platform/Unix/UnixARAttributes.h"
 #endif
 
 // tools
