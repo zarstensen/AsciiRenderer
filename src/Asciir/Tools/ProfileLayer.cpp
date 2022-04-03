@@ -20,7 +20,7 @@ namespace Tools
 			else
 			{
 				AR_CORE_NOTIFY("ProfilingLayer: Begun Profiling!");
-				CTProfiler::beginSession(m_buffer_size, m_out_dir, true, m_timeout);
+				CTProfiler::beginSession(m_buffer_size, m_out_dir, true, (duration)m_timeout);
 			}
 		}
 	}

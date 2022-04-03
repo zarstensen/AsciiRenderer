@@ -25,8 +25,16 @@ namespace Asciir
 	{
 		Coord applyTransform(Coord vec);
 		Coord applyTransform(TInt x, TInt y) { return applyTransform(Coord(x, y)); }
+		/// @brief aplies the transform to a coordinate assumed to be in a grid of the specified resolution.
+		/// here the coordinate is assumed to be the index of the cell in the grid, and from this, the midpoint of the cell is calculated and used in the transform.
+		/// afterwards the result is re-offset from the cell origin to the cell index. The result is not rounded.
+		Coord applyTransformGrid(Coord vec, Real resolution = 1) { return applyTransform(vec.array() + resolution / 2).array() - resolution / 2; }
+		
 		Coord reverseTransform(Coord vec);
 		Coord reverseTransform(TInt x, TInt y) { return reverseTransform(Coord(x, y)); }
+		/// @see applyTransformGrid
+		Coord reverseTransformGrid(Coord vec, Real resolution = 1) { return reverseTransform(vec.array() + resolution / 2).array() - resolution / 2; }
+
 
 		/// @brief sets the origin of the transformation matrix.  
 		/// only relevant for the scale and rotation part of the transformation matrix

@@ -18,7 +18,7 @@ namespace Asciir
 
 			vec -= m_origin;
 
-			vec = m_transform_matrix.linear() * vec + m_transform_matrix.translation();
+			vec = m_transform_matrix.linear() * vec + m_pos;
 
 			vec += m_origin;
 		}
@@ -37,9 +37,9 @@ namespace Asciir
 
 			// uses Eigen transform matrices to perform the transformation
 
-			vec -= m_origin;
+			vec -= m_origin + m_pos;
 
-			vec = m_inv_transform.linear() * vec + m_inv_transform.translation();
+			vec = m_inv_transform.linear() * vec;
 
 			vec += m_origin;
 		}

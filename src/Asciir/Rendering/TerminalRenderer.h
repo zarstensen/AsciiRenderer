@@ -119,7 +119,15 @@ namespace Asciir
 		Tile& blend(const Tile& other)
 		{
 			// tile is empty, nothing should be done
-			if (other.is_empty) return *this;
+			if (other.is_empty)
+			{
+				return *this;
+			}
+			else if (is_empty)
+			{
+				*this = other;
+				return *this;
+			}
 
 			if (other.symbol != '\0') symbol = other.symbol;
 			// TODO should background colour be blended here aswell?
@@ -127,6 +135,15 @@ namespace Asciir
 			background_colour.blend(other.background_colour);
 
 			return *this;
+		}
+
+		/// @brief static version of blend(Tile)
+		static Tile blend(const Tile& background, const Tile& foreground)
+		{
+			Tile result = background;
+			result.blend(foreground);
+
+			return result;
 		}
 	};
 

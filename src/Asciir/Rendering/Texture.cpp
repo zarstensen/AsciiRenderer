@@ -152,20 +152,25 @@ namespace Asciir
 
 			// allocate memory for the texture
 
-			resize({width, height});
+			resizeClear({width, height}, Tile());
 
 			// load texture into memory
-			for (auto& elem : m_texture.reshaped())
+			for (size_t y = 0; y < height; y++)
 			{
-				Tile tile_in;
-				texture_in.read((char*)tile_in.symbol, 1);
-				texture_in.read((char*)tile_in.symbol + 1, U8CharSize(tile_in.symbol) - 1);
+				for (size_t x = 0; x < width; x++)
+				{
+					auto& elem = m_texture(y, x);
 
-				texture_in.read((char*)&tile_in.colour, sizeof(elem.colour));
+					Tile tile_in;
+					texture_in.read((char*)tile_in.symbol, 1);
+					texture_in.read((char*)tile_in.symbol + 1, U8CharSize(tile_in.symbol) - 1);
 
-				texture_in.read((char*)&tile_in.background_colour, sizeof(tile_in.background_colour));
+					texture_in.read((char*)&tile_in.colour, sizeof(elem.colour));
 
-				elem = tile_in;
+					texture_in.read((char*)&tile_in.background_colour, sizeof(tile_in.background_colour));
+
+					elem = tile_in;
+				}
 			}
 		}
 		else

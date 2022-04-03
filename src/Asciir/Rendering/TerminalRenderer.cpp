@@ -299,31 +299,46 @@ namespace TRInterface
 			size = AR_IMPL(this).termSize();
 		
 		CT_MEASURE_N("Other");
+		
 		// \x1b[?25l = hide cursor
+
+		// terminal size is different from last update
 		// the cursor will have to be rehidden every time the terminal gets resized
-		if (m_should_resize)
-		{
-			CT_MEASURE_N("RESIZE");
-			// reset stored tiles from last update
-			if (size.x != drawWidth() && size.y != drawHeight())
-				clearRenderTiles();
-
-			m_should_resize = false;
-			std::string resize_str = "\x1b[?25l\x1b[8;" + std::to_string(drawHeight()) + ';' + std::to_string(drawWidth()) + 't';
-			fwrite(resize_str.c_str(), 1, resize_str.size(), stderr);
-
-			r_info.new_size = true;
-		}
-		else if (size.x != drawWidth() || size.y != drawHeight())
+		if (size.x != drawWidth() || size.y != drawHeight())
 		{
 			CT_MEASURE_N("UPDATE SIZE");
 
-			m_buff_stream << "\x1b[?25l";
-			m_tiles.resize(size.y, size.x);
+			if (m_should_resize)
+			{
+				m_should_resize = false;
 
+				// TODO: EXPLAIN THIS!!!
+			#ifdef AR_WIN
+				m_buff_stream << AR_ANSIS_CSI << "8;1;" << drawWidth() << 't';
+			#endif
+
+				m_buff_stream << AR_ANSIS_CSI << "8;" << drawHeight() << ';' << drawWidth() << 't';
+			}
+			else
+			{
+				m_tiles.resize(size.y, size.x);
+			}
+
+			m_buff_stream << AR_ANSIS_CSI << "?25l";
 			// reset stored tiles from last update
 			clearRenderTiles();
 
+			r_info.new_size = true;
+		}
+		else if (m_should_resize)
+		{
+			CT_MEASURE_N("RESIZE");
+
+			m_should_resize = false;
+
+			m_buff_stream << AR_ANSIS_CSI << "8;" << drawHeight() << ';' << drawWidth() << 't';
+			m_buff_stream << AR_ANSIS_CSI << "?25l";
+			
 			r_info.new_size = true;
 		}
 
@@ -339,7 +354,7 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("RENAMING");
 
-			m_attr_handler->setTitle(std::cout, m_title);
+			m_attr_handler->setTitle(m_buff_stream, m_title);
 			m_should_rename = false;
 			r_info.new_name = true;
 		}
@@ -406,7 +421,8 @@ namespace TRInterface
 		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
 		m_attr_handler->moveCode(getStream());
 
-		m_print_thrd.startLoop();
+		flushBuffer();
+		// m_print_thrd.startLoop();
 	}
 	
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::render()
@@ -415,6 +431,9 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("Update");
 			r_info = update();
+
+			// the buffer is flushed right before a draw, in case any resize commands were put in it.
+			flushBuffer();
 		}
 
 		draw();

@@ -26,7 +26,7 @@ namespace Asciir
         // TODO: remove this extra quad
         Quad grid_quad(Coord(ceil(size.x, resolution), floor(size.y, resolution)), Coord(floor(offset.x, resolution), ceil(offset.y, resolution)));
 
-        coord = transform.reverseTransform(coord) - offset;
+        coord = transform.reverseTransformGrid(coord, resolution) - offset;
         coord.x = round(coord.x, resolution) + (Real)0.5;
         coord.y = round(coord.y, resolution) + (Real)0.5;
 

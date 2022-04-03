@@ -435,6 +435,8 @@ namespace Asciir
 		// formatting
 		stream << AR_ANSIS_CSI;
 
+		// TODO: no reason for clear of attributes when m_cleared is set
+
 		if (attributes[ITALIC] && (!last_attributes[ITALIC] || m_cleared))
 			stream << ";3";
 		else if (!attributes[ITALIC] && (last_attributes[ITALIC] || m_cleared))
@@ -455,13 +457,13 @@ namespace Asciir
 		else if (!attributes[STRIKE] && (last_attributes[STRIKE] || m_cleared))
 			stream << ";29";
 
-		// foreground colour
-		if (m_foreground != m_last_foreground || m_cleared || is_newline)
+		// colour
+		if (attributes[BOLD] != last_attributes[BOLD] || m_background != m_last_background || m_foreground != m_last_foreground || m_cleared || is_newline)
 		{
 
-			unsigned char red = m_foreground.red + AR_BOLD_DIFF;
-			unsigned char green = m_foreground.green + AR_BOLD_DIFF;
-			unsigned char blue = m_foreground.blue + AR_BOLD_DIFF;
+			unsigned char red = m_foreground.red;
+			unsigned char green = m_foreground.green;
+			unsigned char blue = m_foreground.blue;
 
 			if (attributes[BOLD])
 			{
@@ -482,11 +484,7 @@ namespace Asciir
 			stream << colour_buffer << ';';
 			fixedToString<3>(blue, colour_buffer);
 			stream << colour_buffer;
-		}
 
-		// update background colour if any of these are true
-		if (attributes[BOLD] != last_attributes[BOLD] || m_foreground != m_last_foreground || m_background != m_last_background || m_cleared || is_newline)
-		{
 			stream << ";48;2;";
 			fixedToString<3>(m_background.red, colour_buffer);
 			stream << colour_buffer << ';';

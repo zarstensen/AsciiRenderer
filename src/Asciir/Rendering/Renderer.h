@@ -62,7 +62,8 @@ namespace Asciir
 		/// @note this structure should only be instantiated by the Renderer itself, and a workflow where this is instantiated manually should be avoided
 		struct ShaderData
 		{
-			/// @brief a reference to the shader that should be rendered
+			/// @brief the shader that should be rendered
+			/// @note even though this is a reference, it does not store a reference to the submitted texture. It is only a reference, as Shader2D is an abstract class.
 			Ref<Shader2D> shader;
 			/// @brief the transform the shader should have
 			Transform transform;
@@ -112,7 +113,8 @@ namespace Asciir
 		// TODO: should this be a reference? mesh might be modified whilst the renderer is rendering.
 		static void submit(const Mesh& mesh, Tile tile, Transform transform = NoTransform);
 		/// @brief submits the given shader to the render queue 
-		static void submit(Ref<Shader2D> shader, Transform transform = NoTransform);
+		template<typename TShader, std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, bool> = false>
+		static void submit(const TShader& shader, Transform transform = NoTransform);
 		/// @brief submits the given tile to the render queue
 		static void submit(TermVert pos, Tile tile);
 		static void submitToQueue(QueueElem new_elem);
@@ -152,9 +154,9 @@ namespace Asciir
 		static Size2D maxSize() { return s_renderer->maxSize(); }
 
 		/// @brief retreives the current width of the terminal
-		static size_t width();
+		static TInt width();
 		/// @brief retreives the current height of the terminal
-		static size_t height();
+		static TInt height();
 
 		/// @brief returns the size of the previously rendered frame.
 		static Size2D lastSize()

@@ -28,9 +28,7 @@ namespace Asciir
 		/// @brief creates a reference to the passed pointer
 		/// @param data data to create reference to
 		Ref(T* data) : std::shared_ptr<T>(data) {}
-		/// @brief automaticly creates a shared pointer from the passed reference
-		/// @param data data to create reference to
-		Ref(const T& data) : std::shared_ptr<T>(std::make_shared<T>(data)) {}
+		//Ref(const T& data) : std::shared_ptr<T>(std::make_shared<T>(data)) {}
 		/// @brief copy constructor
 		Ref(const Ref<T>& other) : std::shared_ptr<T>(other) {}
 		/// @brief convert shared_ptr to Ref 
@@ -40,6 +38,11 @@ namespace Asciir
 		/// @param other data to be referenced as a different type
 		template<typename TOther>
 		Ref(const Ref<TOther>& other) : std::shared_ptr<T>(std::dynamic_pointer_cast<T>(other)) {}
+
+		/// @brief automaticly creates a shared pointer from the passed value
+		/// @param data data to create reference to
+		template<typename TOther, std::enable_if_t<std::is_base_of_v<T, TOther>, bool> = false>
+		Ref(const TOther& data) : std::shared_ptr<T>(std::make_shared<TOther>(data)) {}
 
 		// enable_if_t doesn't work in the template here for reasons :/
 		/// @brief returns a new Ref object refrencing the same object as the current Ref, but with a different underlying type
@@ -59,11 +62,26 @@ namespace Asciir
 			*this = new TOther(args...);
 		}
 
+		/// @brief creates a new Ref<T> object pointing to a new instance of type T, copied from the original Ref<T>
+		Ref<T> copy()
+		{
+			return Ref<T>(**this);
+		}
+
 		using std::shared_ptr<T>::operator=;
 
 		/// @brief compare the value of two references
 		bool operator==(const Ref<T>& other) { return this->get() == other->get(); }
 	};
+
+	/// @brief refrence type that should be passed, when passing a refrence, to any of the Renderer::submit functions
+	/*template<typename T>
+	class RenderRef
+
+
+	/// @brief alias for RenderRef<T>
+	template<typename T>
+	using RRef = RenderRef<T>;*/
 
 	/// @brief bit shift left function
 	/// @param x amount to be shifted

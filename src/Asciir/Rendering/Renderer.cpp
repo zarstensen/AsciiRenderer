@@ -28,6 +28,7 @@ namespace Asciir
 
 	void Renderer::setThreads(uint32_t thread_count)
 	{
+		// TODO: thread_count 1 should be the same as 0
 		m_render_thread_pool.resize(thread_count, ETH::LThread(&renderThrd));
 
 		for (ETH::LThread& thrd : m_render_thread_pool)
@@ -48,7 +49,7 @@ namespace Asciir
 		if (data.shader->size().x == -1 && data.shader->size().y == -1)
 		{
 			// TODO: what should the uv be here?
-			return data.shader->readTile(data.transform.reverseTransform(x, y), Coord(1, 1), time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }).round(), Coord(1, 1), time_since_start, frames_since_start);
 		}
 		// shader has bounds, check if inside visible quad before doing anything else
 		else if (data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
@@ -57,7 +58,7 @@ namespace Asciir
 				x / data.shader->size().x,
 				y / data.shader->size().y);
 
-			return data.shader->readTile(data.transform.reverseTransform(x, y), uv, time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }).round(), uv, time_since_start, frames_since_start);
 		}
 		else
 		{
@@ -89,16 +90,16 @@ namespace Asciir
 			switch (s_render_queue->at(ri).index())
 			{
 				case 0:
-					result_tile = drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), y, x).blend(result_tile);
+					result_tile = Tile::blend(drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), x, y), result_tile);
 					break;
 				case 1:
-					result_tile = drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), y, x, dt, df).blend(result_tile);
+					result_tile = Tile::blend(drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), x, y, dt, df), result_tile);
 					break;
 				case 2:
-					result_tile = drawTileData(std::get<TileData>(s_render_queue->at(ri)), y, x).blend(result_tile);
+					result_tile = Tile::blend(drawTileData(std::get<TileData>(s_render_queue->at(ri)), x, y), result_tile);
 					break;
 				case 3:
-					result_tile = std::get<ClearData>(s_render_queue->at(ri));
+					result_tile = Tile::blend(std::get<ClearData>(s_render_queue->at(ri)), result_tile);
 					break;
 			}
 
@@ -107,14 +108,14 @@ namespace Asciir
 				break;
 		}
 		
-		s_renderer->drawTile(y, x, result_tile);
+		s_renderer->drawTile(x, y, result_tile);
 	}
 
 	void Renderer::waitMinDT(DeltaTime curr_dt)
 	{
 		duration start_time = getTime();
-		auto d_val = start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds();
-		while (start_time + (duration)s_min_dt.nanoSeconds() - (duration)curr_dt.nanoSeconds() > getTime());
+
+		while (start_time + s_min_dt.durr() - curr_dt.durr() > getTime());
 	}
 
 	// should this be a ref to mesh???
@@ -152,45 +153,6 @@ namespace Asciir
 		bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
 
 		data.visible = Quad::fromCorners(top_left_coord, bottom_right_coord);
-
-		submitToQueue(data);
-	}
-
-	void Renderer::submit(Ref<Shader2D> shader, Transform transform)
-	{
-		ShaderData data{ shader, transform };
-
-		// calculate visible quad
-		if (shader->size() != TermVert(-1, -1))
-		{
-			// TODO: optimize this if necessary
-			Quad texture_quad = Quad(data.shader->size());
-
-			Coord top_left_coord(size());
-			Coord bottom_right_coord(0, 0);
-
-			for (const Coord& vert : texture_quad.getVerts())
-			{
-				Coord transformed_vert = data.transform.applyTransform(vert);
-				top_left_coord.x = std::min(top_left_coord.x, transformed_vert.x);
-				top_left_coord.y = std::min(top_left_coord.y, transformed_vert.y);
-
-				bottom_right_coord.x = std::max(bottom_right_coord.x, transformed_vert.x);
-				bottom_right_coord.y = std::max(bottom_right_coord.y, transformed_vert.y);
-			}
-
-			// make sure the area is inside the terminal
-
-			top_left_coord.x = top_left_coord.x < 0 ? 0 : floor(top_left_coord.x);
-			top_left_coord.y = top_left_coord.y < 0 ? 0 : floor(top_left_coord.y);
-
-			bottom_right_coord.x = ceil(bottom_right_coord.x);
-			bottom_right_coord.x = bottom_right_coord.x >= (long long)size().x ? size().x : bottom_right_coord.x;
-			bottom_right_coord.y = ceil(bottom_right_coord.y);
-			bottom_right_coord.y = bottom_right_coord.y >= (long long)size().y ? size().y : bottom_right_coord.y;
-
-			data.visible = Quad::fromCorners(top_left_coord, bottom_right_coord);
-		}
 
 		submitToQueue(data);
 	}
@@ -255,7 +217,6 @@ namespace Asciir
 		{
 			for (TInt y = rect_start.y; y < rect_offset.y; y++)
 			{
-				AR_INFO(Renderer::size());
 				result.setTile(Size2D(x, y), Renderer::viewTile(TermVert(x, y)));
 			}
 		}
@@ -278,14 +239,14 @@ namespace Asciir
 		return s_renderer->drawSize();
 	}
 
-	size_t Renderer::width()
+	TInt Renderer::width()
 	{
-		return s_renderer->drawWidth();
+		return (TInt)s_renderer->drawWidth();
 	}
 
-	size_t Renderer::height()
+	TInt Renderer::height()
 	{
-		return s_renderer->drawHeight();
+		return (TInt)s_renderer->drawHeight();
 	}
 
 	void Renderer::swapQueues()
@@ -325,7 +286,7 @@ namespace Asciir
 			{
 				for (TInt y = 0; y < s_renderer->drawHeight(); y++)
 				{
-					drawTile(y, x, time_since_start, frames_since_start);
+					drawTile(x, y, time_since_start, frames_since_start);
 				}
 			}
 		}
@@ -376,7 +337,7 @@ namespace Asciir
 			for (uint32_t i = current_tile; i < end; i++)
 			{
 				//       calculate the x and y coordinates from the index
-				drawTile((TInt)(i % s_renderer->drawHeight()), (TInt)(i / s_renderer->drawHeight()), m_curr_dt, m_curr_df);
+				drawTile((TInt)(i % s_renderer->drawWidth()), (TInt)(i / s_renderer->drawWidth()), m_curr_dt, m_curr_df);
 			}
 		}
 	}

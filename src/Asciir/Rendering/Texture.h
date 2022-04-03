@@ -31,11 +31,11 @@ namespace Asciir
 
 		/// @brief copy constructor
 		Texture2D(const Texture2D& other)
-			: m_texture(other.m_texture) {}
+			: m_texture(other.m_texture), m_tiled_size(other.m_tiled_size) {}
 
 		/// @brief move constructor
 		Texture2D(Texture2D&& other) noexcept
-			: m_texture(std::move(other.m_texture)) {}
+			: m_texture(std::move(other.m_texture)), m_tiled_size(std::move(other.m_tiled_size)) {}
 
 		/// @brief read a tile from the texture. if the coordinate is out of bounds, the texture will be tiled.
 		/// @param coord the coordinate of the wanted tile
@@ -53,6 +53,12 @@ namespace Asciir
 		void setTiledSize(TermVert new_size) { m_tiled_size = new_size; }
 		/// @brief gets the size of the stored texture.
 		Size2D textureSize() const { return m_texture.dim(); }
+
+		/// @brief retrieves the centre of the *tiled* texture
+		Coord centre() { return (Coord) size() / 2; }
+
+		/// @brief retrieves the centre of the *untiled* texture
+		Coord textureCentre() { return (Coord) textureSize() / 2; }
 
 		/// @brief resizes the size of the stored texture
 		/// @param new_size the size the texture should be resized to
@@ -87,7 +93,18 @@ namespace Asciir
 		Texture2D& operator=(Texture2D&& other) noexcept
 		{
 			m_texture = std::move(other.m_texture);
+			m_tiled_size = std::move(other.m_tiled_size);
 			return *this;
+		}
+
+		/// @brief copy assignment operator.
+		Texture2D& operator=(const Texture2D& other)
+		{
+			m_texture = other.m_texture;
+			m_tiled_size = other.m_tiled_size;
+
+			return *this;
+
 		}
 
 	protected:
