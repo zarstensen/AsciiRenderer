@@ -82,7 +82,7 @@ namespace Asciir
 
 			CT_MEASURE_N("WAIT");
 
-			Renderer::waitMinDT(castRealMilli(getTime() - curr_frame_start));
+			Renderer::waitMinDT(getTime() - curr_frame_start);
 		}
 	}
 
@@ -91,7 +91,7 @@ namespace Asciir
 		{
 		CT_MEASURE_N("Render Frame");
 		// print the current queue to the terminal
-		Renderer::flushRenderQueue(DeltaTime(castRealMilli(m_last_frame_start - m_app_start)), m_frame_count);
+		Renderer::flushRenderQueue(DeltaTime(m_last_frame_start - m_app_start), m_frame_count);
 		}
 
 		TerminalRenderer::TRUpdateInfo update_info;

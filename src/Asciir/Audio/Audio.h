@@ -148,6 +148,11 @@ namespace Asciir
 		/// use this function to acces any properties that are not exposed by the AudioPlayer
 		sf::SoundSource& getSrc() { return *m_audio_src; };
 
+		/// @brief gives the SFML SoundSource object responsible for playing the audio, and casts it to the passed child type.
+		/// @tparam T what type the source should be cast to (most likely sf::Sound or sf::Music)
+		template<typename T, std::enable_if_t<std::is_base_of_v<sf::SoundSource, T>, bool> = false>
+		T& getSrc() { return (T&)*m_audio_src; }
+
 	protected:
 		sf::SoundSource* m_audio_src = nullptr;
 		Ref<sf::SoundBuffer> m_fx_buff;

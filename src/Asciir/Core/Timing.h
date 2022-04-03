@@ -40,10 +40,14 @@ namespace Asciir
 		/// @brief same as freq but assumes delta time store interval inbetween two frames
 		Real fps() const { return freq(); }
 
+		/// @brief retrieve the underlying chrono duration variable containing the time.
+		/// @return 
+		duration durr() { return m_time; }
+
 		/// @brief cast operator for the Real datatype, final value is in seconds
 		operator Real() const { return seconds(); }
-		/// @brief cast operator for the duration datatype, final value is in nanoseconds
-		operator duration() const { return m_time; }
+		/// @brief cast operator for integer data types, final value is in nano seconds
+		explicit operator long long() const { return nanoSeconds(); }
 	};
 
 	/// @brief get the current time

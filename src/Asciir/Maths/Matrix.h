@@ -67,9 +67,16 @@ namespace Asciir
 		const T& operator()(size_t y, size_t x) const { return get(y, x); }
 
 		/// @brief move assignment operator
-		arMatrix<T, order>& operator=(arMatrix<T, order>&& other)
+		arMatrix<T, order>& operator=(arMatrix<T, order>&& other) noexcept
 		{
 			EgMatrixX<T, order>::operator=(std::move(other));
+			return *this;
+		}
+
+		/// @brief copy assignment operator
+		arMatrix<T, order>& operator=(const arMatrix<T, order>& other)
+		{
+			EgMatrixX<T, order>::operator=(other);
 			return *this;
 		}
 

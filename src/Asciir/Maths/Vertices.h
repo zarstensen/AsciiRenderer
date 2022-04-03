@@ -32,6 +32,17 @@ namespace Asciir
 		template<typename TOther>
 		arVertBase<T, n>& operator=(const arVertBase<TOther, n>& other);
 
+		/// @brief rounds the elements using the specified base
+		/// @return refrence to the current instance
+		template<std::enable_if_t<std::is_arithmetic_v<T>, bool> = false>
+		arVertBase<T, n>& round(Real base = 1)
+		{
+			for (auto& elem : *this)
+				elem = Asciir::round(elem, base);
+
+			return *this;
+		}
+
 		using Eigen::Vector<T, n>::operator[];
 		using Eigen::Vector<T, n>::operator();
 	};
