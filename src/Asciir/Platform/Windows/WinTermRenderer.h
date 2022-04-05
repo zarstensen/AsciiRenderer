@@ -27,8 +27,12 @@ namespace TRInterface
 		TermVert maxSize() const;
 		/// @see TerminalRendererInterface::pos()
 		Coord pos() const;
-		/// @see TerminalRendererInterface::fontSize()
-		Size2D fontSize() const;
+		
+		/// @see TerminalRendererInterface::getFont()
+		std::pair<std::string, Size2D> getFont() const;
+
+		/// @see TerminalRendererInterface::setFont()
+		bool setFont(const std::string& name, Size2D size);
 
 		/// @see TerminalRendererInterface::isFocused()
 		bool isFocused() const;
@@ -43,6 +47,8 @@ namespace TRInterface
 		DWORD m_fallback_console_mode;
 		// codepage before constructor
 		std::pair<UINT, UINT> m_fallback_codepage;
+		// the current font size, defaults to the console font size
+		COORD m_font_size;
 	};
 }
 

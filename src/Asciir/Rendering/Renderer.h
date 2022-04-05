@@ -124,6 +124,31 @@ namespace Asciir
 		/// @brief sets the title of the terminal
 		static void setTitle(const std::string& title) { s_renderer->setTitle(title); }
 
+		/// @see setFontName() and setFontSize()
+		static bool setFont(const std::string& font_name, Size2D new_size) { return s_renderer->setFont(font_name, new_size); }
+
+		/// @see getFontName() and getFontSize()
+		/// @return a pair containing the name and size of the font.
+		static std::pair<std::string, Size2D> getFont() { return s_renderer->getFont(); }
+
+		/// @brief chanes the current font of the terminal
+		/// @note depending on the platform, this effect might take effect instantly *(Windows)* or on the Application update.
+		/// @param font_name the name of the font. Must be a font accesible to the terminal, meaning only default terminal fonts are avaliable, unless the terminal prefrences are modified, to include a custom font.
+		static bool setFontName(const std::string& font_name) { return s_renderer->setFont(font_name, s_renderer->getFont().second); }
+
+		/// @brief retrieves the name of the current font.
+		static std::string getFontName() { return getFont().first; }
+
+		/// @brief sets the font size
+		/// @attention the new font size is not guaranteed to match the passed size, as not all sizes are supported. Instead, the closest approximation will be used.
+		/// @param size the width and height of the font
+		static bool setFontSize(Size2D size) { return s_renderer->setFont(s_renderer->getFont().first, size); }
+
+		/// @brief retrieves the size of the current font.
+		/// @return a Size2D structure containing the width and height, of the font, in pixels.
+		// TODO: a string is allocated here when it is not needed.
+		static Size2D getFontSize() { return getFont().second; }
+
 		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
 		/// @param rect_start the top right corner of the section to be captured
 		/// @param rect_offset the bottom right corner of the section to be captured.

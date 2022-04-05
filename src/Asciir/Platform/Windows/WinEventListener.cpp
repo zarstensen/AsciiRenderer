@@ -100,11 +100,11 @@ namespace ELInterface
 						case WINDOW_BUFFER_SIZE_EVENT:
 							COORD size = event_r.Event.WindowBufferSizeEvent.dwSize;
 							m_term_size = { size.X, size.Y };
-							AR_INFO(size.X, size.Y);
 							break;
 						case MENU_EVENT:
 							break;
 						default:
+							// this should never be hit
 							AR_CORE_WARN("Unknown windows console event type: ", m_event_buffer[i].EventType);
 							break;
 					}
@@ -124,6 +124,8 @@ namespace ELInterface
 			return;
 		}
 	#endif
+
+		AR_INFO(event.wVirtualKeyCode, event.bKeyDown);
 
 		if (event.bKeyDown)
 		{

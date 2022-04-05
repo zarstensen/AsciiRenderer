@@ -227,12 +227,13 @@ namespace Asciir
 
 		};
 
+		#define AR_INT_FUNC_HELPER(...) __VA_ARGS__
 		// TODO: make a macro define and macro undef file?
 		// macro for defining a "virtual" function in the compile time interface.
 		// short for "ascii renderer interface function"
-		#define AR_INT_FUNC_R(signature, ret_val) signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); return ret_val; }
+		#define AR_INT_FUNC_R(signature, ret_val) AR_INT_FUNC_HELPER signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); return AR_INT_FUNC_HELPER ret_val; }
 		// TODO: is this needed?
-		#define AR_INT_FUNC(signature) signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); }
+		#define AR_INT_FUNC(signature) AR_INT_FUNC_HELPER signature { AR_ASSERT_VOLATILE(false, #signature " should not be called from the interface class!"); }
 
 		/// @brief interface class for the TerminalRenderer.  
 		/// 
@@ -368,24 +369,35 @@ namespace Asciir
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
-			AR_INT_FUNC_R(TermVert termSize() const, {});
+			AR_INT_FUNC_R((TermVert) termSize() const, ({}))
 			/// @brief get the size where the TerminalRenderer is able to draw.
 			Size2D drawSize() const;
 			size_t drawWidth() const { return m_tiles.width(); }
 			size_t drawHeight() const { return m_tiles.height(); }
 			/// @brief returns the maximum possible size of the terminal. (-1, -1) = no limit.
-			AR_INT_FUNC_R(TermVert maxSize() const, {});
+			AR_INT_FUNC_R((TermVert) maxSize() const, ({}))
 
 			/// @brief returns the current position of the terminal.
-			AR_INT_FUNC_R(Coord pos() const, {});
+			AR_INT_FUNC_R((Coord) pos() const, ({}))
 			/// @brief returns the position of the terminal at the previous call to update() or render().
 			Coord lastPos() { return m_pos; }
+			
+			/// @brief gets the current terminal font.
+			/// @return a pair structure containing the name and the size of the font.
+			AR_INT_FUNC_R((std::pair<std::string, Size2D>) getFont() const, ({ "", Size2D() }))
 
-			/// @brief returns the current font size of the terminal.
-			/// @returns Size2D structure containing the width and height of a character, in pixels.
-			AR_INT_FUNC_R(Size2D fontSize() const, {});
+			/// @brief sets the current font of the terminal.
+			/// @param the name of the font.
+			/// @param new_size the font size.
+			/// @return wether the function was successfull in setting the font. this will fail if the font_name is invalid (does not exist), or the size is invalid.
+			// ignore unused variable warning
+			#pragma warning(push)
+			#pragma warning(suppress: 4100)
+			AR_INT_FUNC_R((bool) setFont(const std::string& font_name, Size2D new_size), ({}))
+			#pragma warning(pop)
 
-			AR_INT_FUNC_R(bool isFocused() const, {});
+			/// @brief resturns wether the terminal window is currently focused
+			AR_INT_FUNC_R((bool) isFocused() const, ({}))
 
 			/// TODO: should these still be here? 
 			void pushBuffer(const std::string& data);

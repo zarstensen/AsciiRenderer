@@ -1,5 +1,7 @@
 #include "WinTermRenderer.h"
 
+#include "arpch.h"
+
 #include "Asciir/Core/Application.h"
 
 #include <Windows.h>
@@ -64,13 +66,47 @@ namespace TRInterface
 		return { (Real)x, (Real)y };
 	}
 
-	Size2D WinTerminalRenderer::fontSize() const
+	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const
 	{
-		CONSOLE_FONT_INFO f_info;
+		CONSOLE_FONT_INFOEX font_info{sizeof(CONSOLE_FONT_INFOEX)};
 
-		AR_WIN_VERIFY(GetCurrentConsoleFont(m_console, false, &f_info));
+		std::pair<std::string, Size2D> result;
 
-		return { (size_t)f_info.dwFontSize.X, (size_t)f_info.dwFontSize.Y };
+		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_console, false, &font_info));
+
+		std::wstring_view name = font_info.FaceName;
+
+	#pragma warning(push)
+	#pragma warning(suppress: 4244)
+		result.first = std::string(name.begin(), name.end());
+		result.second = { font_info.dwFontSize.X, font_info.dwFontSize.Y };
+	#pragma warning(pop)
+
+		return result;
+	}
+
+	bool WinTerminalRenderer::setFont(const std::string& name, Size2D size)
+	{
+		AR_ASSERT_MSG(name.size() < LF_FACESIZE, "Font name cannot be more than 32 characters long");
+		CONSOLE_FONT_INFOEX font_info{sizeof(CONSOLE_FONT_INFOEX)};
+		
+		// default font weight is 400
+		font_info.FontWeight = 1000;
+
+		font_info.dwFontSize = { (SHORT)size.x, (SHORT)size.y };
+
+		for (size_t i = 0; i < name.size(); i++)
+			font_info.FaceName[i] = name[i];
+
+		
+
+		// font should be the same for full screen and windowed
+		bool max_font_res = SetCurrentConsoleFontEx(m_console, TRUE, &font_info);
+		AR_WIN_VERIFY(max_font_res);
+		bool win_font_res = SetCurrentConsoleFontEx(m_console, FALSE, &font_info);
+		AR_WIN_VERIFY(win_font_res);
+
+		return max_font_res && win_font_res;
 	}
 
 	bool WinTerminalRenderer::isFocused() const
