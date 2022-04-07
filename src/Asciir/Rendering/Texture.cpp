@@ -1,5 +1,10 @@
 #include "Texture.h"
+
 #include "arpch.h"
+
+#include <ChrTrc.h>
+
+using namespace cimg_library;
 
 namespace Asciir
 {
@@ -194,5 +199,205 @@ namespace Asciir
 		AR_ASSERT_MSG(m_is_loaded, "cannot reload unloaded texture");
 		m_is_loaded = false;
 		load(m_file_dir);
+	}
+
+	Texture2D loadImage(Path image_path, bool load_foreground, bool use_half_tiles)
+	{
+		CT_MEASURE_N("Image Load");
+		AR_VERIFY_MSG(std::filesystem::exists(image_path), "Could not find image file: ", image_path);
+
+		Texture2D image_texture;
+		
+		try
+		{
+			CImg<uint8_t> image_data(image_path.string().c_str());
+
+			if (use_half_tiles)
+			{
+				image_texture.resize({ image_data.width(), (image_data.height() + 1) / 2 - 1 }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t) image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t) image_data.height() / 2; y++)
+					{
+						Colour foreground;
+						Colour background;
+
+						/// grayscale values
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, y, 0, 0));
+							foreground = Colour(image_data(x, y + 1, 0, 0));
+						}
+						// RGB(A) values
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+							{
+								background.setChannel(c, image_data(x, y, 0, c));
+								foreground.setChannel(c, image_data(x, y + 1, 0, c));
+							}
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+;
+						image_texture.setTile({ x, y }, Tile(foreground, background, UTF8Char::fromCode(9604)));
+					}
+				}
+
+				// y height is odd, last row should be handled seperatly
+				if (image_data.height() % 2 == 1)
+				{
+					for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+					{
+
+						Colour background;
+
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								background.setChannel(c, image_data(x, image_data.height() - 1, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+
+						image_texture.setTile({ x, image_texture.size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), UTF8Char::fromCode(9604)));
+					}
+				}
+
+			}
+			else
+			{
+				image_texture.resize({ image_data.width(), image_data.height() }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t)image_data.height(); y++)
+					{
+						Colour colour;
+						Tile loaded_tile;
+
+						if (image_data.spectrum() == 1)
+						{
+							colour = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								colour.setChannel(c, image_data(x, y, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+
+						if (load_foreground)
+							loaded_tile.colour = colour;
+						else
+							loaded_tile.background_colour = colour;
+
+						image_texture.setTile({ x, y }, loaded_tile);
+					}
+				}
+			}
+		}
+		catch (CImgIOException e)
+		{
+			// is probably a unsupported format
+			AR_CORE_ERR("Unable to load image file: ", image_path, "\nError message: ", e.what());
+			return {};
+		}
+
+		return image_texture;
+	}
+
+	// ============ TextureSequence ============
+	
+	TextureSequence::TextureSequence(std::initializer_list<Ref<Texture2D>> init_values)
+		: m_frames(init_values) {}
+
+	TextureSequence::TextureSequence(const TextureSequence& other)
+		: m_curr_frame(other.m_curr_frame), m_frames(other.m_frames) {}
+
+	Ref<Texture2D> TextureSequence::incrFrame(size_t jump_size)
+	{
+		m_curr_frame += jump_size;
+		m_curr_frame %= m_frames.size();
+
+		return m_frames[m_curr_frame];
+	}
+
+	Ref<Texture2D> TextureSequence::decrFrame(size_t jump_size)
+	{
+		// special case if the jump size is greater than the number of frames to the left of the current frame
+		if (jump_size > m_frames.size() - m_curr_frame)
+			m_curr_frame = m_frames.size() - jump_size - m_curr_frame;
+		else
+			m_curr_frame -= jump_size;
+
+		return m_frames[m_curr_frame];
+	}
+	
+	void TextureSequence::addFrame(Ref<Texture2D> new_frame, size_t pos)
+	{
+		AR_ASSERT(pos < m_frames.size());
+
+		// a frame will be added behind the current frame, thus the current frame will be shifted to the right.
+		if (pos < m_curr_frame)
+			m_curr_frame++;
+
+		m_frames.insert(m_frames.begin() + pos, new_frame);
+	}
+
+	void TextureSequence::addFrames(const std::vector<Ref<Texture2D>>& new_frames)
+	{
+		m_frames.insert(m_frames.end(), new_frames.begin(), new_frames.end());
+	}
+
+	void TextureSequence::addFrames(const std::vector<Ref<Texture2D>>& new_frames, size_t pos)
+	{
+		AR_ASSERT(pos < frameCount());
+
+		m_frames.insert(m_frames.begin() + pos, new_frames.begin(), new_frames.end());
+
+		// the active frame should be shifted to the left by the amount of new frames added to the left of the active frame.
+		if (pos < m_curr_frame)
+			m_curr_frame += new_frames.size();
+	}
+	
+	void TextureSequence::removeFrame(size_t pos)
+	{
+		AR_ASSERT(pos < frameCount())
+		m_frames.erase(m_frames.begin() + pos);
+		
+		// if the removed frame is to the left of the current frame, the current frame must be shifted to the left.
+		if (pos <= m_curr_frame && m_curr_frame != 0)
+			m_curr_frame--;
+	}
+	
+	void TextureSequence::removeFrames(size_t start, size_t end)
+	{
+		AR_ASSERT(start < end);
+		AR_ASSERT(end < frameCount());
+
+		m_frames.erase(m_frames.begin() + start, m_frames.begin() + end);
+
+		// in case the current frame is erased, choose the closest frame to the left of it, as the next active frame
+		if (m_curr_frame > start && m_curr_frame < end)
+			m_curr_frame = start;
+		// the current frame should be shifted to the left by the amount of frames removed
+		else if (start < m_curr_frame)
+			m_curr_frame -= start - end;
 	}
 }

@@ -13,3 +13,7 @@
 [submodule "modules/SFML"]
 	path = modules/SFML
 	url = https://github.com/SFML/SFML.git
+[submodule "modules/CImg"]
+	path = modules/CImg
+	url = https://github.com/dtschump/CImg.git
+	branch = v.3.0.2

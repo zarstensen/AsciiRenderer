@@ -5,6 +5,14 @@ set(CMAKE_CXX_STANDARD 17)
 
 include(CheckIPOSupported)
 
+# vcpkg
+if(CMAKE_TOOLCHAIN_FILE)
+    include(${CMAKE_TOOLCHAIN_FILE})
+elseif(DEFINED ENV{VCPKG_ROOT} AND NOT ASCIIR_NO_VCPKG)
+	message(STATUS "VCPKG_ROOT is defined, including vcpkg.cmake. Define ASCIIR_NO_VCPKG to disable this behaviour")
+	include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+endif()
+
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set(PREDEFINED_TARGETS_FOLDER "CustomTargets")
@@ -93,6 +101,7 @@ set(EXAMPLES
     RendererExample
     TriangleExample
     TextureExample
+    SuperAsciirBros
 )
 
 set(INCLUDE_DIRS
@@ -409,6 +418,25 @@ set_property(TARGET sfml-main PROPERTY FOLDER "modules/SFML")
 set_property(TARGET sfml-system PROPERTY FOLDER "modules/SFML")
 
 target_link_libraries(${PROJECT_NAME} SFML::Audio)
+
+# CImg
+
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/modules/CImg")
+
+# enable png and jpeg support
+target_compile_definitions(${PROJECT_NAME} PUBLIC cimg_use_png cimg_use_jpeg cimg_verbosity=0)
+
+# libpng, zlib and libjpeg
+
+find_package(JPEG REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC  ${JPEG_INCLUDE_DIR})
+target_link_libraries(${PROJECT_NAME} ${JPEG_LIBRARIES})
+
+message(STATUS ${JPEG_LIBRARIES})
+
+find_package(PNG REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC  ${PNG_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
 
 # EThread
 

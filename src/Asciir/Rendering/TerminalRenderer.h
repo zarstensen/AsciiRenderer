@@ -50,6 +50,17 @@ namespace Asciir
 		#endif
 		};
 
+
+		/// @brief constructs a UTF8Char from the given UTF8 decimal code
+		static UTF8Char fromCode(uint32_t code)
+		{
+			char data[UTF_CODE_LEN + 1] = { '\0' };
+
+			memcpy(data, (const char*)&code, sizeof(code));
+
+			return UTF8Char(data);
+		}
+
 		/// @brief retrieves a null terminated c_str containing the UTF-8 character
 		operator const char* () const
 		{

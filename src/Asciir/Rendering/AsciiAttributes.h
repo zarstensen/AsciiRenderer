@@ -84,6 +84,14 @@ namespace Asciir
 		/// @brief opposite of operator==()
 		bool operator!=(const Colour& other) const;
 
+		/// @brief sets the specified channel index to the passed value
+		void setChannel(uint8_t channel, unsigned char val)
+		{
+			AR_ASSERT(channel < 4);
+			// yeah a bit hacky, i know
+			((unsigned char*)this)[channel] = val;
+		}
+
 		/// @brief blends the two colours taking the alpha value into account
 		/// uses the current colour as the background and calculates the alpha result afterwards
 		Colour& blend(const Colour& other);
