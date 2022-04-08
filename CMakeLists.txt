@@ -204,6 +204,7 @@ set(SRC_DIR_RENDERING
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
     src/Asciir/Rendering/Texture.cpp
+    src/Asciir/Rendering/Texture.ipp
 )
 
 set(HEADER_DIR_RENDERING

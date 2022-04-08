@@ -128,7 +128,7 @@ namespace Asciir
 	///	if set to false, the image is loaded into the background.
 	Texture2D loadImage(Path image_path, bool use_half_tiles = false, bool load_foreground = false);
 
-	/// @brief stores data from a .cart (compact asciir Texture) file
+	/// @brief stores data from any Asciir loadable texture files (.cart, .xp, .txt)
 	class FileTexture : public Texture2D
 	{
 	public:
@@ -140,10 +140,12 @@ namespace Asciir
 
 		/// @brief load the passed file path into memory
 		void load(const Path& dir);
-		/// @brief unload the texture and free the previosly loaded memory
+
+		void load() { load(m_file_dir); }
+		/// @brief unloads the texture and frees the previosly loaded memory
 		void unload();
 
-		/// @brief reread the file texture into memory
+		/// @brief reread the file texture into memory. Should be used if the file has been updated since the last load() / reload()
 		void reload();
 
 		/// @brief returns wether the FileTexture currently has a texture loaded
@@ -159,25 +161,36 @@ namespace Asciir
 		bool m_is_loaded = false;
 	};
 
-	/// @brief stores a sequence of Textures.
+	template<typename TShader, typename Enable=void>
+	class ShaderSequence
+	{
+		static_assert("Template parameter must have base type Shader2D");
+	};
+
+	/// @brief allows tempalte to compile if TShader has Shader2D as a base class.
+	template<typename TShader>
+	using enable_if_shader = std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, TShader>;
+
+	/// @brief stores a sequence of Shaders.
 	/// This class intended use is to store animations and to easily iterate through them.
-	/// use nextFrame(), prevFrame() and setFrame(), to set what Texture2D readTile will use.
+	/// use nextFrame(), prevFrame() and setFrame(), to set what shader readTile will use.
 	/// 
 	/// the active frame is automaticly preserved whenever the frame container is modified (addFrame, removeFrame, etc...), so a call to any of these functions will not change the active frame.
 	/// the only case where the active frame is changed, is if the current active frame is removed.
 	/// in this case, the next valid frame to the left of the active frame, will be chosen as the next active frame.
 	/// if there are no valid frames to the left of the active frame, then the next valid frame to the right of the active frame will be chosen.
 	/// 
-	class TextureSequence
+	template<typename TShader>
+	class ShaderSequence<TShader, enable_if_shader<TShader>>
 	{
 	public:
 		/// @brief default constructor, will contain 0 frames.
-		TextureSequence() = default;
+		ShaderSequence() = default;
 
 		/// @brief initializes the TextureSequence with the passed values
-		TextureSequence(std::initializer_list<Ref<Texture2D>> init_values);
+		ShaderSequence(std::initializer_list<Ref<TShader>> init_values);
 
-		TextureSequence(const TextureSequence& other);
+		ShaderSequence(const ShaderSequence<TShader>& other);
 
 		/// @brief increases the current frame index by a specified amount.
 		/// 
@@ -185,7 +198,7 @@ namespace Asciir
 		/// 
 		/// @param jump_size the size of the increment
 		/// @return refrence to the Texture2D at the destination position
-		Ref<Texture2D> incrFrame(size_t jump_size = 1);
+		Ref<TShader> incrFrame(size_t jump_size = 1);
 
 		/// @brief decreases the current frame index by a specified amount.
 		/// 
@@ -193,32 +206,32 @@ namespace Asciir
 		/// 
 		/// @param jump_size the size of the increment
 		/// @return refrence to the Texture2D at the destination position
-		Ref<Texture2D> decrFrame(size_t jump_size = 1);
+		Ref<TShader> decrFrame(size_t jump_size = 1);
 		/// @brief sets the index of the active frame
 		/// @return refrence to the Texture2D at the passed frame index
-		Ref<Texture2D> setFrame(size_t frame) { AR_ASSERT(frame < m_frames.size()); m_curr_frame = frame; return m_frames[m_curr_frame]; }
+		Ref<TShader> setFrame(size_t frame) { AR_ASSERT(frame < m_frames.size()); m_curr_frame = frame; return m_frames[m_curr_frame]; }
 
 		/// @brief gets the active frame
-		Ref<Texture2D> getFrame() const { return m_frames[m_curr_frame]; }
+		Ref<TShader> getFrame() const { return m_frames[m_curr_frame]; }
 		/// @brief gets the frame at the passed frame index
-		Ref<Texture2D> getFrame(size_t frame) const { return m_frames[frame]; }
+		Ref<TShader> getFrame(size_t frame) const { return m_frames[frame]; }
 
 		/// @brief gets the number of frames in the current TextureSequence
 		size_t frameCount() { return m_frames.size(); }
 
 		/// @brief adds a Texture2D to the end of the texture sequence
-		void addFrame(Ref<Texture2D> new_frame) { m_frames.push_back(new_frame); }
+		void addFrame(Ref<TShader> new_frame) { m_frames.push_back(new_frame); }
 		/// @brief inserts a Texture2D at the specified position
-		void addFrame(Ref<Texture2D> new_frame, size_t pos);
+		void addFrame(Ref<TShader> new_frame, size_t pos);
 
 		/// @brief appends the passed frames to the end of the TextureSequence
-		void addFrames(const std::vector<Ref<Texture2D>>& init_values);
+		void addFrames(const std::vector<Ref<TShader>>& init_values);
 		/// @brief inserts the passed frames at the specified position
-		void addFrames(const std::vector<Ref<Texture2D>>& init_values, size_t pos);
+		void addFrames(const std::vector<Ref<TShader>>& init_values, size_t pos);
 		/// @brief same as @ref addFrames(other.data())
-		void addFrames(const TextureSequence& other) { addFrames(other.data()); }
+		void addFrames(const ShaderSequence<TShader>& other) { addFrames(other.data()); }
 		/// @brief same as @ref addFrames(other.data(), pos)
-		void addFrames(const TextureSequence& other, size_t pos) { addFrames(other.data(), pos); }
+		void addFrames(const ShaderSequence<TShader>& other, size_t pos) { addFrames(other.data(), pos); }
 
 		/// @brief removes the frame at the specified position.
 		/// if the current active frame is removed, then the frame to the left of it will be the next active frame
@@ -234,13 +247,16 @@ namespace Asciir
 		void reserve(size_t capacity) { m_frames.reserve(capacity); }
 
 		/// @brief returns the vector instance storing the frames.
-		const std::vector<Ref<Texture2D>>& data() const { return m_frames; }
+		const std::vector<Ref<TShader>>& data() const { return m_frames; }
 
 		/// @brief same as getFrame()
-		operator Ref<Texture2D>() { return getFrame(); }
+		operator Ref<TShader>() { return getFrame(); }
 
 	protected:
 		size_t m_curr_frame = 0;
-		std::vector<Ref<Texture2D>> m_frames;
+		std::vector<Ref<TShader>> m_frames;
 	};
+	
 }
+
+#include "Texture.ipp"

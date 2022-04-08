@@ -189,7 +189,6 @@ namespace Asciir
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
 		m_is_loaded = false;
-		m_file_dir = "";
 
 		resize({ 0, 0 });
 	}
@@ -322,82 +321,5 @@ namespace Asciir
 		return image_texture;
 	}
 
-	// ============ TextureSequence ============
 	
-	TextureSequence::TextureSequence(std::initializer_list<Ref<Texture2D>> init_values)
-		: m_frames(init_values) {}
-
-	TextureSequence::TextureSequence(const TextureSequence& other)
-		: m_curr_frame(other.m_curr_frame), m_frames(other.m_frames) {}
-
-	Ref<Texture2D> TextureSequence::incrFrame(size_t jump_size)
-	{
-		m_curr_frame += jump_size;
-		m_curr_frame %= m_frames.size();
-
-		return m_frames[m_curr_frame];
-	}
-
-	Ref<Texture2D> TextureSequence::decrFrame(size_t jump_size)
-	{
-		// special case if the jump size is greater than the number of frames to the left of the current frame
-		if (jump_size > m_frames.size() - m_curr_frame)
-			m_curr_frame = m_frames.size() - jump_size - m_curr_frame;
-		else
-			m_curr_frame -= jump_size;
-
-		return m_frames[m_curr_frame];
-	}
-	
-	void TextureSequence::addFrame(Ref<Texture2D> new_frame, size_t pos)
-	{
-		AR_ASSERT(pos < m_frames.size());
-
-		// a frame will be added behind the current frame, thus the current frame will be shifted to the right.
-		if (pos < m_curr_frame)
-			m_curr_frame++;
-
-		m_frames.insert(m_frames.begin() + pos, new_frame);
-	}
-
-	void TextureSequence::addFrames(const std::vector<Ref<Texture2D>>& new_frames)
-	{
-		m_frames.insert(m_frames.end(), new_frames.begin(), new_frames.end());
-	}
-
-	void TextureSequence::addFrames(const std::vector<Ref<Texture2D>>& new_frames, size_t pos)
-	{
-		AR_ASSERT(pos < frameCount());
-
-		m_frames.insert(m_frames.begin() + pos, new_frames.begin(), new_frames.end());
-
-		// the active frame should be shifted to the left by the amount of new frames added to the left of the active frame.
-		if (pos < m_curr_frame)
-			m_curr_frame += new_frames.size();
-	}
-	
-	void TextureSequence::removeFrame(size_t pos)
-	{
-		AR_ASSERT(pos < frameCount())
-		m_frames.erase(m_frames.begin() + pos);
-		
-		// if the removed frame is to the left of the current frame, the current frame must be shifted to the left.
-		if (pos <= m_curr_frame && m_curr_frame != 0)
-			m_curr_frame--;
-	}
-	
-	void TextureSequence::removeFrames(size_t start, size_t end)
-	{
-		AR_ASSERT(start < end);
-		AR_ASSERT(end < frameCount());
-
-		m_frames.erase(m_frames.begin() + start, m_frames.begin() + end);
-
-		// in case the current frame is erased, choose the closest frame to the left of it, as the next active frame
-		if (m_curr_frame > start && m_curr_frame < end)
-			m_curr_frame = start;
-		// the current frame should be shifted to the left by the amount of frames removed
-		else if (start < m_curr_frame)
-			m_curr_frame -= start - end;
-	}
 }
