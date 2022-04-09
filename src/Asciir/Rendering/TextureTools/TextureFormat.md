@@ -21,14 +21,14 @@ Stored as a grid of characters where each row is seperated by a newline.
 Should appear after the size section with one or more newlines.  
 This section should have the same number of columns as the width of the image and The same number of rows as the height of the image.   
 The data is stored as multi byte characters (UTF-8) for each grid element Seperated by a single space if it is not a character code (optional at end of row).  
-Incase of a character code there should be no spaces between the elements. 
+Incase of a character code there should be no spaces at the end of the symbol entry. 
 Character codes should be written as a 2 digit hex code where the hex value will be converted to its corresponding ASCII-8 character.
 these should mainly be used to define transparent characters.
 A null character (00) is considered transparent.
 
 > 3 'a' characters next to each other: a a a  
 > 3 'a' characters with spaces inbetween them: a   a   a  
-> 3 'a' characters with null codes inbetween them: a00a00a  
+> 3 'a' characters with null codes inbetween them: a 00a 00a   
 
 #### foreground color:
 Defines the color of the symbols stored in the texture.  
@@ -58,7 +58,7 @@ Anything inside the comment is ignored when converted to a .cart file.
 
 // symbols section
 ╔ ═ ╗
-║00 ║
+║ 00║
 ╚ ═ ╝
 
 // foreground color section
@@ -96,7 +96,7 @@ Each element is 9-12 bytes long.
 
 ## example:
 ```
-              ╔ÿÿ═ÿÿ═ÿÿ╦ÿÿ═ÿÿ═ÿÿ╗ÿÿ║ÿÿ                  ║ÿÿ                  ║ÿÿ╠ÿÿ═ÿÿ═ÿÿ╬ÿÿ═ÿÿ═ÿÿ╣ÿÿ║ÿÿ                  ║ÿÿ                  ║ÿÿ╚ÿÿ═ÿÿ═ÿÿ╩ÿÿ═ÿÿ═ÿÿ╝ÿÿ
+CART              в•”я  я я яв•‘я  я я яв•љя  я я яв•ђя  я я я         в•ђя  я я яв•—я  я я яв•‘я  я я яв•ќя  я я я
 ```
 > the example .art file, converted to a .cart file
 
