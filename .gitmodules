@@ -17,3 +17,7 @@
 	path = modules/CImg
 	url = https://github.com/dtschump/CImg.git
 	branch = v.3.0.2
+[submodule "modules/zlib"]
+	path = modules/zlib
+	url = https://github.com/madler/zlib.git
+	branch = v1.2.12

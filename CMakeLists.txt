@@ -439,6 +439,10 @@ find_package(PNG REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC  ${PNG_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
 
+find_package(ZLIB REQUIRED)
+target_include_directories(${PROJECT_NAME} PUBLIC ${ZLIB_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES})
+
 # EThread
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)

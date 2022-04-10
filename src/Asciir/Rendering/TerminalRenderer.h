@@ -40,7 +40,7 @@ namespace Asciir
 		/// @brief constructs a UTF8Char from the given wide character
 		UTF8Char(wchar_t wc) { *this = fromCode((uint32_t) wc); }
 
-		/// @brief constructs a UTF8Char instance from the given UTF-8 sequence
+		/// @brief constructs a UTF8Char instance from the given UTF-8 binary sequence
 		UTF8Char(const char* c)
 		{
 			AR_ASSERT_MSG(U8Len(c) < 2, "u8 string must only contain one or less characters, found ", U8Len(c));
@@ -54,6 +54,8 @@ namespace Asciir
 
 
 		/// @brief constructs a UTF8Char from the given UTF8 decimal code
+		/// @important ONLY use this for decimal codes and not the actual binary representation of the UTF-8 character, as this converts the decimal code to the binary representation.
+		/// instead use the constructor that takes a const char* UTF8Char(const char*).
 		static UTF8Char fromCode(uint32_t code_point);
 
 		/// @brief retrieves a null terminated c_str containing the UTF-8 character

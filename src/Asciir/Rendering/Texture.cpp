@@ -202,6 +202,74 @@ namespace Asciir
 		return *this;
 	}
 
+	FileTexture& FileTexture::loadXP(const Path& xp_file, size_t layer, const std::array<uint32_t, 0x100>& font_map)
+	{
+		gzFile xp_in = gzopen(xp_file.string().c_str(), "rb");
+		
+		// skip version number
+		gzseek(xp_in, sizeof(int32_t), SEEK_CUR);
+
+		int32_t layer_count;
+		gzread(xp_in, &layer_count, sizeof(int32_t));
+
+		AR_ASSERT_MSG(layer < layer_count, "Layer index of XP file must not be greater than the layer count of the file.");
+
+		int32_t current_layer = 0;
+
+		// skip layers until the target layer is reached
+		while (current_layer < layer)
+		{
+			// these should be the same for every layer, but they are read anyways in case of future changes to the format specification
+			int32_t width, height;
+			gzread(xp_in, &width, sizeof(int32_t));
+			gzread(xp_in, &height, sizeof(int32_t));
+
+			gzseek(xp_in, (sizeof(uint32_t) + sizeof(int8_t) * 6) * width * height, SEEK_CUR);
+		}
+
+		// as the data is stored in column major order, there is no reason to keep track of the x y indicies.
+
+		int32_t width, height;
+		gzread(xp_in, &width, sizeof(int32_t));
+		gzread(xp_in, &height, sizeof(int32_t));
+
+		resize({ width, height }, RESIZE::CLEAR);
+
+		for (uint32_t i = 0; i < (uint32_t)width * (uint32_t)height; i++)
+		{
+			// get symbol
+			uint32_t symbol_seq;
+			gzread(xp_in, &symbol_seq, sizeof(uint32_t));
+
+			m_texture[i].symbol = UTF8Char::fromCode(font_map[symbol_seq]);
+
+			// get foreground
+
+			uint8_t c_val[3];
+
+			gzread(xp_in, c_val, sizeof(uint8_t) * 3);
+
+			m_texture[i].colour = Colour(c_val[0], c_val[1], c_val[2]);
+
+			// get background
+
+			gzread(xp_in, c_val, sizeof(uint8_t) * 3);
+
+			m_texture[i].background_colour = Colour(c_val[0], c_val[1], c_val[2]);
+
+			// transparent background
+			if (m_texture[i].background_colour == Colour(255, 0, 255))
+				m_texture[i].background_colour = Colour(0, 0);
+		}
+
+		gzclose(xp_in);
+
+		m_file_dir = xp_file;
+		m_is_loaded = true;
+
+		return *this;
+	}
+
 	FileTexture& FileTexture::loadTXT(const Path& txt_file)
 	{
 		std::wifstream file_in(txt_file);
