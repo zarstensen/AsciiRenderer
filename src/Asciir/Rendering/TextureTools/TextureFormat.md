@@ -6,7 +6,7 @@ The .art file is a more readable version of the format and will be used to defin
 
 # .art file
 
-Contains five diffrent sections (size, symbols, foreground color, background color, comment [optional])
+Contains five diffrent sections (size, symbols, foreground color, background color, comments [optional])
 
 #### size:
 Defines the size of the texture.
@@ -81,8 +81,10 @@ FF0000 FF0000   FF0000
 ```
 
 # .cart file
-Contains four sections like the .art file (size, symbols, foreground color, background color). 
+Contains four sections like the .art file (size, symbols, foreground color, background color) and an additional header section. 
 Each section has the same functionality as the .art file sections. 
+
+each .cart file starts with a 4 byte long header containing the characters 'C A R T'. This exists in order to detect a .cart file without depending on the file extension.
 
 A .cart file is not compressed, the data is just stored as more compact and efficient to read by the program.
 
@@ -93,6 +95,22 @@ Each element is 9-12 bytes long.
 > 1-4 byte: symbol  
 > 4 bytes: foreground  
 > 4 bytes: background  
+
+### IMPORTANT: 
+in contrast to the .art format, a .cart file stores the symbols section as row major instead of column major.
+
+## overview:
+
+```
+HEADER (CART): 4 bytes
+SIZE (WIDTH, HEIGHT): 8 * 2 bytes
+...
+SYMBOL: 1-4 bytes
+FOREGROUND: 4 bytes
+BACKGROUND: 4 bytes
+...
+
+```
 
 ## example:
 ```
