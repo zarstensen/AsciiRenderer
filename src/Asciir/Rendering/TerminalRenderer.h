@@ -37,6 +37,8 @@ namespace Asciir
 
 		/// @brief constructs a UTF8Char from the given character
 		UTF8Char(char c) { m_data[0] = c; };
+		/// @brief constructs a UTF8Char from the given wide character
+		UTF8Char(wchar_t wc) { *this = fromCode((uint32_t) wc); }
 
 		/// @brief constructs a UTF8Char instance from the given UTF-8 sequence
 		UTF8Char(const char* c)
@@ -52,14 +54,7 @@ namespace Asciir
 
 
 		/// @brief constructs a UTF8Char from the given UTF8 decimal code
-		static UTF8Char fromCode(uint32_t code)
-		{
-			char data[UTF_CODE_LEN + 1] = { '\0' };
-
-			memcpy(data, (const char*)&code, sizeof(code));
-
-			return UTF8Char(data);
-		}
+		static UTF8Char fromCode(uint32_t code_point);
 
 		/// @brief retrieves a null terminated c_str containing the UTF-8 character
 		operator const char* () const
