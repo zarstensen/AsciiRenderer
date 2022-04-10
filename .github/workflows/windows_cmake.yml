@@ -21,6 +21,8 @@ jobs:
       with:
         vcpkgArguments: 'zlib libpng libjpeg-turbo openal'
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'e6c58446fc02943d80ca859fd7d09b017c2ae352'
+        vcpkgTriplet: ${{ matrix.triplet }}
       
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DWIN32=${{matrix.arch == 'x86'}}
