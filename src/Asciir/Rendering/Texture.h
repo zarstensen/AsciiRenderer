@@ -114,18 +114,7 @@ namespace Asciir
 
 	typedef std::filesystem::path Path;
 
-	/// @brief loads the given image file into a Texture2D class.
-	/// 
-	/// the image is loaded by writing the image RGB(A) values into the texture object.
-	/// 
-	/// @param image_path the path to the image that should be loaded
-	/// @param use_half_tiles if set to true, each tile in the Texture2D will contain a half square symbol.
-	/// each tile will then hold 2 colours, where the foreground colour and background colour each represents two seperate colours of the loaded image, on the y-axis.
-	/// this works best with images with have an even y-resolution, in the case of an odd y-resolution, the bottom tiles will have a transparent foreground colour.
-	/// if set to true, load_foreground is ignored.
-	/// @return a Texture2D instance containing the image data
-	/// @param load_foreground wether to load the image into the foreground or background colour.
-	///	if set to false, the image is loaded into the background.
+	
 	Texture2D loadImage(Path image_path, bool use_half_tiles = false, bool load_foreground = false);
 
 	/// @brief stores data from any Asciir loadable texture files (.cart, .xp, .txt)
@@ -133,27 +122,67 @@ namespace Asciir
 	{
 	public:
 		FileTexture() = default;
-		/// @brief autoloads the passed file
-		FileTexture(const Path& file_dir) { load(file_dir); };
+		/// @brief sets the passed directory as the current file texture directory.
+		FileTexture(const Path& file_dir) : m_file_dir(file_dir) {}
 
 		~FileTexture() final override { if (loaded()) unload(); }
+		
+		/// @brief the currently loaded texture file.  
+		/// returns an empty path, if no file is currently loaded.
+		Path dir() const { return m_file_dir; };
+
+		/// @brief sets the directory of the file texture.
+		/// @attention this method does not load the file texture into memory. Inorder for the file to be readable, one should call load().
+		void setDir(const Path& file_dir) { m_file_dir = file_dir; }
 
 		/// @brief load the passed file path into memory
-		void load(const Path& dir);
+		/// @return refrence to the current instance
+		FileTexture& load(const Path& dir);
 
-		void load() { load(m_file_dir); }
+		/// @brief load the current file into memory
+		/// @return refrence to the current instance
+		FileTexture& load() { return load(m_file_dir); }
+
+		/// @brief loads a cart texture file into memory.
+		/// @return refrence to the current instance
+		FileTexture& loadCART(const Path& cart_file);
+		/// @brief loads a REXPaint texture file (.xp) into memory.
+		/// @return refrence to the current instance
+		FileTexture& loadXP(const Path& xp_file) { return *this; }
+		/// @brief loads a txt file into memory
+		/// 
+		/// no colour data is stored in txt file textures, instead txt files should be used when only symbols need to be loaded.
+		/// the txt file should contain a rectangle of symbols, where each row is seperated by a newline.
+		/// this method will automaticly determine the width and height of the texture, assuming the row and col sizes are consistent.
+		/// 
+		/// @return refrence to the current instance
+		FileTexture& loadTXT(const Path& txt_file);
+		/// @brief loads the given image file into a Texture2D class.
+		/// 
+		/// the image is loaded by writing the image RGB(A) values into the texture object.
+		/// 
+		/// @param image_path the path to the image that should be loaded
+		/// @param use_half_tiles if set to true, each tile in the Texture2D will contain a half square symbol.
+		/// each tile will then hold 2 colours, where the foreground colour and background colour each represents two seperate colours of the loaded image, on the y-axis.
+		/// this works best with images with have an even y-resolution, in the case of an odd y-resolution, the bottom tiles will have a transparent foreground colour.
+		/// if set to true, load_foreground is ignored.
+		/// @return a Texture2D instance containing the image data
+		/// @param load_foreground wether to load the image into the foreground or background colour.
+		///	if set to false, the image is loaded into the background.
+		FileTexture& loadIMG(const Path& img_file, bool use_half_tiles = false, bool load_foreground = false);
+
+		/// @brief same as loadIMG() using the current file directory as the image directory.
+		FileTexture& loadIMG(bool use_half_tiles = false, bool load_foreground = false) { return loadIMG(m_file_dir, use_half_tiles, load_foreground); }
+
 		/// @brief unloads the texture and frees the previosly loaded memory
-		void unload();
+		FileTexture& unload();
 
 		/// @brief reread the file texture into memory. Should be used if the file has been updated since the last load() / reload()
-		void reload();
+		FileTexture& reload();
 
 		/// @brief returns wether the FileTexture currently has a texture loaded
 		bool loaded() const { return m_is_loaded; }
 
-		/// @brief the currently loaded texture file.  
-		/// returns an empty path, if no file is currently loaded.
-		Path dir() const { return m_file_dir; };
 
 	protected:
 		Path m_file_dir = "";
@@ -162,14 +191,11 @@ namespace Asciir
 	};
 
 	template<typename TShader, typename Enable=void>
-	class ShaderSequence
-	{
-		static_assert("Template parameter must have base type Shader2D");
-	};
+	class ShaderSequence;
 
 	/// @brief allows tempalte to compile if TShader has Shader2D as a base class.
 	template<typename TShader>
-	using enable_if_shader = std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, TShader>;
+	using enable_if_shader = std::enable_if_t<std::is_base_of_v<Shader2D, TShader>>;
 
 	/// @brief stores a sequence of Shaders.
 	/// This class intended use is to store animations and to easily iterate through them.
@@ -257,6 +283,7 @@ namespace Asciir
 		std::vector<Ref<TShader>> m_frames;
 	};
 	
+	typedef ShaderSequence<FileTexture> ImageSequence;
 }
 
 #include "Texture.ipp"
