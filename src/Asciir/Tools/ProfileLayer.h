@@ -20,9 +20,11 @@ namespace Tools
 		/// @param buffer_size size of the CTProfiler buffer.
 		/// @param timeout timeout for each profiling session (-1 = no timeout).
 		/// @param out_dir output file for the profile result file
-		ProfilingLayer(size_t buffer_size = 0, DeltaTime timeout = -1, std::filesystem::path out_dir = "Profile.json")
+		ProfilingLayer(size_t buffer_size, bool auto_start, DeltaTime timeout = -1, std::filesystem::path out_dir = "Profile.json")
 			: m_buffer_size(buffer_size), m_timeout(timeout), m_out_dir(out_dir)
-		{}
+		{
+			ChrTrcProfiler::CTProfiler::beginSession(buffer_size, m_out_dir, true, (duration)m_timeout);
+		}
 
 		void onAdd() override { AR_CORE_INFO("Added ProfilingLayer to the application"); }
 
