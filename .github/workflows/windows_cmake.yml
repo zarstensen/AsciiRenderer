@@ -22,8 +22,7 @@ jobs:
         vcpkgArguments: 'zlib libpng libjpeg-turbo openal'
         vcpkgJsonGlob: '**/vcpkg.json'
         runVcpkgInstall: true
-        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
+        vcpkgDirectory: '${{ github.workspace }}/modules/vcpkg'
         vcpkgTriplet: ${{ matrix.triplet }}
       
     - name: Configure CMake
