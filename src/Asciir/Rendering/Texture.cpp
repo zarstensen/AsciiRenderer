@@ -1,5 +1,10 @@
 #include "Texture.h"
+
 #include "arpch.h"
+
+#include <ChrTrc.h>
+
+using namespace cimg_library;
 
 namespace Asciir
 {
@@ -130,69 +135,473 @@ namespace Asciir
 	}
 
 	// ============ FileTexture ============
-	void FileTexture::load(const Path& dir)
+	FileTexture& FileTexture::load(const Path& dir)
 	{
 		Path abs_dir = std::filesystem::absolute(dir);
 		AR_ASSERT_MSG(!m_is_loaded, "cannot load file into an already loaded texture");
 
 		if (std::filesystem::exists(abs_dir))
 		{
-			m_file_dir = abs_dir;
-			m_is_loaded = true;
+			Path file_type = m_file_dir.extension();
 
-			std::ifstream texture_in(abs_dir, std::ios::binary);
-
-			// load the size into memory
-
-			size_t width;
-			size_t height;
-
-			texture_in.read((char*)&width, sizeof(size_t));
-			texture_in.read((char*)&height, sizeof(size_t));
-
-			// allocate memory for the texture
-
-			resizeClear({width, height}, Tile());
-
-			// load texture into memory
-			for (size_t y = 0; y < height; y++)
-			{
-				for (size_t x = 0; x < width; x++)
-				{
-					auto& elem = m_texture(y, x);
-
-					Tile tile_in;
-					texture_in.read((char*)tile_in.symbol, 1);
-					texture_in.read((char*)tile_in.symbol + 1, U8CharSize(tile_in.symbol) - 1);
-
-					texture_in.read((char*)&tile_in.colour, sizeof(elem.colour));
-
-					texture_in.read((char*)&tile_in.background_colour, sizeof(tile_in.background_colour));
-
-					elem = tile_in;
-				}
-			}
+			if (file_type == ".cart")
+				loadCART(abs_dir);
+			else if (file_type == ".xp")
+				loadXP(abs_dir);
+			else if (file_type == ".txt")
+				loadTXT(abs_dir);
+			else // if none of the above is true, assume the file is an image file
+				loadIMG(abs_dir);
 		}
 		else
 		{
 			AR_CORE_ERR("the file ", dir, " does not exist, unable to load texture");
 			AR_ASSERT(false);
 		}
+
+		return *this;
 	}
 
-	void FileTexture::unload()
+	FileTexture& FileTexture::loadCART(const Path& cart_file)
+	{
+		std::ifstream texture_in(cart_file, std::ios::binary);
+
+		// check the header
+		char header[4];
+
+		texture_in.read(header, 4);
+
+		AR_ASSERT_MSG(strcmp(header, "CART") == 0, "Invalid header in file: ", cart_file);
+
+		// load the size into memory
+
+		size_t width;
+		size_t height;
+
+		texture_in.read((char*)&width, sizeof(size_t));
+		texture_in.read((char*)&height, sizeof(size_t));
+
+		// allocate memory for the texture
+
+		resizeClear({ width, height }, Tile());
+
+		// load texture into memory
+		for(Tile& elem: m_texture.reshaped())
+		{
+			texture_in.read((char*)elem.symbol, 1);
+			texture_in.read((char*)elem.symbol + 1, U8CharSize(elem.symbol) - 1);
+
+			texture_in.read((char*)&elem.colour, sizeof(elem.colour));
+
+			texture_in.read((char*)&elem.background_colour, sizeof(elem.background_colour));
+		}
+
+		m_file_dir = cart_file;
+		m_is_loaded = true;
+
+		return *this;
+	}
+
+	FileTexture& FileTexture::loadXP(const Path& xp_file, size_t layer, const std::array<uint32_t, 0x100>& font_map)
+	{
+		gzFile xp_in = gzopen(xp_file.string().c_str(), "rb");
+		
+		// skip version number
+		gzseek(xp_in, sizeof(int32_t), SEEK_CUR);
+
+		int32_t layer_count;
+		gzread(xp_in, &layer_count, sizeof(int32_t));
+
+		AR_ASSERT_MSG(layer < layer_count, "Layer index of XP file must not be greater than the layer count of the file.");
+
+		int32_t current_layer = 0;
+
+		// skip layers until the target layer is reached
+		while (current_layer < layer)
+		{
+			// these should be the same for every layer, but they are read anyways in case of future changes to the format specification
+			int32_t width, height;
+			gzread(xp_in, &width, sizeof(int32_t));
+			gzread(xp_in, &height, sizeof(int32_t));
+
+			gzseek(xp_in, (sizeof(uint32_t) + sizeof(int8_t) * 6) * width * height, SEEK_CUR);
+		}
+
+		// as the data is stored in column major order, there is no reason to keep track of the x y indicies.
+
+		int32_t width, height;
+		gzread(xp_in, &width, sizeof(int32_t));
+		gzread(xp_in, &height, sizeof(int32_t));
+
+		resize({ width, height }, RESIZE::CLEAR);
+
+		for (uint32_t i = 0; i < (uint32_t)width * (uint32_t)height; i++)
+		{
+			// get symbol
+			uint32_t symbol_seq;
+			gzread(xp_in, &symbol_seq, sizeof(uint32_t));
+
+			m_texture[i].symbol = UTF8Char::fromCode(font_map[symbol_seq]);
+
+			// get foreground
+
+			uint8_t c_val[3];
+
+			gzread(xp_in, c_val, sizeof(uint8_t) * 3);
+
+			m_texture[i].colour = Colour(c_val[0], c_val[1], c_val[2]);
+
+			// get background
+
+			gzread(xp_in, c_val, sizeof(uint8_t) * 3);
+
+			m_texture[i].background_colour = Colour(c_val[0], c_val[1], c_val[2]);
+
+			// transparent background
+			if (m_texture[i].background_colour == Colour(255, 0, 255))
+				m_texture[i].background_colour = Colour(0, 0);
+		}
+
+		gzclose(xp_in);
+
+		m_file_dir = xp_file;
+		m_is_loaded = true;
+
+		return *this;
+	}
+
+	FileTexture& FileTexture::loadTXT(const Path& txt_file)
+	{
+		std::wifstream file_in(txt_file);
+		file_in.imbue(std::locale("en_US.UTF-8"));
+
+		// make sure the txt file is formatted correctly.
+
+		size_t width = 0;
+		size_t height = 0;
+		size_t curr_w = 0;
+
+		wchar_t c;
+
+		for (file_in.read(&c, 1);!file_in.eof();file_in.read(&c, 1))
+		{
+			if (c == '\n')
+			{
+				if (width != 0 && curr_w != width)
+				{
+					AR_ASSERT_MSG("Text file formatted incorrectly, row width was not consistent, at row: ", height);
+					return *this;
+				}
+
+				width = curr_w;
+				curr_w = 0;
+				height++;
+			}
+			else
+			{
+				curr_w++;
+			}
+		}
+
+		if (width != 0 && curr_w != width)
+		{
+			AR_ASSERT_MSG("Text file formatted incorrectly, row width was not consistent, at row: ", height);
+			return *this;
+		}
+
+		// last line does not have a newline, so this should be incremented to account for this
+		height++;
+
+		// the width and height were found doing the format check, so the entire texture can be allocated at once.
+
+		resize({ width, height }, RESIZE::CLEAR);
+
+		// reset file stream
+		file_in.clear();
+		file_in.seekg(file_in.beg);
+
+		size_t x = 0;
+		size_t y = 0;
+
+		for(file_in.read(&c, 1);!file_in.eof(); file_in.read(&c, 1))
+		{
+			if (c == '\n')
+			{
+				y++;
+				x = 0;
+
+				// continue here, as the newline itself should not be stored
+				continue;
+			}
+
+			setTile({ x, y }, Tile(BLACK8, WHITE8, UTF8Char(c)));
+
+			x++;
+		}
+
+		m_file_dir = txt_file;
+		m_is_loaded = true;
+
+		return *this;
+	}
+
+	FileTexture& FileTexture::loadIMG(const Path& img_file, bool use_half_tiles, bool load_foreground)
+	{
+		CT_MEASURE_N("Image Load");
+		AR_VERIFY_MSG(std::filesystem::exists(img_file), "Could not find image file: ", img_file);
+
+		try
+		{
+			CImg<uint8_t> image_data(img_file.string().c_str());
+
+			if (use_half_tiles)
+			{
+				resize({ image_data.width(), (image_data.height() + 1) / 2 - 1 }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t)image_data.height() / 2; y++)
+					{
+						Colour foreground;
+						Colour background;
+
+						/// grayscale values
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, y, 0, 0));
+							foreground = Colour(image_data(x, y + 1, 0, 0));
+						}
+						// RGB(A) values
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+							{
+								background.setChannel(c, image_data(x, y, 0, c));
+								foreground.setChannel(c, image_data(x, y + 1, 0, c));
+							}
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", img_file, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+						}
+						// 9604 = half block
+						setTile({ x, y }, Tile(foreground, background, UTF8Char::fromCode(9604)));
+					}
+				}
+
+				// y height is odd, last row should be handled seperatly
+				if (image_data.height() % 2 == 1)
+				{
+					for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+					{
+
+						Colour background;
+
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								background.setChannel(c, image_data(x, image_data.height() - 1, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", img_file, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+						}
+
+						setTile({ x, size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), UTF8Char::fromCode(9604)));
+					}
+				}
+
+			}
+			else
+			{
+				resize({ image_data.width(), image_data.height() }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t)image_data.height(); y++)
+					{
+						Colour colour;
+						Tile loaded_tile;
+
+						if (image_data.spectrum() == 1)
+						{
+							colour = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								colour.setChannel(c, image_data(x, y, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", img_file, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+						}
+
+						if (load_foreground)
+							loaded_tile.colour = colour;
+						else
+							loaded_tile.background_colour = colour;
+
+						setTile({ x, y }, loaded_tile);
+					}
+				}
+			}
+
+			m_file_dir = img_file;
+			m_is_loaded = true;
+		}
+		catch (CImgIOException e)
+		{
+			// is probably a unsupported format
+			AR_CORE_ERR("Unable to load image file: ", img_file, "\nError message: ", e.what());
+		}
+
+		return *this;
+	}
+
+	FileTexture& FileTexture::unload()
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot unload already unloaded texture");
 		m_is_loaded = false;
-		m_file_dir = "";
 
 		resize({ 0, 0 });
+
+		return *this;
 	}
 
-	void FileTexture::reload()
+	FileTexture& FileTexture::reload()
 	{
 		AR_ASSERT_MSG(m_is_loaded, "cannot reload unloaded texture");
 		m_is_loaded = false;
 		load(m_file_dir);
+
+		return *this;
 	}
+
+	Texture2D loadImage(Path image_path, bool load_foreground, bool use_half_tiles)
+	{
+		CT_MEASURE_N("Image Load");
+		AR_VERIFY_MSG(std::filesystem::exists(image_path), "Could not find image file: ", image_path);
+
+		Texture2D image_texture;
+		
+		try
+		{
+			CImg<uint8_t> image_data(image_path.string().c_str());
+
+			if (use_half_tiles)
+			{
+				image_texture.resize({ image_data.width(), (image_data.height() + 1) / 2 - 1 }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t) image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t) image_data.height() / 2; y++)
+					{
+						Colour foreground;
+						Colour background;
+
+						/// grayscale values
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, y, 0, 0));
+							foreground = Colour(image_data(x, y + 1, 0, 0));
+						}
+						// RGB(A) values
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+							{
+								background.setChannel(c, image_data(x, y, 0, c));
+								foreground.setChannel(c, image_data(x, y + 1, 0, c));
+							}
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+;
+						image_texture.setTile({ x, y }, Tile(foreground, background, UTF8Char::fromCode(9604)));
+					}
+				}
+
+				// y height is odd, last row should be handled seperatly
+				if (image_data.height() % 2 == 1)
+				{
+					for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+					{
+
+						Colour background;
+
+						if (image_data.spectrum() == 1)
+						{
+							background = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								background.setChannel(c, image_data(x, image_data.height() - 1, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+
+						image_texture.setTile({ x, image_texture.size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), UTF8Char::fromCode(9604)));
+					}
+				}
+
+			}
+			else
+			{
+				image_texture.resize({ image_data.width(), image_data.height() }, RESIZE::CLEAR);
+
+				for (uint32_t x = 0; x < (uint32_t)image_data.width(); x++)
+				{
+					for (uint32_t y = 0; y < (uint32_t)image_data.height(); y++)
+					{
+						Colour colour;
+						Tile loaded_tile;
+
+						if (image_data.spectrum() == 1)
+						{
+							colour = Colour(image_data(x, image_data.height() - 1, 0, 0));
+						}
+						else if (image_data.spectrum() == 3 || image_data.spectrum() == 4)
+						{
+							for (uint8_t c = 0; c < (uint8_t)image_data.spectrum(); c++)
+								colour.setChannel(c, image_data(x, y, 0, c));
+						}
+						else
+						{
+							AR_CORE_ERR("Unknown image file format: ", image_path, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
+							return {};
+						}
+
+						if (load_foreground)
+							loaded_tile.colour = colour;
+						else
+							loaded_tile.background_colour = colour;
+
+						image_texture.setTile({ x, y }, loaded_tile);
+					}
+				}
+			}
+		}
+		catch (CImgIOException e)
+		{
+			// is probably a unsupported format
+			AR_CORE_ERR("Unable to load image file: ", image_path, "\nError message: ", e.what());
+			return {};
+		}
+
+		return image_texture;
+	}
+
+	
 }

@@ -48,7 +48,8 @@
 
 /// @brief same as AR_VERIFY, but a custom message is appended to the error message.
 #ifdef AR_DEBUG
-#define AR_VERIFY_MSG(x, ...) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
+#define AR_VERIFY_MSG(x, ...) { \
+	auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
 	if(!AR_JOIN_NAME(ret_val, __LINE__)) { \
 		AR_CORE_ERR("line: ", __LINE__, " File: ", __FILE__, '\n', __VA_ARGS__); \
 		AR_DEBUG_BREAK; \

@@ -38,7 +38,6 @@ namespace Asciir
 		return !operator==(other);
 	}
 
-
 	Colour& Colour::blend(const Colour& other)
 	{
 		Real foreground_alpha = (Real)other.alpha / UCHAR_MAX;

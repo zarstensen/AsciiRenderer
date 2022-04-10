@@ -486,4 +486,41 @@ namespace TRInterface
 		stream << (int)tile.symbol << " (" << tile.background_colour << ") (" << tile.colour << ") ";
 		return stream;
 	}
+
+	UTF8Char UTF8Char::fromCode(uint32_t code_point)
+	{
+		AR_ASSERT_MSG(code_point >> 21 == 0, "Code point must not have a value greater than 2^21!");
+
+		// the two byte character is simply mapped onto the multi byte UTF-8 represeentation.
+		// eg. the binary value 00010100011 simply becomes 110 000010 10 1000011
+		char data[UTF_CODE_LEN + 1] = { '\0' };
+
+		// start by checking if code point is ascii
+		if (code_point < 128)
+		{
+			data[0] = code_point;
+		}
+		else
+		{
+			for (size_t i = 1; i < 4; i++)
+			{
+				// find the length of the UTF-8 encoding
+				if (code_point >> (i * 6 + 6 - i) == 0)
+				{
+					for (size_t j = 0; j < i; j++)
+						data[i - j] = ((code_point >> (j * 6)) & 0x3F) + 0x80;
+
+
+					data[0] = code_point >> (i * 6);
+
+					for (size_t j = 0; j < i + 1; j++)
+						data[0] = data[0] + (0x80 >> j);
+
+					break;
+				}
+			}
+		}
+
+		return UTF8Char(data);
+	}
 }

@@ -54,4 +54,8 @@
 #include <ETH.h>
 
 #include <SFML/Audio.hpp>
+
+#include <CImg.h>
+
+#include <zlib.h>
 // Modules

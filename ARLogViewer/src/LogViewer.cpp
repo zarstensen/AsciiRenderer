@@ -13,7 +13,7 @@ namespace Asciir
 		m_log_attributes = std::make_unique<UnixARAttr>();
 #endif
 
-		m_log_attributes->setTitle(std::cout, "LogViewer");
+		Renderer::setTitle("LogViewer");
 	}
 
 	LogViewer::~LogViewer()
