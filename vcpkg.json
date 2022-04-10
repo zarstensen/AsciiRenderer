@@ -5,7 +5,6 @@
   "dependencies": [
     "zlib",
     "libjpeg-turbo",
-    "libpng",
-    "openal"
+    "libpng"
   ]
 }
