@@ -16,7 +16,12 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
-
+    - name: vcpkg install dependencies
+      uses: lukka/run-vcpkg@v10.2
+      with:
+        vcpkgArguments: 'zlib libpng libjpeg-turbo openal'
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+      
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DWIN32=${{matrix.arch == 'x86'}}
 
