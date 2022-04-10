@@ -431,9 +431,6 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("Update");
 			r_info = update();
-
-			// the buffer is flushed right before a draw, in case any resize commands were put in it.
-			AR_IMPL(this).getBuffer()->pubsync();
 		}
 
 		draw();
