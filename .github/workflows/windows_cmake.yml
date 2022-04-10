@@ -20,8 +20,10 @@ jobs:
       uses: lukka/run-vcpkg@v10.2
       with:
         vcpkgArguments: 'zlib libpng libjpeg-turbo openal'
+        vcpkgJsonGlob: '**/vcpkg.json'
+        runVcpkgInstall: true
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 'e6c58446fc02943d80ca859fd7d09b017c2ae352'
+        vcpkgGitCommitId: '${{ matrix.vcpkgCommitId }}'
         vcpkgTriplet: ${{ matrix.triplet }}
       
     - name: Configure CMake
