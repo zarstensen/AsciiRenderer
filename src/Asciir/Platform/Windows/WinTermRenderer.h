@@ -26,6 +26,11 @@ namespace TRInterface
 
 			AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
 
+			const char* enable_alt_buf = "\x1b[?1049h";
+
+			for(HANDLE h: getCBuffers())
+				WriteFile(h, enable_alt_buf, strlen(enable_alt_buf), NULL, NULL);
+
 		}
 
 		~TermRendererBuffer()
