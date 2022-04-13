@@ -162,9 +162,10 @@ namespace Asciir
 	namespace TRInterface
 	{
 
-		/// @brief output iterator for the TerminalRenderer pushBuffer functions.  
+		/// @brief console output buffer for the TerminalRenderer pushBuffer functions.  
 		/// 
 		/// should only be used by the TerminalRenderer and nothing else.  
+		/// implementation is latform specific
 		/// 
 		/// implementation details:
 		/// 
@@ -175,65 +176,7 @@ namespace Asciir
 		/// 
 		/// when the buffer is flushed, the buffer is simply printed out to the terminal.
 		/// 
-		class TermRendererBuffer : public std::streambuf
-		{
-			std::string m_buffer;
-
-		public:
-
-			/// @brief constructs a TermRendererBuffer instance
-			/// @param buffer_size the size of the buffer
-			TermRendererBuffer(size_t buffer_size)
-			{
-				m_buffer.reserve(buffer_size);
-			}
-
-			/// @brief put *s* into the buffer
-			/// @param s string data
-			/// @param count length of string data
-			/// @return count
-			std::streamsize xsputn(const std::streambuf::char_type* s, std::streamsize count) final
-			{
-				if (count + m_buffer.size() > m_buffer.capacity())
-					sync();
-
-				if ((size_t)count > m_buffer.capacity())
-					fwrite(s, 1, count, stdout);
-				else
-					m_buffer += s;
-
-				return count;
-			}
-
-			/// @brief put single char into the buffer
-			/// @return state of the overflow operation
-			std::streambuf::int_type overflow(std::streambuf::int_type ch) final
-			{
-				if (ch != std::streambuf::traits_type::eof())
-				{
-					if (m_buffer.size() == m_buffer.capacity())
-						sync();
-
-					m_buffer += (char)ch;
-
-					return 0;
-				}
-				else
-				{
-					return -1;
-				}
-			}
-
-			/// @brief flushes the buffer into stdout.
-			int sync() final
-			{
-				fwrite(m_buffer.c_str(), 1, m_buffer.size(), stdout);
-				m_buffer.clear();
-
-				return 0;
-			}
-
-		};
+		class TermRendererBuffer;
 
 		#define AR_INT_FUNC_HELPER(...) __VA_ARGS__
 		// TODO: make a macro define and macro undef file?
@@ -412,10 +355,13 @@ namespace Asciir
 			void pushBuffer(const char* c_str);
 			void pushBuffer(const char* c_buff, size_t buff_len);
 			void pushBuffer(char c);
-			void flushBuffer();
+
+			/// @brief is called when the draw function finishes and the buffer should display its contents to the console.
+			AR_INT_FUNC_R((void) flushBuffer(),());
 
 			/// @brief get the current buffer of the TerminalRenderer buffer.
-			TermRendererBuffer* getBuffer() { return &m_buffer; }
+			// this should return the platform implementation of the TermRendererBuffer.
+			AR_INT_FUNC_R((std::streambuf*) getBuffer(), (nullptr))
 			/// @brief get the ostream for the TerminalRenderer buffer
 			std::ostream& getStream(){ return m_buff_stream; }
 
@@ -440,7 +386,6 @@ namespace Asciir
 			ETH::LThread m_print_thrd;
 
 			Ref<AsciiAttr> m_attr_handler;
-			TermRendererBuffer m_buffer;
 			std::ostream m_buff_stream;
 			bool m_should_resize = false;
 			bool m_should_rename = true;

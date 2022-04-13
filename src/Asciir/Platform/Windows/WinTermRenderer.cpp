@@ -2,16 +2,89 @@
 
 #include "arpch.h"
 
+#include <Windows.h>
+#include <ChrTrc.h>
+
 #include "Asciir/Core/Application.h"
 
-#include <Windows.h>
 
 namespace Asciir
 {
 namespace TRInterface
 {
+	// ============ TermRendererBuffer ============
+
+	std::streamsize TermRendererBuffer::xsputn(const std::streambuf::char_type* s, std::streamsize count)
+	{
+		if (count + m_buffer.size() > m_buffer.capacity())
+			sync();
+
+		if ((size_t)count > m_buffer.capacity())
+		{
+			AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD) m_buffer.size(), NULL, NULL));
+			AR_WIN_VERIFY(WriteFile(m_hconsole_display, m_buffer.c_str(), (DWORD) m_buffer.size(), NULL, NULL));
+		}
+		else
+		{
+			m_buffer += s;
+		}
+
+		return count;
+	}
+
+	std::streambuf::int_type TermRendererBuffer::overflow(std::streambuf::int_type ch)
+	{
+		if (ch != std::streambuf::traits_type::eof())
+		{
+			if (m_buffer.size() == m_buffer.capacity())
+				sync();
+
+			m_buffer += (char)ch;
+
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+
+	// this should be used sparingly in the windows implementation, as it write to both the writable and display buffer in order to sync the data.
+	int TermRendererBuffer::sync()
+	{
+		AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD) m_buffer.size(), NULL, NULL));
+		AR_WIN_VERIFY(WriteFile(m_hconsole_display, m_buffer.c_str(), (DWORD) m_buffer.size(), NULL, NULL));
+		m_buffer.clear();
+
+		return 0;
+	}
+
+	void TermRendererBuffer::swapCBuffer()
+	{
+		{
+			CT_MEASURE_N("BWRITE 1");
+			AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD)m_buffer.size(), NULL, NULL));
+		}
+
+		std::swap(m_hconsole_writable, m_hconsole_display);
+
+		{
+			CT_MEASURE_N("BSWAP");
+			AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
+		}
+
+		{
+			CT_MEASURE_N("BWRITE 2");
+			AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD)m_buffer.size(), NULL, NULL));
+		}
+
+		m_buffer.clear();
+	}
+
+	// ============ WinTerminalRenderer ============
+
 	WinTerminalRenderer::WinTerminalRenderer(const WinTerminalRenderer::TerminalProps& props)
-		: TerminalRendererInterface(props), m_console(GetStdHandle(STD_OUTPUT_HANDLE)), m_console_hwin(GetConsoleWindow())
+		: TerminalRendererInterface(props), m_buffer(props.buffer_size), m_console(GetStdHandle(STD_OUTPUT_HANDLE)), m_console_hwin(GetConsoleWindow())
 	{
 		// enable ansi code support
 		AR_WIN_VERIFY(GetConsoleMode(m_console, &m_fallback_console_mode));
@@ -72,7 +145,8 @@ namespace TRInterface
 
 		std::pair<std::string, Size2D> result;
 
-		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_console, false, &font_info));
+		// both buffers should have the same font
+		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_buffer.getCBuffers()[0], false, &font_info));
 
 		std::wstring_view name = font_info.FaceName;
 
@@ -99,19 +173,25 @@ namespace TRInterface
 			font_info.FaceName[i] = name[i];
 
 		
+		bool success = true;
 
 		// font should be the same for full screen and windowed
-		bool max_font_res = SetCurrentConsoleFontEx(m_console, TRUE, &font_info);
-		AR_WIN_VERIFY(max_font_res);
-		bool win_font_res = SetCurrentConsoleFontEx(m_console, FALSE, &font_info);
-		AR_WIN_VERIFY(win_font_res);
+		for (HANDLE hconsole : m_buffer.getCBuffers())
+		{
+			bool max_font_res = SetCurrentConsoleFontEx(hconsole, TRUE, &font_info);
+			AR_WIN_VERIFY(max_font_res);
+			bool win_font_res = SetCurrentConsoleFontEx(hconsole, FALSE, &font_info);
+			AR_WIN_VERIFY(win_font_res);
 
-		return max_font_res && win_font_res;
+			success = success && max_font_res && win_font_res;
+		}
+		return success;
 	}
 
 	bool WinTerminalRenderer::isFocused() const
 	{
 		return GetForegroundWindow() == GetConsoleWindow();
 	}
+
 }
 }

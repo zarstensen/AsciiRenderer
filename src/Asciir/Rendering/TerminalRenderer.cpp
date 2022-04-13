@@ -56,7 +56,7 @@ namespace Asciir
 namespace TRInterface
 {
 	TerminalRendererInterface::TerminalRendererInterface(const TerminalRendererInterface::TerminalProps& term_props)
-		: m_title(term_props.title), m_buffer(term_props.buffer_size), m_buff_stream(&m_buffer), m_print_thrd(&TerminalRendererInterface::flushBuffer, this) {}
+		: m_title(term_props.title), m_buff_stream(AR_IMPL(this).getBuffer()), m_print_thrd(&TerminalRendererInterface::flushBuffer, this) {}
 
 	void TerminalRendererInterface::initRenderer(const TerminalProps& term_props)
 	{
@@ -421,7 +421,7 @@ namespace TRInterface
 		m_attr_handler->move(TermVert(drawWidth() - 1, drawHeight() - 1));
 		m_attr_handler->moveCode(getStream());
 
-		flushBuffer();
+		AR_IMPL(this).flushBuffer();
 		// m_print_thrd.startLoop();
 	}
 	
@@ -431,9 +431,6 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("Update");
 			r_info = update();
-
-			// the buffer is flushed right before a draw, in case any resize commands were put in it.
-			flushBuffer();
 		}
 
 		draw();
@@ -449,29 +446,22 @@ namespace TRInterface
 
 	void TerminalRendererInterface::pushBuffer(char c)
 	{
-		m_buffer.sputc(c);
+		AR_IMPL(this).getBuffer()->sputc(c);
 	}
 
 	void TerminalRendererInterface::pushBuffer(const std::string& str)
 	{
-		m_buffer.sputn(str.data(), str.size());
+		AR_IMPL(this).getBuffer()->sputn(str.data(), str.size());
 	}
 
 	void TerminalRendererInterface::pushBuffer(const char* c_str)
 	{
-		m_buffer.sputn(c_str, strlen(c_str));
+		AR_IMPL(this).getBuffer()->sputn(c_str, strlen(c_str));
 	}
 
 	void TerminalRendererInterface::pushBuffer(const char* c_buff, size_t buff_len)
 	{
-		m_buffer.sputn(c_buff, buff_len);
-	}
-
-	void TerminalRendererInterface::flushBuffer()
-	{
-		CT_MEASURE_N("Buffer Flush");
-
-		m_buffer.pubsync();
+		AR_IMPL(this).getBuffer()->sputn(c_buff, buff_len);
 	}
 
 	std::array<bool, ATTR_COUNT>& TerminalRendererInterface::attributes()
@@ -498,7 +488,7 @@ namespace TRInterface
 		// start by checking if code point is ascii
 		if (code_point < 128)
 		{
-			data[0] = code_point;
+			data[0] = (char) code_point;
 		}
 		else
 		{
@@ -511,7 +501,7 @@ namespace TRInterface
 						data[i - j] = ((code_point >> (j * 6)) & 0x3F) + 0x80;
 
 
-					data[0] = code_point >> (i * 6);
+					data[0] = (char)(code_point >> (i * 6));
 
 					for (size_t j = 0; j < i + 1; j++)
 						data[0] = data[0] + (0x80 >> j);
