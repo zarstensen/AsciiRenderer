@@ -29,7 +29,7 @@ namespace TRInterface
 			const char* enable_alt_buf = "\x1b[?1049h";
 
 			for(HANDLE h: getCBuffers())
-				WriteFile(h, enable_alt_buf, strlen(enable_alt_buf), NULL, NULL);
+				WriteFile(h, enable_alt_buf, (DWORD) strlen(enable_alt_buf), NULL, NULL);
 
 		}
 

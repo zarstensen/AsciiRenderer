@@ -65,6 +65,7 @@ namespace TRInterface
 			CT_MEASURE_N("BWRITE 1");
 			AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD)m_buffer.size(), NULL, NULL));
 		}
+
 		std::swap(m_hconsole_writable, m_hconsole_display);
 
 		{
