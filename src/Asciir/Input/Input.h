@@ -128,8 +128,8 @@ namespace Asciir
 		/// @brief sets the eventlistener to be used for polling events
 		static void setEventListener(EventListener& listener);
 
-		static Coord s_mouse_pos, s_mouse_diff;
-		static Coord s_last_terminal_pos;
+		static TermVert s_mouse_pos, s_mouse_diff;
+		static TermVert s_last_terminal_pos;
 		static TermVert s_last_size;
 		static TermVert s_cur_pos, s_cur_diff;
 		static TerminalEventHandler* i_terminal;

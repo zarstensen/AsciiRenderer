@@ -10,12 +10,12 @@ namespace Asciir
 		std::stringstream tmp_stream;
 
 		// Format time stamp
-		duration time_now = getTime();
-		duration time_since_start = time_now - m_log_start;
+		DeltaTime time_now = getTime();
+		DeltaTime time_since_start = time_now - m_log_start;
 
 		// Seconds have a precission of 2 decimals
 
-		long long milliseconds = castMilli(time_since_start);
+		long long milliseconds = (long long) time_since_start.milliSeconds();
 
 		long long hours = milliseconds / (1000 * 60 * 60);
 		milliseconds -= hours * 1000 * 60 * 60;

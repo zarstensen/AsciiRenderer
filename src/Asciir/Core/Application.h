@@ -110,9 +110,9 @@ namespace Asciir
 		bool m_running = false;
 		LayerStack m_layerStack;
 		/// @brief used to calculate the delta time between frames
-		duration m_last_frame_start;
+		DeltaTime m_last_frame_start;
 		/// @brief stores the start of the application
-		duration m_app_start;
+		DeltaTime m_app_start;
 		/// @brief stores the amount of frames rendered to the terminal
 		size_t m_frame_count = 0;
 
