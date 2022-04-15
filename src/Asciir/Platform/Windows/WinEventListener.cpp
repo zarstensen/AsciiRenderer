@@ -9,6 +9,11 @@
 #include "Asciir/Event/TerminalEvent.h"
 #include "Asciir/Core/Application.h"
 
+#include "Asciir/Rendering/Renderer.h"
+
+#include <WinUser.h>
+#include <hidusage.h>
+
 namespace Asciir
 {
 namespace ELInterface
@@ -45,28 +50,111 @@ namespace ELInterface
 		m_last_term_pos = m_trenderer->pos();
 		m_last_term_size = m_trenderer->termSize();
 
+		
+		// start thread listeners
+
 		m_callback = callback;
 		m_is_listening = true;
-		m_input_thrd = std::thread(&WinEventListener::listenForInputs, this);
+
+		m_idev_evt_thrd = std::thread(&WinEventListener::windowEvtThrd, this);
+		m_win_evt_thrd = std::thread(&WinEventListener::iDeviceEvtThrd, this);
 	}
 
 	void WinEventListener::stop()
 	{
+
 		m_is_listening = false;
-		m_input_thrd.join();
+
+		// make sure the message loop is stopped before the input threads are joined
+		SendMessage(NULL, WM_QUIT, NULL, NULL);
+
+		m_idev_evt_thrd.join();
+		m_win_evt_thrd.join();
 	}
 	
-	WinEventListener::KeyInputData WinEventListener::winGetKeyFromWinCode(WORD code) const
+	WinEventListener::KeyInputData& WinEventListener::winGetKeyFromWinCode(WORD code)
 	{
-		return getKeyFromCode(WinToKeyCodeMap.at(code));
+		return keybd_state[(size_t)WinToKeyCodeMap.at(code) - 1];
 	}
 
-	WinEventListener::MouseInputData WinEventListener::winGetMouseKeyFromWinCode(WORD code) const
+	WinEventListener::MouseInputData& WinEventListener::winGetMouseKeyFromWinCode(WORD code)
 	{
-		return getMouseKeyFromCode(WinToMouseCodeMap.at(code));
+		return mouse_state[(size_t)WinToMouseCodeMap.at(code) - 1];
 	}
 
-	void WinEventListener::listenForInputs()
+	void WinEventListener::iDeviceEvtThrd()
+	{
+		// setup Windows message only window
+
+		WNDCLASSEX wndclass = {};
+		wndclass.cbSize = sizeof(WNDCLASSEX);
+		wndclass.lpfnWndProc = DefWindowProc;
+		wndclass.hInstance = GetModuleHandle(NULL);
+		wndclass.lpszClassName = TEXT("AsciirInputWindow");
+
+		AR_WIN_VERIFY(RegisterClassEx(&wndclass));
+
+		HWND message_window = CreateWindowEx(NULL, wndclass.lpszClassName, NULL, NULL, 0, 0, 0, 0, HWND_MESSAGE, NULL, wndclass.hInstance, NULL);
+
+		AR_WIN_VERIFY(message_window);
+
+		// setup raw input devices
+
+		// TODO: this should be able to be modified at runtime, so other input devices, such as controllers, can be added.
+
+		std::array<RAWINPUTDEVICE, 1> rid;
+
+		// keyboard device
+
+		rid[0] = RAWINPUTDEVICE{ HID_USAGE_PAGE_GENERIC , HID_USAGE_GENERIC_KEYBOARD, RIDEV_INPUTSINK | RIDEV_NOLEGACY, message_window };
+
+		AR_WIN_VERIFY(RegisterRawInputDevices(rid.data(), (UINT) rid.size(), sizeof(RAWINPUTDEVICE)));
+
+		// begin message loop
+
+		MSG msg;
+
+		while (m_is_listening && GetMessage(&msg, NULL, NULL, NULL))
+		{
+			if (msg.message == WM_INPUT) // recieved input from a device
+			{
+				HRAWINPUT hrinp = (HRAWINPUT)msg.lParam;
+
+				UINT cb_size;
+
+				GetRawInputData(hrinp, RID_INPUT, NULL, &cb_size, sizeof(RAWINPUTHEADER));
+
+				RAWINPUT* rinp = (RAWINPUT*)new uint8_t[cb_size];
+
+				GetRawInputData(hrinp, RID_INPUT, rinp, &cb_size, sizeof(RAWINPUTHEADER));
+
+				switch (rinp->header.dwType)
+				{
+				case RIM_TYPEMOUSE:
+					// raw mouse movement is very unpractical to handle, as it in most cases ONLY gives relative position changes, making the initial position impossible to deduce.
+					// it also does not take into account mouse acceleration.
+					break;
+				case RIM_TYPEKEYBOARD:
+					sendKeybdEvent(rinp->data.keyboard);
+					break;
+				case RIM_TYPEHID:
+					AR_ASSERT_MSG(false, "Custom input devices are not yet supported")
+					break;
+				}
+			}
+			else
+			{
+				AR_INFO("UNKNOWN MSG: ", msg.message);
+			}
+		}
+		
+		// cleanup
+
+		AR_WIN_VERIFY(UnregisterClass(TEXT("AsciirInputWindow"), GetModuleHandle(NULL)));
+		AR_WIN_VERIFY(DestroyWindow(message_window));
+	}
+
+	void WinEventListener::windowEvtThrd()
 	{
 		while (m_is_listening)
 		{
@@ -86,27 +174,28 @@ namespace ELInterface
 				for (size_t i = 0; i < num_read; i++)
 				{
 					INPUT_RECORD event_r = m_event_buffer[i];
-					switch (event_r.EventType)   
+					switch (event_r.EventType)
 					{
-						case KEY_EVENT:
-							sendKeybdEvent(event_r.Event.KeyEvent);
-							break;
-						case MOUSE_EVENT:
-							sendMouseEvent(event_r.Event.MouseEvent);
-							break;
-						case FOCUS_EVENT:
-							sendFocusEvent(event_r.Event.FocusEvent);
-							break;
-						case WINDOW_BUFFER_SIZE_EVENT:
-							COORD size = event_r.Event.WindowBufferSizeEvent.dwSize;
-							m_term_size = { size.X, size.Y };
-							break;
-						case MENU_EVENT:
-							break;
-						default:
-							// this should never be hit
-							AR_CORE_WARN("Unknown windows console event type: ", m_event_buffer[i].EventType);
-							break;
+					// device input events are now handlet by the iDeviceEvtTHrd
+					case KEY_EVENT:
+						break;
+					case MOUSE_EVENT:
+						sendMouseEvent(event_r.Event.MouseEvent);
+						break;
+					// END
+					case FOCUS_EVENT:
+						sendFocusEvent(event_r.Event.FocusEvent);
+						break;
+					case WINDOW_BUFFER_SIZE_EVENT:
+						COORD size = event_r.Event.WindowBufferSizeEvent.dwSize;
+						m_term_size = { size.X, size.Y };
+						break;
+					case MENU_EVENT:
+						break;
+					default:
+						// this should never be hit
+						AR_CORE_WARN("Unknown windows console event type: ", m_event_buffer[i].EventType);
+						break;
 					}
 				}
 			}
@@ -115,75 +204,41 @@ namespace ELInterface
 		}
 	}
 
-	void WinEventListener::sendKeybdEvent(KEY_EVENT_RECORD event)
+	void WinEventListener::sendKeybdEvent(RAWKEYBOARD event)
 	{
 	#ifdef AR_SAFE_RELEASE
-		if (WinToKeyCodeMap.count(event.wVirtualKeyCode) == 0)
+		if (WinToKeyCodeMap.count(event.VKey) == 0)
 		{
-			AR_CORE_WARN("Unknown key recieved: ", event.wVirtualKeyCode);
+			AR_CORE_WARN("Unknown key recieved: ", event.VKey);
 			return;
 		}
 	#endif
-
-		AR_INFO(event.wVirtualKeyCode, event.bKeyDown);
-
-		if (event.bKeyDown)
+		if ((event.Flags & 0b1) == RI_KEY_MAKE)
 		{
-			KeyInputData& data = keybd_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
+			KeyInputData& data = winGetKeyFromWinCode(event.VKey);
 			KeyPressedEvent e;
 
-			if (!data.is_down)
-			{
-				data.is_repeat = true;
-				data.is_down = true;
-				data.time_since_down = getTime();
+			e = KeyPressedEvent(WinToKeyCodeMap.at(event.VKey), data.is_repeat);
+				
+			data.is_repeat = true;
+			data.is_down = true;
+			data.time_since_down = getTime();
 
-				e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), false);
-
-				m_callback(e);
-
-				for (size_t i = 0; i < event.wRepeatCount - 1; i++)
-				{
-					e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
-
-					m_callback(e);
-				}
-			}
-			else if (data.is_down)
-			{
-				data.is_repeat = false;
-
-				for (size_t i = 0; i < event.wRepeatCount; i++)
-				{
-					e = KeyPressedEvent(WinToKeyCodeMap.at(event.wVirtualKeyCode), true);
-
-					m_callback(e);
-				}
-			}
-
-			// store down event
-			keybd_down_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1] = data;
+			m_callback(e);
 		}
 		else
 		{
-			KeyInputData& data = keybd_state[(size_t)WinToKeyCodeMap.at(event.wVirtualKeyCode) - 1];
-			KeyReleasedEvent e(WinToKeyCodeMap.at(event.wVirtualKeyCode));
-
-			if (data.is_down)
-			{
-				data.is_repeat = true;
-				data.is_down = false;
-			}
-			else if (!data.is_down)
-			{
-				data.is_repeat = false;
-			}
+			KeyInputData& data = winGetKeyFromWinCode(event.VKey);
+			KeyReleasedEvent e(WinToKeyCodeMap.at(event.VKey));
+			
+			data.is_repeat = false;
+			data.is_down = false;
 
 			m_callback(e);
 		}
 	}
 
-	// mouse pos on the screen is found when the event is recieved so it might be off compared to when the event was sent
+	// mouse pos on the screen is found when the event is recieved, so it might be slightly off compared to when the event was sent
 	void WinEventListener::sendMouseEvent(MOUSE_EVENT_RECORD event)
 	{
 		for (int button = 0; button < 5; button++)
@@ -199,11 +254,9 @@ namespace ELInterface
 
 					TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
 
-					MousePressedEvent e_first(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
-					MousePressedEvent e_second(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, true);
+					MousePressedEvent e_double(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, true);
 
-					m_callback(e_first);
-					m_callback(e_second);
+					m_callback(e_double);
 
 					// store down event
 					mouse_down_state[button] = data;
@@ -223,7 +276,7 @@ namespace ELInterface
 						data.time_since_down = getTime();
 
 						TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
-						
+
 						MousePressedEvent e(WinToMouseCodeMap.at(button_word), getMousePos(), cur_pos, false);
 
 						m_callback(e);
@@ -250,8 +303,8 @@ namespace ELInterface
 			}
 			else if (event.dwEventFlags & MOUSE_MOVED)
 			{
-				Coord pos = getCurrentMousePos(); // get the current position of the mouse
-				
+				TermVert pos = getCurrentMousePos(); // get the current position of the mouse
+
 				TermVert cur_pos = { event.dwMousePosition.X, event.dwMousePosition.Y };
 
 
@@ -290,7 +343,7 @@ namespace ELInterface
 
 		// Move event
 
-		Coord new_pos = m_trenderer->pos();
+		TermVert new_pos = m_trenderer->pos();
 
 		if (new_pos != m_last_term_pos)
 		{
@@ -301,7 +354,7 @@ namespace ELInterface
 		m_last_term_pos = new_pos;
 	}
 
-	Coord EventListenerImpl::getCurrentMousePos()
+	TermVert EventListenerImpl::getCurrentMousePos()
 	{
 		POINT pos;
 		AR_WIN_VERIFY(GetCursorPos(&pos));

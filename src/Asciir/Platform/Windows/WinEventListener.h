@@ -13,12 +13,13 @@ namespace ELInterface
 	{
 	protected:
 
-		std::thread m_input_thrd;
+		std::thread m_idev_evt_thrd;
+		std::thread m_win_evt_thrd;
 		DWORD m_hcin_fallback;
 		HANDLE m_hConsole_in;
 		HANDLE m_hConsole_out;
 
-		Coord m_last_term_pos = { 0, 0 };
+		TermVert m_last_term_pos = { 0, 0 };
 		TermVert m_last_term_size = { 0, 0 };
 
 		const TerminalRenderer* m_trenderer = nullptr;
@@ -42,23 +43,36 @@ namespace ELInterface
 		/// @brief gives information back about the given windows [Virtual-Key Code](https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes)
 		/// 
 		/// @attention this function is windows specific, use getKeyFromCode() for a cross platform alternative
-		KeyInputData winGetKeyFromWinCode(WORD code) const;
+		KeyInputData& winGetKeyFromWinCode(WORD code);
 
 		/// @brief returns input data about the given windows mouse key
 		///
 		/// @attention this function is windows specific, use getMouseKeyFromCode() for a cross platform alternative
-		MouseInputData winGetMouseKeyFromWinCode(WORD code) const;
+		MouseInputData& winGetMouseKeyFromWinCode(WORD code);
 
 		/// @brief retrieves the latest recieved terminal screen buffer resize event.
 		TermVert winLastTermSize() const { return m_term_size; }
 
 	protected:
 
-		void listenForInputs();
+		/// @brief thread responsible for listening for events input from devices (keyboard, gamepad, eg.), EXCEPT for a mouse input device.
+		void iDeviceEvtThrd();
+		/// @brief thread responsible for listening for events related to the terminal window (resize, window movement, eg.), as well as any mouse device inputs.
+		void windowEvtThrd();
 
-		void sendKeybdEvent(KEY_EVENT_RECORD event);
+		/// @brief constructs a KeyEvent structure form the passed RAWKEYBOARD and passes it to the event handler.
+		void sendKeybdEvent(RAWKEYBOARD event);
+		/// @brief constructs a MouseEvent structure form the passed MOUSE_EVENT_RECORD and passes it to the event handler.
 		void sendMouseEvent(MOUSE_EVENT_RECORD event);
+		/// @brief constructs a FocusEvent structure form the passed FOCUS_EVENT_RECORD and passes it to the event handler.
 		void sendFocusEvent(FOCUS_EVENT_RECORD event);
+		/// @brief sends any terminal window related events to the event handler.
+		///
+		/// in contrast to the other send event methods, this one does not take any parameters,
+		/// as it auto detects any changes related to the terminal status that has happened since the last call to this method.
+		/// 
+		/// it is done as such, as there is no way of detecting some events, like terminal window movement, without polling them.
+		/// 
 		void sendTermEvents();
 
 		std::atomic<bool> m_is_listening = false;

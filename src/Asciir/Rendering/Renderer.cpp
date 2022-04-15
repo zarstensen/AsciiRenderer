@@ -113,9 +113,9 @@ namespace Asciir
 
 	void Renderer::waitMinDT(DeltaTime curr_dt)
 	{
-		duration start_time = getTime();
+		DeltaTime start_time = getTime();
 
-		while (start_time + s_min_dt.durr() - curr_dt.durr() > getTime());
+		while (start_time + s_min_dt - curr_dt > getTime());
 	}
 
 	// should this be a ref to mesh???
