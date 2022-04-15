@@ -3,7 +3,7 @@
 
 namespace Asciir
 {
-	duration getTime()
+	DeltaTime getTime()
 	{
 		return clock::now().time_since_epoch();
 	}

@@ -44,14 +44,30 @@ namespace Asciir
 		/// @return 
 		duration durr() { return m_time; }
 
+		/// @brief cast operator for the underlying chrono duratino datatype
+		operator duration() { return m_time; }
 		/// @brief cast operator for the Real datatype, final value is in seconds
-		operator Real() const { return seconds(); }
+		explicit operator Real() const { return seconds(); }
 		/// @brief cast operator for integer data types, final value is in nano seconds
 		explicit operator long long() const { return nanoSeconds(); }
+
+		DeltaTime& operator+=(const DeltaTime& other) { m_time += other.m_time; return *this; }
+		DeltaTime& operator-=(const DeltaTime& other) { m_time -= other.m_time; return *this; }
+
+		DeltaTime operator+(const DeltaTime& other) { return DeltaTime(*this) += other; }
+		DeltaTime operator-(const DeltaTime& other) { return DeltaTime(*this) -= other; }
+
+		bool operator < (const DeltaTime& other) { return m_time < other.m_time; }
+		bool operator <=(const DeltaTime& other) { return m_time <= other.m_time; }
+		bool operator > (const DeltaTime& other) { return m_time > other.m_time; }
+		bool operator >=(const DeltaTime& other) { return m_time >= other.m_time; }
+		bool operator ==(const DeltaTime& other) { return m_time == other.m_time; }
+
+
 	};
 
 	/// @brief get the current time
-	duration getTime();
+	DeltaTime getTime();
 	void sleep(DeltaTime millsec);
 
 	/// @brief convert duration to milliseconds
