@@ -128,7 +128,7 @@ namespace TRInterface
 		return { max_size.X, max_size.Y };
 	}
 	
-	Coord WinTerminalRenderer::pos() const
+	TermVert WinTerminalRenderer::pos() const
 	{
 		RECT pos;
 		AR_WIN_VERIFY(GetWindowRect(m_console_hwin, &pos));

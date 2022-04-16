@@ -59,7 +59,7 @@ namespace Asciir
 			CT_MEASURE_N("Main Loop");
 
 			// calculate the timeinterval from the last frame to the current frame
-			duration curr_frame_start = getTime();
+			DeltaTime curr_frame_start = getTime();
 			DeltaTime d_time(curr_frame_start - m_last_frame_start);
 
 			{

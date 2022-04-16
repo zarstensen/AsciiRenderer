@@ -10,7 +10,7 @@
 namespace Asciir
 {
 	// TODO: inline?
-	Coord Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
+	TermVert Input::s_mouse_pos, Input::s_mouse_diff, Input::s_last_terminal_pos;
 	TermVert Input::s_last_size, Input::s_cur_pos, Input::s_cur_diff;
 	TerminalRenderer::TRUpdateInfo Input::s_info;
 	EventListener* Input::s_event_listener = nullptr;
@@ -66,7 +66,7 @@ namespace Asciir
 	bool Input::isKeyPressed(Key keycode)
 	{
 		EventListener::KeyInputData key_data = s_event_listener->getKeyFromCode(keycode);
-		return castMilli(getTime() - key_data.time_since_down) > AR_KEY_PRESSED_TIMEOUT && key_data.is_down && isFocused();
+		return (getTime() - key_data.time_since_down).milliSeconds() > AR_KEY_PRESSED_TIMEOUT && key_data.is_down && isFocused();
 	}
 
 	bool Input::isKeyToggled(Key keycode)
@@ -105,7 +105,7 @@ namespace Asciir
 
 	bool Input::isMouseMoved()
 	{
-		return (s_mouse_diff != Coord(0, 0)) && isFocused();
+		return (s_mouse_diff != TermVert(0, 0)) && isFocused();
 	}
 
 	bool Input::isTerminalMoved()

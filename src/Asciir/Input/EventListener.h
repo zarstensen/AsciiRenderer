@@ -32,7 +32,7 @@ namespace Asciir
 				bool is_down = false;
 				bool is_repeat = false;
 
-				duration time_since_down = duration();
+				DeltaTime time_since_down = duration();
 			};
 
 			/// @brief structure that holds mouse down state and detection time
@@ -41,7 +41,7 @@ namespace Asciir
 				bool is_down = false;
 				bool is_double_click = false;
 
-				duration time_since_down = duration();
+				DeltaTime time_since_down = duration();
 			};
 
 			/// @brief size of key input array for the keyboard
@@ -69,8 +69,8 @@ namespace Asciir
 			/// @brief same as keybd_poll_state but for mouse data
 			std::array<MouseInputData, MIS_LEN> mouse_poll_state;
 
-			Coord m_mouse_pos;
-			Coord m_poll_mouse_pos;
+			TermVert m_mouse_pos;
+			TermVert m_poll_mouse_pos;
 			TermVert m_poll_cur_pos;
 			TermVert m_cur_pos;
 
@@ -113,9 +113,9 @@ namespace Asciir
 			const MouseInputData& getMouseKeyFromCode(MouseKey code) const { return getMousePoll()[(size_t)code - 1]; }
 
 			/// @return the mouse position at the time of the latest pollState() call. 
-			Coord getMousePosPoll() { return m_poll_mouse_pos; };
+			TermVert getMousePosPoll() { return m_poll_mouse_pos; };
 			/// @return the mouse position recieved from the latest mouse moved event. 
-			Coord getMousePos() { return m_mouse_pos; };
+			TermVert getMousePos() { return m_mouse_pos; };
 
 			/// @return the cursor position at the time of the latest pollState() call.
 			/// @note cursor refers to the terminal column and row the mouse cursor is inside
@@ -125,7 +125,7 @@ namespace Asciir
 			TermVert getCursorPos() { return m_cur_pos; };
 			/// @brief prompts the system for the current mouseposition,
 			/// should return the same as getMousePos() if the pointer is inside the terminal window, else returns the position of the pointer outside the terminal window.
-			static Coord getCurrentMousePos();
+			static TermVert getCurrentMousePos();
 		};
 	}
 } // end of Asciir namespace

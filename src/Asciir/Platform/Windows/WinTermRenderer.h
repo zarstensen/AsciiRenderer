@@ -6,11 +6,10 @@ namespace Asciir
 {
 namespace TRInterface
 {
-	//
-	// the windows implementation of the TermRendererBuffer uses two seperate console buffers, a writable, and a display buffer.
-	// the reason for this is that it is much faster to write to a console buffer that is not currently being displayed,
-	// thus a buffer swap system is implemented with the console buffers, where each console print, will result in the buffers being swapped.
-	//
+	/// @detail the windows implementation of the TermRendererBuffer uses two seperate console buffers, a writable, and a display buffer.
+	/// the reason for this is that it is much faster to write to a console buffer that is not currently being displayed,
+	/// thus a buffer swap system is implemented with the console buffers, where each console print, will result in the buffers being swapped.
+	///
 	class TermRendererBuffer : public std::streambuf
 	{
 	public:
@@ -92,7 +91,7 @@ namespace TRInterface
 		/// @see TerminalRendererInterface::maxSize()
 		TermVert maxSize() const;
 		/// @see TerminalRendererInterface::pos()
-		Coord pos() const;
+		TermVert pos() const;
 		
 		/// @see TerminalRendererInterface::getFont()
 		std::pair<std::string, Size2D> getFont() const;

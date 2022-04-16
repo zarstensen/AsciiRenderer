@@ -12,7 +12,7 @@ namespace Asciir
 	/// > args...
 	class FileLog
 	{
-		std::chrono::steady_clock::duration m_log_start;
+		DeltaTime m_log_start;
 		std::ofstream m_log_file;
 		std::mutex m_log_file_mutex;
 		std::string m_name;
