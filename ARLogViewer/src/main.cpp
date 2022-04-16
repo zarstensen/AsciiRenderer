@@ -41,6 +41,9 @@ public:
 		// set the title of the terminal to the current log dir
 		Asciir::ARApp::getApplication()->getTermRenderer().setTitle(m_log_dir);
 		Asciir::ARApp::getApplication()->getTermRenderer().update();
+
+
+		Asciir::Renderer::setTitle("LogViewer");
 		
 		// wait until the log file is created, if it does not exist
 		while (true)

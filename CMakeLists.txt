@@ -112,6 +112,7 @@ set(INCLUDE_DIRS
 set(SRC_DIR_CORE  
     src/Asciir/Core/Application.cpp
     src/Asciir/Core/Layer.cpp 
+    src/Asciir/Core/EntryPoint.cpp
     src/Asciir/Core/LayerStack.cpp 
     src/Asciir/Core/Terminal.cpp 
     src/Asciir/Core/Timing.cpp  
@@ -277,7 +278,6 @@ endif()
 # add the main Asciir library
 add_library(${PROJECT_NAME} STATIC
     src/Asciir.h
-    src/AsciirHeaders.h
     src/pch/arpch.h
     src/pch/arpch.cpp
 

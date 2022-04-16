@@ -12,8 +12,6 @@ namespace Asciir
 #elif defined(AR_UNIX)
 		m_log_attributes = std::make_unique<UnixARAttr>();
 #endif
-
-		Renderer::setTitle("LogViewer");
 	}
 
 	LogViewer::~LogViewer()

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <AsciirHeaders.h>
+#include <Asciir.h>
 
 namespace Asciir
 {
@@ -17,6 +17,7 @@ namespace Tools
 	{
 	public:
 		/// @brief constructs a profiling layer with the specified profiling buffer size and timeout.
+		/// @param auto_start if set to true, automaticly begins a session on construction.
 		/// @param buffer_size size of the CTProfiler buffer.
 		/// @param timeout timeout for each profiling session (-1 = no timeout).
 		/// @param out_dir output file for the profile result file
