@@ -1,13 +1,9 @@
 (This readme is massively outdated, will be updated soon...)
-# AsciiRender
-a text / ascii based game engine that uses ansi escape codes and the terminal to render the game.
-Some of the engine is being built with the help of the [game engine tutorial series by The Cherno](https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT).
-> Note: it is not yet finished
+# AsciiRender (New Windows input system)
 
-> ###### *example of what it can currently do*
-> <img src="Resources/AREarlyExample.gif" width=450 height=450>
-> 
-> #### the source code for this example is in the BasicInputExample project
+This branch should fix any previous input problems from devices, when specific key combinations are pushed (eg. shift + ANY_KEY).
 
-docs coming soon...
+Previously Asciir used the [ReadConsoleInput()](https://docs.microsoft.com/en-us/windows/console/readconsoleinput) function to read device inputs. However, this function has problems with detecting key up signals when shift (or other spcific keys) are pressed whilst releasing any other key. As there is no solution to this, the [RawInput model](https://docs.microsoft.com/en-us/windows/win32/inputdev/raw-input) will instead be used for receiving device input data.
+
+This will also allow to take input from other devices like a controller. However, it will require the console application / game to run a hidden windows application in order to use this API.
 
