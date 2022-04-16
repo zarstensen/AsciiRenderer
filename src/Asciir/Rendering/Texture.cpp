@@ -348,7 +348,7 @@ namespace Asciir
 	FileTexture& FileTexture::loadIMG(const Path& img_file, bool use_half_tiles, bool load_foreground)
 	{
 		CT_MEASURE_N("Image Load");
-		AR_VERIFY_MSG(std::filesystem::exists(img_file), "Could not find image file: ", img_file);
+		AR_ASSERT_VOLATILE(std::filesystem::exists(img_file), "Could not find image file: ", img_file);
 
 		try
 		{
@@ -485,7 +485,7 @@ namespace Asciir
 	Texture2D loadImage(Path image_path, bool load_foreground, bool use_half_tiles)
 	{
 		CT_MEASURE_N("Image Load");
-		AR_VERIFY_MSG(std::filesystem::exists(image_path), "Could not find image file: ", image_path);
+		AR_ASSERT_VOLATILE(std::filesystem::exists(image_path), "Could not find image file: ", image_path);
 
 		Texture2D image_texture;
 		
@@ -603,5 +603,58 @@ namespace Asciir
 		return image_texture;
 	}
 
-	
+
+
+	// ============ SpriteSheet ============
+
+	Tile SpriteSheet::readTile(const TermVert& coord, Coord uv, const DeltaTime& time_since_start, size_t frames_since_start)
+	{
+		TermVert sprite_coord = coord;
+
+		if (m_tiled_size != TermVert(-1, -1))
+		{
+			AR_ASSERT_MSG(coord.x < size().x&& coord.y < size().y, "Coordinate out of bounds for Texture2D read.\nCoordinate: ", coord,
+				"\nTiled size: ", m_tiled_size,
+				"\nSprite size: ", m_sprite_size);
+
+			sprite_coord.x %= m_sprite_size.x;
+			sprite_coord.y %= m_sprite_size.y;
+		}
+
+		// the coordinate must be withing the range of [(0, 0); tile_size], if not, it will be tiled.
+		
+		sprite_coord += m_sprite_size.cwiseProduct(m_active_sprite) + m_offset + m_padding.cwiseProduct(m_active_sprite);
+
+		return m_texture(sprite_coord);
+	}
+
+	void SpriteSheet::setSprite(Size2D sprite_pos)
+	{
+		AR_ASSERT_MSG(sprite_pos.x < getSpriteCount().x && sprite_pos.y < getSpriteCount().y, "Sprite position must be inside the sprite sheet!\npos: ", sprite_pos, "\nsprite count: ", getSpriteCount());
+
+		m_active_sprite = sprite_pos;
+	}
+
+	Texture2D SpriteSheet::getSprite()
+	{
+		Texture2D sprite(getSpriteSize());
+
+		for (size_t x = 0; x < getSpriteSize().x; x++)
+			for (size_t y = 0; y < getSpriteSize().y; y++)
+				sprite.setTile({x, y}, readTile({ x, y }));
+
+		return sprite;
+	}
+
+	void SpriteSheet::incrSprite(TInt amount)
+	{
+		TInt new_indx = (m_active_sprite.x + m_active_sprite.y * getSpriteCount().x + amount) % (getSpriteCount().x * getSpriteCount().y);
+
+		m_active_sprite = TermVert(new_indx % getSpriteCount().x, new_indx / getSpriteCount().x);
+	}
+
+	TermVert SpriteSheet::size() const
+	{
+		return m_tiled_size == TermVert(-1, -1) ? getSpriteSize() : m_tiled_size;
+	}
 }

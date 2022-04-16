@@ -48,11 +48,12 @@ namespace Asciir
 		TermVert size() const override;
 
 		/// @brief sets the size of the texture, when tiled.
-		/// if this new_size is greater than size(), the texture will be tiled, when using readTile().
+		/// if the new_size is greater than size(), the texture will be tiled, when using readTile().
+		/// if the new_size is smaller than size(), the texture will be cropped.
 		/// if set to (-1, -1), the tiled size will match the texture size.
 		void setTiledSize(TermVert new_size) { m_tiled_size = new_size; }
 		/// @brief gets the size of the stored texture.
-		Size2D textureSize() const { return m_texture.dim(); }
+		TermVert textureSize() const { return m_texture.dim(); }
 
 		/// @brief retrieves the centre of the *tiled* texture
 		Coord centre() { return (Coord) size() / 2; }
@@ -113,9 +114,6 @@ namespace Asciir
 	};
 
 	typedef std::filesystem::path Path;
-
-	
-	Texture2D loadImage(Path image_path, bool use_half_tiles = false, bool load_foreground = false);
 
 	static constexpr std::array<uint32_t, 0x100> XP_FONT_MAP = {
 	160,
@@ -384,7 +382,7 @@ namespace Asciir
 		/// @brief sets the passed directory as the current file texture directory.
 		FileTexture(const Path& file_dir) : m_file_dir(file_dir) {}
 
-		~FileTexture() final override { if (loaded()) unload(); }
+		~FileTexture() override { if (loaded()) unload(); }
 		
 		/// @brief the currently loaded texture file.  
 		/// returns an empty path, if no file is currently loaded.
@@ -453,6 +451,72 @@ namespace Asciir
 		Path m_file_dir = "";
 
 		bool m_is_loaded = false;
+	};
+
+	/// @brief wrapper class of FileTexture specialized for reading sprite sheets.
+	/// 
+	/// use the constructor or the provided methods to configure the sprite sheet layout.
+	/// one configured use setSprite() to set the sprite tile that readTile() should use.
+	/// 
+	/// when passing to Renderer::submit(), the getSprite() method should be used,
+	/// as it only copies the selected sprite,instead of the entire sprite sheet, into the render buffer.
+	/// 
+	/// when a sprite sheet is tiled, only the active sprite is tiled.
+	/// 
+	class SpriteSheet : public FileTexture
+	{
+	public:
+		/// @brief constructor
+		/// @param file_dir the file that contains the sprite sheet
+		/// @param sprite_size the size of a sprite tile in the sprite sheet
+		/// @param grid_padding the padding inbetween sprite tiles
+		/// @param grid_offset the offset, from the upper left corner, of which the sprite sheet starts
+		SpriteSheet(const Path& file_dir, Size2D sprite_size, Size2D grid_padding = { 0, 0 }, Size2D grid_offset = { 0, 0 })
+			: FileTexture(file_dir), m_sprite_size(sprite_size), m_padding(grid_padding), m_offset(grid_offset) {}
+
+		/// @brief sets the sprite tile that will be considered the active sprite.
+		void setSprite(Size2D sprite_pos);
+		
+		/// @brief converts the SpriteSheet instance to a Texture2D **only** conatining the active sprite
+		Texture2D getSprite();
+		/// @brief get the active tile postion
+		TermVert getSpritePos() { return m_active_sprite; }
+
+		/// @brief increase the active sprite tile by the passed amount.
+		/// when increased, the tile will be moved to the right, and if out of bounds, will wrap around and move a row dowm.
+		/// this is also true for when the final row is reached.
+		void incrSprite(TInt amount = 1);
+		/// @brief same as incrSprite, but the opposite direction
+		/// equivalent to incrSprite(-amount)
+		void decrSprite(TInt amount = 1) { incrSprite(-amount); }
+
+		/// @brief set the size of a sprite tile
+		void setSpriteSize(TermVert grid_size) { AR_ASSERT(grid_size.x > 0 && grid_size.y > 0); m_sprite_size = grid_size; }
+		/// @brief get the size of a sprite tile
+		TermVert getSpriteSize() const { return m_sprite_size; }
+
+		/// @brief get the number of avaliable sprites in the x and y direction
+		TermVert getSpriteCount() const { return (textureSize() - m_offset + m_padding).cwiseQuotient(m_sprite_size + m_padding); }
+
+		void setOffset(TermVert offset) { AR_ASSERT(offset.x >= 0 && offset.y >= 0); m_offset = offset; }
+		TermVert getOffset() { return m_offset; }
+
+		void setPadding(TermVert padding) { AR_ASSERT(padding.x >= 0 && padding.y >= 0); m_padding = padding; }
+		TermVert getPadding() const { return m_padding; }
+
+		/// @brief the size of the active sprite, unless tiled size is not equal to (-1, -1).
+		/// when the tiled size is anything else than (-1, -1), the size will be equal to the tiled size.
+		TermVert size() const override;
+		
+		/// @brief read the tile at the passed coordinate, from the active tile.
+		Tile readTile(const TermVert& coord, Coord uv = Coord(0, 0), const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) override;
+
+	protected:
+
+		TermVert m_sprite_size;
+		TermVert m_padding;
+		TermVert m_offset;
+		TermVert m_active_sprite;
 	};
 
 	template<typename TShader, typename Enable=void>
