@@ -1,0 +1,5 @@
+<map id="Asciir::KeyReleasedEvent" name="Asciir::KeyReleasedEvent">
+<area shape="rect" id="node1" title="class for key released events" alt="" coords="5,155,177,181"/>
+<area shape="rect" id="node2" href="$d5/ded/class_asciir_1_1_key_event.html" title="base event class for all key events holds the keycode that generated the event" alt="" coords="32,80,151,107"/>
+<area shape="rect" id="node3" href="$db/da2/class_asciir_1_1_event.html" title="abstract class containing data about an event" alt="" coords="44,5,139,32"/>
+</map>

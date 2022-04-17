@@ -1,0 +1,21 @@
+<map id="Asciir::ELInterface::WinEventListener" name="Asciir::ELInterface::WinEventListener">
+<area shape="rect" id="node1" title="windows specific implementation of the EventListener class" alt="" coords="1539,128,1669,169"/>
+<area shape="rect" id="node2" href="$dc/d74/class_asciir_1_1_e_l_interface_1_1_event_listener_impl.html" title="interface declaration for the EventListener interface, will contain no definitions,..." alt="" coords="1274,128,1406,169"/>
+<area shape="rect" id="node3" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="933,57,1090,83"/>
+<area shape="rect" id="node4" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="617,5,745,47"/>
+<area shape="rect" id="node5" title=" " alt="" coords="252,5,387,47"/>
+<area shape="rect" id="node6" href="$dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html" title="Windows specific implementation of TerminalRenderer. &#160;&#160;makes use of the windows api in order to retri..." alt="" coords="1263,200,1417,241"/>
+<area shape="rect" id="node7" href="$d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html" title="interface class for the TerminalRenderer." alt="" coords="921,200,1101,241"/>
+<area shape="rect" id="node8" href="$d3/d5e/struct_asciir_1_1ar_matrix.html" title=" " alt="" coords="579,71,783,141"/>
+<area shape="rect" id="node9" title=" " alt="" coords="221,74,417,130"/>
+<area shape="rect" id="node10" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="599,166,762,193"/>
+<area shape="rect" id="node11" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="255,155,383,196"/>
+<area shape="rect" id="node12" title=" " alt="" coords="5,162,172,189"/>
+<area shape="rect" id="node13" href="$d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="639,217,722,243"/>
+<area shape="rect" id="node14" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="259,221,380,247"/>
+<area shape="rect" id="node15" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="269,277,369,303"/>
+<area shape="rect" id="node16" href="$d8/d1b/class_asciir_1_1_ref.html" title=" " alt="" coords="617,268,744,309"/>
+<area shape="rect" id="node17" title=" " alt="" coords="242,328,397,369"/>
+<area shape="rect" id="node18" href="$dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html" title=" " alt="" coords="939,291,1083,332"/>
+<area shape="rect" id="node19" title=" " alt="" coords="628,334,733,361"/>
+</map>

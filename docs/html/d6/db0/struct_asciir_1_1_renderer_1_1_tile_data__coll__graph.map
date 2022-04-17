@@ -1,0 +1,9 @@
+<map id="Asciir::Renderer::TileData" name="Asciir::Renderer::TileData">
+<area shape="rect" id="node1" title="structure containing information for rendering a single pixel / tile on the terminal" alt="" coords="183,304,354,331"/>
+<area shape="rect" id="node2" href="$d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="157,215,239,241"/>
+<area shape="rect" id="node3" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="5,103,127,130"/>
+<area shape="rect" id="node4" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="151,103,251,130"/>
+<area shape="rect" id="node5" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="263,215,421,241"/>
+<area shape="rect" id="node6" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="278,96,406,137"/>
+<area shape="rect" id="node7" title=" " alt="" coords="275,5,409,47"/>
+</map>

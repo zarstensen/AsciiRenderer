@@ -1,0 +1,4 @@
+<map id="Asciir::ELInterface::EventListenerImpl::MouseInputData" name="Asciir::ELInterface::EventListenerImpl::MouseInputData">
+<area shape="rect" id="node1" title="structure that holds mouse down state and detection time" alt="" coords="5,95,137,151"/>
+<area shape="rect" id="node2" href="$db/dd5/class_asciir_1_1_delta_time.html" title="data class for storing time intervals with minimal overhead" alt="" coords="11,5,132,32"/>
+</map>

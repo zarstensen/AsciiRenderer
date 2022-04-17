@@ -1,0 +1,5 @@
+<map id="Asciir::KeyPressedEvent" name="Asciir::KeyPressedEvent">
+<area shape="rect" id="node1" title="event class for key pressed events" alt="" coords="5,155,172,181"/>
+<area shape="rect" id="node2" href="$d5/ded/class_asciir_1_1_key_event.html" title="base event class for all key events holds the keycode that generated the event" alt="" coords="29,80,148,107"/>
+<area shape="rect" id="node3" href="$db/da2/class_asciir_1_1_event.html" title="abstract class containing data about an event" alt="" coords="41,5,136,32"/>
+</map>

@@ -1,0 +1,13 @@
+<map id="Asciir::Renderer::ShaderData" name="Asciir::Renderer::ShaderData">
+<area shape="rect" id="node1" title="structure containing information for rendering a Shader2D" alt="" coords="909,71,1100,98"/>
+<area shape="rect" id="node2" href="$d8/d1b/class_asciir_1_1_ref.html" title=" " alt="" coords="676,5,803,47"/>
+<area shape="rect" id="node3" title=" " alt="" coords="413,5,567,47"/>
+<area shape="rect" id="node4" href="$db/d80/struct_asciir_1_1_transform.html" title="structure representing transformation data." alt="" coords="679,126,799,153"/>
+<area shape="rect" id="node5" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="409,89,571,115"/>
+<area shape="rect" id="node11" href="$d1/d26/class_asciir_1_1_quad.html" title="class representing a quad, as well as implementing less expensive functions from the Mesh class." alt="" coords="692,71,787,98"/>
+<area shape="rect" id="node6" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="228,81,356,123"/>
+<area shape="rect" id="node7" title=" " alt="" coords="9,89,175,115"/>
+<area shape="rect" id="node8" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="405,171,575,198"/>
+<area shape="rect" id="node9" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="228,164,356,205"/>
+<area shape="rect" id="node10" title=" " alt="" coords="5,171,179,198"/>
+</map>

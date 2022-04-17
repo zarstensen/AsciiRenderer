@@ -1,0 +1,6 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$d0/d02/class_asciir_1_1_shader2_d.html" title="A base class used to access dynamiccly generated data as a texture. &#160;&#160;is computed on the CPU and not ..." alt="" coords="5,5,125,32"/>
+<area shape="rect" id="node2" href="$d4/d43/class_asciir_1_1_texture2_d.html" title="A simple shader storing a resizable 2D ascii texture." alt="" coords="173,5,296,32"/>
+<area shape="rect" id="node3" href="$de/d45/class_asciir_1_1_file_texture.html" title="stores data from any Asciir loadable texture files (.cart, .xp, .txt)" alt="" coords="344,5,471,32"/>
+<area shape="rect" id="node4" href="$d9/d0f/class_asciir_1_1_sprite_sheet.html" title="wrapper class of FileTexture specialized for reading sprite sheets." alt="" coords="519,5,649,32"/>
+</map>

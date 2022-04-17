@@ -1,0 +1,10 @@
+<map id="Asciir::FileTexture" name="Asciir::FileTexture">
+<area shape="rect" id="node1" title="stores data from any Asciir loadable texture files (.cart, .xp, .txt)" alt="" coords="163,367,290,393"/>
+<area shape="rect" id="node2" href="$d4/d43/class_asciir_1_1_texture2_d.html" title="A simple shader storing a resizable 2D ascii texture." alt="" coords="165,291,288,317"/>
+<area shape="rect" id="node3" href="$d0/d02/class_asciir_1_1_shader2_d.html" title="A base class used to access dynamiccly generated data as a texture. &#160;&#160;is computed on the CPU and not ..." alt="" coords="5,194,125,221"/>
+<area shape="rect" id="node4" href="$d3/d5e/struct_asciir_1_1ar_matrix.html" title=" " alt="" coords="149,187,304,228"/>
+<area shape="rect" id="node5" title=" " alt="" coords="147,96,306,137"/>
+<area shape="rect" id="node6" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="328,194,485,221"/>
+<area shape="rect" id="node7" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="343,96,471,137"/>
+<area shape="rect" id="node8" title=" " alt="" coords="339,5,474,47"/>
+</map>

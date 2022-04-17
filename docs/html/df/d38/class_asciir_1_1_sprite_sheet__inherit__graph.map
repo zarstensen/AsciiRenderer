@@ -1,0 +1,6 @@
+<map id="Asciir::SpriteSheet" name="Asciir::SpriteSheet">
+<area shape="rect" id="node1" title="wrapper class of FileTexture specialized for reading sprite sheets." alt="" coords="5,229,136,256"/>
+<area shape="rect" id="node2" href="$de/d45/class_asciir_1_1_file_texture.html" title="stores data from any Asciir loadable texture files (.cart, .xp, .txt)" alt="" coords="7,155,134,181"/>
+<area shape="rect" id="node3" href="$d4/d43/class_asciir_1_1_texture2_d.html" title="A simple shader storing a resizable 2D ascii texture." alt="" coords="9,80,132,107"/>
+<area shape="rect" id="node4" href="$d0/d02/class_asciir_1_1_shader2_d.html" title="A base class used to access dynamiccly generated data as a texture. &#160;&#160;is computed on the CPU and not ..." alt="" coords="11,5,131,32"/>
+</map>

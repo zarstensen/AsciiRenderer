@@ -1,0 +1,5 @@
+<map id="Asciir::Tile" name="Asciir::Tile">
+<area shape="rect" id="node1" title=" " alt="" coords="91,109,174,136"/>
+<area shape="rect" id="node2" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="5,5,127,32"/>
+<area shape="rect" id="node3" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="151,5,251,32"/>
+</map>

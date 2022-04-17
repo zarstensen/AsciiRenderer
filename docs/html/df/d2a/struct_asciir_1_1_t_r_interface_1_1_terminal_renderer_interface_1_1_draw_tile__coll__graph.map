@@ -1,0 +1,6 @@
+<map id="Asciir::TRInterface::TerminalRendererInterface::DrawTile" name="Asciir::TRInterface::TerminalRendererInterface::DrawTile">
+<area shape="rect" id="node1" title="structure containing two tiles, the current tile, and the previously rendered tile" alt="" coords="43,213,223,269"/>
+<area shape="rect" id="node2" href="$d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="91,109,174,136"/>
+<area shape="rect" id="node3" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="5,5,127,32"/>
+<area shape="rect" id="node4" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="151,5,251,32"/>
+</map>

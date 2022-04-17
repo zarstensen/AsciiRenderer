@@ -1,0 +1,13 @@
+<map id="Asciir::Renderer::MeshData" name="Asciir::Renderer::MeshData">
+<area shape="rect" id="node1" title="structure containing information for rendering a Mesh instance" alt="" coords="237,380,420,407"/>
+<area shape="rect" id="node2" href="$d6/d9f/class_asciir_1_1_mesh.html" title="A class containing vertices and data about how to connect them. &#160;&#160;Points will be determinded wether t..." alt="" coords="127,291,221,317"/>
+<area shape="rect" id="node3" href="$d4/da5/struct_asciir_1_1ar_vertices.html" title=" " alt="" coords="29,172,151,213"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,81,175,123"/>
+<area shape="rect" id="node5" href="$d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="287,291,370,317"/>
+<area shape="rect" id="node6" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="176,179,297,206"/>
+<area shape="rect" id="node7" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="321,179,421,206"/>
+<area shape="rect" id="node8" href="$d1/d26/class_asciir_1_1_quad.html" title="class representing a quad, as well as implementing less expensive functions from the Mesh class." alt="" coords="433,291,528,317"/>
+<area shape="rect" id="node9" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="446,179,609,206"/>
+<area shape="rect" id="node10" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="463,81,591,123"/>
+<area shape="rect" id="node11" title=" " alt="" coords="444,5,611,32"/>
+</map>

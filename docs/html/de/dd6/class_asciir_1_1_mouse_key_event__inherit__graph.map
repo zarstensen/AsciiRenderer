@@ -1,0 +1,6 @@
+<map id="Asciir::MouseKeyEvent" name="Asciir::MouseKeyEvent">
+<area shape="rect" id="node1" title="base event class for all mouse key events" alt="" coords="122,80,279,107"/>
+<area shape="rect" id="node3" href="$d2/d9d/class_asciir_1_1_mouse_pressed_event.html" title="event class for mouse pressed events" alt="" coords="5,155,188,181"/>
+<area shape="rect" id="node4" href="$d5/d4a/class_asciir_1_1_mouse_released_event.html" title="event class for mouse released events" alt="" coords="212,155,400,181"/>
+<area shape="rect" id="node2" href="$db/da2/class_asciir_1_1_event.html" title="abstract class containing data about an event" alt="" coords="153,5,248,32"/>
+</map>

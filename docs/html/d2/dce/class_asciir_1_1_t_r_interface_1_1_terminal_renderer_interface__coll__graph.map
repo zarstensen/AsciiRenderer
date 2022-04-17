@@ -1,0 +1,13 @@
+<map id="Asciir::TRInterface::TerminalRendererInterface" name="Asciir::TRInterface::TerminalRendererInterface">
+<area shape="rect" id="node1" title="interface class for the TerminalRenderer." alt="" coords="921,124,1101,165"/>
+<area shape="rect" id="node2" href="$d3/d5e/struct_asciir_1_1ar_matrix.html" title=" " alt="" coords="579,5,783,76"/>
+<area shape="rect" id="node3" title=" " alt="" coords="221,11,417,67"/>
+<area shape="rect" id="node4" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="599,102,762,129"/>
+<area shape="rect" id="node5" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="255,92,383,133"/>
+<area shape="rect" id="node6" title=" " alt="" coords="5,99,172,126"/>
+<area shape="rect" id="node7" href="$d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="639,157,722,183"/>
+<area shape="rect" id="node8" href="$de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="259,158,380,185"/>
+<area shape="rect" id="node9" href="$db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="269,217,369,243"/>
+<area shape="rect" id="node10" href="$d8/d1b/class_asciir_1_1_ref.html" title=" " alt="" coords="617,237,744,279"/>
+<area shape="rect" id="node11" title=" " alt="" coords="242,268,397,309"/>
+</map>

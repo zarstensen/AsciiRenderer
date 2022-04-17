@@ -1,0 +1,4 @@
+<map id="Asciir::TRInterface::TerminalRendererInterface" name="Asciir::TRInterface::TerminalRendererInterface">
+<area shape="rect" id="node1" title="interface class for the TerminalRenderer." alt="" coords="5,5,185,47"/>
+<area shape="rect" id="node2" href="$dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html" title="Windows specific implementation of TerminalRenderer. &#160;&#160;makes use of the windows api in order to retri..." alt="" coords="18,95,173,136"/>
+</map>

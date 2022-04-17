@@ -1,0 +1,4 @@
+<map id="Asciir::arMatrix&lt; T, order &gt;" name="Asciir::arMatrix&lt; T, order &gt;">
+<area shape="rect" id="node1" title="A wrapper for MatrixX that overloads functions like size() to return Asciir types instead of Eigen ty..." alt="" coords="9,95,143,136"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,147,47"/>
+</map>
