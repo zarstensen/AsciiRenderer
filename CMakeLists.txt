@@ -4,14 +4,7 @@ Project(Asciir)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CheckIPOSupported)
-
-# vcpkg
-if(CMAKE_TOOLCHAIN_FILE)
-    include(${CMAKE_TOOLCHAIN_FILE})
-elseif(DEFINED ENV{VCPKG_ROOT} AND NOT ASCIIR_NO_VCPKG)
-	message(STATUS "VCPKG_ROOT is defined, including vcpkg.cmake. Define ASCIIR_NO_VCPKG to disable this behaviour")
-	include("$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
-endif()
+include("${CMAKE_BINARY_DIR}/conan/conan_paths.cmake")
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
