@@ -1,6 +1,7 @@
 var _log_8h =
 [
     [ "Asciir::Log", "df/dc2/class_asciir_1_1_log.html", null ],
+    [ "AR_ASSERT_VOLATILE", "da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262", null ],
     [ "AR_CORE_CRIT", "da/df4/_log_8h.html#a0e124ae3e3032a3653dbc788307c47cb", null ],
     [ "AR_CORE_ERR", "da/df4/_log_8h.html#ab4f8c96b3c342b7ba11ec9df9717a962", null ],
     [ "AR_CORE_INFO", "da/df4/_log_8h.html#abce31b2b7a815157c57183183315ddf2", null ],

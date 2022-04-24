@@ -8,6 +8,7 @@ var class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer =
     [ "isFocused", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#af693ea4b0767867a99fdedae2a32fb55", null ],
     [ "maxSize", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a1e0d5af22b6782bd270b81e485554de8", null ],
     [ "pos", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a6580353136e9e0aa05f4029c4a86df4e", null ],
+    [ "resizeBuff", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#acf71bdb7d8248e36de54348f9ff2a2de", null ],
     [ "setFont", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a2b7ae9294b86888592cd98b6f589fbe9", null ],
     [ "termSize", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a6b4ffa099d5ebb3ba6226b1608b6ba88", null ],
     [ "m_buffer", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a0058cba25aff8ffed42fe7e5f5129059", null ],

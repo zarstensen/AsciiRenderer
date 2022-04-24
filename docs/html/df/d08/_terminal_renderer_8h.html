@@ -151,9 +151,9 @@ Namespaces</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a4650740e50dddc45f63a16104d2f2ba6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a>(...)&#160;&#160;&#160;__VA_ARGS__</td></tr>
 <tr class="separator:a4650740e50dddc45f63a16104d2f2ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9f7b87ffff035b5d032ad6b30dc58f7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d08/_terminal_renderer_8h.html#af9f7b87ffff035b5d032ad6b30dc58f7">AR_INT_FUNC_R</a>(signature,  ret_val)&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { AR_ASSERT_VOLATILE(false, #signature &quot; should not be called from the interface class!&quot;); return <a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> ret_val; }</td></tr>
+<tr class="memitem:af9f7b87ffff035b5d032ad6b30dc58f7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d08/_terminal_renderer_8h.html#af9f7b87ffff035b5d032ad6b30dc58f7">AR_INT_FUNC_R</a>(signature,  ret_val)&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { <a class="el" href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">AR_ASSERT_VOLATILE</a>(false, #signature &quot; should not be called from the interface class!&quot;); return <a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> ret_val; }</td></tr>
 <tr class="separator:af9f7b87ffff035b5d032ad6b30dc58f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dd4a6a77dcc7db5d63bc621236fbbde"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d08/_terminal_renderer_8h.html#a8dd4a6a77dcc7db5d63bc621236fbbde">AR_INT_FUNC</a>(signature)&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { AR_ASSERT_VOLATILE(false, #signature &quot; should not be called from the interface class!&quot;); }</td></tr>
+<tr class="memitem:a8dd4a6a77dcc7db5d63bc621236fbbde"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d08/_terminal_renderer_8h.html#a8dd4a6a77dcc7db5d63bc621236fbbde">AR_INT_FUNC</a>(signature)&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { <a class="el" href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">AR_ASSERT_VOLATILE</a>(false, #signature &quot; should not be called from the interface class!&quot;); }</td></tr>
 <tr class="separator:a8dd4a6a77dcc7db5d63bc621236fbbde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -187,7 +187,7 @@ Functions</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">signature</td><td>)</td>
-          <td>&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { AR_ASSERT_VOLATILE(false, #signature &quot; should not be called from the interface class!&quot;); }</td>
+          <td>&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { <a class="el" href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">AR_ASSERT_VOLATILE</a>(false, #signature &quot; should not be called from the interface class!&quot;); }</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -233,7 +233,7 @@ Functions</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { AR_ASSERT_VOLATILE(false, #signature &quot; should not be called from the interface class!&quot;); return <a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> ret_val; }</td>
+          <td></td><td>&#160;&#160;&#160;<a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> signature { <a class="el" href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">AR_ASSERT_VOLATILE</a>(false, #signature &quot; should not be called from the interface class!&quot;); return <a class="el" href="../../df/d08/_terminal_renderer_8h.html#a4650740e50dddc45f63a16104d2f2ba6">AR_INT_FUNC_HELPER</a> ret_val; }</td>
         </tr>
       </table>
 </div><div class="memdoc">

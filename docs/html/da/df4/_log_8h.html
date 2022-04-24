@@ -157,8 +157,45 @@ Macros</h2></td></tr>
 <tr class="memitem:a5fcae6c0b5aa7daea1f873000040c5d5"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/df4/_log_8h.html#a5fcae6c0b5aa7daea1f873000040c5d5">AR_ERR</a>(...)&#160;&#160;&#160;<a class="el" href="../../df/dc2/class_asciir_1_1_log.html#a75b024749340182e729b25203d49f877">::Asciir::Log::clientError</a>(__LINE__, __FILE__, __VA_ARGS__)</td></tr>
 <tr class="memdesc:a5fcae6c0b5aa7daea1f873000040c5d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">automaticly sets the line and file arguments  <a href="../../da/df4/_log_8h.html#a5fcae6c0b5aa7daea1f873000040c5d5">More...</a><br /></td></tr>
 <tr class="separator:a5fcae6c0b5aa7daea1f873000040c5d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa9a1ba32f3b8116355da08c25cea262"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">AR_ASSERT_VOLATILE</a>(x, ...)</td></tr>
+<tr class="memdesc:aaa9a1ba32f3b8116355da08c25cea262"><td class="mdescLeft">&#160;</td><td class="mdescRight">same as AR_ASSERT, but works in both debug and release mode.  <a href="../../da/df4/_log_8h.html#aaa9a1ba32f3b8116355da08c25cea262">More...</a><br /></td></tr>
+<tr class="separator:aaa9a1ba32f3b8116355da08c25cea262"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="aaa9a1ba32f3b8116355da08c25cea262" name="aaa9a1ba32f3b8116355da08c25cea262"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa9a1ba32f3b8116355da08c25cea262">&#9670;&nbsp;</a></span>AR_ASSERT_VOLATILE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define AR_ASSERT_VOLATILE</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">x, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>...</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">    <span class="keywordflow">if</span>(!(x)) { \</div>
+<div class="line">    AR_CORE_ERR(__VA_ARGS__, <span class="stringliteral">&quot; line: &quot;</span>, __LINE__, <span class="stringliteral">&quot; File: &quot;</span>, __FILE__); \</div>
+<div class="line">    AR_DEBUG_BREAK; \</div>
+<div class="line">    assert((<span class="keyword">false</span> &amp;&amp; <span class="stringliteral">&quot;Error message can be found in a log file&quot;</span>));}</div>
+</div><!-- fragment -->
+<p>same as AR_ASSERT, but works in both debug and release mode. </p>
+
+</div>
+</div>
 <a id="a0e124ae3e3032a3653dbc788307c47cb" name="a0e124ae3e3032a3653dbc788307c47cb"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0e124ae3e3032a3653dbc788307c47cb">&#9670;&nbsp;</a></span>AR_CORE_CRIT</h2>
 

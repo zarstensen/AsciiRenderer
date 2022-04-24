@@ -239,9 +239,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a910b5d42fb6a6cd8a906d2d018f71deb">resize</a> (<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a> size)</td></tr>
 <tr class="memdesc:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the terminal to the specified size  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a910b5d42fb6a6cd8a906d2d018f71deb">More...</a><br /></td></tr>
 <tr class="separator:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aecabedcefd2472497013d4dcc1f1b093"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#aecabedcefd2472497013d4dcc1f1b093">AR_INT_FUNC_R</a> ((<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a>) termSize() const,({})) <a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a> drawSize() const</td></tr>
-<tr class="memdesc:aecabedcefd2472497013d4dcc1f1b093"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the size of the terminal.  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#aecabedcefd2472497013d4dcc1f1b093">More...</a><br /></td></tr>
-<tr class="separator:aecabedcefd2472497013d4dcc1f1b093"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a086fcb53627f2697213336842b7d509d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a086fcb53627f2697213336842b7d509d">AR_INT_FUNC_R</a> ((void) resizeBuff(),()) AR_INT_FUNC_R((<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a>) termSize() const</td></tr>
+<tr class="memdesc:a086fcb53627f2697213336842b7d509d"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets called when the terminal should be resized. the new size should be <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a7d4b84f33abeaf214eed561596d48632">drawWidth()</a> X <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a84b3b80f03d79b24eeaa25f4c3589815">drawHeight()</a> it is ipmlementation specific wether the terminal resize happens at the function call, or at the next update.  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a086fcb53627f2697213336842b7d509d">More...</a><br /></td></tr>
+<tr class="separator:a086fcb53627f2697213336842b7d509d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d4b84f33abeaf214eed561596d48632"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a7d4b84f33abeaf214eed561596d48632">drawWidth</a> () const</td></tr>
 <tr class="separator:a7d4b84f33abeaf214eed561596d48632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84b3b80f03d79b24eeaa25f4c3589815"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a84b3b80f03d79b24eeaa25f4c3589815">drawHeight</a> () const</td></tr>
@@ -449,40 +449,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aecabedcefd2472497013d4dcc1f1b093" name="aecabedcefd2472497013d4dcc1f1b093"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aecabedcefd2472497013d4dcc1f1b093">&#9670;&nbsp;</a></span>AR_INT_FUNC_R() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Asciir::TRInterface::TerminalRendererInterface::AR_INT_FUNC_R </td>
-          <td>(</td>
-          <td class="paramtype">(<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a>) termSize() const&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">({})&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>returns the size of the terminal. </p>
-<dl class="section note"><dt>Note</dt><dd>this is the current actual size of the terminal, for the draw size, use drawSize().</dd></dl>
-<p>get the size where the TerminalRenderer is able to draw. </p>
-
-</div>
-</div>
 <a id="ae55060e115f32acf83825cc718be4486" name="ae55060e115f32acf83825cc718be4486"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae55060e115f32acf83825cc718be4486">&#9670;&nbsp;</a></span>AR_INT_FUNC_R() <span class="overload">[4/4]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae55060e115f32acf83825cc718be4486">&#9670;&nbsp;</a></span>AR_INT_FUNC_R() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -508,6 +476,37 @@ Protected Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>is called when the draw function finishes and the buffer should display its contents to the console. </p>
+
+</div>
+</div>
+<a id="a086fcb53627f2697213336842b7d509d" name="a086fcb53627f2697213336842b7d509d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a086fcb53627f2697213336842b7d509d">&#9670;&nbsp;</a></span>AR_INT_FUNC_R() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Asciir::TRInterface::TerminalRendererInterface::AR_INT_FUNC_R </td>
+          <td>(</td>
+          <td class="paramtype">(void) resizeBuff()&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">()&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>gets called when the terminal should be resized. the new size should be <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a7d4b84f33abeaf214eed561596d48632">drawWidth()</a> X <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a84b3b80f03d79b24eeaa25f4c3589815">drawHeight()</a> it is ipmlementation specific wether the terminal resize happens at the function call, or at the next update. </p>
+<p >returns the size of the terminal. </p><dl class="section note"><dt>Note</dt><dd>this is the current actual size of the terminal, for the draw size, use drawSize(). </dd></dl>
 
 </div>
 </div>

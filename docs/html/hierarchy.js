@@ -149,6 +149,9 @@ var hierarchy =
           [ "Asciir::arVector< Real >", "d1/d50/class_asciir_1_1ar_vector.html", null ]
         ] ]
       ] ],
+      [ "Asciir::arVertBase< size_t, n >", "d4/d7d/struct_asciir_1_1ar_vert_base.html", [
+        [ "Asciir::arVertex< size_t >", "d1/df4/struct_asciir_1_1ar_vertex.html", null ]
+      ] ],
       [ "Asciir::arVertBase< Scale, n >", "d4/d7d/struct_asciir_1_1ar_vert_base.html", [
         [ "Asciir::arVertex< Scale >", "d1/df4/struct_asciir_1_1ar_vertex.html", null ]
       ] ],

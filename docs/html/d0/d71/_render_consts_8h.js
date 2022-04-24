@@ -1,7 +1,7 @@
 var _render_consts_8h =
 [
-    [ "AR_ANSIS_CSI", "d0/d71/_render_consts_8h.html#aa8158a8e0ccdaefacb98f95a87e9ba79", null ],
-    [ "AR_ANSIS_OSC", "d0/d71/_render_consts_8h.html#af0dde251f41e3eff4ee59c5c18d9a730", null ],
+    [ "AR_ANSI_CSI", "d0/d71/_render_consts_8h.html#ae5c6f49a98d3938e84a5d5457e72a6b7", null ],
+    [ "AR_ANSI_OSC", "d0/d71/_render_consts_8h.html#ac12af0f9bc723cb9544a2fc5973395d0", null ],
     [ "AR_BOLD_DIFF", "d0/d71/_render_consts_8h.html#afe91e8e8472414ac3738c48b77ef9b67", null ],
     [ "CGRADIENT16", "d0/d71/_render_consts_8h.html#ad3eeb7c15b37ea3f40e9600e14a52120", null ],
     [ "IS_BLACK", "d0/d71/_render_consts_8h.html#a714fda4cc38176f97e4c855d17daf19a", null ],

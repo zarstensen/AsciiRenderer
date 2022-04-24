@@ -148,6 +148,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad4537f53a35f3d16d9777dbca52d7f7e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ad4537f53a35f3d16d9777dbca52d7f7e">swapCBuffer</a> ()</td></tr>
 <tr class="memdesc:ad4537f53a35f3d16d9777dbca52d7f7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">swaps the console buffers, and makes sure the previously displayed buffer, is up to date with the writable buffer.  <a href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ad4537f53a35f3d16d9777dbca52d7f7e">More...</a><br /></td></tr>
 <tr class="separator:ad4537f53a35f3d16d9777dbca52d7f7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a047eba5fd6b77d5ecb94c295a9a784f4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#a047eba5fd6b77d5ecb94c295a9a784f4">resize</a> (<a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a> new_size)</td></tr>
+<tr class="memdesc:a047eba5fd6b77d5ecb94c295a9a784f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">resizes the terminal buffers (in turn resizing the entire terminal) the actual resizing is performed on the next <a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ad4537f53a35f3d16d9777dbca52d7f7e" title="swaps the console buffers, and makes sure the previously displayed buffer, is up to date with the wri...">swapCBuffer()</a> call.  <a href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#a047eba5fd6b77d5ecb94c295a9a784f4">More...</a><br /></td></tr>
+<tr class="separator:a047eba5fd6b77d5ecb94c295a9a784f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7a56697b120ed63d924c993ec1c9ed0"><td class="memItemLeft" align="right" valign="top">std::array&lt; HANDLE, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#af7a56697b120ed63d924c993ec1c9ed0">getCBuffers</a> () const</td></tr>
 <tr class="memdesc:af7a56697b120ed63d924c993ec1c9ed0"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns an array containing the two console buffers  <a href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#af7a56697b120ed63d924c993ec1c9ed0">More...</a><br /></td></tr>
 <tr class="separator:af7a56697b120ed63d924c993ec1c9ed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -160,9 +163,6 @@ Public Member Functions</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Asciir::TRInterface::TermRendererBuffer::TermRendererBuffer </td>
@@ -172,11 +172,6 @@ Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 <p>constructs a <a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html">TermRendererBuffer</a> instance </p>
@@ -269,6 +264,34 @@ Public Member Functions</h2></td></tr>
 
 <p>put single char into the buffer </p>
 <dl class="section return"><dt>Returns</dt><dd>state of the overflow operation </dd></dl>
+
+</div>
+</div>
+<a id="a047eba5fd6b77d5ecb94c295a9a784f4" name="a047eba5fd6b77d5ecb94c295a9a784f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a047eba5fd6b77d5ecb94c295a9a784f4">&#9670;&nbsp;</a></span>resize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Asciir::TRInterface::TermRendererBuffer::resize </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a>&#160;</td>
+          <td class="paramname"><em>new_size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>resizes the terminal buffers (in turn resizing the entire terminal) the actual resizing is performed on the next <a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ad4537f53a35f3d16d9777dbca52d7f7e" title="swaps the console buffers, and makes sure the previously displayed buffer, is up to date with the wri...">swapCBuffer()</a> call. </p>
 
 </div>
 </div>

@@ -1,13 +1,14 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" title=" " alt="" coords="5,242,107,269"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,274,107,301"/>
 <area shape="rect" id="node2" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,5,287,47"/>
 <area shape="rect" id="node4" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,71,287,112"/>
 <area shape="rect" id="node6" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,136,287,177"/>
 <area shape="rect" id="node8" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,201,287,243"/>
 <area shape="rect" id="node10" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,267,287,308"/>
-<area shape="rect" id="node14" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,343,287,384"/>
-<area shape="rect" id="node16" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title="A base wrapper to be used as a base for arVertex&lt;n&gt;, arVertex2D and arVertex3D." alt="" coords="159,413,287,455"/>
-<area shape="rect" id="node20" href="$dc/d4b/struct_asciir_1_1s__ar_vertices.html" title="staticly sized version of arVertices" alt="" coords="155,479,291,520"/>
+<area shape="rect" id="node14" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,333,287,375"/>
+<area shape="rect" id="node16" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="159,400,287,441"/>
+<area shape="rect" id="node18" href="$d4/d7d/struct_asciir_1_1ar_vert_base.html" title="A base wrapper to be used as a base for arVertex&lt;n&gt;, arVertex2D and arVertex3D." alt="" coords="159,468,287,509"/>
+<area shape="rect" id="node22" href="$dc/d4b/struct_asciir_1_1s__ar_vertices.html" title="staticly sized version of arVertices" alt="" coords="155,533,291,575"/>
 <area shape="rect" id="node3" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="349,11,506,38"/>
 <area shape="rect" id="node5" href="$d6/d0b/struct_asciir_1_1ar_vertex_3_01_t_00_012_00_01void_01_4.html" title="exposes index 0 and 1 as member variables x and y, if there is excactly 2 dimensions" alt="" coords="360,63,495,104"/>
 <area shape="rect" id="node7" href="$d4/d0f/struct_asciir_1_1ar_vertex_3_01_t_00_013_00_01void_01_4.html" title="exposes index 0, 1 and 2 as member variables x, y and z if there are 3 dimensions" alt="" coords="360,128,495,169"/>
@@ -15,8 +16,9 @@
 <area shape="rect" id="node11" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="346,274,509,301"/>
 <area shape="rect" id="node12" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="339,325,516,351"/>
 <area shape="rect" id="node13" href="$d1/d50/class_asciir_1_1ar_vector.html" title=" " alt="" coords="564,325,727,351"/>
-<area shape="rect" id="node15" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="343,375,512,402"/>
-<area shape="rect" id="node17" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="348,426,507,453"/>
-<area shape="rect" id="node19" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="360,477,495,519"/>
-<area shape="rect" id="node18" href="$d1/d50/class_asciir_1_1ar_vector.html" title="wrapper class for the arVertex class, providing functions often used with Vectors" alt="" coords="566,426,725,453"/>
+<area shape="rect" id="node15" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="342,375,513,402"/>
+<area shape="rect" id="node17" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="343,426,512,453"/>
+<area shape="rect" id="node19" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="348,477,507,503"/>
+<area shape="rect" id="node21" href="$d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="360,528,495,569"/>
+<area shape="rect" id="node20" href="$d1/d50/class_asciir_1_1ar_vector.html" title="wrapper class for the arVertex class, providing functions often used with Vectors" alt="" coords="566,477,725,503"/>
 </map>
