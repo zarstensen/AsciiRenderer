@@ -14,6 +14,29 @@ namespace TRInterface
 {
 	// ============ TermRendererBuffer ============
 
+	TermRendererBuffer::TermRendererBuffer(size_t buffer_size)
+		: m_console_hwin(GetConsoleWindow())
+	{
+		m_buffer.reserve(buffer_size);
+
+		// allocate console buffers
+		m_hconsole_display = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+		m_hconsole_writable = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+
+		DWORD mode;
+		GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &mode);
+
+		AR_WIN_VERIFY(SetConsoleMode(m_hconsole_writable, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
+		AR_WIN_VERIFY(SetConsoleMode(m_hconsole_display, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
+
+		AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
+
+		const char* disable_scroll = "\x1b[0;0r"; // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
+
+		for(HANDLE h: getCBuffers())
+			WriteFile(h, disable_scroll, (DWORD) strlen(disable_scroll), NULL, NULL);
+	}
+
 	std::streamsize TermRendererBuffer::xsputn(const std::streambuf::char_type* s, std::streamsize count)
 	{
 		if (count + m_buffer.size() > m_buffer.capacity())
@@ -95,7 +118,6 @@ namespace TRInterface
 		// makes sure the text on the console before the application was started is not modified by the program.
 		// also makes sure any text never is scrolled outside the console window.
 		// this in turn means that console mouse events always report the correct y value.
-		std::cout << AR_ANSIS_CSI << "?1049h";
 
 		// enable UTF8 codepage
 		m_fallback_codepage = { GetConsoleOutputCP(), GetConsoleCP() };
@@ -107,23 +129,34 @@ namespace TRInterface
 
 	WinTerminalRenderer::~WinTerminalRenderer()
 	{
-		// go back to normal screen buffer
-		std::cout << AR_ANSIS_CSI << "?1049l";
 
 		// reset console mode
-		AR_WIN_VERIFY(SetConsoleMode(m_console, m_fallback_console_mode));
+		//AR_WIN_VERIFY(SetConsoleMode(m_console, m_fallback_console_mode));
 		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_codepage.first));
 		AR_WIN_VERIFY(SetConsoleCP(m_fallback_codepage.second));
 	}
 	
 	TermVert WinTerminalRenderer::termSize() const
 	{
-		return ARApp::getApplication()->getTermEvtHandler().getEvtListener().winLastTermSize();
+		// TODO: this might work with a different setup?
+		// return ARApp::getApplication()->getTermEvtHandler().getEvtListener().winLastTermSize();
+		
+		// calculate the cols / rows using the size and fontsize of the console
+		
+		RECT client_rect;
+
+		AR_WIN_VERIFY(GetClientRect(m_console_hwin, &client_rect));
+		
+		TermVert size(client_rect.right - client_rect.left, client_rect.bottom - client_rect.top);
+
+		size = size.cwiseQuotient((TermVert)getFont().second).eval();
+
+		return size;
 	}
 
 	TermVert WinTerminalRenderer::maxSize() const
 	{
-		COORD max_size = GetLargestConsoleWindowSize(m_console);
+		COORD max_size = GetLargestConsoleWindowSize(m_buffer.getCBuffers()[0]);
 
 		return { max_size.X, max_size.Y };
 	}
@@ -139,6 +172,33 @@ namespace TRInterface
 		return { (Real)x, (Real)y };
 	}
 
+	void WinTerminalRenderer::resizeBuff()
+	{
+		Size2D resize_size = drawSize().unaryExpr([](size_t val) { return val + 1; }).cwiseProduct(getFont().second);
+
+		// resizing with terminal escape sequnces on windows is very unreliable and will cause the terminal to crash more than often
+		// so here SetWIndowPos is used instead as an alternative.
+		CT_MEASURE_N("BUFFER RESIZE");
+		// calculate the width in pixels using the font size, and requested buffer size.
+		RECT window_rect;
+		RECT client_rect;
+
+		AR_WIN_VERIFY(GetClientRect(m_console_hwin, &client_rect));
+
+		// convert client coords to display coords
+
+		AR_WIN_VERIFY(ClientToScreen(m_console_hwin, (POINT*)&client_rect));
+		AR_WIN_VERIFY(ClientToScreen(m_console_hwin, ((POINT*)&client_rect) + 1));
+
+		AR_WIN_VERIFY(GetWindowRect(m_console_hwin, &window_rect));
+
+		// -2 = account for the 1 pixel wide blue border
+		LONG border_height = client_rect.top - window_rect.top + window_rect.bottom - client_rect.bottom - 2;
+		LONG border_width = client_rect.left - window_rect.left + window_rect.right - client_rect.right - 2;
+
+		AR_WIN_VERIFY(SetWindowPos(m_console_hwin, NULL, -1, -1, (int)resize_size.x + border_width, (int)resize_size.y + border_height, SWP_NOMOVE | SWP_NOZORDER));
+	}
+
 	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const
 	{
 		CONSOLE_FONT_INFOEX font_info{sizeof(CONSOLE_FONT_INFOEX)};
@@ -146,7 +206,7 @@ namespace TRInterface
 		std::pair<std::string, Size2D> result;
 
 		// both buffers should have the same font
-		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_buffer.getCBuffers()[0], false, &font_info));
+		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_buffer.getCBuffers()[0], FALSE, &font_info));
 
 		std::wstring_view name = font_info.FaceName;
 
@@ -161,31 +221,40 @@ namespace TRInterface
 
 	bool WinTerminalRenderer::setFont(const std::string& name, Size2D size)
 	{
-		AR_ASSERT_MSG(name.size() < LF_FACESIZE, "Font name cannot be more than 32 characters long");
-		CONSOLE_FONT_INFOEX font_info{sizeof(CONSOLE_FONT_INFOEX)};
-		
-		// default font weight is 400
-		font_info.FontWeight = 1000;
+		auto font = getFont();
 
-		font_info.dwFontSize = { (SHORT)size.x, (SHORT)size.y };
-
-		for (size_t i = 0; i < name.size(); i++)
-			font_info.FaceName[i] = name[i];
-
-		
-		bool success = true;
-
-		// font should be the same for full screen and windowed
-		for (HANDLE hconsole : m_buffer.getCBuffers())
+		// only change terminal font if it is different from the current font
+		if (font.first != name || font.second != size)
 		{
-			bool max_font_res = SetCurrentConsoleFontEx(hconsole, TRUE, &font_info);
-			AR_WIN_VERIFY(max_font_res);
-			bool win_font_res = SetCurrentConsoleFontEx(hconsole, FALSE, &font_info);
-			AR_WIN_VERIFY(win_font_res);
+			AR_ASSERT_MSG(name.size() < LF_FACESIZE, "Font name cannot be more than 32 characters long");
+			CONSOLE_FONT_INFOEX font_info{ sizeof(CONSOLE_FONT_INFOEX) };
 
-			success = success && max_font_res && win_font_res;
+			// default font weight is 400
+			font_info.FontWeight = 400;
+
+			font_info.dwFontSize = { (SHORT)size.x, (SHORT)size.y };
+
+			for (size_t i = 0; i < name.size(); i++)
+				font_info.FaceName[i] = name[i];
+
+
+			bool success = true;
+
+			// font should be the same for full screen and windowed
+			for (HANDLE hconsole : m_buffer.getCBuffers())
+			{
+				bool max_font_res = SetCurrentConsoleFontEx(hconsole, TRUE, &font_info);
+				AR_WIN_VERIFY(max_font_res);
+				bool win_font_res = SetCurrentConsoleFontEx(hconsole, FALSE, &font_info);
+				AR_WIN_VERIFY(win_font_res);
+
+				success = success && max_font_res && win_font_res;
+			}
+
+			return success;
 		}
-		return success;
+
+		return true;
 	}
 
 	bool WinTerminalRenderer::isFocused() const

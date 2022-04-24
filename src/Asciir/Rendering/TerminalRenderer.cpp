@@ -280,11 +280,15 @@ namespace TRInterface
 			"Size ", size, " is too large or negative. Max size: ", AR_IMPL(this).maxSize());
 
 		m_should_resize = true;
-		m_tiles.resize(size);
+		
+		// only resize the tiles if the size has actually changed
+		if (!size.isApprox((TermVert)m_tiles.dim()))
+			m_tiles.resize(size);
+		
 	}
 
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
-	{	
+	{
 		CT_MEASURE();
 
 		TRUpdateInfo r_info;
@@ -308,37 +312,18 @@ namespace TRInterface
 		{
 			CT_MEASURE_N("UPDATE SIZE");
 
-			if (m_should_resize)
-			{
-				m_should_resize = false;
-
-				// TODO: EXPLAIN THIS!!!
-			#ifdef AR_WIN
-				m_buff_stream << AR_ANSIS_CSI << "8;1;" << drawWidth() << 't';
-			#endif
-
-				m_buff_stream << AR_ANSIS_CSI << "8;" << drawHeight() << ';' << drawWidth() << 't';
-			}
-			else
-			{
+			if (!m_should_resize)
 				m_tiles.resize(size.y, size.x);
-			}
+			
+			
+			m_should_resize = false;
 
-			m_buff_stream << AR_ANSIS_CSI << "?25l";
+			AR_IMPL(this).resizeBuff();
+			
+			m_buff_stream << AR_ANSI_CSI << "?25l";
 			// reset stored tiles from last update
 			clearRenderTiles();
 
-			r_info.new_size = true;
-		}
-		else if (m_should_resize)
-		{
-			CT_MEASURE_N("RESIZE");
-
-			m_should_resize = false;
-
-			m_buff_stream << AR_ANSIS_CSI << "8;" << drawHeight() << ';' << drawWidth() << 't';
-			m_buff_stream << AR_ANSIS_CSI << "?25l";
-			
 			r_info.new_size = true;
 		}
 

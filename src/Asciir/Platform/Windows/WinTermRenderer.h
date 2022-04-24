@@ -2,6 +2,8 @@
 
 #include "Asciir/Rendering/TerminalRenderer.h"
 
+#include "Asciir/Rendering/Primitives.h"
+
 namespace Asciir
 {
 namespace TRInterface
@@ -15,22 +17,7 @@ namespace TRInterface
 	public:
 		/// @brief constructs a TermRendererBuffer instance
 		/// @param buffer_size the size of the buffer
-		TermRendererBuffer(size_t buffer_size)
-		{
-			m_buffer.reserve(buffer_size);
-
-			// allocate console buffers
-			m_hconsole_display = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-			m_hconsole_writable = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-
-			AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
-
-			const char* enable_alt_buf = "\x1b[?1049h";
-
-			for(HANDLE h: getCBuffers())
-				WriteFile(h, enable_alt_buf, (DWORD) strlen(enable_alt_buf), NULL, NULL);
-
-		}
+		TermRendererBuffer(size_t buffer_size);
 
 		~TermRendererBuffer()
 		{
@@ -58,9 +45,17 @@ namespace TRInterface
 		/// @note this also syncs the buffer.
 		void swapCBuffer();
 
+		/// @brief resizes the terminal buffers (in turn resizing the entire terminal)
+		/// the actual resizing is performed on the next swapCBuffer() call.
+		void resize(Size2D new_size)
+		{
+			m_buffer_resize = true;
+			m_resize_size = new_size;
+		}
+
 		/// @brief returns an array containing the two console buffers
 		/// @return first = display, second = writable
-		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_writable }; }
+		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_display }; }
 
 	private:
 		std::string m_buffer;
@@ -69,6 +64,12 @@ namespace TRInterface
 		HANDLE m_hconsole_display;
 		// handle to the currently writable console buffer
 		HANDLE m_hconsole_writable;
+
+		HWND m_console_hwin;
+
+		// TODO: double resize boolean necessary?
+		bool m_buffer_resize = false;
+		Size2D m_resize_size;
 	};
 
 	namespace ELInterface { class WinEventListener; }
@@ -93,6 +94,9 @@ namespace TRInterface
 		/// @see TerminalRendererInterface::pos()
 		TermVert pos() const;
 		
+		/// @see TerminalRendererInterface::resizeBuff()
+		void resizeBuff();
+
 		/// @see TerminalRendererInterface::getFont()
 		std::pair<std::string, Size2D> getFont() const;
 
