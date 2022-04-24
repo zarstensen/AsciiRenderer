@@ -166,11 +166,6 @@ namespace ELInterface
 				DWORD num_read;
 				AR_WIN_VERIFY(ReadConsoleInput(m_hConsole_in, m_event_buffer, BUFF_LEN, &num_read));
 
-				CONSOLE_SCREEN_BUFFER_INFOEX test;
-				test.cbSize = sizeof(test);
-
-				AR_WIN_VERIFY(GetConsoleScreenBufferInfoEx(m_hConsole_out, &test));
-
 				for (size_t i = 0; i < num_read; i++)
 				{
 					INPUT_RECORD event_r = m_event_buffer[i];

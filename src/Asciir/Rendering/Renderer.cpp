@@ -21,8 +21,6 @@ namespace Asciir
 	{
 		s_renderer = &ARApp::getApplication()->getTermRenderer();
 		s_attr_handler = &s_renderer->getAttrHandler();
-
-		ARApp::getApplication()->getTermRenderer().update();
 	}
 
 
@@ -239,6 +237,7 @@ namespace Asciir
 		return s_renderer->drawSize();
 	}
 
+	// TODO: width and height should be the width and height, assuming the update function has been called.
 	TInt Renderer::width()
 	{
 		return (TInt)s_renderer->drawWidth();

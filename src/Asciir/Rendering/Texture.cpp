@@ -607,7 +607,7 @@ namespace Asciir
 
 	// ============ SpriteSheet ============
 
-	Tile SpriteSheet::readTile(const TermVert& coord, Coord uv, const DeltaTime& time_since_start, size_t frames_since_start)
+	Tile SpriteSheet::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
 	{
 		TermVert sprite_coord = coord;
 
