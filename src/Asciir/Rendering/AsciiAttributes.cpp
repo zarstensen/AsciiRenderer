@@ -266,7 +266,7 @@ namespace Asciir
 	{
 		if (m_should_move)
 		{
-			dst += AR_ANSIS_CSI;
+			dst += AR_ANSI_CSI;
 			dst += std::to_string(m_pos.y + 1) + ';' + std::to_string(m_pos.x + 1) + 'H';
 
 			m_should_move = false;
@@ -278,7 +278,7 @@ namespace Asciir
 	{
 		if (m_should_move)
 		{
-			stream << AR_ANSIS_CSI;
+			stream << AR_ANSI_CSI;
 			stream << std::to_string(m_pos.y + 1) << ';' << std::to_string(m_pos.x + 1) << 'H';
 
 			m_should_move = false;
@@ -332,7 +332,7 @@ namespace Asciir
 		moveCode(dst);
 
 		// formatting
-		dst += AR_ANSIS_CSI;
+		dst += AR_ANSI_CSI;
 		dst += "0";
 
 		if (attributes[ITALIC])
@@ -432,7 +432,7 @@ namespace Asciir
 		char colour_buffer[4];
 
 		// formatting
-		stream << AR_ANSIS_CSI;
+		stream << AR_ANSI_CSI;
 
 		// TODO: no reason for clear of attributes when m_cleared is set
 
@@ -509,7 +509,7 @@ namespace Asciir
 
 	void AsciiAttr::setTitle(std::ostream& stream, const std::string& name)
 	{
-		stream << AR_ANSIS_OSC << "0;" << name << '\a';
+		stream << AR_ANSI_OSC << "0;" << name << '\a';
 	}
 
 	std::ostream& operator<<(std::ostream& stream, const Colour& c)

@@ -4,8 +4,8 @@
 
 namespace Asciir
 {
-	constexpr auto AR_ANSIS_CSI = "\x1b[";
-	constexpr auto AR_ANSIS_OSC = "\x1b]";
+	constexpr auto AR_ANSI_CSI = "\x1b[";
+	constexpr auto AR_ANSI_OSC = "\x1b]";
 
 	/// @brief windows does not support bold characters. this is accounted for by changing the brightness of the Colour by AR_BOLD_DIFF
 	constexpr auto AR_BOLD_DIFF = 38;
