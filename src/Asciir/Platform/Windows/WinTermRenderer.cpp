@@ -31,10 +31,10 @@ namespace TRInterface
 
 		AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
 
-		const char* disable_scroll = "\x1b[0;0r"; // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
+		//const char* alternate_buff = "\x1b[?1049h"; // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
 
-		for(HANDLE h: getCBuffers())
-			WriteFile(h, disable_scroll, (DWORD) strlen(disable_scroll), NULL, NULL);
+		//for(HANDLE h: getCBuffers())
+		//	WriteFile(h, alternate_buff, (DWORD) strlen(alternate_buff), NULL, NULL);
 	}
 
 	std::streamsize TermRendererBuffer::xsputn(const std::streambuf::char_type* s, std::streamsize count)
@@ -174,29 +174,32 @@ namespace TRInterface
 
 	void WinTerminalRenderer::resizeBuff()
 	{
-		Size2D resize_size = drawSize().unaryExpr([](size_t val) { return val + 1; }).cwiseProduct(getFont().second);
-
-		// resizing with terminal escape sequnces on windows is very unreliable and will cause the terminal to crash more than often
-		// so here SetWIndowPos is used instead as an alternative.
 		CT_MEASURE_N("BUFFER RESIZE");
-		// calculate the width in pixels using the font size, and requested buffer size.
-		RECT window_rect;
-		RECT client_rect;
+		TermVert resize_size = (TermVert)drawSize();
+		TermVert term_size = termSize();
 
-		AR_WIN_VERIFY(GetClientRect(m_console_hwin, &client_rect));
+		SMALL_RECT win_size{ 0, 0, (SHORT)(resize_size.x - 1), (SHORT)(resize_size.y - 1) };
+		COORD buff_size{ (SHORT)resize_size.x, (SHORT)resize_size.y };
 
-		// convert client coords to display coords
+		// prevent resizing momentarily or else the resize might happen inbetween SetConsoleWindowInfo and SetConsoleScreenBufferSize, which will trigger an windows error.
 
-		AR_WIN_VERIFY(ClientToScreen(m_console_hwin, (POINT*)&client_rect));
-		AR_WIN_VERIFY(ClientToScreen(m_console_hwin, ((POINT*)&client_rect) + 1));
+		LONG fallback_style = GetWindowLong(m_console_hwin, GWL_STYLE);
+		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style & ~(WS_SIZEBOX));
 
-		AR_WIN_VERIFY(GetWindowRect(m_console_hwin, &window_rect));
+		// console window size cannot be greater than the console buffer size, and the console buffer size cannot be smaller than the console window size,
+		// So depending on the current size, and the new size, the order of the functions should be flipped.
+		if (term_size.x * term_size.y > resize_size.x * resize_size.y)
+		{
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_size));
+			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_size));
+		}
+		else
+		{
+			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_size));
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_size));
+		}
 
-		// -2 = account for the 1 pixel wide blue border
-		LONG border_height = client_rect.top - window_rect.top + window_rect.bottom - client_rect.bottom - 2;
-		LONG border_width = client_rect.left - window_rect.left + window_rect.right - client_rect.right - 2;
-
-		AR_WIN_VERIFY(SetWindowPos(m_console_hwin, NULL, -1, -1, (int)resize_size.x + border_width, (int)resize_size.y + border_height, SWP_NOMOVE | SWP_NOZORDER));
+		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style);
 	}
 
 	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const

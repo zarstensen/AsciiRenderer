@@ -258,17 +258,17 @@ namespace Asciir
 		{
 			size_t new_capacity = queue_size;
 
-#if AR_RENDER_QUEUE_MIN != -1
+		#if AR_RENDER_QUEUE_MIN != -1
 
-#if AR_RENDER_QUEUE_MAX != -1
+		#if AR_RENDER_QUEUE_MAX != -1
 			static_assert(AR_RENDER_QUEUE_MIN + AR_RENDER_QUEUE_MARGIN < AR_RENDER_QUEUE_MAX);
-#endif
+		#endif
 
 			static_assert(AR_RENDER_QUEUE_MIN > 0);
 
 			new_capacity = std::max(new_capacity, (size_t)AR_RENDER_QUEUE_MIN);
 
-#endif
+		#endif
 
 			s_submit_queue->shrink_to_fit();
 			s_submit_queue->reserve(new_capacity);

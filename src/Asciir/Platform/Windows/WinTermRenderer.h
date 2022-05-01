@@ -55,7 +55,7 @@ namespace TRInterface
 
 		/// @brief returns an array containing the two console buffers
 		/// @return first = display, second = writable
-		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_display }; }
+		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_writable }; }
 
 	private:
 		std::string m_buffer;
