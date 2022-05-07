@@ -104,6 +104,7 @@ $(document).ready(function(){initNavTree('dc/dd8/class_asciir_1_1_t_r_interface_
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="../../d1/dc9/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Asciir::TRInterface::TermRendererBuffer Class Reference</div></div>
 </div><!--header-->
@@ -124,8 +125,11 @@ Collaboration diagram for Asciir::TRInterface::TermRendererBuffer:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d9/ddd/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer__coll__graph.png" border="0" usemap="#a_asciir_1_1_t_r_interface_1_1_term_renderer_buffer_coll__map" alt="Collaboration graph"/></div>
 <map name="a_asciir_1_1_t_r_interface_1_1_term_renderer_buffer_coll__map" id="a_asciir_1_1_t_r_interface_1_1_term_renderer_buffer_coll__map">
-<area shape="rect" title=" " alt="" coords="5,80,149,121"/>
-<area shape="rect" title=" " alt="" coords="25,5,130,32"/>
+<area shape="rect" title=" " alt="" coords="7,276,151,317"/>
+<area shape="rect" title=" " alt="" coords="5,187,111,213"/>
+<area shape="rect" href="../../d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="135,187,306,213"/>
+<area shape="rect" href="../../d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="157,96,285,137"/>
+<area shape="rect" title=" " alt="" coords="152,5,289,47"/>
 </map>
 <center><span class="legend">[<a target="top" href="../../graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -154,6 +158,21 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af7a56697b120ed63d924c993ec1c9ed0"><td class="memItemLeft" align="right" valign="top">std::array&lt; HANDLE, 2 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#af7a56697b120ed63d924c993ec1c9ed0">getCBuffers</a> () const</td></tr>
 <tr class="memdesc:af7a56697b120ed63d924c993ec1c9ed0"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns an array containing the two console buffers  <a href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#af7a56697b120ed63d924c993ec1c9ed0">More...</a><br /></td></tr>
 <tr class="separator:af7a56697b120ed63d924c993ec1c9ed0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:acff72120d4b8b515e15e53e56808d33b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#acff72120d4b8b515e15e53e56808d33b">m_buffer</a></td></tr>
+<tr class="separator:acff72120d4b8b515e15e53e56808d33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad50c47485b5753f04eb12c0930a9c435"><td class="memItemLeft" align="right" valign="top">HANDLE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ad50c47485b5753f04eb12c0930a9c435">m_hconsole_display</a></td></tr>
+<tr class="separator:ad50c47485b5753f04eb12c0930a9c435"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c8103185deb65cd222812d4ec8ef9a4"><td class="memItemLeft" align="right" valign="top">HANDLE&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#a9c8103185deb65cd222812d4ec8ef9a4">m_hconsole_writable</a></td></tr>
+<tr class="separator:a9c8103185deb65cd222812d4ec8ef9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1bd1ada1d5268b7fd21a2a576cefe365"><td class="memItemLeft" align="right" valign="top">HWND&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#a1bd1ada1d5268b7fd21a2a576cefe365">m_console_hwin</a></td></tr>
+<tr class="separator:a1bd1ada1d5268b7fd21a2a576cefe365"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac42574889086d437a448862747b0d9f2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#ac42574889086d437a448862747b0d9f2">m_buffer_resize</a> = false</td></tr>
+<tr class="separator:ac42574889086d437a448862747b0d9f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c7b8480a164298e49bb166b8be628d8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html#a3c7b8480a164298e49bb166b8be628d8">m_resize_size</a></td></tr>
+<tr class="separator:a3c7b8480a164298e49bb166b8be628d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >@detail the windows implementation of the <a class="el" href="../../dc/dd8/class_asciir_1_1_t_r_interface_1_1_term_renderer_buffer.html">TermRendererBuffer</a> uses two seperate console buffers, a writable, and a display buffer. the reason for this is that it is much faster to write to a console buffer that is not currently being displayed, thus a buffer swap system is implemented with the console buffers, where each console print, will result in the buffers being swapped. </p>
@@ -385,6 +404,139 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>count </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="acff72120d4b8b515e15e53e56808d33b" name="acff72120d4b8b515e15e53e56808d33b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acff72120d4b8b515e15e53e56808d33b">&#9670;&nbsp;</a></span>m_buffer</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string Asciir::TRInterface::TermRendererBuffer::m_buffer</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac42574889086d437a448862747b0d9f2" name="ac42574889086d437a448862747b0d9f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac42574889086d437a448862747b0d9f2">&#9670;&nbsp;</a></span>m_buffer_resize</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Asciir::TRInterface::TermRendererBuffer::m_buffer_resize = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a1bd1ada1d5268b7fd21a2a576cefe365" name="a1bd1ada1d5268b7fd21a2a576cefe365"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bd1ada1d5268b7fd21a2a576cefe365">&#9670;&nbsp;</a></span>m_console_hwin</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HWND Asciir::TRInterface::TermRendererBuffer::m_console_hwin</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad50c47485b5753f04eb12c0930a9c435" name="ad50c47485b5753f04eb12c0930a9c435"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad50c47485b5753f04eb12c0930a9c435">&#9670;&nbsp;</a></span>m_hconsole_display</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HANDLE Asciir::TRInterface::TermRendererBuffer::m_hconsole_display</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9c8103185deb65cd222812d4ec8ef9a4" name="a9c8103185deb65cd222812d4ec8ef9a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c8103185deb65cd222812d4ec8ef9a4">&#9670;&nbsp;</a></span>m_hconsole_writable</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HANDLE Asciir::TRInterface::TermRendererBuffer::m_hconsole_writable</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3c7b8480a164298e49bb166b8be628d8" name="a3c7b8480a164298e49bb166b8be628d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c7b8480a164298e49bb166b8be628d8">&#9670;&nbsp;</a></span>m_resize_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a> Asciir::TRInterface::TermRendererBuffer::m_resize_size</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

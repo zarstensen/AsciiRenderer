@@ -36,9 +36,8 @@ var searchData=
   ['log_2eh_33',['Log.h',['../da/df4/_log_8h.html',1,'']]],
   ['loglineout_34',['logLineOut',['../df/dbc/class_asciir_1_1_log_viewer.html#acaa907c5845cc2ee3bf69e26e87a46f5',1,'Asciir::LogViewer']]],
   ['logterm_35',['LogTerm',['../d0/d22/class_log_term.html#aae59b70e3cd9bfb8d02933185c4c0f63',1,'LogTerm::LogTerm()'],['../d0/d22/class_log_term.html',1,'LogTerm']]],
-  ['logviewer_36',['LogViewer',['../df/dbc/class_asciir_1_1_log_viewer.html',1,'Asciir']]],
+  ['logviewer_36',['LogViewer',['../df/dbc/class_asciir_1_1_log_viewer.html',1,'Asciir::LogViewer'],['../df/dbc/class_asciir_1_1_log_viewer.html#a38c57318b1ae7dae38f7aff0bde2722a',1,'Asciir::LogViewer::LogViewer()']]],
   ['logviewer_37',['logviewer',['../d0/d22/class_log_term.html#a85ef7421a028a5cfcde325d0a6322463',1,'LogTerm']]],
-  ['logviewer_38',['LogViewer',['../df/dbc/class_asciir_1_1_log_viewer.html#a38c57318b1ae7dae38f7aff0bde2722a',1,'Asciir::LogViewer']]],
-  ['logviewer_2ecpp_39',['LogViewer.cpp',['../dc/d6c/_log_viewer_8cpp.html',1,'']]],
-  ['logviewer_2eh_40',['LogViewer.h',['../d4/dcd/_log_viewer_8h.html',1,'']]]
+  ['logviewer_2ecpp_38',['LogViewer.cpp',['../dc/d6c/_log_viewer_8cpp.html',1,'']]],
+  ['logviewer_2eh_39',['LogViewer.h',['../d4/dcd/_log_viewer_8h.html',1,'']]]
 ];

@@ -15,6 +15,5 @@ var class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer =
     [ "m_console", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a1ab044b655fb38f5a1d57f9c8d1086ea", null ],
     [ "m_console_hwin", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a9e0e1ce7230a85d9e6050d07ec1120a0", null ],
     [ "m_fallback_codepage", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#afe3810cd2ad00d462fba58e1c021d410", null ],
-    [ "m_fallback_console_mode", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a5d48d1e053ae1756626cee2ab05f426c", null ],
-    [ "m_font_size", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a4612995b051e538b1453a182a736752e", null ]
+    [ "m_fallback_console_mode", "dc/d45/class_asciir_1_1_t_r_interface_1_1_win_terminal_renderer.html#a5d48d1e053ae1756626cee2ab05f426c", null ]
 ];

@@ -131,17 +131,20 @@ Collaboration diagram for Asciir::TRInterface::TerminalRendererInterface:</div>
 <div class="dyncontent">
 <div class="center"><img src="../../d2/dce/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface__coll__graph.png" border="0" usemap="#a_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface_coll__map" alt="Collaboration graph"/></div>
 <map name="a_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface_coll__map" id="a_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface_coll__map">
-<area shape="rect" title="interface class for the TerminalRenderer." alt="" coords="921,124,1101,165"/>
+<area shape="rect" title="interface class for the TerminalRenderer." alt="" coords="921,159,1101,200"/>
 <area shape="rect" href="../../d3/d5e/struct_asciir_1_1ar_matrix.html" title=" " alt="" coords="579,5,783,76"/>
-<area shape="rect" title=" " alt="" coords="221,11,417,67"/>
+<area shape="rect" title=" " alt="" coords="221,13,417,69"/>
 <area shape="rect" href="../../d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="599,102,762,129"/>
-<area shape="rect" href="../../d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="255,92,383,133"/>
-<area shape="rect" title=" " alt="" coords="5,99,172,126"/>
-<area shape="rect" href="../../d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="639,157,722,183"/>
-<area shape="rect" href="../../de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="259,158,380,185"/>
-<area shape="rect" href="../../db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="269,217,369,243"/>
-<area shape="rect" href="../../d8/d1b/class_asciir_1_1_ref.html" title=" " alt="" coords="617,237,744,279"/>
-<area shape="rect" title=" " alt="" coords="242,268,397,309"/>
+<area shape="rect" href="../../d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="255,93,383,135"/>
+<area shape="rect" title=" " alt="" coords="5,101,172,127"/>
+<area shape="rect" href="../../d1/df4/struct_asciir_1_1ar_vertex.html" title=" " alt="" coords="595,166,766,193"/>
+<area shape="rect" href="../../d4/d7d/struct_asciir_1_1ar_vert_base.html" title=" " alt="" coords="255,159,383,200"/>
+<area shape="rect" title=" " alt="" coords="20,159,157,200"/>
+<area shape="rect" href="../../d2/d68/struct_asciir_1_1_tile.html" title=" " alt="" coords="639,221,722,247"/>
+<area shape="rect" href="../../de/d7e/class_asciir_1_1_u_t_f8_char.html" title="stores a singular UTF 8 character." alt="" coords="259,225,380,251"/>
+<area shape="rect" href="../../db/dde/struct_asciir_1_1_colour.html" title="structure representing a 32 bit rgba colour value." alt="" coords="269,281,369,307"/>
+<area shape="rect" href="../../d8/d1b/class_asciir_1_1_ref.html" title=" " alt="" coords="617,301,744,343"/>
+<area shape="rect" title=" " alt="" coords="242,332,397,373"/>
 </map>
 <center><span class="legend">[<a target="top" href="../../graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -237,7 +240,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:ac631b708ebb252d9e6913e673c3e6551"><td class="mdescLeft">&#160;</td><td class="mdescRight">calls <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a9db123243593c5f09ef4c3b00703e23c" title="updates the terminal properties.   this function updates the size, title, and fontsize (TODO: impleme...">update()</a> and <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a522c9365a7e00083a4be2e9645395e69" title="draws the currently stored frame into the terminal, and stores this frame as the previous frame.">draw()</a>.  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#ac631b708ebb252d9e6913e673c3e6551">More...</a><br /></td></tr>
 <tr class="separator:ac631b708ebb252d9e6913e673c3e6551"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a910b5d42fb6a6cd8a906d2d018f71deb">resize</a> (<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a> size)</td></tr>
-<tr class="memdesc:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">set the terminal to the specified size  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a910b5d42fb6a6cd8a906d2d018f71deb">More...</a><br /></td></tr>
+<tr class="memdesc:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="mdescLeft">&#160;</td><td class="mdescRight">request the terminal to resize to the specified size the terminal will actually resize only once <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a9db123243593c5f09ef4c3b00703e23c" title="updates the terminal properties.   this function updates the size, title, and fontsize (TODO: impleme...">update()</a> has been called.  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a910b5d42fb6a6cd8a906d2d018f71deb">More...</a><br /></td></tr>
 <tr class="separator:a910b5d42fb6a6cd8a906d2d018f71deb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a086fcb53627f2697213336842b7d509d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a086fcb53627f2697213336842b7d509d">AR_INT_FUNC_R</a> ((void) resizeBuff(),()) AR_INT_FUNC_R((<a class="el" href="../../d3/da1/namespace_asciir.html#a2ebc3567eca2d5dde1dc5e6b46254393">TermVert</a>) termSize() const</td></tr>
 <tr class="memdesc:a086fcb53627f2697213336842b7d509d"><td class="mdescLeft">&#160;</td><td class="mdescRight">gets called when the terminal should be resized. the new size should be <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a7d4b84f33abeaf214eed561596d48632">drawWidth()</a> X <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a84b3b80f03d79b24eeaa25f4c3589815">drawHeight()</a> it is ipmlementation specific wether the terminal resize happens at the function call, or at the next update.  <a href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a086fcb53627f2697213336842b7d509d">More...</a><br /></td></tr>
@@ -280,6 +283,12 @@ Protected Attributes</h2></td></tr>
 <tr class="separator:a028d0d14aaa0ee346c65a79c0bf3affc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf54f2d5b71dd1fa8a7d18ea52262ed3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d3/da1/namespace_asciir.html#a4cb57293d46a9d15775cb4014f04aa42">Coord</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#aaf54f2d5b71dd1fa8a7d18ea52262ed3">m_pos</a></td></tr>
 <tr class="separator:aaf54f2d5b71dd1fa8a7d18ea52262ed3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a619a24c3266bfd2211ddddeb7a25c51e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a619a24c3266bfd2211ddddeb7a25c51e">m_font_size</a></td></tr>
+<tr class="separator:a619a24c3266bfd2211ddddeb7a25c51e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9803513de5c3e1e33269fcae782d43de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a9803513de5c3e1e33269fcae782d43de">m_term_resize</a></td></tr>
+<tr class="separator:a9803513de5c3e1e33269fcae782d43de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b97df9cc06345452b3a49458a52b235"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a8b97df9cc06345452b3a49458a52b235">m_resize_first</a> = false</td></tr>
+<tr class="separator:a8b97df9cc06345452b3a49458a52b235"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f3297481175a57da8ff9820ba67b2b4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d2/d68/struct_asciir_1_1_tile.html">Tile</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a9f3297481175a57da8ff9820ba67b2b4">m_tile_state</a> = <a class="el" href="../../d2/d68/struct_asciir_1_1_tile.html">Tile</a>()</td></tr>
 <tr class="separator:a9f3297481175a57da8ff9820ba67b2b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb613ac9cde820fd069758520f071ded"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#acb613ac9cde820fd069758520f071ded">m_title</a></td></tr>
@@ -1213,7 +1222,7 @@ Protected Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>set the terminal to the specified size </p>
+<p>request the terminal to resize to the specified size the terminal will actually resize only once <a class="el" href="../../d0/da2/class_asciir_1_1_t_r_interface_1_1_terminal_renderer_interface.html#a9db123243593c5f09ef4c3b00703e23c" title="updates the terminal properties.   this function updates the size, title, and fontsize (TODO: impleme...">update()</a> has been called. </p>
 
 </div>
 </div>
@@ -1384,6 +1393,28 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a619a24c3266bfd2211ddddeb7a25c51e" name="a619a24c3266bfd2211ddddeb7a25c51e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a619a24c3266bfd2211ddddeb7a25c51e">&#9670;&nbsp;</a></span>m_font_size</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a> Asciir::TRInterface::TerminalRendererInterface::m_font_size</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aaf54f2d5b71dd1fa8a7d18ea52262ed3" name="aaf54f2d5b71dd1fa8a7d18ea52262ed3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaf54f2d5b71dd1fa8a7d18ea52262ed3">&#9670;&nbsp;</a></span>m_pos</h2>
 
@@ -1428,6 +1459,28 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a8b97df9cc06345452b3a49458a52b235" name="a8b97df9cc06345452b3a49458a52b235"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b97df9cc06345452b3a49458a52b235">&#9670;&nbsp;</a></span>m_resize_first</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Asciir::TRInterface::TerminalRendererInterface::m_resize_first = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aeb911c8efe81b6f60ea93553e751fc76" name="aeb911c8efe81b6f60ea93553e751fc76"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aeb911c8efe81b6f60ea93553e751fc76">&#9670;&nbsp;</a></span>m_should_rename</h2>
 
@@ -1461,6 +1514,28 @@ Protected Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">bool Asciir::TRInterface::TerminalRendererInterface::m_should_resize = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9803513de5c3e1e33269fcae782d43de" name="a9803513de5c3e1e33269fcae782d43de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9803513de5c3e1e33269fcae782d43de">&#9670;&nbsp;</a></span>m_term_resize</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d3/da1/namespace_asciir.html#aa27b62cdb7272d0f6e5370ed4adb6fa5">Size2D</a> Asciir::TRInterface::TerminalRendererInterface::m_term_resize</td>
         </tr>
       </table>
   </td>
