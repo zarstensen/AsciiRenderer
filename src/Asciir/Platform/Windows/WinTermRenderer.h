@@ -56,8 +56,8 @@ namespace TRInterface
 		/// @brief returns an array containing the two console buffers
 		/// @return first = display, second = writable
 		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_writable }; }
-
-	private:
+	
+	protected:
 		std::string m_buffer;
 
 		// handle to the currently displayed console buffer
@@ -107,7 +107,7 @@ namespace TRInterface
 		bool isFocused() const;
 
 		/// @see TerminalRendererInterface::flushBuffer()
-		void flushBuffer() { m_buffer.swapCBuffer(); }
+		void flushBuffer();
 
 		/// @see TerminalRendererInterface::getBuffer()
 		/// @return 
@@ -123,8 +123,6 @@ namespace TRInterface
 		DWORD m_fallback_console_mode;
 		// codepage before constructor
 		std::pair<UINT, UINT> m_fallback_codepage;
-		// the current font size, defaults to the console font size
-		COORD m_font_size;
 
 		TermRendererBuffer m_buffer;
 	};

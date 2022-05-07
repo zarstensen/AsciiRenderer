@@ -240,6 +240,7 @@ namespace Asciir
 				bool new_size = false;
 				bool new_pos = false;
 				bool new_name = false;
+				bool new_zoom = false; // TODO: implement this
 			};
 
 			/// @brief structure containing two tiles, the current tile, and the previously rendered tile
@@ -315,7 +316,8 @@ namespace Asciir
 			/// @brief calls update() and draw().
 			TRUpdateInfo render();
 			
-			/// @brief set the terminal to the specified size
+			/// @brief request the terminal to resize to the specified size
+			/// the terminal will actually resize only once update() has been called.
 			void resize(TermVert size);
 
 			/// @brief gets called when the terminal should be resized.
@@ -385,6 +387,11 @@ namespace Asciir
 		protected:
 			arMatrix<DrawTile, Eigen::RowMajor> m_tiles;
 			Coord m_pos;
+			Size2D m_font_size;
+			// stores the size the terminal should be resized to. If it is (0, 0), then the terminal should not be resized.
+			Size2D m_term_resize;
+			// this is needed, as both buffers needs to be resized on a request, and this keeps track of which buffer already has been resized.
+			bool m_resize_first = false;
 			Tile m_tile_state = Tile();
 			std::string m_title;
 

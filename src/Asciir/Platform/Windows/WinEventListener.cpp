@@ -62,7 +62,6 @@ namespace ELInterface
 
 	void WinEventListener::stop()
 	{
-
 		m_is_listening = false;
 
 		// make sure the message loop is stopped before the input threads are joined

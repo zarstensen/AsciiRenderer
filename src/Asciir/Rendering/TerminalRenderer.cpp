@@ -278,13 +278,13 @@ namespace TRInterface
 	{
 		AR_ASSERT_MSG(size.x <= AR_IMPL(this).maxSize().x && size.x > 0 && size.y <= AR_IMPL(this).maxSize().y && size.y > 0,
 			"Size ", size, " is too large or negative. Max size: ", AR_IMPL(this).maxSize());
-
-		m_should_resize = true;
 		
 		// only resize the tiles if the size has actually changed
 		if (!size.isApprox((TermVert)m_tiles.dim()))
-			m_tiles.resize(size);
-		
+		{
+			m_resize_first = true;
+			m_term_resize = size;
+		}
 	}
 
 	TerminalRendererInterface::TRUpdateInfo TerminalRendererInterface::update()
@@ -306,20 +306,34 @@ namespace TRInterface
 		
 		// \x1b[?25l = hide cursor
 
-		// terminal size is different from last update
-		// the cursor will have to be rehidden every time the terminal gets resized
-		if (size.x != drawWidth() || size.y != drawHeight())
+		Size2D new_size;
+
+		if (!m_term_resize.isApprox(Size2D(0, 0)))
+		{
+			new_size = m_term_resize;
+
+			// only reset the m_term_resize attribute, if it is the second time (meaning both buffers have been resized) resizing a buffer.
+			if(!m_resize_first)
+				m_term_resize = Size2D(0, 0);
+			
+			m_resize_first;
+		}
+		else if (size.x != drawWidth() || size.y != drawHeight())
+		{
+			// terminal size is different from last update
+			new_size = size;
+		}
+
+		// if new size is not equal to (0, 0), either a resize has been requested, or the user has manually resized the terminal.
+		if (!new_size.isApprox(Size2D(0, 0)))
 		{
 			CT_MEASURE_N("UPDATE SIZE");
-
-			if (!m_should_resize)
-				m_tiles.resize(size.y, size.x);
 			
-			
-			m_should_resize = false;
+			m_tiles.resize(new_size);
 
 			AR_IMPL(this).resizeBuff();
-			
+
+			// the cursor will have to be rehidden every time the terminal gets resized
 			m_buff_stream << AR_ANSI_CSI << "?25l";
 			// reset stored tiles from last update
 			clearRenderTiles();
@@ -343,6 +357,13 @@ namespace TRInterface
 			m_should_rename = false;
 			r_info.new_name = true;
 		}
+
+		if (AR_IMPL(this).getFont().second != m_font_size)
+		{
+			r_info.new_zoom = true;
+			m_font_size = AR_IMPL(this).getFont().second;
+		}
+
 
 		return r_info;
 	}

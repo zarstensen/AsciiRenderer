@@ -30,11 +30,6 @@ namespace TRInterface
 		AR_WIN_VERIFY(SetConsoleMode(m_hconsole_display, mode | ENABLE_VIRTUAL_TERMINAL_PROCESSING));
 
 		AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(m_hconsole_display));
-
-		//const char* alternate_buff = "\x1b[?1049h"; // https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences#scrolling-margins
-
-		//for(HANDLE h: getCBuffers())
-		//	WriteFile(h, alternate_buff, (DWORD) strlen(alternate_buff), NULL, NULL);
 	}
 
 	std::streamsize TermRendererBuffer::xsputn(const std::streambuf::char_type* s, std::streamsize count)
@@ -124,6 +119,8 @@ namespace TRInterface
 		AR_WIN_VERIFY(SetConsoleOutputCP(CP_UTF8));
 		AR_WIN_VERIFY(SetConsoleCP(CP_UTF8));
 
+		m_font_size = getFont().second;
+
 		initRenderer(props);
 	}
 
@@ -143,13 +140,11 @@ namespace TRInterface
 		
 		// calculate the cols / rows using the size and fontsize of the console
 		
-		RECT client_rect;
+		CONSOLE_SCREEN_BUFFER_INFO console_info;
 
-		AR_WIN_VERIFY(GetClientRect(m_console_hwin, &client_rect));
+		AR_WIN_VERIFY(GetConsoleScreenBufferInfo(m_buffer.getCBuffers()[0], &console_info));
 		
-		TermVert size(client_rect.right - client_rect.left, client_rect.bottom - client_rect.top);
-
-		size = size.cwiseQuotient((TermVert)getFont().second).eval();
+		TermVert size(console_info.dwSize.X, console_info.dwSize.Y);
 
 		return size;
 	}
@@ -174,29 +169,63 @@ namespace TRInterface
 
 	void WinTerminalRenderer::resizeBuff()
 	{
+		// resize both buffers, using buffer swaps and a minimal window size, resize buffer and sofnaiosfjhd
 		CT_MEASURE_N("BUFFER RESIZE");
 		TermVert resize_size = (TermVert)drawSize();
+
+		// in case the maximum size has changed since the last resize, cap the resize_size to be inside the maximum bounds, even though this check has already happened.
+		resize_size.x = std::min(maxSize().x, resize_size.x);
+		resize_size.y = std::min(maxSize().y, resize_size.y);
+
 		TermVert term_size = termSize();
 
-		SMALL_RECT win_size{ 0, 0, (SHORT)(resize_size.x - 1), (SHORT)(resize_size.y - 1) };
-		COORD buff_size{ (SHORT)resize_size.x, (SHORT)resize_size.y };
+		// sometimes the console will have a larger window size than the maximum window size. As this creates problems for the code below, the window size is clamped to its maximum possible size.
+		// this situation might occur if the console window size is changed with a "zoom", which does not update the window size, even if the window size grows.
+		if (term_size.x > maxSize().x || term_size.y > maxSize().y)
+		{
+			SMALL_RECT max_win_size = { 0, 0, (SHORT)std::min(maxSize().x, term_size.x) - 1, (SHORT)std::min(maxSize().y, term_size.y) - 1 };
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &max_win_size));
+		}
+
+		term_size.x = std::min(maxSize().x, term_size.x);
+		term_size.y = std::min(maxSize().y, term_size.y);
 
 		// prevent resizing momentarily or else the resize might happen inbetween SetConsoleWindowInfo and SetConsoleScreenBufferSize, which will trigger an windows error.
 
 		LONG fallback_style = GetWindowLong(m_console_hwin, GWL_STYLE);
 		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style & ~(WS_SIZEBOX));
-
+		
 		// console window size cannot be greater than the console buffer size, and the console buffer size cannot be smaller than the console window size,
 		// So depending on the current size, and the new size, the order of the functions should be flipped.
-		if (term_size.x * term_size.y > resize_size.x * resize_size.y)
+		// this is true independent of the direction, so if the new width is smaller than the old width, but the new height is larger than the old height, the resize operation must be split.
+
+		COORD buff_width{ resize_size.x, term_size.y};
+		SMALL_RECT win_width{ 0, 0, buff_width.X - 1, buff_width.Y - 1 };
+
+		// TODO: check if the code below this is required, alternative code: ignore if side nr. 1 needs to be downscaled and side nr. 2 needs to be upscaled (less win32 calls).
+		if (term_size.x > resize_size.x)
 		{
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_size));
-			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_size));
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width));
+			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width));
 		}
-		else
+		else if (term_size.x < resize_size.x)
 		{
-			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_size));
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_size));
+			AR_WIN_VERIFY((SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width)));
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width));
+		}
+		
+		COORD buff_height{ resize_size.x, resize_size.y };
+		SMALL_RECT win_height{ 0, 0, buff_height.X - 1, buff_height.Y - 1 };
+
+		if(term_size.y > resize_size.y)
+		{
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height));
+			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height));
+		}
+		else if (term_size.y < resize_size.y)
+		{
+			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height));
+			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height));
 		}
 
 		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style);
@@ -254,6 +283,8 @@ namespace TRInterface
 				success = success && max_font_res && win_font_res;
 			}
 
+			m_font_size = size;
+
 			return success;
 		}
 
@@ -265,5 +296,14 @@ namespace TRInterface
 		return GetForegroundWindow() == GetConsoleWindow();
 	}
 
+	void WinTerminalRenderer::flushBuffer()
+	{
+		m_buffer.swapCBuffer();
+		
+		// the two buffers should not have different fonts, so make sure they are the same here.
+		if (m_font_size != getFont().second)
+			setFont(getFont().first, m_font_size);
+
+	}
 }
 }
