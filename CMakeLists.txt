@@ -4,7 +4,7 @@ Project(Asciir)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CheckIPOSupported)
-include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake")
+include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake" OPTIONAL)
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)

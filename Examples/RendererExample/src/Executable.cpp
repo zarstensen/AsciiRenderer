@@ -20,7 +20,7 @@ class TriangleLayer : public Asciir::Layer
 		t.setPos({ 1, 0 });
 
 		if(++x_off % 2)
-			Asciir::Renderer::submitMesh(quad, Asciir::IYELLOW8, t);
+			Asciir::Renderer::submit(quad, Asciir::IYELLOW8, t);
 	}
 };
 

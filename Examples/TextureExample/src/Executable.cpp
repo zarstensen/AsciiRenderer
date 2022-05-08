@@ -95,31 +95,53 @@ class TextureLayer : public Asciir::Layer
 {
 	Ref<FileTexture> texture = FileTexture();
 	Ref<Shader2D> shader = new TileShader();
-	const Path texture_path = "./test.cart";
+
+	AudioSource rroll_aud = AudioSource("Sound.mp3");
+	AudioPlayer rroll_player = AudioPlayer(rroll_aud);
 
 	void onAdd() final
 	{
-		Renderer::setMinDT(DeltaTime(60).fps());
-		//texture->load(texture_path);
+		rroll_player.getSrc<sf::Music>().setLoop(true);
+		// rroll_player.play();
+
+		Renderer::setFontSize({ 2, 2 });
 	}
 
 	Mesh square = std::vector<Coords>({ Coords({{5, 0}, {10, 0}, {20, 10}, {0, 10}}), Coords({{6, 3}, {10, 3}, {11, 7}, {6, 7}}) });
 	Transform texture_t;
 	Real rot = 0_R;
 
+	DeltaTime time_since_start = 0;
+
+	void onEvent(Event& e)
+	{
+		if (e.getType() == KeyPressedEvent::getStaticType())
+		{
+			KeyPressedEvent& pevent = (KeyPressedEvent&)e;
+
+			AR_INFO((size_t)pevent.getKeyCode(), "\t:\t", pevent.isRepeat());
+		}
+	}
+
 	void onUpdate(DeltaTime delta_time) final
 	{
+		exit(0);
 		ARApp::getApplication()->getTermRenderer().setTitle(std::to_string(delta_time.fps()));
 		Renderer::clear();
-		// texture_t.setScale({ 1_R/5_R, 1_R/5_R });
-		texture_t.setOrigin(square.getMedianVert());
-		rot += delta_time * 3;
-		texture_t.setPos({15, 15});
-		texture_t.setRotation(rot);
 
-		Renderer::submit(shader);
-		//Renderer::submit(square, IYELLOW8, texture_t);
-		//Renderer::submitShader(texture, texture_t);
+
+		time_since_start = time_since_start + delta_time;
+
+		int frame = time_since_start.seconds() * 25;
+
+		std::stringstream name;
+
+		name << "Video/VIDEO" << std::setfill('0') << std::setw(4) << frame + 1 << ".jpg";
+
+		FileTexture rroll(name.str());
+
+		// Renderer::submit(rroll.load());
+		// Renderer::resize(rroll.size());
 	}
 };
 

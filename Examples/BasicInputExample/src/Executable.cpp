@@ -4,7 +4,7 @@ using namespace Asciir::AsciirLiterals;
 
 class ExampleLayer : public Asciir::Layer
 {
-	Asciir::Coord pos = { 10, 10 }; // initial position of the box
+	Asciir::Coord pos = { 5, 5 }; // initial position of the box
 	static constexpr Asciir::Real speed = 0.025_R; // maximum speed of the box
 
 	// gets called when the application is started, and if this layer already exists on the layer stack.
@@ -19,6 +19,7 @@ class ExampleLayer : public Asciir::Layer
 	// this acts as the main loop for the layer.
 	void onUpdate(Asciir::DeltaTime delta_time /*time difference between the last updateand current update*/)
 	{
+		Asciir::Renderer::resize({ 50, 50 });
 		// start by clearing the background with a dark blue background colour
 		Asciir::Renderer::clear(Asciir::Tile(Asciir::BLUE8));
 
