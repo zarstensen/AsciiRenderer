@@ -4,7 +4,7 @@ Project(Asciir)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CheckIPOSupported)
-include("${CMAKE_BINARY_DIR}/conan/conan_paths.cmake")
+include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake")
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -306,6 +306,10 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_TOOLS}
 )
 
+# setup alias library
+
+add_library(${PROJECT_NAME}::${LIBRARY_TARGET_NAME} ALIAS ${LIBRARY_TARGET_NAME})
+
 if(ipo_supported AND NOT ${MSVC})
 set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION_RELWITHDEBINFO TRUE)
@@ -384,16 +388,16 @@ endif()
 set_target_properties(${PROJECT_NAME}
     PROPERTIES
     OUTPUT_NAME ${PROJECT_NAME}
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/Debug-${ARCH}
-    ARCHIVE_OUTPUT_DIRECTORY_INLINEDEBUG ${CMAKE_BINARY_DIR}/bin/InlineDebug-${ARCH}
-    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/Release-${ARCH}
-    ARCHIVE_OUTPUT_DIRECTORY_DEPLOYREL ${CMAKE_BINARY_DIR}/bin/DeployRelease-${ARCH}
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}/bin/Debug-${ARCH}
+    ARCHIVE_OUTPUT_DIRECTORY_INLINEDEBUG ${CMAKE_CURRENT_BINARY_DIR}/bin/InlineDebug-${ARCH}
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR}/bin/Release-${ARCH}
+    ARCHIVE_OUTPUT_DIRECTORY_DEPLOYREL ${CMAKE_CURRENT_BINARY_DIR}/bin/DeployRelease-${ARCH}
 )
 
 
 # Eigen 3
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/eigen)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/modules/eigen)
 
 # SFML
 
@@ -403,9 +407,9 @@ set(SFML_BUILD_GRAPHICS FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_WINDOW FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 set(SFML_BUILD_NETWORK FALSE CACHE BOOL "ASCIIR specific default value" FORCE)
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/SFML SFML)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/SFML SFML)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/SFML/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/modules/SFML/include)
 
 set_property(TARGET sfml-audio PROPERTY FOLDER "modules/SFML")
 set_property(TARGET sfml-main PROPERTY FOLDER "modules/SFML")
@@ -415,7 +419,7 @@ target_link_libraries(${PROJECT_NAME} SFML::Audio)
 
 # CImg
 
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_SOURCE_DIR}/modules/CImg")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/modules/CImg")
 
 # enable png and jpeg support
 target_compile_definitions(${PROJECT_NAME} PUBLIC cimg_use_png cimg_use_jpeg cimg_verbosity=0)
@@ -438,9 +442,9 @@ target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES})
 
 # EThread
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/EThread EThread)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/EThread EThread)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ETHread/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/modules/ETHread/include)
 
 set_property(TARGET EThread PROPERTY FOLDER "modules/EThread")
 
@@ -448,9 +452,9 @@ target_link_libraries(${PROJECT_NAME} EThread)
 
 # ChrTrcProfiler
 
-add_subdirectory(${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler ChrTrcProfiler)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/ChrTrcProfiler ChrTrcProfiler)
 
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_SOURCE_DIR}/modules/ChrTrcProfiler/include)
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/modules/ChrTrcProfiler/include)
 
 set_property(TARGET ChrTrcProfiler PROPERTY FOLDER "modules/ChrTrcProfiler")
 
