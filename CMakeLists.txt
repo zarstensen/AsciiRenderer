@@ -4,7 +4,7 @@ Project(Asciir)
 set(CMAKE_CXX_STANDARD 17)
 
 include(CheckIPOSupported)
-include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake" OPTIONAL)
+include("${CMAKE_CURRENT_SOURCE_DIR}/scripts/ConanInstall.cmake")
 
 # place all predefined target projects into a filter
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -70,6 +70,7 @@ endif()
 option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
 option(ASCIIR_EXAMPLES "build example projects" OFF)
 option(ASCIIR_HIGH_PRECISSION_FLOAT "uses double instead of float as floating point data type (uses more memory)" OFF)
+option(ASCIIR_AUTO_INSTALL_DEPS "Automaticly installs the required packages using conan (requires conan)" OFF)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH "x64")
@@ -375,6 +376,15 @@ $<$<CONFIG:DEPLOYREL>:AR_CORE_LOG_DIR="./logs/core_log.log" AR_CLIENT_LOG_DIR=".
 $<$<BOOL:${ASCIIR_HIGH_PRECISSION_FLOAT}>:AR_HIGH_PRECISSION_FLOAT>)
 
 # packages
+
+# install trhough conan
+
+if(${ASCIIR_AUTO_INSTALL_DEPS})
+    ConanInstall("${CMAKE_CURRENT_BINARY_DIR}/conan")
+endif()
+
+include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake" OPTIONAL)
+
 if(${UNIX})
     find_package(X11 REQUIRED)
     include_directories(${X11_INCLUDE_DIRS})
