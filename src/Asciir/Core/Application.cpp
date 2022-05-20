@@ -40,8 +40,6 @@ namespace Asciir
 
 		m_last_frame_start = m_app_start;
 
-		m_terminal_renderer.update();
-
 		m_render_thread.start();
 
 		// start the main loop

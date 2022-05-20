@@ -5,12 +5,12 @@ namespace Asciir
 {
 	// in order to be able to copy the s
 	template<typename TShader, std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, bool>>
-	void Renderer::submit(const TShader& shader, Transform transform)
+	void Renderer::submit(Ref<TShader> shader, Transform transform)
 	{
 		ShaderData data{ Ref<Shader2D>(shader), transform };
 
 		// calculate visible quad
-		if (shader.size() != TermVert(-1, -1))
+		if (data.shader->size() != TermVert(-1, -1))
 		{
 			// TODO: optimize this if necessary
 			Quad texture_quad = Quad(data.shader->size());

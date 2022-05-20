@@ -308,7 +308,8 @@ namespace TRInterface
 
 		Size2D new_size;
 
-		if (!m_term_resize.isApprox(Size2D(0, 0)))
+		// ignore if resize is 0, 0, or equal to the current size.
+		if (!m_term_resize.isApprox(Size2D(0, 0)) && (!m_term_resize.isApprox(m_tiles.dim()) || !m_resize_first))
 		{
 			new_size = m_term_resize;
 
@@ -316,7 +317,7 @@ namespace TRInterface
 			if(!m_resize_first)
 				m_term_resize = Size2D(0, 0);
 			
-			m_resize_first;
+			m_resize_first = false;
 		}
 		else if (size.x != drawWidth() || size.y != drawHeight())
 		{

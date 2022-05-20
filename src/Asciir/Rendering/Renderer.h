@@ -114,7 +114,7 @@ namespace Asciir
 		static void submit(const Mesh& mesh, Tile tile, Transform transform = NoTransform);
 		/// @brief submits the given shader to the render queue 
 		template<typename TShader, std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, bool> = false>
-		static void submit(const TShader& shader, Transform transform = NoTransform);
+		static void submit(Ref<TShader> shader, Transform transform = NoTransform);
 		/// @brief submits the given tile to the render queue
 		static void submit(TermVert pos, Tile tile);
 		static void submitToQueue(QueueElem new_elem);
