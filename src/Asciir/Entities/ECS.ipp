@@ -2,9 +2,7 @@
 
 namespace Asciir
 {
-	/*
-	* EntityBlueprint definitions
-	*/
+	// ============ EntityBlueprint ============
 	
 	template<typename ...Args>
 	template<typename ...InitArgs, std::enable_if_t<sizeof...(InitArgs) <= sizeof...(Args), bool>>
@@ -35,9 +33,8 @@ namespace Asciir
 		std::get<index>(m_init_values) = arg;
 	}
 
-	/*
-	* System definitions
-	*/
+	// ============ System ============
+
 	template<typename First, typename ...Args, std::enable_if_t<(sizeof...(Args) > 0), bool>>
 	void System::requireComponents()
 	{
@@ -109,9 +106,7 @@ namespace Asciir
 	}
 
 
-    /*
-    * SceneView and ComponentIterator definitions
-    */
+    // ============ SceneView ============
 
 	template<typename ...TComps>
 	SceneView::SceneView(Scene& target_scene)
@@ -125,14 +120,12 @@ namespace Asciir
 		prepare();
 	}
 
-	/*
-	* Scene definitions
-	*/
+	// ============ Scene ============
 
 	template<typename TBlueprint, std::enable_if_t<enable_if_same_template<TBlueprint, EntityBlueprint>::value, bool>>
-	UID Scene::createEntity(const TBlueprint& entity_blueprint)
+	Entity Scene::createEntity(const TBlueprint& entity_blueprint)
 	{
-		UID new_entity = createEntity();
+		Entity new_entity = createEntity();
 
 		if constexpr (std::tuple_size_v<TBlueprint::CompList> > 0)
 		{

@@ -90,17 +90,21 @@ namespace Asciir
     void System::run()
     {
         for (Scene* scene : m_system_scenes)
+            run(scene);
+    }
+
+    void System::run(Scene* scene)
+    {
+        m_active_scene = scene;
+
+        onSceneChange();
+
+        for (ComponentView& view : scene->getView(m_system_components))
         {
-            m_active_scene = scene;
-
-            onSceneChange();
-
-            for (ComponentView& view : scene->getView(m_system_components))
-            {
-                m_active_components = &view;
-                process(*scene);
-            }
+            m_active_components = &view;
+            process(*scene);
         }
+
     }
 
     void System::addScene(Scene& scene)
@@ -260,7 +264,7 @@ namespace Asciir
     * Scene definitions
     */
 
-    UID Scene::createEntity()
+    Entity Scene::createEntity()
     {
         if (m_avaliable_entities.size() == 0)
         {
@@ -269,14 +273,14 @@ namespace Asciir
             for (auto&[_, buffer] : m_components)
                 buffer.grow();
 
-            return m_entity_count - 1;
+            return { m_entity_count - 1, this };
         }
         else
         {
             UID new_uid = m_avaliable_entities.back();
             m_avaliable_entities.pop_back();
 
-            return new_uid;
+            return { new_uid, this };
         }
     }
     
