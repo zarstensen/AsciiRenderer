@@ -148,7 +148,7 @@ namespace Asciir
 			m_components[typeid(TComp)].setSize(m_entity_count);
 		}
 
-		m_components[typeid(TComp)].set(entity_id, component_data);
+		m_components[typeid(TComp)].set<TComp>(entity_id, component_data);
 
 		// set the newly added components entity uid
 		getComponents<TComp>(entity_id).m_entity_id = entity_id;

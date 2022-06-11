@@ -52,7 +52,8 @@ namespace Asciir
     void ComponentBuffer::resize(size_t size)
     {
         for (size_t i = size; i < getSize(); i++)
-            if(hasIndex(i)) remove(i);
+            if(hasIndex(i))
+                remove(i);
         
         setSize(size);
     }
@@ -83,9 +84,7 @@ namespace Asciir
         m_data.erase(begin, end);
     }
 
-    /*
-    * System definitions
-    */
+    // ============ System ============
 
     void System::run()
     {
@@ -99,12 +98,11 @@ namespace Asciir
 
         onSceneChange();
 
-        for (ComponentView& view : scene->getView(m_system_components))
-        {
-            m_active_components = &view;
-            process(*scene);
-        }
-
+            for (auto& view : scene->getView(m_system_components))
+            {
+                m_active_components = &view;
+                process(*scene);
+            }
     }
 
     void System::addScene(Scene& scene)
@@ -129,24 +127,22 @@ namespace Asciir
         m_system_scenes.erase(&scene);
     }
 
-    /*
-   * SceneView and ComponentIterator definitions
-   */
+    // ============ SceneView and ComponentIterator definitions ============
 
     SceneView::SceneView(Scene& target_scene)
         : m_scene(target_scene) {}
 
-    typename SceneView::ComponentIterator SceneView::begin()
+    typename ComponentIterator SceneView::begin()
     {
-        return ComponentIterator(*this);
+        return ComponentIterator(this);
     }
 
-    typename SceneView::ComponentIterator SceneView::end()
+    typename ComponentIterator SceneView::end()
     {
         if (m_target_component_buffer.index() == 1)
-            return ComponentIterator(*this, m_scene.componentCount(std::get<std::type_index>(m_target_component_buffer)));
+            return ComponentIterator(this, m_scene.componentCount(std::get<std::type_index>(m_target_component_buffer)));
         else
-            return ComponentIterator(*this, 0);
+            return ComponentIterator(this, 0);
     }
 
     void SceneView::prepare()
@@ -176,65 +172,66 @@ namespace Asciir
 
     }
 
-    SceneView::ComponentIterator::ComponentIterator(SceneView& scene_view, size_t start_index)
+   ComponentIterator::ComponentIterator(SceneView* scene_view, size_t start_index)
         : m_scene_view(scene_view), m_current_index(start_index)
     {
         findNextEntity();
     }
 
-    typename SceneView::ComponentIterator& SceneView::ComponentIterator::operator++()
+    ComponentIterator& ComponentIterator::operator++()
     {
         m_current_index++;
         findNextEntity();
         return *this;
     }
 
-    typename SceneView::ComponentIterator SceneView::ComponentIterator::operator++(int)
+    ComponentIterator ComponentIterator::operator++(int)
     {
         ComponentIterator prev = *this;
 
-        ++* this;
-
+        if(&m_scene_view->m_scene)
+            ++* this;
+       
         return prev;
     }
 
 
-    typename SceneView::ComponentIterator::reference SceneView::ComponentIterator::operator*()
+    ComponentIterator::reference ComponentIterator::operator*()
     {
         return m_component_view;
     }
 
-    bool SceneView::ComponentIterator::operator==(const ComponentIterator& other) const
+    bool ComponentIterator::operator==(const ComponentIterator& other) const
     {
         return m_current_index == other.m_current_index;
     }
 
-    bool SceneView::ComponentIterator::operator!=(const ComponentIterator& other) const
+    bool ComponentIterator::operator!=(const ComponentIterator& other) const
     {
         return !(*this == other);
     }
 
     // returns whether an entity was found in front of the current index, that contains all the required components.
     // m_current_index will automaticly be updated in the function
-    bool SceneView::ComponentIterator::findNextEntity()
+    bool ComponentIterator::findNextEntity()
     {
-        if (m_scene_view.m_target_component_buffer.index() == 1) // only find the next entity, if all required components exists
+        if (m_scene_view->m_target_component_buffer.index() == 1) // only find the next entity, if all required components exists
         {
-            std::type_index component_buffer = std::get<std::type_index>(m_scene_view.m_target_component_buffer);
+            std::type_index component_buffer = std::get<std::type_index>(m_scene_view->m_target_component_buffer);
 
             Component* target_component = nullptr;
             bool found_entity = false;
 
             // increment index until an entity with all the passed components is found or the end of the component buffer is reached
-            while (m_current_index < m_scene_view.m_scene.componentCount(component_buffer))
+            while (m_current_index < m_scene_view->m_scene.componentCount(component_buffer))
             {
-                target_component = &m_scene_view.m_scene.getComponentIndexed(m_current_index, component_buffer);
+                target_component = &m_scene_view->m_scene.getComponentIndexed(m_current_index, component_buffer);
 
                 found_entity = true;
 
-                for (std::type_index component : m_scene_view.m_required_components)
+                for (std::type_index component : m_scene_view->m_required_components)
                 {
-                    if (!m_scene_view.m_scene.hasComponent(target_component->getEntUID(), component))
+                    if (!m_scene_view->m_scene.hasComponent(target_component->getEntUID(), component))
                     {
                         found_entity = false;
                     }
@@ -248,9 +245,9 @@ namespace Asciir
             // fill m_components with the current entities components only if the iterator is not an past the end iterator.
             if (found_entity)
             {
-                for (std::type_index component : m_scene_view.m_required_components)
+                for (std::type_index component : m_scene_view->m_required_components)
                 {
-                    m_component_view.set(component, m_scene_view.m_scene.getComponent(target_component->getEntUID(), component));
+                    m_component_view.set(component, m_scene_view->m_scene.getComponent(target_component->getEntUID(), component));
                 }
             }
 
@@ -260,9 +257,9 @@ namespace Asciir
         return false;
     }
 
-    /*
-    * Scene definitions
-    */
+
+
+    // ============ Scene definitions ============
 
     Entity Scene::createEntity()
     {
@@ -286,7 +283,7 @@ namespace Asciir
     
     void Scene::destroyEntity(UID entity_id)
     {
-        for (auto[_,buffer] : m_components)
+        for (auto&[_,buffer] : m_components)
         {
             if (buffer.hasIndex(entity_id))
                 buffer.remove(entity_id);
@@ -296,7 +293,7 @@ namespace Asciir
         {
             m_entity_count--;
 
-            for (auto[_,buffer] : m_components)
+            for (auto&[_,buffer] : m_components)
                 buffer.shrink();
         }
         else

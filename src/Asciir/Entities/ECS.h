@@ -113,7 +113,7 @@ namespace Asciir
 		UID getEntUID() {
 		#ifdef AR_DEBUG
 			UID last = m_components.begin()->second->getEntUID();
-			for (auto [_, comp] : m_components)
+			for (auto& [_, comp] : m_components)
 				AR_ASSERT_MSG(last == comp->getEntUID(), "getEntUID was called with midex entity id's\nID1: ", last, "\nID2:", comp->getEntUID());
 		#endif
 
@@ -131,8 +131,8 @@ namespace Asciir
 		{
 		#ifdef AR_DEBUG
 			UID last = m_components.begin()->second->getEntUID();
-			for (auto [_, comp] : m_components)
-				AR_ASSERT_MSG(last == comp->getEntUID(), "get was called with midex entity id's\nID1: ", last, "\nID2:", comp->getEntUID());
+			for (auto& [_, comp] : m_components)
+				AR_ASSERT_MSG(last == comp->getEntUID(), "get was called with mixed entity id's\nID1: ", last, "\nID2:", comp->getEntUID());
 
 			AR_ASSERT_MSG(m_components.find(component) != m_components.end(), "ComponentView does not contain a component with the type: ", component.name());
 		#endif
@@ -296,7 +296,7 @@ namespace Asciir
 		// stores a pointer for each component currently being processed.
 		ComponentView* m_active_components = nullptr;
 		// UID for entity currently being processed
-		UID m_active_entity;
+		UID m_active_entity = INVALID_ENTITY_UID;
 		// stores a pointer to the current scene being processed
 		Scene* m_active_scene = nullptr;
 	};
@@ -307,12 +307,55 @@ namespace Asciir
 	public:
 		ComponentBuffer(size_t data_size = 0) : m_data_size(data_size) {}
 
+		/// @brief retrieves a component using the entity index in the scene.
+		/// this method maps the passed index to the corresponding component buffer index using a sparse map.
 		uint8_t* get(size_t indx);
 		uint8_t* unmappedGet(size_t indx);
 
 		void remove(size_t indx);
-		// if a component already is stored at the current index, it is overwritten
+		
+		/// @brief sets the component at indx to the value of data.
+		/// if a component already is stored at the current index, it is overwritten
+		/// 
+		/// @note data is copied as a raw byte array,
+		/// meaning if any special operation is requeredfor the copmonent type on a copy,
+		/// it will not perform it, as the copy constructor will not be called.
+		/// 
+		/// For an alternative see set<TComp>, which fixes this issue.
+		/// 
+		/// @see set<TComp>
 		void set(size_t indx, uint8_t* data);
+
+		/// @brief sets the component data at the passed index, and makes sure the data passed is copied using the copy constructor of TComp.
+		/// @see set
+		template<typename TComp>
+		void set(size_t indx, const TComp& data)
+		{
+			if (!hasIndex(indx))
+			{
+				m_data.reserve(m_data.size() + m_data_size + sizeof(size_t));
+
+				// TODO: is this needed?
+
+				m_data.insert(m_data.end(), m_data_size, 0);
+
+				// copy construct a new TComp object inside the raw component buffer, using placement new
+				new (m_data.data() + dataLength() * (m_data_size + sizeof(size_t))) TComp(data);
+
+				// finaly, update the sparse map and the entity ID of the data buffer.
+				m_data.insert(m_data.end(), (uint8_t*)&indx, (uint8_t*)&indx + sizeof(size_t));
+
+				m_sparse_map[indx] = dataLength() - 1;
+
+			}
+			else
+			{
+				// in the case the index exists, get the position of it in the buffer, and copy the data into to the desired position
+				auto begin = m_data.begin() + mapIncoming(indx) * (m_data_size + sizeof(size_t));
+
+				*(TComp*)(m_data.data() + mapIncoming(indx) * (m_data_size + sizeof(size_t))) = data;
+			}
+		}
 
 		// set the size of the sparse map without affecting the size of the data array
 		void setSize(size_t size);
@@ -351,6 +394,8 @@ namespace Asciir
 		std::vector<size_t> m_sparse_map;
 	};
 	
+	class ComponentIterator;
+
 	/// @brief iterable class that lets you loop over all entities in a specific scene containing specific components [TComps]
 	/// begin() and end() returns an ComponentIterator class
 	/// the iterator will not be usable after the scenes components have been modified
@@ -381,34 +426,6 @@ namespace Asciir
 		/// will automaticly be called if a SceneView constructor adds components
 		void prepare();
 
-		/// @brief class for iterating over entities containing specific components
-		class ComponentIterator
-		{
-		public:
-			using iterator_category = std::forward_iterator_tag;
-			using value_type = ComponentView;
-			using difference_type = std::ptrdiff_t;
-			using pointer = value_type*;
-			using reference = value_type&;
-
-			ComponentIterator(SceneView& scene_view, size_t start_index = 0);
-
-			ComponentIterator& operator++();
-			ComponentIterator operator++(int);
-			bool operator==(const ComponentIterator& other) const;
-			bool operator!=(const ComponentIterator& other) const;
-			reference operator*();
-
-		protected:
-
-			bool findNextEntity();
-
-			size_t m_current_index = 0;
-			// what component buffer should be iterated over
-			SceneView& m_scene_view;
-			value_type m_component_view;
-		};
-
 		ComponentIterator begin();
 		ComponentIterator end();
 
@@ -417,6 +434,36 @@ namespace Asciir
 		std::set<std::type_index> m_required_components;
 		Scene& m_scene;
 
+		friend ComponentIterator;
+
+	};
+
+	/// @brief class for iterating over entities containing specific components
+	class ComponentIterator
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using value_type = ComponentView;
+		using difference_type = std::ptrdiff_t;
+		using pointer = value_type*;
+		using reference = value_type&;
+
+		ComponentIterator(SceneView* scene_view, size_t start_index = 0);
+
+		ComponentIterator& operator++();
+		ComponentIterator operator++(int);
+		bool operator==(const ComponentIterator& other) const;
+		bool operator!=(const ComponentIterator& other) const;
+		reference operator*();
+
+	protected:
+
+		bool findNextEntity();
+
+		size_t m_current_index = 0;
+		// what component buffer should be iterated over
+		SceneView* m_scene_view;
+		value_type m_component_view;
 	};
 
 	class Entity;
@@ -551,11 +598,11 @@ namespace Asciir
 
 	};
 
-	/// @brief the entity class responsible for managing a single entity and information handling to its scene
+	/// @brief the Entity class responsible for managing a single entity and its copmonents.
 	/// the primary purpose of this class is to avoid constantly having to refrence the scene an entity is tied to, when adding, removing and retrieving components.
 	/// 
 	/// this means that functions like Scene::addComponents has an equivalent Entity::add, which does exactly the same as the former function.
-	/// However, the scene does not have to be specified, as the Entity class also stores which scene the entity is tied to.
+	/// However, the scene does not have to be specified, as the Entity class also stores which Scene the entity is tied to.
 	/// 
 	class Entity
 	{
@@ -587,7 +634,7 @@ namespace Asciir
 			}
 		}
 
-		template<typename TComp, typename ... Rest, std::enable_if_t<(sizeof...(Rest) > 0), bool> = false>
+		template<typename TComp, typename ... Rest>
 		void add()
 		{
 			m_scene->addComponents<TComp, Rest...>(getID());
@@ -618,11 +665,13 @@ namespace Asciir
 			m_scene = nullptr;
 		}
 
-		/// @return returns the id of the entity,
+		/// @return returns the id of the entity.
 		UID getID() { return m_id; }
 
 		/// @return returns the scene that the entity is tied to.
 		Scene* getScene() { return m_scene; }
+
+		operator bool() { return m_id != INVALID_ENTITY_UID && m_scene != nullptr; }
 
 	protected:
 		Entity(UID id, Scene* scene)

@@ -229,7 +229,7 @@ namespace Asciir
 				/// @brief the buffer size of the TerminalRenderer
 				size_t buffer_size;
 
-				TerminalProps(const std::string& title = "Asciir App", TermVert size = { 0, 0 }, size_t buffer_size = 1024ULL * 512ULL)
+				TerminalProps(const std::string& title = "Asciir App", TermVert size = { 0, 0 }, size_t buffer_size = 1024ULL * 1024ULL * 128ULL)
 					: title(title), size(size), buffer_size(buffer_size)
 				{}
 			};
