@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: [Debug, Release, DeployRel]
+        build_type: [Debug, Release]
         arch: [x64, x86]
 
     steps:
