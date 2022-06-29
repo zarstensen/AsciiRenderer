@@ -16,12 +16,14 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: true
-    - name: vcpkg install dependencies
-      uses: lukka/run-vcpkg@v10.2
-      with:
-        vcpkgJsonGlob: '**/vcpkg.json'
-        runVcpkgInstall: true
-        vcpkgDirectory: '${{ github.workspace }}/modules/vcpkg'
+    - name: get conan
+      uses: turtlebrowser/get-conan@v1.0
+     
+    - name: configure profile
+      run: conan profile new default --detect && conan profile update settings.compiler.libcxx=libstdc++20 default
+      
+    - name: install dependencies
+      run: conan install . -s build_type=${{env.BUILD_TYPE}} --install-folder=${{github.workspace}}/build/conan --build missing
       
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}} -DWIN32=${{matrix.arch == 'x86'}}
