@@ -21,11 +21,13 @@ namespace Asciir
 		Component(UID uid = INVALID_ENTITY_UID)
 			: m_entity_id(uid) {}
 
+		/// @brief retrieve the id of the entity this component is tied to
 		UID getEntUID() const { return m_entity_id; }
 
 		// cast operator to implicitly cast when adding a component to a component buffer
 		operator uint8_t*() { return (uint8_t*) this; }
 
+		/// @brief check if the components are of the same type, and are tied to the same entity
 		bool operator==(const Component & other) { return typeid(this) == typeid(other) && getEntUID() == other.getEntUID(); }
 
 	protected:
@@ -309,10 +311,36 @@ namespace Asciir
 
 		/// @brief retrieves a component using the entity index in the scene.
 		/// this method maps the passed index to the corresponding component buffer index using a sparse map.
-		uint8_t* get(size_t indx);
+		uint8_t* get(UID indx);
+		/// @brief retrieves a component from the component buffer at the passed index.
+		/// this should rarely be called by an external source file, instead use get(UID).
 		uint8_t* unmappedGet(size_t indx);
 
+		/// @brief erase the component data at the component buffer index.
+		/// if the destructor sohuld be called, use remove<TComp>(size_t).
 		void remove(size_t indx);
+
+		/// @brief erase the component data at the component buffer index, and call ~TComp() on the data.
+		template<typename TComp>
+		void remove(size_t indx)
+		{
+			AR_ASSERT_MSG(sizeof(TComp) == m_data_size, "Size of TComp must be equal to the datasize. (is TComp not the type actually stored in the component buffer?)");
+
+			// offset all indexes past the element to the left in the sparse map
+			for (size_t i = mapIncoming(indx) + 1; i < dataLength(); i++)
+				m_sparse_map[mapOutgoing(i)]--;
+
+			size_t offset = mapIncoming(indx) * (m_data_size + sizeof(size_t));
+
+			// remove the component from component data vector
+			auto begin = m_data.begin() + offset;
+			auto end = begin + (m_data_size + sizeof(size_t));
+
+			// destruct data as a TComp class.
+			(TComp*)(m_data.data() + offset)->~TComp();
+
+			m_data.erase(begin, end);
+		}
 		
 		/// @brief sets the component at indx to the value of data.
 		/// if a component already is stored at the current index, it is overwritten
@@ -331,6 +359,8 @@ namespace Asciir
 		template<typename TComp>
 		void set(size_t indx, const TComp& data)
 		{
+			AR_ASSERT_MSG(sizeof(TComp) == m_data_size, "Size of TComp must be equal to the datasize. (is TComp not the type actually stored in the component buffer?)");
+
 			if (!hasIndex(indx))
 			{
 				m_data.reserve(m_data.size() + m_data_size + sizeof(size_t));
@@ -357,32 +387,33 @@ namespace Asciir
 			}
 		}
 
-		// set the size of the sparse map without affecting the size of the data array
+		/// @brief set the size of the sparse map without affecting the size of the data array
 		void setSize(size_t size);
-		// gets the size of the sparse map
+		/// @brief gets the size of the sparse map
 		size_t getSize() { return m_sparse_map.size(); }
 
-		// increases the size by amount
+		/// @brief increases the size of the sparse map by amount
 		void grow(size_t amount = 1) { setSize(getSize() + amount); }
-		// decreases the size by amount
+		/// @brief decreases the size of the sparse map by amount
 		void shrink(size_t amount = 1) { AR_ASSERT(amount <= getSize()); resize(getSize() - amount); }
 
-		// sets the size of the sparse map and removes any elements not instide the new size
+		/// @brief sets the size of the sparse map and removes any elements not instide the new size
 		void resize(size_t size);
 
-		// gets the number of components currently stored in the component buffer
+		/// @brief gets the number of components currently stored in the component buffer
 		size_t dataLength() { return m_data.size() / (m_data_size + sizeof(size_t)); }
 
 
-		// check wether the index passed has an element associated with the ComponentBuffer
+		/// @brief check wether the index passed has an element associated with the ComponentBuffer
 		bool hasIndex(size_t indx);
 
-		// maps an incomming index using the sparse map
-		size_t mapIncoming(size_t indx) { return m_sparse_map[indx]; }
+		/// @brief maps an incomming index using the sparse map
+		size_t mapIncoming(UID indx) { return m_sparse_map[indx]; }
 		
-		// maps an index relative to m_data to the sparse_map
-		size_t mapOutgoing(size_t indx);
+		/// @brief maps an index relative to m_data to the sparse_map
+		UID mapOutgoing(size_t indx);
 
+		/// @brief same as get(indx);
 		uint8_t* operator[](size_t indx) { return get(indx); }
 
 	protected:

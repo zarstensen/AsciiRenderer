@@ -8,7 +8,7 @@ namespace Asciir
     * ComponentBuffer definitions
     */
 
-    uint8_t* ComponentBuffer::get(size_t indx)
+    uint8_t* ComponentBuffer::get(UID indx)
     {
         AR_ASSERT_MSG(hasIndex(indx), "Invalid index was passed: ", indx, "\nSize: ", getSize(), "\nData length", dataLength());
         return unmappedGet(mapIncoming(indx));

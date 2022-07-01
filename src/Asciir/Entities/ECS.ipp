@@ -177,7 +177,7 @@ namespace Asciir
 
 		AR_ASSERT_MSG(m_components[typeid(TComp)].hasIndex(entity_id), "cannot remove component if it has not been added\nEntity UID: ", entity_id);
 
-		m_components[typeid(TComp)].remove(entity_id);
+		m_components[typeid(TComp)].remove<TComp>(entity_id);
 	}
 
 	template<typename TComp, typename ...Args, std::enable_if_t<(sizeof...(Args) > 0), bool>>
