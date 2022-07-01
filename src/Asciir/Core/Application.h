@@ -4,6 +4,7 @@
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
+#include "Asciir/Entities/ECS.h"
 #include "LayerStack.h"
 
 #include <ETH.h>
@@ -83,6 +84,19 @@ namespace Asciir
 		/// @param overlay overlay to be popped
 		void popOverlay(Layer* overlay);
 		
+		/// @brief sets the currently active scene.
+		/// @note if the previous active scene have no other strong refs, it will be destroyed. 
+		void setScene(Ref<Scene> scene)
+		{
+			m_scene = scene;
+		}
+
+		/// @brief gets the currently active scene.
+		Ref<Scene> getScene()
+		{
+			return m_scene;
+		}
+
 		/// @brief sets the passed app as the main asciir application
 		/// @param app app to be loaded
 		static void load(ARApp* app);
@@ -102,6 +116,21 @@ namespace Asciir
 		/// stops the main loop
 		/// @return true if exit success
 		bool onTerminalClose(TerminalClosedEvent& e);
+
+		/// @brief the currently active scene, that all entities created will be tied to.
+		/// starts out with a default scene, containing no entities.
+		Ref<Scene> m_scene = Scene();
+
+		/// @brief all systems that should be tied to the active scene.
+		/// these should be independent on the currently active scene, and should not be modified, only because of a scene change.
+		/// 
+		/// starts out containing these systems:
+		/// > RenderSystem
+		/// > NativeScriptSystem
+		/// > LuaScriptSystem
+		/// 
+		/// more systems can be developed and added by the user.
+		std::set<Ref<System>> m_systems = { RenderSystem(), NativeScriptSystem() };
 
 		/// @brief used to handle the terminal
 		/// used to handle rendering to the terminal and event handling for terminal specific events
