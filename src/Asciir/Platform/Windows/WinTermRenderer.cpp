@@ -298,12 +298,19 @@ namespace TRInterface
 
 	void WinTerminalRenderer::flushBuffer()
 	{
-		m_buffer.swapCBuffer();
-		
-		// the two buffers should not have different fonts, so make sure they are the same here.
-		if (m_font_size != getFont().second)
-			setFont(getFont().first, m_font_size);
+		CT_MEASURE_N("BUFFER FLUSH");
 
+		{
+			CT_MEASURE_N("BUFFER SWAP");
+			m_buffer.swapCBuffer();
+		}
+
+		{
+			CT_MEASURE_N("FONT SYNC");
+			// the two buffers should not have different fonts, so make sure they are the same here.
+			if (m_font_size != getFont().second)
+				setFont(getFont().first, m_font_size);
+		}
 	}
 }
 }

@@ -13,6 +13,9 @@ namespace Asciir
 	typedef float Real;
 #endif
 
+	/// @brief alias for the underlying file path data type
+	typedef std::filesystem::path Path;
+
 	/// @brief class for holding a smart pointer to an object.
 	/// 
 	///	automaticly sets up an shared pointer depending on the passed arguments, so there is no need to worry about the construction of a shared pointer.

@@ -173,7 +173,7 @@ namespace Asciir
 		static void clear(Tile tile = Tile(BLACK8, WHITE8, ' '));
 		/// @brief resizes the terminal to the given size.
 		static void resize(Size2D size);
-		/// @brief retrieves the current size of the terminal, for the previously rendered fram size, see lastSize()
+		/// @brief retrieves the current size of the terminal, for the previously rendered frame size, see lastSize()
 		static Size2D size();
 		/// @brief retrieves the maximum possible size of the terminal, for the current font configuration.
 		static Size2D maxSize() { return s_renderer->maxSize(); }

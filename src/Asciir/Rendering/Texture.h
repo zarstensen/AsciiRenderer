@@ -113,8 +113,6 @@ namespace Asciir
 		TermVert m_tiled_size = {-1, -1};
 	};
 
-	typedef std::filesystem::path Path;
-
 	static constexpr std::array<uint32_t, 0x100> XP_FONT_MAP = {
 	160,
 	9786,

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.1.0)
+Project(Asciir VERSION 0.1.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -127,11 +127,15 @@ set(HEADER_DIR_CORE
 
 set(HEADER_DIR_ENTITIES
     src/Asciir/Entities/ECS.h
+    src/Asciir/Entities/Systems.h
+    src/Asciir/Entities/Components.h
 )
 
 set(SRC_DIR_ENTITIES
     src/Asciir/Entities/ECS.cpp
     src/Asciir/Entities/ECS.ipp
+    src/Asciir/Entities/Systems.cpp
+    src/Asciir/Entities/Components.h
 )
 
 set(DIR_EVENT
@@ -322,9 +326,12 @@ if(MSVC)
 
     set_target_properties(${PROJECT_NAME} PROPERTIES test "$<$<CONFIG:INLINEDEB>:DEBUG> $<$<CONFIG:DEPLOYREL>:RELEASE>")
 
-    # set warning level
 
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /external:anglebrackets /external:W0 $<$<CONFIG:DEPLOYREL>:/WX>)
+    # set conformance mode ot permissive (sfml requires this)
+    target_compile_options(${PROJECT_NAME} PUBLIC /permissive)
+    
+    # set warning level
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /external:anglebrackets /external:W0 $<$<CONFIG:DEPLOYREL>:/WX> /permissive)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
