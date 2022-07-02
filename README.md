@@ -17,7 +17,7 @@
 
 The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the console as its window. It makes use of ANSI control sequences in order to control the terminal.
 
-Displaying graphics in the terminal can often be very trivial as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
+Displaying graphics in the terminal can often be very inconvenient, as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
 ## Examples (More coming soon)
 here are some demo projects build with Asciir, see the examples folder for more examples.
