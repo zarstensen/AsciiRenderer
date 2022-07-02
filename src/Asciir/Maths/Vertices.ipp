@@ -160,7 +160,7 @@ namespace Asciir
 
 	template<typename T, size_t d, size_t n>
 	s_arVertices<T, d, n>::s_arVertices(const Eigen::Vector<arVertex<T, d>, n>& other)
-		: Eigen::VectorX<arVertex<T, d>>(other) {}
+		: Eigen::Vector<arVertex<T, d>, n>(other) {}
 
 	template<typename T, size_t d, size_t n>
 	template<typename TOther>

@@ -157,7 +157,7 @@ namespace Asciir
 
 	void Renderer::submitRect(s_Coords<2> verts, Tile tile)
 	{
-		Mesh rect = Mesh({ verts[0], {verts[1].x, verts[0].y }, verts[1], {verts[0].x, verts[1].x} });
+		Mesh rect = Mesh({ verts[0], {verts[1].x, verts[0].y }, verts[1], {verts[0].x, verts[1].y} });
 
 		submit(rect, tile);
 	}
