@@ -50,6 +50,8 @@ simply displays three yellow triangles that move and rotate on the screen. The f
 
 ## Getting Started
 
+Currently, Asciir only works on the Windows platform, however cross platform support is planned to be implemented some time in the future.
+
 if using ASCIIR_CONAN_AUTO_INSTALL, conan is required
 * Conan
   ```
@@ -338,6 +340,7 @@ the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir
 
 - [ ] Implement a tree based entity structure (like godot)
 - [ ] Create a Texture editor
+- [ ] Cross platform support
 - [ ] Graphical User interface tools (widgets and stuff)
 - [ ] Create a Game Engine editor
 
