@@ -25,12 +25,11 @@ here are some demo projects build with Asciir, see the examples folder for more 
 ### TriangleExample
 
 simply displays three yellow triangles that move and rotate on the screen. The framerate is displayed as the title.  
-![image](resources/TextureExampleGif.gif)
+![image][TriangleExampleGif]
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-#
 
 ### Built With
 
@@ -44,12 +43,10 @@ simply displays three yellow triangles that move and rotate on the screen. The f
   - [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) (reading jpg files)
 
 - My projects
-  - [EThread]("https://github.com/karstensensensen/EThread")
-  - [ChrTrcProfiler]("https://github.com/karstensensensen/ChrTrcProfiler") (visual profiling)
+  - [EThread](https://github.com/karstensensensen/EThread)
+  - [ChrTrcProfiler](https://github.com/karstensensensen/ChrTrcProfiler) (visual profiling)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-#
 
 ## Getting Started
 
@@ -294,9 +291,6 @@ More tutorials will come in the future, in the meantime checkout the codebase re
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-#
-
 ## CMake
 
 The following variables are exposed and are initialized with the displayed default values.
@@ -327,8 +321,6 @@ automaticly installs all the dependencies using the Conan package manager. (cona
 
 the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
 
-#
-
 ## Roadmap
 
 ### near future
@@ -351,17 +343,15 @@ the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-#
-
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-#
-
 ## Acknowledgments
 
 This game engine was built with the help of [The Cherno's game engine series](https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT). I highly recommend it as a good starting point for creating your very own game engine!
+
+<!-- References -->
+[TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
