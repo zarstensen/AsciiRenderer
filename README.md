@@ -30,7 +30,6 @@ simply displays three yellow triangles that move and rotate on the screen. The f
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-#
 
 ### Built With
 
@@ -48,8 +47,6 @@ simply displays three yellow triangles that move and rotate on the screen. The f
   - [ChrTrcProfiler]("https://github.com/karstensensensen/ChrTrcProfiler") (visual profiling)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-#
 
 ## Getting Started
 
@@ -294,9 +291,6 @@ More tutorials will come in the future, in the meantime checkout the codebase re
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-#
-
 ## CMake
 
 The following variables are exposed and are initialized with the displayed default values.
@@ -327,8 +321,6 @@ automaticly installs all the dependencies using the Conan package manager. (cona
 
 the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
 
-#
-
 ## Roadmap
 
 ### near future
@@ -351,16 +343,11 @@ the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
-#
-
 ## License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-#
 
 ## Acknowledgments
 
