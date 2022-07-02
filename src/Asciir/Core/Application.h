@@ -130,7 +130,7 @@ namespace Asciir
 		/// > LuaScriptSystem
 		/// 
 		/// more systems can be developed and added by the user.
-		std::set<Ref<System>> m_systems = { RenderSystem(), NativeScriptSystem() };
+		std::set<Ref<System>> m_systems;
 
 		/// @brief used to handle the terminal
 		/// used to handle rendering to the terminal and event handling for terminal specific events
