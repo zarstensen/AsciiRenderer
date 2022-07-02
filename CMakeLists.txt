@@ -127,15 +127,11 @@ set(HEADER_DIR_CORE
 
 set(HEADER_DIR_ENTITIES
     src/Asciir/Entities/ECS.h
-    src/Asciir/Entities/Systems.h
-    src/Asciir/Entities/Components.h
 )
 
 set(SRC_DIR_ENTITIES
     src/Asciir/Entities/ECS.cpp
     src/Asciir/Entities/ECS.ipp
-    src/Asciir/Entities/Systems.cpp
-    src/Asciir/Entities/Components.h
 )
 
 set(DIR_EVENT
