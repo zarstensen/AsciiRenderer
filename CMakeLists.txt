@@ -453,6 +453,14 @@ find_package(ZLIB REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC ${ZLIB_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES})
 
+# FastNoise2
+
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/modules/FastNoise2")
+
+set(FASTNOISE2_NOISETOOL OFF CACHE BOOL INTERNAL "")
+
+target_link_libraries(${PROJECT_NAME} FastNoise)
+
 # EThread
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/modules/EThread EThread)

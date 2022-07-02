@@ -20,3 +20,6 @@
 	path = modules/zlib
 	url = https://github.com/madler/zlib.git
 
+[submodule "modules/FastNoise2"]
+	path = modules/FastNoise2
+	url = https://github.com/Auburn/FastNoise2.git
