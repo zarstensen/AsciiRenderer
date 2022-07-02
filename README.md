@@ -43,8 +43,8 @@ simply displays three yellow triangles that move and rotate on the screen. The f
   - [libjpeg-turbo](https://github.com/libjpeg-turbo/libjpeg-turbo) (reading jpg files)
 
 - My projects
-  - [EThread]("https://github.com/karstensensensen/EThread")
-  - [ChrTrcProfiler]("https://github.com/karstensensensen/ChrTrcProfiler") (visual profiling)
+  - [EThread](https://github.com/karstensensensen/EThread)
+  - [ChrTrcProfiler](https://github.com/karstensensensen/ChrTrcProfiler) (visual profiling)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
