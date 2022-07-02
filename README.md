@@ -4,7 +4,9 @@
 
 <div id="top"></div>
 
+
 ![image][AsciirBanner]
+![GitHub Actions CI](https://github.com/karstensensensen/AsciiRenderer/actions/workflows/windows_cmake.yml/badge.svg "GitHub Actions CI")
 
 - [Ascii Renderer](#ascii-renderer)
   - [Examples (More coming soon)](#examples-more-coming-soon)
