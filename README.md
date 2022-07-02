@@ -17,7 +17,7 @@
 
 The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the console as its window. It makes use of ANSI control sequences in order to control the terminal.
 
-Displaying graphics in the terminal can often be very trivial as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
+Displaying graphics in the terminal can often be very inconvenient, as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
 ## Examples (More coming soon)
 here are some demo projects build with Asciir, see the examples folder for more examples.
@@ -31,7 +31,7 @@ simply displays three yellow triangles that move and rotate on the screen. The f
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-### Built With
+## Built With
 
 - 3rd party
   - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) (linear algebra)
@@ -49,6 +49,8 @@ simply displays three yellow triangles that move and rotate on the screen. The f
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Getting Started
+
+Currently, Asciir only works on the Windows platform, however cross platform support is planned to be implemented some time in the future.
 
 if using ASCIIR_CONAN_AUTO_INSTALL, conan is required
 * Conan
@@ -338,6 +340,7 @@ the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir
 
 - [ ] Implement a tree based entity structure (like godot)
 - [ ] Create a Texture editor
+- [ ] Cross platform support
 - [ ] Graphical User interface tools (widgets and stuff)
 - [ ] Create a Game Engine editor
 
