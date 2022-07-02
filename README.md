@@ -31,7 +31,7 @@ simply displays three yellow triangles that move and rotate on the screen. The f
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-### Built With
+## Built With
 
 - 3rd party
   - [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) (linear algebra)
