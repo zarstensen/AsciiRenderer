@@ -25,7 +25,7 @@ here are some demo projects build with Asciir, see the examples folder for more 
 ### TriangleExample
 
 simply displays three yellow triangles that move and rotate on the screen. The framerate is displayed as the title.  
-![image](resources/TextureExampleGif.gif)
+![image][TriangleExampleGif]
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -365,3 +365,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Acknowledgments
 
 This game engine was built with the help of [The Cherno's game engine series](https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT). I highly recommend it as a good starting point for creating your very own game engine!
+
+<!-- References -->
+[TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
