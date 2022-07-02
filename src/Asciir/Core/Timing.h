@@ -45,9 +45,9 @@ namespace Asciir
 		duration durr() { return m_time; }
 
 		/// @brief cast operator for the underlying chrono duratino datatype
-		operator duration() { return m_time; }
+		explicit operator duration() { return m_time; }
 		/// @brief cast operator for the Real datatype, final value is in seconds
-		explicit operator Real() const { return seconds(); }
+		operator Real() const { return seconds(); }
 		/// @brief cast operator for integer data types, final value is in nano seconds
 		explicit operator long long() const { return nanoSeconds(); }
 
