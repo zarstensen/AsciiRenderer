@@ -4,8 +4,11 @@
 
 <div id="top"></div>
 
+![image][AsciirBanner]
+
 - [Ascii Renderer](#ascii-renderer)
   - [Examples (More coming soon)](#examples-more-coming-soon)
+  - [Built With](#built-with)
   - [Getting Started](#getting-started)
   - [Usage](#usage)
   - [CMake](#cmake)
@@ -358,3 +361,4 @@ This game engine was built with the help of [The Cherno's game engine series](ht
 
 <!-- References -->
 [TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
+[AsciirBanner]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif
