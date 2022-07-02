@@ -1,4 +1,4 @@
-name: Windowwwwws build
+name: Windows build
 
 on: [ push, pull_request ]
 
