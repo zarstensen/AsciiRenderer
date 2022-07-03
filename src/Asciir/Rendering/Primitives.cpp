@@ -23,8 +23,6 @@ namespace Asciir
     bool Quad::isInsideGrid(Coord coord, Transform& transform, Real resolution) const
     {
         // simply create a new quad which is fitted to a grid corresponding to the resolution
-        // TODO: remove this extra quad
-        Quad grid_quad(Coord(ceil(size.x, resolution), floor(size.y, resolution)), Coord(floor(offset.x, resolution), ceil(offset.y, resolution)));
 
         coord = transform.reverseTransformGrid(coord, resolution) - offset;
         coord.x = round(coord.x, resolution) + (Real)0.5;

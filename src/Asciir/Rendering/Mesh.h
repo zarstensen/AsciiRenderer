@@ -30,6 +30,7 @@ namespace Asciir
 		/// afterwards the result is re-offset from the cell origin to the cell index. The result is not rounded.
 		Coord applyTransformGrid(Coord vec, Real resolution = 1)
 		{
+			// TODO: does this work?
 			//return applyTransform(vec.array() + resolution / 2).array() - resolution / 2;
 			return applyTransform(vec).floor(resolution);
 		}
@@ -39,6 +40,7 @@ namespace Asciir
 		/// @see applyTransformGrid
 		Coord reverseTransformGrid(Coord vec, Real resolution = 1)
 		{
+			// TODO: does this work?
 			//return reverseTransform(vec.array() + resolution / 2).round(resolution).array() - resolution / 2;
 			return reverseTransform(vec).floor(resolution);
 		}
