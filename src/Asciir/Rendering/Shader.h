@@ -29,10 +29,10 @@ namespace Asciir
 		/// 
 		/// (0, 0) will be the top left of the shader and (1, 1) will be the bottom right of the shader
 		///  
+		/// if the size() is unlimited, the uv coordinates will be relative to the terminal size.
 		/// 
 		/// @param coord 
 		/// @return 
 		Coord toUV(const TermVert& coord);
-
 	};
 }
