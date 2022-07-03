@@ -43,6 +43,28 @@ namespace Asciir
 			return *this;
 		}
 
+		/// @brief floors the elements using the specified base
+		/// @return refrence to the current instance
+		template<std::enable_if_t<std::is_arithmetic_v<T>, bool> = false>
+		arVertBase<T, n>& floor(Real base = 1)
+		{
+			for (auto& elem : *this)
+				elem = Asciir::floor(elem, base);
+
+			return *this;
+		}
+
+		/// @brief ceils the elements using the specified base
+		/// @return refrence to the current instance
+		template<std::enable_if_t<std::is_arithmetic_v<T>, bool> = false>
+		arVertBase<T, n>& ceil(Real base = 1)
+		{
+			for (auto& elem : *this)
+				elem = Asciir::ceil(elem, base);
+
+			return *this;
+		}
+
 		using Eigen::Vector<T, n>::operator[];
 		using Eigen::Vector<T, n>::operator();
 	};
