@@ -444,7 +444,10 @@ namespace Asciir
 						if (load_foreground)
 							loaded_tile.colour = colour;
 						else
+						{
 							loaded_tile.background_colour = colour;
+							loaded_tile.colour = Colour(0, 0, 0, 0);
+						}
 
 						setTile({ x, y }, loaded_tile);
 					}
