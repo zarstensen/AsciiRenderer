@@ -4,7 +4,9 @@
 
 <div id="top"></div>
 
+
 ![image][AsciirBanner]
+![GitHub Actions CI](https://github.com/karstensensensen/AsciiRenderer/actions/workflows/windows_cmake.yml/badge.svg "GitHub Actions CI")
 
 - [Ascii Renderer](#ascii-renderer)
   - [Examples (More coming soon)](#examples-more-coming-soon)
@@ -30,6 +32,9 @@ here are some demo projects build with Asciir, see the examples folder for more 
 simply displays three yellow triangles that move and rotate on the screen. The framerate is displayed as the title.  
 ![image][TriangleExampleGif]
 
+### AsciirBanner (not yet added)
+This example projects contains all the code that was used to generate the banner graphic displayed at the top of the README.
+It makes use of texture loading and more complex shaders for the lightning in the background and some slight enhancements to loaded textures.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
