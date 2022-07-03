@@ -24,7 +24,7 @@ class LightningShader : public Shader2D
 
 		Real rng = std::min(1_R, 2*std::pow(std::sin(_uv.x * PI), 2_R)) * noise_generator->GenSingle2D(_uv.x, time_since_start, seed);
 
-		// this generates a generate starting at the centre of the screen that expands horizontally
+		// this generates a gradient starting at the centre of the screen that expands horizontally both ways
 		Real scale = (1 - std::pow(std::tanh(_uv.y * 4 - 2 + 0.25 * rng), 2));
 
 		// colour the gradient, and make sure it is white in the centre
