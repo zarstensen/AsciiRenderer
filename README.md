@@ -20,7 +20,7 @@
 
 # Ascii Renderer
 
-The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the console as its window. It makes use of ANSI control sequences in order to control the terminal.
+The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the terminal / console as its window. It makes use of ANSI control sequences in order to control the terminal.
 
 Displaying graphics in the terminal can often be very inconvenient, as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
@@ -334,7 +334,7 @@ the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir
 
 ## Performance
 
-The slowest process during the rendering is by far actually printing the new graphics to the terminal. As the terminal does not erase its contents everyframe, only modified tiles, compared to the previous frame, are actually printed to the console. If a high fps is required, this optimization should be kept in mind, as one can still have a relatively complex scene rendered and still have a high frame rate, as long as the modified tiles are kept to a minnimum.  
+The slowest process during the rendering is by far actually printing the new graphics to the terminal. As the terminal does not erase its contents everyframe, only modified tiles, compared to the previous frame, are actually printed to the terminal. If a high fps is required, this optimization should be kept in mind, as one can still have a relatively complex scene rendered and still have a high frame rate, as long as the modified tiles are kept to a minnimum.  
   
 An example of an optimization could be the rendering of an expanding gradient. Event though each tile might only have its colour values changed by relatively small values, they still have to be redrawn. In order to optimize this example, we instead need to reduce the number of tiles changed pr. frame. This can be done by intentianolly introducing banding in the gradient's colours, as this will reduce the number of times a tile will change colour, and thus reduce the number of writes to the terminal.
 
