@@ -90,6 +90,7 @@ define_property(
 
 # organize folders and files into general variables
 set(EXAMPLES
+    AsciirBanner
     BasicInputExample
     MouseInputExample
     RendererExample
