@@ -6,6 +6,7 @@
 
 
 ![image][AsciirBanner]
+> ###### [this banner graphic](#asciirbanner) was rendered and displayed inside a Windows Command Prompt using Asciir.
 ![GitHub Actions CI](https://github.com/karstensensensen/AsciiRenderer/actions/workflows/windows_cmake.yml/badge.svg "GitHub Actions CI")
 
 - [Ascii Renderer](#ascii-renderer)
@@ -22,7 +23,7 @@
 
 The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the terminal / console as its window. It makes use of ANSI control sequences in order to control the terminal.
 
-Displaying graphics in the terminal can often be very inconvenient, as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal), title and other properties. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
+Displaying graphics in a terminal can often be very tedious and inconvenient, as it was not really designed for it. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal), title and other properties. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
 ## Examples (More coming soon)
 here are some demo projects build with Asciir, see the examples folder for more examples.
