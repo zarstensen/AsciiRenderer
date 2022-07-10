@@ -328,7 +328,7 @@ Use double instead of float for the Real typedef.
 
 ### ASCIIR_AUTO_ISNTALL_DEPS
 
-automaticly installs all the dependencies using the Conan package manager. (conan is required for this to work)
+automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
 
 the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
 
