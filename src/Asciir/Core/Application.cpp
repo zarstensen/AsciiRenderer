@@ -33,6 +33,11 @@ namespace Asciir
 
 		m_terminal_evt.onStart();
 
+		// submits might have happened in the onStart calls, so swap the renderer queues.
+
+		Renderer::swapQueues();
+		render();
+
 		// setup first render pass
 		m_running = true;
 		m_app_start = getTime();
@@ -41,7 +46,7 @@ namespace Asciir
 		m_last_frame_start = m_app_start;
 
 		m_render_thread.start();
-
+		
 		// start the main loop
 		run();
 	}
@@ -89,17 +94,24 @@ namespace Asciir
 
 	void ARApp::render()
 	{
+
+		TerminalRenderer::TRUpdateInfo update_info;
+
+		// the terminal should be updated before the render queue is flushed, otherwise size data will be outdated
+		{
+		CT_MEASURE_N("Terminal update");
+		update_info = m_terminal_renderer.update();
+		}
+
 		{
 		CT_MEASURE_N("Render Frame");
 		// print the current queue to the terminal
 		Renderer::flushRenderQueue(DeltaTime(m_last_frame_start - m_app_start), m_frame_count);
 		}
 
-		TerminalRenderer::TRUpdateInfo update_info;
-
 		{
 		CT_MEASURE_N("Print To Console");
-		update_info = m_terminal_renderer.render();
+		m_terminal_renderer.draw();
 		}
 		
 		// as a new frame is shown, any previous inputs to the terminal should be relative to the last frame, so poll the terminal inputs

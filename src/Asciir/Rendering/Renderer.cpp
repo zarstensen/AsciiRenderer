@@ -43,20 +43,10 @@ namespace Asciir
 
 	Tile Renderer::drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start)
 	{
-		// shader has no bounds
-		if (data.shader->size().x == -1 && data.shader->size().y == -1)
+		// check if inside visible quad before doing anything else
+		if (data.shader->size() == TermVert(-1, -1) || data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
 		{
-			// TODO: what should the uv be here?
-			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), Coord(1, 1), time_since_start, frames_since_start);
-		}
-		// shader has bounds, check if inside visible quad before doing anything else
-		else if (data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
-		{
-			Coord uv = Coord(
-				x / data.shader->size().x,
-				y / data.shader->size().y);
-
-			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), uv, time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), time_since_start, frames_since_start);
 		}
 		else
 		{
@@ -87,16 +77,16 @@ namespace Asciir
 			size_t ri = (s_render_queue->size() - 1 - i);
 			switch (s_render_queue->at(ri).index())
 			{
-				case 0:
+				case 0: // mesh
 					result_tile = Tile::blend(drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), x, y), result_tile);
 					break;
-				case 1:
+				case 1: // shader
 					result_tile = Tile::blend(drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), x, y, dt, df), result_tile);
 					break;
-				case 2:
+				case 2: // tile
 					result_tile = Tile::blend(drawTileData(std::get<TileData>(s_render_queue->at(ri)), x, y), result_tile);
 					break;
-				case 3:
+				case 3: // clear
 					result_tile = Tile::blend(std::get<ClearData>(s_render_queue->at(ri)), result_tile);
 					break;
 			}

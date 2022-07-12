@@ -39,10 +39,9 @@ namespace Asciir
 
 		/// @brief read a tile from the texture. if the coordinate is out of bounds, the texture will be tiled.
 		/// @param coord the coordinate of the wanted tile
-		/// @param uv *reserved*
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& dt = 0, size_t df = 0) override;
+		Tile readTile(TermVert coord, const DeltaTime& dt = 0, size_t df = 0) override;
 		
 		/// @return the size of the texture, including tiling.
 		TermVert size() const override;
@@ -507,7 +506,7 @@ namespace Asciir
 		TermVert size() const override;
 		
 		/// @brief read the tile at the passed coordinate, from the active tile.
-		Tile readTile(const TermVert& coord, Coord uv = Coord(0, 0), const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) override;
+		Tile readTile(TermVert coord, const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) override;
 
 	protected:
 

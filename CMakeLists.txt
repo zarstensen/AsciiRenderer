@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.1.4)
+Project(Asciir VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -90,6 +90,7 @@ define_property(
 
 # organize folders and files into general variables
 set(EXAMPLES
+    AsciirBanner
     BasicInputExample
     MouseInputExample
     RendererExample
@@ -198,6 +199,7 @@ set(SRC_DIR_RENDERING
     src/Asciir/Rendering/TerminalRenderer.cpp
     src/Asciir/Rendering/Renderer.cpp
     src/Asciir/Rendering/Renderer.ipp
+    src/Asciir/Rendering/Shader.cpp
     src/Asciir/Rendering/Texture.cpp
     src/Asciir/Rendering/Texture.ipp
 )

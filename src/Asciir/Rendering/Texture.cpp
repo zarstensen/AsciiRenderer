@@ -17,7 +17,7 @@ namespace Asciir
 	}
 
 	// uv, dt, and df is never used here
-	Tile Texture2D::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
+	Tile Texture2D::readTile(TermVert coord, const DeltaTime&, size_t)
 	{
 		if (m_tiled_size != TermVert(-1, -1))
 		{
@@ -610,7 +610,7 @@ namespace Asciir
 
 	// ============ SpriteSheet ============
 
-	Tile SpriteSheet::readTile(const TermVert& coord, Coord, const DeltaTime&, size_t)
+	Tile SpriteSheet::readTile(TermVert coord, const DeltaTime&, size_t)
 	{
 		TermVert sprite_coord = coord;
 
