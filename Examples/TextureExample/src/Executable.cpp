@@ -21,7 +21,7 @@ protected:
 	Quad square = Quad(Asciir::Coord(30, 30), Asciir::Coord(100, 10));
 
 
-	Tile readTile(const TermVert& coord, Coord, const DeltaTime& t, size_t frame) final override
+	Tile readTile(TermVert coord, const DeltaTime& t, size_t frame) final override
 	{
 
 		Tile result;
@@ -72,8 +72,9 @@ class Mandelbrod : public Shader2D
 		);
 	}
 
-	Tile readTile(const TermVert& coord, Coord uv, const DeltaTime&, size_t) final override
+	Tile readTile(TermVert coord, const DeltaTime&, size_t) final override
 	{
+		Coord uv = toUV(coord);
 		Coord z = Coord(0,0);
 
 		size_t maxIterations = 100;

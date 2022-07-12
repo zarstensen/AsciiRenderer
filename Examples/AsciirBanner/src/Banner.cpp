@@ -14,24 +14,27 @@ class LightningShader : public Shader2D
 		return { -1, -1 };
 	}
 
-	virtual Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& time_since_start, size_t frames_since_start) override
+	virtual Tile readTile(TermVert coord, const DeltaTime& time_since_start, size_t frames_since_start) override
 	{
-		Coord _uv = toUV(coord);
+		Coord uv = toUV(coord);
 
 		Colour background;
 
 		// the noise used is OpenSimplex 2, the closer the uv coords are to the edge of the screen, the closer to 0 the rng values will be.
 
-		Real rng = std::min(1_R, 2*std::pow(std::sin(_uv.x * PI), 2_R)) * noise_generator->GenSingle2D(_uv.x, time_since_start, seed);
+		// uncomment dead code if the "wobble" should reduce the closer the lightning comes to the terminal edges.
+		Real rng = /*std::min(1_R, 2*std::pow(std::sin(_uv.x * PI), 2_R)) * */noise_generator->GenSingle2D(uv.x, time_since_start, seed);
 
 		// this generates a generate starting at the centre of the screen that expands horizontally
-		Real scale = (1 - std::pow(std::tanh(_uv.y * 4 - 2 + 0.25 * rng), 2));
+		Real scale = (1 - (Real)std::pow(std::tanh(uv.y * 4 - 2 + 0.25 * rng), 2));
 
 		// colour the gradient, and make sure it is white in the centre
 
-		background.red = 255 * round(std::pow(scale, 2), 1 / 64_R);
-		background.green = 255 * round(std::pow(scale, 25), 1 / 64_R);
-		background.blue = 255 * round(std::pow(scale, 1), 1 / 64_R);
+		int gradient_step = 64;
+
+		background.red = 255 * round((Real)std::pow(scale, 2), 1_R / gradient_step);
+		background.green = 255 * round((Real)std::pow(scale, 25), 1_R / gradient_step);
+		background.blue = 255 * round((Real)std::pow(scale, 1), 1_R / gradient_step);
 		background.alpha = 255;
 
 		return background;
@@ -56,7 +59,7 @@ public:
 		return m_shader->size() + TermVert(2, 2);
 	}
 
-	virtual Tile readTile(const TermVert& coord, Coord uv, const DeltaTime& time_since_start, size_t frames_since_start) override
+	virtual Tile readTile(TermVert coord, const DeltaTime& time_since_start, size_t frames_since_start) override
 	{
 		TermVert shader_coord = coord - TermVert(1, 1);
 		Quad shader_quad = Quad::fromCorners(Coord(1, 1), (Coord)m_shader->size());
@@ -95,7 +98,7 @@ public:
 
 		auto s = m_text->size();
 
-		m_outlined_text = OutlineShader(m_text, Tile(BLACK8));
+		m_outlined_text = OutlineShader(m_text, Colour(0, 0, 0, 255));
 
 		m_lightning.allocate();
 	};
@@ -131,6 +134,7 @@ public:
 	virtual void start(const std::vector<std::string>& args) override
 	{
 		pushLayer(new BannerLayer());
+		pushOverlay(new Tools::ProfilingLayer(4096 * 4096));
 
 		Renderer::setThreads();
 		Renderer::setFont("Consolas", { 10, 10 });

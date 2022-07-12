@@ -5,7 +5,7 @@ set(INCLUDE_FILES
 )
 
 set(SRC_FILES
-    src/Executable.cpp
+    src/BasicInputExample.cpp
 )
 
 add_executable(${PROJECT_NAME}
