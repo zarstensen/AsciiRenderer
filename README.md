@@ -6,6 +6,7 @@
 
 
 ![image][AsciirBanner]
+> ###### [this banner graphic](#asciirbanner) was rendered and displayed inside a Windows Command Prompt using Asciir.
 ![GitHub Actions CI](https://github.com/karstensensensen/AsciiRenderer/actions/workflows/windows_cmake.yml/badge.svg "GitHub Actions CI")
 
 - [Ascii Renderer](#ascii-renderer)
@@ -20,9 +21,9 @@
 
 # Ascii Renderer
 
-The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the console as its window. It makes use of ANSI control sequences in order to control the terminal.
+The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that uses the terminal / console as its window. It makes use of ANSI control sequences in order to control the terminal.
 
-Displaying graphics in the terminal can often be very inconvenient, as it was not really designed for this. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal) and title. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
+Displaying graphics in a terminal can often be very tedious and inconvenient, as it was not really designed for it. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal), title and other properties. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
 ## Examples (More coming soon)
 here are some demo projects build with Asciir, see the examples folder for more examples.
@@ -32,7 +33,7 @@ here are some demo projects build with Asciir, see the examples folder for more 
 simply displays three yellow triangles that move and rotate on the screen. The framerate is displayed as the title.  
 ![image][TriangleExampleGif]
 
-### AsciirBanner (not yet added)
+### AsciirBanner
 This example projects contains all the code that was used to generate the banner graphic displayed at the top of the README.
 It makes use of texture loading and more complex shaders for the lightning in the background and some slight enhancements to loaded textures.
 
@@ -65,6 +66,7 @@ if using ASCIIR_CONAN_AUTO_INSTALL, conan is required
   ```
   pip install conan
   ```
+
 
 ### Building
 Asciir uses CMake as its build system and conan to handle the download of some dependencies.
@@ -327,9 +329,17 @@ Use double instead of float for the Real typedef.
 
 ### ASCIIR_AUTO_ISNTALL_DEPS
 
-automaticly installs all the dependencies using the Conan package manager. (conan is required for this to work)
+automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
 
 the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
+
+## Performance
+
+The slowest process during the rendering is by far actually printing the new graphics to the terminal. As the terminal does not erase its contents everyframe, only modified tiles, compared to the previous frame, are actually printed to the terminal. If a high fps is required, this optimization should be kept in mind, as one can still have a relatively complex scene rendered and still have a high frame rate, as long as the modified tiles are kept to a minnimum.  
+  
+An example of an optimization could be the rendering of an expanding gradient. Event though each tile might only have its colour values changed by relatively small values, they still have to be redrawn. In order to optimize this example, we instead need to reduce the number of tiles changed pr. frame. This can be done by intentianolly introducing banding in the gradient's colours, as this will reduce the number of times a tile will change colour, and thus reduce the number of writes to the terminal.
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Roadmap
 
@@ -366,4 +376,4 @@ This game engine was built with the help of [The Cherno's game engine series](ht
 
 <!-- References -->
 [TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
-[AsciirBanner]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif
+[AsciirBanner]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif "This banner was rendered in a terminal using the Asciir engine!"
