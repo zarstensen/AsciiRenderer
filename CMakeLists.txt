@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.2.0)
+Project(Asciir VERSION 0.2.1)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -93,7 +93,6 @@ set(EXAMPLES
     AsciirBanner
     BasicInputExample
     MouseInputExample
-    RendererExample
     TriangleExample
     TextureExample
     SuperAsciirBros
