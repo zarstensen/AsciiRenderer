@@ -27,6 +27,9 @@ namespace Asciir
 	{
 		AR_CORE_INFO("Started application");
 		
+		// make sure terminal properties are avaliable when onStart is called.
+		m_terminal_renderer.update();
+
 		// notify each layer that the application has started
 		for (Layer* layer : m_layerStack)
 			layer->onStart();
@@ -64,6 +67,12 @@ namespace Asciir
 			// calculate the timeinterval from the last frame to the current frame
 			DeltaTime curr_frame_start = getTime();
 			DeltaTime d_time(curr_frame_start - m_last_frame_start);
+
+			{
+			CT_MEASURE_N("System Processing");
+			// scene systems are run *after* layer updates
+			m_scene->runSystems();
+			}
 
 			{
 			CT_MEASURE_N("Layer Updates");
