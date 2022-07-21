@@ -81,9 +81,6 @@ namespace Asciir
 				layer->onUpdate(d_time);
 			}
 
-			for (Ref<System> system : m_systems)
-				system->run(&*m_scene);
-
 			// wait for rendering to finish
 			m_render_thread.joinLoop();
 			m_last_frame_start = curr_frame_start;

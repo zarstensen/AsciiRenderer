@@ -5,6 +5,7 @@
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"
 #include "Asciir/Entities/ECS.h"
+#include "Asciir/Entities/Systems.h"
 #include "LayerStack.h"
 
 #include <ETH.h>
@@ -120,17 +121,6 @@ namespace Asciir
 		/// @brief the currently active scene, that all entities created will be tied to.
 		/// starts out with a default scene, containing no entities.
 		Ref<Scene> m_scene = Scene();
-
-		/// @brief all systems that should be tied to the active scene.
-		/// these should be independent on the currently active scene, and should not be modified, only because of a scene change.
-		/// 
-		/// starts out containing these systems:
-		/// > RenderSystem
-		/// > NativeScriptSystem
-		/// > LuaScriptSystem
-		/// 
-		/// more systems can be developed and added by the user.
-		std::set<Ref<System>> m_systems;
 
 		/// @brief used to handle the terminal
 		/// used to handle rendering to the terminal and event handling for terminal specific events

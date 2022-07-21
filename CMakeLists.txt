@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.2.2)
+Project(Asciir VERSION 0.2.3)
 
 set(CMAKE_CXX_STANDARD 17)
 
