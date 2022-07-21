@@ -26,6 +26,8 @@
 #include "Asciir/Event/TerminalEvent.h"
 
 #include "Asciir/Entities/ECS.h"
+#include "Asciir/Entities/Components.h"
+#include "Asciir/Entities/Systems.h"
 
 #include "Asciir/Rendering/TerminalRenderer.h"
 #include "Asciir/Rendering/AsciiAttributes.h"

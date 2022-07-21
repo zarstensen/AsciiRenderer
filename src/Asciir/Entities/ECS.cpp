@@ -98,11 +98,15 @@ namespace Asciir
 
         onSceneChange();
 
-            for (auto& view : scene->getView(m_system_components))
-            {
-                m_active_components = &view;
-                process(*scene);
-            }
+        onStart();
+
+        for (auto& view : scene->getView(m_system_components))
+        {
+            m_active_components = &view;
+            process(*scene);
+        }
+
+        onEnd();
     }
 
     void System::addScene(Scene& scene)

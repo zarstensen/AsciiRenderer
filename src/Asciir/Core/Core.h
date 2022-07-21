@@ -51,7 +51,7 @@ namespace Asciir
 		/// @brief returns a new Ref object refrencing the same object as the current Ref, but with a different underlying type
 		/// @tparam TOther the new underlying type for the new Ref object
 		template<typename TOther>
-		std::enable_if_t<std::is_abstract_v<T> && std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
+		std::enable_if_t<std::is_base_of_v<T, TOther> || std::is_base_of_v<TOther, T>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
 
 		/// @brief allocates the specified type and stores it in the refrence.  
 		/// 

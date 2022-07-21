@@ -5,9 +5,7 @@ function(ConanInstall install_dir)
 	message(STATUS "Installing conan packages")
 	execute_process(COMMAND conan install "${CMAKE_CURRENT_SOURCE_DIR}" --build missing WORKING_DIRECTORY "${install_dir}" RESULT_VARIABLE INSTALL_RESULT)
 
-
-
-	if(${INSTALL_RESULT})
+	if(NOT ${INSTALL_RESULT} EQUAL 0)
 		if(${INSTALL_RESULT} EQUAL "The system cannot find the file specified")
 			message(SEND_ERROR "Conan could not be found. Please install Conan by running the 'pip install conan' command.")
 		else()

@@ -582,19 +582,18 @@ namespace Asciir
 		/// if a system is associated witha  scene, it will be run, on the current Scene, when the runSystem() method is called.
 		/// @note this does not modify the system itself in any way, meaning after this call, a call to system.run(),
 		/// will not include this scene, unless it was added with system.addScene.
-		void addSystem(System& system) { m_associated_systems.insert(&system); }
+		void addSystem(Ref<System> system) { m_associated_systems.insert(system); }
 
 		/// @brief checks if the passed system is associated with the current scene.
-		/// @param system 
-		bool hasSystem(System& system) { return m_associated_systems.find(&system) != m_associated_systems.end(); }
+		bool hasSystem(Ref<System> system) { return m_associated_systems.find(system) != m_associated_systems.end(); }
 
 		/// @brief unassociates a System witht he current scene.
-		void removeSystem(System& system) { AR_ASSERT_MSG(hasSystem(system), "Scene must contain system before it can be removed!"); m_associated_systems.erase(&system); }
+		void removeSystem(Ref<System> system) { AR_ASSERT_MSG(hasSystem(system), "Scene must contain system before it can be removed!"); m_associated_systems.erase(system); }
 		
 		/// @brief runs all systems associated with the current scene.
 		void runSystems()
 		{
-			for (System* system : m_associated_systems)
+			for (Ref<System> system : m_associated_systems)
 				system->run(this);
 		}
 
@@ -620,7 +619,7 @@ namespace Asciir
 		// list containing recyclable uids
 		std::vector<UID> m_avaliable_entities;
 
-		std::unordered_set<System*> m_associated_systems;
+		std::set<Ref<System>> m_associated_systems;
 
 		std::map<std::type_index, ComponentBuffer> m_components;
 
