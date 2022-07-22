@@ -630,6 +630,7 @@ namespace Asciir
 			{
 				if (*line_change == '\n')
 				{
+					m_char_count += std::distance(begin, line_change);
 					m_width = std::max((size_t)std::distance(begin, line_change), m_width);
 					m_txt.push_back(std::string(begin, line_change));
 					// skip newline char
@@ -642,6 +643,7 @@ namespace Asciir
 
 			if (begin != line_change)
 			{
+				m_char_count += std::distance(begin, line_change);
 				m_width = std::max((size_t)std::distance(begin, line_change), m_width);
 				m_txt.push_back(std::string(begin, line_change));
 			}
@@ -669,7 +671,10 @@ namespace Asciir
 		{
 			// find the width
 			for (const std::string& str : m_txt)
+			{
+				m_char_count += str.length();
 				m_width = std::max(str.length(), m_width);
+			}
 		}
 
 		// Inherited via Shader2D
@@ -680,13 +685,35 @@ namespace Asciir
 
 		virtual Tile readTile(TermVert coord, const DeltaTime&, size_t) override
 		{
+			int32_t char_indx = 0;
+
+			for (size_t i = 0; i < coord.y; i++)
+				char_indx += (int32_t)m_txt[i].length();
+
+			char_indx += coord.x;
+
+			int32_t max_char = int32_t(m_char_count * m_chars_visible);
+
 			// check if a character should be rendered.
-			if (coord.x < m_txt[coord.y].size())
+			if (coord.x < m_txt[coord.y].size() && char_indx < max_char)
 			{
 				return Tile(m_background, m_foreground, m_txt[coord.y][coord.x]);
 			}
 			else // the background is rendered no matter what.
 				return Tile(Colour(0, 0), m_background);
+		}
+
+		void charsVisible(float percent)
+		{
+			m_chars_visible = percent;
+		}
+		// -1 = all
+		void charsVisible(int32_t count)
+		{
+			if (count == -1)
+				charsVisible(1);
+			else
+				charsVisible(count / (float)m_char_count);
 		}
 
 	protected:
@@ -695,7 +722,10 @@ namespace Asciir
 		
 		// store the width in a seperate variable in stead of calculating it on each shader render
 		size_t m_width = 0;
+		size_t m_char_count = 0;
 		Colour m_foreground, m_background;
+		// the percent of characters visible, starting from the top left of the text block.
+		float m_chars_visible = 1;
 	};
 }
 
