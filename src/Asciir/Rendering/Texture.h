@@ -610,6 +610,93 @@ namespace Asciir
 	};
 	
 	typedef ShaderSequence<FileTexture> ImageSequence;
+
+	/// @brief shader class responsible for displaying a text block onto the terminal
+	class Text : public Shader2D
+	{
+	public:
+		/// @brief constructs a Text shader from the passed string.
+		/// any '\n' character will split the passed string into multiple lines.
+		/// @param txt the string to display
+		/// @see Text(const std::vector<const std::string&>&, Colour, Colour)
+		Text(const std::string& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
+			: m_foreground(foreground), m_background(background)
+		{
+			// convert the single string into a vector of string split at each newline '\n'.
+			auto begin = txt.begin();
+			auto line_change = txt.begin();
+			
+			while (line_change != txt.end())
+			{
+				if (*line_change == '\n')
+				{
+					m_width = std::max((size_t)std::distance(begin, line_change), m_width);
+					m_txt.push_back(std::string(begin, line_change));
+					// skip newline char
+					line_change++;
+					begin = line_change;
+				}
+
+				line_change++;
+			}
+
+			if (begin != line_change)
+			{
+				m_width = std::max((size_t)std::distance(begin, line_change), m_width);
+				m_txt.push_back(std::string(begin, line_change));
+			}
+		}
+
+		/// @brief constructs a Text shader from the passed strings.
+		/// each index in the vector will be seen as the corresponding strings line number when it is displayed.
+		/// e.g.
+		/// ['A', 'B', '', 'C']
+		/// will result in the text being displayed as
+		/// A
+		/// B
+		/// 
+		/// C
+		/// 
+		/// newline characters should not be present in any of the passed strings.
+		/// For newline support see Text(const std::string&, Colour, Colour)
+		/// 
+		/// @param foreground the foreground (text) colour of the displayed text.
+		/// Default: WHITE8
+		/// @param background the background colour of the displayed text
+		/// Default: Transparent 'Colour(0, 0)'
+		Text(const std::vector<std::string>& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
+			: m_txt(txt), m_foreground(foreground), m_background(background)
+		{
+			// find the width
+			for (const std::string& str : m_txt)
+				m_width = std::max(str.length(), m_width);
+		}
+
+		// Inherited via Shader2D
+		virtual TermVert size() const override
+		{
+			return { m_width, m_txt.size() };
+		}
+
+		virtual Tile readTile(TermVert coord, const DeltaTime&, size_t) override
+		{
+			// check if a character should be rendered.
+			if (coord.x < m_txt[coord.y].size())
+			{
+				return Tile(m_background, m_foreground, m_txt[coord.y][coord.x]);
+			}
+			else // the background is rendered no matter what.
+				return Tile(Colour(0, 0), m_background);
+		}
+
+	protected:
+		
+		std::vector<std::string> m_txt;
+		
+		// store the width in a seperate variable in stead of calculating it on each shader render
+		size_t m_width = 0;
+		Colour m_foreground, m_background;
+	};
 }
 
 #include "Texture.ipp"
