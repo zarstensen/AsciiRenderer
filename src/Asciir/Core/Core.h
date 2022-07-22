@@ -74,7 +74,7 @@ namespace Asciir
 		using std::shared_ptr<T>::operator=;
 
 		/// @brief compare the value of two references
-		bool operator==(const Ref<T>& other) { return this->get() == other->get(); }
+		bool operator==(const Ref<T>& other) const { return this->get() == other.get(); }
 	};
 
 	/// @brief refrence type that should be passed, when passing a refrence, to any of the Renderer::submit functions

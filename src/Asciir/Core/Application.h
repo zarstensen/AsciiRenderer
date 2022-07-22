@@ -120,7 +120,7 @@ namespace Asciir
 
 		/// @brief the currently active scene, that all entities created will be tied to.
 		/// starts out with a default scene, containing no entities.
-		Ref<Scene> m_scene = Scene();
+		Ref<Scene> m_scene;
 
 		/// @brief used to handle the terminal
 		/// used to handle rendering to the terminal and event handling for terminal specific events

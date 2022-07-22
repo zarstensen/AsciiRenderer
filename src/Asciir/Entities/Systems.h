@@ -6,48 +6,42 @@
 
 namespace Asciir
 {
-	class ShaderRenderSystem : public System
-	{
-	public:
-		/// @brief sets up the system, in this case, it specifies the required components for the rendersystem.
-		ShaderRenderSystem()
-		{
-			requireComponents<TextureC, TransformC>();
-		}
+	void ShaderRendererSystem(System*, Scene& scene);
 
-		/// @brief submits the texture and transform copmonent the the Render queue, if the texture is enabled.
-		virtual void process(Scene& scene) override;
-	};
-
-	class MeshRenderSystem : public System
-	{
-	public:
-		MeshRenderSystem()
-		{
-			requireComponents<MeshC, TransformC>();
-		}
-
-		virtual void process(Scene& scene) override;
-	};
+	void MeshRendererSystem(System*, Scene& scene);
 
 	class NativeScriptSystem : public System
 	{
 	public:
 		NativeScriptSystem()
-		{
-			requireComponents<NativeScriptC>();
-		}
+			: System((SystemPtr)&NativeScriptSystem::callScripts) {}
 
-		virtual void onStart()
+		static void callScripts(NativeScriptSystem* system, Scene& scene)
 		{
 			DeltaTime curr_time = getTime();
-			dt = curr_time - prev_process;
+			system->dt = curr_time - system->prev_process;
 
-			prev_process = curr_time;
+			system->prev_process = curr_time;
+
+			for (auto [_, script] : scene.getReg().view<Ref<NativeScript>>().each())
+			{
+				// if the script comonent has just been enabled / disabled, call the add / remove method.
+
+				if (script->enable == true && script->m_added == false)
+				{
+					script->m_added = true;
+					script->add();
+				}
+				else if (script->enable == false && script->m_added == true)
+				{
+					script->m_added = false;
+					script->remove();
+				}
+
+				if (script->enable)
+					script->process(system->dt);
+			}
 		}
-
-		// Inherited via System
-		virtual void process(Scene& scene) override;
 
 	protected:
 		// the deltatime to pass to the scripts
@@ -61,7 +55,6 @@ namespace Asciir
 	public:
 		LuaScriptSystem()
 		{
-			requireComponents<LuaScriptC>();
 		}
 	};
 

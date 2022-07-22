@@ -10,44 +10,34 @@ namespace Asciir
 {
 	/// @brief stores an entities parent and children.
 	/// every entity should have a NodeC component on it.
-	struct NodeC : public Component
+	struct Node
 	{
 
 		// root by default
 		/// @brief which entity is the parent of the current entity.
 		/// if parent = INVALID_ENTITY_UID, then the current entity should be the root.
-		UID parent = INVALID_ENTITY_UID;
+		Entity parent;
 
 		/// @brief which entities have the current entity as their parent.
-		std::map<std::string, UID> children;
+		std::map<std::string, Entity> children;
 
 		/// @brief the name of the entity, this can be used t
 		std::string name;
 	};
 
-	struct TextureC : public Component
+	struct TextureC
 	{
 		bool enabled = true;
 		Ref<Shader2D> texture;
 	};
 
-	struct PositionC : public Component
-	{
-		Coord position;
-	};
-
-	struct MeshC : public Component
+	struct MeshC
 	{
 		Tile tile;
 		Mesh mesh;
 	};
 
-	struct TransformC : public Component
-	{
-		Transform transform;
-	};
-
-	struct AudioC : public Component
+	struct AudioC
 	{
 		AudioPlayer player;
 		AudioSource source;
@@ -55,7 +45,7 @@ namespace Asciir
 
 	class NativeScriptSystem;
 
-	struct NativeScript : public Component
+	struct NativeScript
 	{
 		bool enable = true;
 		Entity entity;
@@ -72,12 +62,7 @@ namespace Asciir
 		friend NativeScriptSystem;
 	};
 
-	struct NativeScriptC : public Component
-	{
-		Ref<NativeScript> script;
-	};
-
-	struct LuaScriptC : public Component
+	struct LuaScript
 	{
 		bool enable = true;
 

@@ -4,35 +4,36 @@
 
 namespace Asciir
 {
-	void ShaderRenderSystem::process(Scene&)
+	//void ShaderRenderSystem::process(Scene&)
+	//{
+	//	if (getComponent<TextureC>().enabled)
+	//		Renderer::submit(getComponent<TextureC>().texture, getComponent<TransformC>().transform);
+	//}
+
+	//void MeshRenderSystem::process(Scene&)
+	//{
+	//	Renderer::submit(getComponent<MeshC>().mesh, getComponent<MeshC>().tile, getComponent<TransformC>().transform);
+	//}
+
+	//void NativeScriptSystem::process(Scene& scene)
+	//{
+		
+	void ShaderRendererSystem(System*, Scene& scene)
 	{
-		if (getComponent<TextureC>().enabled)
-			Renderer::submit(getComponent<TextureC>().texture, getComponent<TransformC>().transform);
-	}
-
-	void MeshRenderSystem::process(Scene&)
-	{
-		Renderer::submit(getComponent<MeshC>().mesh, getComponent<MeshC>().tile, getComponent<TransformC>().transform);
-	}
-
-	void NativeScriptSystem::process(Scene& scene)
-	{
-		// if the script comonent has just been enabled / disabled, call the add / remove method.
-
-		Ref<NativeScript> script = getComponent<NativeScriptC>().script;
-
-		if (script->enable == true && script->m_added == false)
+		for (auto [_, texture, transform] : scene.getReg().view<TextureC, Transform>().each())
 		{
-			script->m_added = true;
-			script->add();
+			if (texture.enabled)
+				Renderer::submit(texture.texture, transform);
 		}
-		else if (script->enable == false && script->m_added == true)
-		{
-			script->m_added = false;
-			script->remove();
-		}
-
-		if (script->enable)
-			script->process(dt);
 	}
+
+	void MeshRendererSystem(System*, Scene& scene)
+	{
+		for (auto [_, mesh, transform] : scene.getReg().view<MeshC, Transform>().each())
+		{
+			Renderer::submit(mesh.mesh, mesh.tile, transform);
+		}
+	}
+
+	//}
 }
