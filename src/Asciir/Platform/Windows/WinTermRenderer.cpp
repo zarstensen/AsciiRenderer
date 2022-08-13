@@ -167,8 +167,10 @@ namespace TRInterface
 		return { (Real)x, (Real)y };
 	}
 
-	void WinTerminalRenderer::resizeBuff()
+	bool WinTerminalRenderer::resizeBuff()
 	{
+		bool success = true;
+		
 		// resize both buffers, using buffer swaps and a minimal window size, resize buffer and sofnaiosfjhd
 		CT_MEASURE_N("BUFFER RESIZE");
 		TermVert resize_size = (TermVert)drawSize();
@@ -205,13 +207,13 @@ namespace TRInterface
 		// TODO: check if the code below this is required, alternative code: ignore if side nr. 1 needs to be downscaled and side nr. 2 needs to be upscaled (less win32 calls).
 		if (term_size.x > resize_size.x)
 		{
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width));
-			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width));
+			AR_WIN_CHECK(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width), success);
+			AR_WIN_CHECK(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width), success);
 		}
 		else if (term_size.x < resize_size.x)
 		{
-			AR_WIN_VERIFY((SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width)));
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width));
+			AR_WIN_CHECK((SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_width)), success);
+			AR_WIN_CHECK(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_width), success);
 		}
 		
 		COORD buff_height{ resize_size.x, resize_size.y };
@@ -219,16 +221,25 @@ namespace TRInterface
 
 		if(term_size.y > resize_size.y)
 		{
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height));
-			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height));
+			AR_WIN_CHECK(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height), success);
+			AR_WIN_CHECK(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height), success);
 		}
 		else if (term_size.y < resize_size.y)
 		{
-			AR_WIN_VERIFY(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height));
-			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height));
+			AR_WIN_CHECK(SetConsoleScreenBufferSize(m_buffer.getCBuffers()[0], buff_height), success);
+			AR_WIN_CHECK(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height), success);
+		}
+
+		// window resize failed (happens randomly sometimes)
+		// TODO: investigate this
+		if (!success)
+		{
+			// TODO: do something here?
 		}
 
 		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style);
+
+		return success;
 	}
 
 	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const
