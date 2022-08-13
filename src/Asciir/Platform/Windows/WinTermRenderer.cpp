@@ -67,7 +67,7 @@ namespace TRInterface
 		}
 	}
 
-	// this should be used sparingly in the windows implementation, as it write to both the writable and display buffer in order to sync the data.
+	// this should be used sparingly in the windows implementation, as it writes to both the writable and display buffer in order to sync the data.
 	int TermRendererBuffer::sync()
 	{
 		AR_WIN_VERIFY(WriteFile(m_hconsole_writable, m_buffer.c_str(), (DWORD) m_buffer.size(), NULL, NULL));
@@ -120,6 +120,11 @@ namespace TRInterface
 		AR_WIN_VERIFY(SetConsoleCP(CP_UTF8));
 
 		m_font_size = getFont().second;
+
+		// prevent the terminal from being fullscreenable and resizable,
+		// in order to reduce the frequency of crashes caused by this bug [https://developercommunity.visualstudio.com/t/Visual-studio-debugger-console-crashes-i/10107748].
+		LONG fallback_style = GetWindowLong(m_console_hwin, GWL_STYLE);
+		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style & ~(WS_SIZEBOX | WS_MAXIMIZEBOX));
 
 		initRenderer(props);
 	}
@@ -190,11 +195,13 @@ namespace TRInterface
 		term_size.x = std::min(maxSize().x, term_size.x);
 		term_size.y = std::min(maxSize().y, term_size.y);
 
+	#if 0 // this is now done in the windows initializing function.
 		// prevent resizing momentarily or else the resize might happen inbetween SetConsoleWindowInfo and SetConsoleScreenBufferSize, which will trigger an windows error.
 
 		LONG fallback_style = GetWindowLong(m_console_hwin, GWL_STYLE);
 		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style & ~(WS_SIZEBOX));
-		
+	#endif
+
 		// console window size cannot be greater than the console buffer size, and the console buffer size cannot be smaller than the console window size,
 		// So depending on the current size, and the new size, the order of the functions should be flipped.
 		// this is true independent of the direction, so if the new width is smaller than the old width, but the new height is larger than the old height, the resize operation must be split.
@@ -228,7 +235,9 @@ namespace TRInterface
 			AR_WIN_VERIFY(SetConsoleWindowInfo(m_buffer.getCBuffers()[0], TRUE, &win_height));
 		}
 
+	#if 0
 		SetWindowLong(m_console_hwin, GWL_STYLE, fallback_style);
+	#endif
 	}
 
 	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const
