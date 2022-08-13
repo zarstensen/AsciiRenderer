@@ -21,8 +21,7 @@
 			char err_msg[256]; \
 			FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err_msg, 255, NULL); \
 			AR_ERR(err_msg); \
-			AR_DEBUG_BREAK; \
-		} \
+			/*AR_DEBUG_BREAK; \*/} \
 		AR_JOIN_NAME(ret_val, __LINE__); }
 	#else
 
@@ -30,6 +29,16 @@
 
 	#endif
 	
+	/// checks if the given win32 function succeeded and stores the return value in var.
+	/// if an error occured, it is logged.
+	#define AR_WIN_CHECK(x, var) {var = var && x; \
+		if(!var) { \
+			char err_msg[256]; \
+			FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err_msg, 255, NULL); \
+			AR_ERR(err_msg); \
+	} \
+	var; }
+
 	// verify the passed windows function
 	// if this fails, a error message if logged, and a debug breakpoint is hit
 	// if debug is off, the function is NOT called and simply expands to nothing

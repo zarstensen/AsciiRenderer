@@ -217,14 +217,14 @@ namespace Asciir
 		entt::entity getID() const { return m_id; }
 
 		/// @return returns the scene that the entity is tied to.
-		Scene& getScene() const { return *m_scene; }
+		Scene* getScene() const { return m_scene; }
 
 		operator bool() { return m_id != entt::null && &m_scene != nullptr; }
 
 		Entity& operator=(const Entity& other)
 		{
 			m_id = other.getID();
-			m_scene = &other.getScene();
+			m_scene = other.getScene();
 
 			return *this;
 		}

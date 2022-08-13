@@ -65,6 +65,11 @@ namespace Asciir
 			*this = new TOther(args...);
 		}
 
+		operator T* ()
+		{
+			return get();
+		}
+
 		/// @brief creates a new Ref<T> object pointing to a new instance of type T, copied from the original Ref<T>
 		Ref<T> copy()
 		{

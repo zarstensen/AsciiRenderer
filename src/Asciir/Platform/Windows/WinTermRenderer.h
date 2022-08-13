@@ -95,7 +95,7 @@ namespace TRInterface
 		TermVert pos() const;
 		
 		/// @see TerminalRendererInterface::resizeBuff()
-		void resizeBuff();
+		bool resizeBuff();
 
 		/// @see TerminalRendererInterface::getFont()
 		std::pair<std::string, Size2D> getFont() const;

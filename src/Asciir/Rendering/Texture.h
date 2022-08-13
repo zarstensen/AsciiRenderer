@@ -41,7 +41,7 @@ namespace Asciir
 		/// @param coord the coordinate of the wanted tile
 		/// @param dt *reserved*
 		/// @param df *reserved*
-		Tile readTile(TermVert coord, const DeltaTime& dt = 0, size_t df = 0) override;
+		Tile readTile(TermVert coord, TermVert screen_coord, const DeltaTime& dt = 0, size_t df = 0) override;
 		
 		/// @return the size of the texture, including tiling.
 		TermVert size() const override;
@@ -506,7 +506,7 @@ namespace Asciir
 		TermVert size() const override;
 		
 		/// @brief read the tile at the passed coordinate, from the active tile.
-		Tile readTile(TermVert coord, const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) override;
+		Tile readTile(TermVert coord, TermVert screen_coord={-1,-1}, const DeltaTime& time_since_start = 0, size_t frames_since_start = 0) override;
 
 	protected:
 
@@ -615,6 +615,8 @@ namespace Asciir
 	class Text : public Shader2D
 	{
 	public:
+		Text() = default;
+
 		/// @brief constructs a Text shader from the passed string.
 		/// any '\n' character will split the passed string into multiple lines.
 		/// @param txt the string to display
@@ -622,31 +624,7 @@ namespace Asciir
 		Text(const std::string& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
 			: m_foreground(foreground), m_background(background)
 		{
-			// convert the single string into a vector of string split at each newline '\n'.
-			auto begin = txt.begin();
-			auto line_change = txt.begin();
-			
-			while (line_change != txt.end())
-			{
-				if (*line_change == '\n')
-				{
-					m_char_count += std::distance(begin, line_change);
-					m_width = std::max((size_t)std::distance(begin, line_change), m_width);
-					m_txt.push_back(std::string(begin, line_change));
-					// skip newline char
-					line_change++;
-					begin = line_change;
-				}
-
-				line_change++;
-			}
-
-			if (begin != line_change)
-			{
-				m_char_count += std::distance(begin, line_change);
-				m_width = std::max((size_t)std::distance(begin, line_change), m_width);
-				m_txt.push_back(std::string(begin, line_change));
-			}
+			setText(txt);
 		}
 
 		/// @brief constructs a Text shader from the passed strings.
@@ -667,8 +645,48 @@ namespace Asciir
 		/// @param background the background colour of the displayed text
 		/// Default: Transparent 'Colour(0, 0)'
 		Text(const std::vector<std::string>& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
-			: m_txt(txt), m_foreground(foreground), m_background(background)
+			: m_foreground(foreground), m_background(background)
 		{
+			setText(txt);
+		}
+
+		void setText(const std::string& txt)
+		{
+			m_txt.clear();
+
+			m_char_count = 0;
+			m_width = 0;
+			// convert the single string into a vector of string split at each newline '\n'.
+			auto begin = txt.begin();
+			auto line_change = txt.begin();
+
+			while (line_change != txt.end())
+			{
+				if (*line_change == '\n')
+				{
+					m_char_count += std::distance(begin, line_change);
+					m_width = std::max((size_t)std::distance(begin, line_change), m_width);
+					m_txt.push_back(std::string(begin, line_change));
+					// skip newline char
+					line_change++;
+					begin = line_change;
+				}
+				else
+					line_change++;
+			}
+
+			if (begin != line_change)
+			{
+				m_char_count += std::distance(begin, line_change);
+				m_width = std::max((size_t)std::distance(begin, line_change), m_width);
+				m_txt.push_back(std::string(begin, line_change));
+			}
+		}
+
+		void setText(const std::vector<std::string>& txt)
+		{
+			m_txt = txt;
+
 			// find the width
 			for (const std::string& str : m_txt)
 			{
@@ -677,13 +695,16 @@ namespace Asciir
 			}
 		}
 
+		void setForeground(Colour colour) { m_foreground = colour; }
+		void setBackground(Colour colour) { m_background = colour; }
+
 		// Inherited via Shader2D
 		virtual TermVert size() const override
 		{
 			return { m_width, m_txt.size() };
 		}
 
-		virtual Tile readTile(TermVert coord, const DeltaTime&, size_t) override
+		virtual Tile readTile(TermVert coord, TermVert, const DeltaTime&, size_t) override
 		{
 			int32_t char_indx = 0;
 
@@ -703,18 +724,21 @@ namespace Asciir
 				return Tile(Colour(0, 0), m_background);
 		}
 
-		void charsVisible(float percent)
+		void setVisible(float percent)
 		{
 			m_chars_visible = percent;
 		}
 		// -1 = all
-		void charsVisible(int32_t count)
+		void setVisibleN(float count)
 		{
 			if (count == -1)
-				charsVisible(1);
+				setVisible(1);
 			else
-				charsVisible(count / (float)m_char_count);
+				setVisible(count / m_char_count);
 		}
+
+		float charsVis() { return m_chars_visible; }
+		float charsVisN() { return m_chars_visible * m_char_count; }
 
 	protected:
 		

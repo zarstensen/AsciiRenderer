@@ -323,7 +323,7 @@ namespace Asciir
 			/// @brief gets called when the terminal should be resized.
 			/// the new size should be drawWidth() X drawHeight()
 			/// it is ipmlementation specific wether the terminal resize happens at the function call, or at the next update.
-			AR_INT_FUNC_R((void) resizeBuff(),())
+			AR_INT_FUNC_R((bool)resizeBuff(), (false))
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
