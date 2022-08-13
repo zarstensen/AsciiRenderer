@@ -46,7 +46,7 @@ namespace Asciir
 		// check if inside visible quad before doing anything else
 		if (data.shader->size() == TermVert(-1, -1) || data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
 		{
-			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), time_since_start, frames_since_start);
+			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), {x, y}, time_since_start, frames_since_start);
 		}
 		else
 		{
@@ -267,7 +267,6 @@ namespace Asciir
 
 	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, size_t frames_since_start)
 	{
-		AR_CORE_INFO("RENDER FRAME");
 		// if only one thread is needed, avoid creating a seperate thread
 		if ((uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight() <= thrd_tile_count || m_render_thread_pool.size() == 0)
 		{
@@ -286,7 +285,7 @@ namespace Asciir
 			// the thread count should not go above the thread pool size
 			thrds = std::min((uint32_t) m_render_thread_pool.size(), thrds);
 
-			AR_CORE_INFO("Using ", thrds, " threads to render the current frame!");
+			AR_CORE_INFO("Using ", thrds, " threads to render the current frame");
 			
 			m_avaliable_tile = 0;
 
