@@ -149,6 +149,56 @@ namespace Asciir
 		// TODO: a string is allocated here when it is not needed.
 		static Size2D getFontSize() { return getFont().second; }
 
+		/// @brief sets the current resolution of the terminal (in PIXELS not CELLS), by changing the font size.
+		/// the final resolution will always be the closest value to res, whilst being smaller than res
+		/// and larger than the terminal width and height (in CELLS).
+		/// 
+		/// example:
+		///		if the terminal is currently 10x10 cells, and setResolution({30, 30}) is called
+		///		the font size will be set to (3, 3), and the resolution of the terminal will be (30, 30) pixels.
+		///		
+		///		if setResolution({31, 31}) is called, the resolution will still be (30, 30) pixels,
+		///		as the terminal resolution cannot get closer to the passed resolution without changing the CELL count.
+		/// 
+		///		finally, if setResolution({1, 1}) is called, the resolution will end up being (10, 10) pixels,
+		///		as the final resolution is unable to be smaller than the cell count.
+		/// 
+		/// @param res the resolution to approximate.
+		/// 
+		/// @return the final size of the terminal, after it has been fitted according to the above rules.
+		static Size2D setResolution(Size2D res);
+
+		/// @brief retrieve the current resolution (pixels) of the terminal window.
+		/// 
+		/// for number of cells, see size()
+		/// 
+		/// @return the size of the terminal window.
+		static Size2D getResolution() { return size().array() * getFontSize().array(); }
+
+		/// @brief decrease the cell size by scale whilst (attempting) to maintain the current terminal resolution.
+		/// 
+		/// affects both cell size and font size.
+		/// 
+		/// if the scale does not divide evently into the (size)[size()] of the terminal, the closest size, smaller than the wanted terminal size, is used instead.
+		/// 
+		/// if the return value is the same as (size() / scale, getFontSize() * scale) (inc. decimals), the resolution of the terminal will have been reserved.
+		/// 
+		/// @return the final terminal and font size , after it has been fitted according to the above rules.
+		/// order: (term_size, font_size)
+		static std::pair<Size2D, Size2D> upscale(Size2D scale);
+		/// @brief increses the cell size by scale whilst (attempting) to maintain the current terminal resolution.
+		/// 
+		/// affects both cell size and font size.
+		/// 
+		/// if the scale does not divide evently into the (font size)[getFontSize()] of the terminal, the closest size,
+		/// smaller than the wanted font size, is used instead.
+		/// 
+		/// if the return value is the same as (size() * scale, getFontSize() / scale) (inc. decimals), the resolution of the terminal will have been reserved.
+		/// 
+		/// @return the final terminal and font size , after it has been fitted according to the above rules.
+		/// order: (term_size, font_size)
+		static std::pair<Size2D, Size2D> downscale(Size2D scale);
+
 		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
 		/// @param rect_start the top right corner of the section to be captured
 		/// @param rect_offset the bottom right corner of the section to be captured.

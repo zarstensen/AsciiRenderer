@@ -175,6 +175,69 @@ namespace Asciir
 		return s_renderer->getTile((TermVert)pos).current;
 	}
 
+	Size2D Renderer::setResolution(Size2D res)
+	{
+		// TODO: error checking (new macro?)
+		// retrieve the needed size informations
+		TermVert resolution = s_renderer->monitorSize();
+		TermVert console_size = s_renderer->termSize();
+
+		// calculate the new font size
+
+		TermVert font_size = TermVert(res).array() / console_size.array();
+		TermVert max_size = resolution.array() / console_size.array();
+
+		font_size.x = std::min(max_size.x, std::max(font_size.x, (TInt)1));
+		font_size.y = std::min(max_size.y, std::max(font_size.y, (TInt)1));
+		
+		setFontSize(font_size);
+
+		return font_size.array() * size().array();
+	}
+
+	std::pair<Size2D, Size2D> Renderer::upscale(Size2D scale)
+	{
+		Size2D terminal_size = size();
+
+		// check if the passed scale is usable
+		if (scale.x == 0 || scale.y == 0 || terminal_size.x % scale.x != 0 || terminal_size.y % scale.y != 0)
+		{
+			AR_WARN("Upscale approximated the final size, due to the passed scale not dividing evently into the terminal size\n\tScale:", scale, "\n\tTSize: ", terminal_size);
+		}
+
+		terminal_size = terminal_size.array() / scale.array();
+
+		Size2D font_size = getFontSize();
+
+		font_size = font_size.array() * scale.array();
+
+		resize(terminal_size);
+		// TODO: error check?
+		setFontSize(font_size);
+
+		return { terminal_size, font_size };
+	}
+
+	std::pair<Size2D, Size2D> Renderer::downscale(Size2D scale)
+	{
+		Size2D font_size = getFontSize();
+
+		if (scale.x == 0 || scale.y == 0 || font_size.x % scale.x != 0 || font_size.y % scale.y != 0)
+		{
+			AR_WARN("Downlscale approximated the final size, due to the passed scale not dividing evently into the font size\n\tScale:", scale, "\n\tFont: ", font_size);
+		}
+
+		font_size = font_size.array() / scale.array();
+		
+		Size2D terminal_size = size();
+		terminal_size = terminal_size.array() * scale.array();
+
+		resize(terminal_size);
+		setFontSize(font_size);
+
+		return {terminal_size, font_size};
+	}
+
 	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
 	{
 		CT_MEASURE_N("Grab Screen");
