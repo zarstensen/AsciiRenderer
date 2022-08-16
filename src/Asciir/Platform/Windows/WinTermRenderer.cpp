@@ -137,6 +137,38 @@ namespace TRInterface
 		AR_WIN_VERIFY(SetConsoleOutputCP(m_fallback_codepage.first));
 		AR_WIN_VERIFY(SetConsoleCP(m_fallback_codepage.second));
 	}
+
+	// simply use the builtin system metric to get the count
+	// 0 = failed
+	size_t WinTerminalRenderer::monitorCount() const
+	{
+		int monitor_count = GetSystemMetrics(SM_CMONITORS);
+		AR_WIN_VERIFY(monitor_count);
+		return monitor_count;
+	}
+
+	TermVert WinTerminalRenderer::monitorSize(size_t display) const
+	{
+		// TODO: implement this
+		assert(false);
+		return TermVert();
+	}
+
+	TermVert WinTerminalRenderer::monitorSize() const
+	{
+		// get the monitor handle the console window is currently on.
+		HMONITOR monitor_handle = MonitorFromWindow(m_console_hwin, MONITOR_DEFAULTTOPRIMARY);
+
+		AR_WIN_VERIFY(monitor_handle);
+
+		// retrieve the monitor rectangle and return the width and height of it.
+
+		MONITORINFO info{ sizeof(MONITORINFO) };
+
+		AR_WIN_VERIFY(GetMonitorInfo(monitor_handle, &info));
+
+		return { info.rcMonitor.right - info.rcMonitor.left, info.rcMonitor.bottom - info.rcMonitor.top };
+	}
 	
 	TermVert WinTerminalRenderer::termSize() const
 	{

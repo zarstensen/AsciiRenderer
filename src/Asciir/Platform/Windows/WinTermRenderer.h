@@ -87,6 +87,16 @@ namespace TRInterface
 		/// @brief reverts the console to before WinTerminalRenderer was instansiated
 		~WinTerminalRenderer();
 
+		/// @see TerminalRendererInterface::monitorCount()
+		size_t monitorCount() const;
+
+		/// @see TerminalRendererInterface::monitorSize(size_t)
+		// TODO: implement this / figure out identifier of a monitor
+		TermVert monitorSize(size_t display) const;
+
+		/// @see TerminalRendererInterface::monitorSize(size_t)
+		TermVert monitorSize() const;
+
 		/// @see TerminalRendererInterface::termSize()
 		TermVert termSize() const;
 		/// @see TerminalRendererInterface::maxSize()
