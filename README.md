@@ -39,7 +39,16 @@ Displaying graphics in a terminal can often be very tedious and inconvenient, as
 
 ## Branch Details
 
-This branch integrates the fully developed Entity Component System into the Asciir workflow.
+There exists of two primary branches (master and dev) and an additional collection of feature branches.
+
+### master
+Contains the latest stable(ish) code.
+### dev
+Contains all small features / fixes that has not yet been merged into the master branch or is still being worked on.
+
+### feature branches
+Each feature branch contains code for a larger feature that is currently being developed.
+These branches should be merged into dev when they are fully developed.
 
 ## Examples (More coming soon)
 
