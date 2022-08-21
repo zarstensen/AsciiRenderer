@@ -4,8 +4,10 @@
 
 namespace Asciir
 {
-	constexpr auto AR_ANSI_CSI = "\x1b[";
-	constexpr auto AR_ANSI_OSC = "\x1b]";
+	// these two are macros instead of constexpr in order to allow for compile time string concatenation
+	// eg. AR_ANSI_CSI "ABCD" would not be valid if these were variables instead of macros 
+	#define AR_ANSI_CSI "\x1b["
+	#define AR_ANSI_OSC "\x1b]"
 
 	/// @brief windows does not support bold characters. this is accounted for by changing the brightness of the Colour by AR_BOLD_DIFF
 	constexpr auto AR_BOLD_DIFF = 38;
