@@ -334,6 +334,9 @@ namespace Asciir
 			/// @brief retrieves the resolution of the monitor the terminal is currently on (in pixels).
 			AR_INT_FUNC_R((TermVert) monitorSize() const, ({ -1, -1 }))
 
+			/// @brief retrieves the resolution of the work area (monitor size excluding taskbare amongst other things) for the primary monitor.
+			AR_INT_FUNC_R((TermVert) workSize() const, ({-1, -1}))
+
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().
 			AR_INT_FUNC_R((TermVert) termSize() const, ({}))

@@ -54,8 +54,13 @@ namespace TRInterface
 		}
 
 		/// @brief returns an array containing the two console buffers
+		/// @note the handles are only guaranteed to be valid until the next update,
+		/// so they should not be stored for long term use, instead use this function everytime they should be retrieved.
 		/// @return first = display, second = writable
 		std::array<HANDLE, 2> getCBuffers() const { return { m_hconsole_display, m_hconsole_writable }; }
+
+		/// @brief replaces the two existing console buffers with two newly created ones
+		void replaceCBuffers();
 	
 	protected:
 		std::string m_buffer;
@@ -96,6 +101,9 @@ namespace TRInterface
 
 		/// @see TerminalRendererInterface::monitorSize(size_t)
 		TermVert monitorSize() const;
+
+		/// @see TerminalRendererInterface::workSize() 
+		TermVert workSize() const;
 
 		/// @see TerminalRendererInterface::termSize()
 		TermVert termSize() const;

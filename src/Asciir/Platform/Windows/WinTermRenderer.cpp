@@ -20,8 +20,7 @@ namespace TRInterface
 		m_buffer.reserve(buffer_size);
 
 		// allocate console buffers
-		m_hconsole_display = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
-		m_hconsole_writable = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+		replaceCBuffers();
 
 		DWORD mode;
 		GetConsoleMode(GetStdHandle(STD_OUTPUT_HANDLE), &mode);
@@ -99,6 +98,33 @@ namespace TRInterface
 		m_buffer.clear();
 	}
 
+	void TermRendererBuffer::replaceCBuffers()
+	{
+		HANDLE new_display = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+		HANDLE new_writable = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+
+		CONSOLE_FONT_INFOEX font_info{ sizeof(CONSOLE_FONT_INFOEX) };
+
+		// both buffers should have the same font
+		AR_WIN_VERIFY(GetCurrentConsoleFontEx(m_hconsole_display, FALSE, &font_info));
+
+		AR_WIN_VERIFY(SetConsoleActiveScreenBuffer(new_display));
+
+		// only close the handle if it is valid
+		if (m_hconsole_display && m_hconsole_display != INVALID_HANDLE_VALUE)
+			CloseHandle(m_hconsole_display);
+		if (m_hconsole_writable && m_hconsole_writable != INVALID_HANDLE_VALUE)
+			CloseHandle(m_hconsole_writable);
+
+		m_hconsole_display = new_display;
+		m_hconsole_writable = new_writable;
+
+		AR_WIN_VERIFY(SetCurrentConsoleFontEx(m_hconsole_display, FALSE, &font_info));
+		AR_WIN_VERIFY(SetCurrentConsoleFontEx(m_hconsole_display, TRUE, &font_info));
+		AR_WIN_VERIFY(SetCurrentConsoleFontEx(m_hconsole_writable, FALSE, &font_info));
+		AR_WIN_VERIFY(SetCurrentConsoleFontEx(m_hconsole_writable, TRUE, &font_info));
+	}
+
 	// ============ WinTerminalRenderer ============
 
 	WinTerminalRenderer::WinTerminalRenderer(const WinTerminalRenderer::TerminalProps& props)
@@ -169,6 +195,14 @@ namespace TRInterface
 
 		return { info.rcMonitor.right - info.rcMonitor.left, info.rcMonitor.bottom - info.rcMonitor.top };
 	}
+
+	TermVert WinTerminalRenderer::workSize() const
+	{
+		RECT work_rect;
+		SystemParametersInfo(SPI_GETWORKAREA, NULL, &work_rect, NULL);
+
+		return TermVert();
+	}
 	
 	TermVert WinTerminalRenderer::termSize() const
 	{
@@ -204,11 +238,11 @@ namespace TRInterface
 		return { (Real)x, (Real)y };
 	}
 
+	// resize visible buffer, create two new buffers to replace the visible and drawable.
+	// this makes sure the screen buffer size matches the terminal dimensions.
+	// finally, the two new buffers replace the old ones, which in turn are closed.
 	bool WinTerminalRenderer::resizeBuff()
 	{
-		bool success = true;
-		
-		// resize both buffers, using buffer swaps and a minimal window size, resize buffer and sofnaiosfjhd
 		CT_MEASURE_N("BUFFER RESIZE");
 		TermVert resize_size = (TermVert)drawSize();
 
@@ -216,8 +250,43 @@ namespace TRInterface
 		resize_size.x = std::min(maxSize().x, resize_size.x);
 		resize_size.y = std::min(maxSize().y, resize_size.y);
 
-		TermVert term_size = termSize();
+		// set the size of the visible buffer
+		
+		// in order to minimize heap allocation during string operations, the dimensions of a resize is assumed to always be less than 9999 (less than 5 digits in length).
+		// due to Windows being wierd, we must first resize to 1 x height and then width x height,
+		// otherwise the terminal will not resize properly in some cases.
 
+		std::string resize_str = AR_ANSI_CSI "8;1;XXXXt" AR_ANSI_CSI "8;XXXX;XXXXt";
+		constexpr size_t digit_count = 4;
+
+		// the resize escape sequence accepts values with leading zeroes, so this is how the values are inserted into the resize string.
+		
+		auto resize_iter = resize_str.begin();
+		char num_buff[digit_count + 1];
+
+		// first height
+		resize_iter += strlen(AR_ANSI_CSI) + strlen("8;1;");
+		std::snprintf(num_buff, digit_count + 1, "%04d", resize_size.x);
+		resize_iter = std::copy(num_buff, num_buff + digit_count, resize_iter);
+
+		// first width
+		resize_iter += strlen("t") + strlen(AR_ANSI_CSI) + strlen("8;");
+		std::snprintf(num_buff, digit_count + 1, "%04d", resize_size.y);
+		resize_iter = std::copy(num_buff, num_buff + digit_count, resize_iter);
+
+
+		// second height
+		resize_iter += strlen(";");
+		std::snprintf(num_buff, digit_count + 1, "%04d", resize_size.x);
+		std::copy(num_buff, num_buff + digit_count, resize_iter);
+
+
+		AR_WIN_VERIFY(WriteFile(m_buffer.getCBuffers()[0], resize_str.data(), resize_str.size(), NULL, NULL));
+
+		m_buffer.replaceCBuffers();
+
+	#if 0 // TODO: remove this when above code has been tested
+		TermVert term_size = termSize();
 		// sometimes the console will have a larger window size than the maximum window size. As this creates problems for the code below, the window size is clamped to its maximum possible size.
 		// this situation might occur if the console window size is changed with a "zoom", which does not update the window size, even if the window size grows.
 		if (term_size.x > maxSize().x || term_size.y > maxSize().y)
@@ -281,6 +350,9 @@ namespace TRInterface
 	#endif
 
 		return success;
+	#endif
+
+		return true;
 	}
 
 	std::pair<std::string, Size2D> WinTerminalRenderer::getFont() const
