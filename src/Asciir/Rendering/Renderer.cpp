@@ -192,7 +192,7 @@ namespace Asciir
 		
 		setFontSize(font_size);
 
-		return font_size.array() * size().array();
+		return Size2D(font_size).array() * size().array();
 	}
 
 	std::pair<Size2D, Size2D> Renderer::upscale(Size2D scale)
