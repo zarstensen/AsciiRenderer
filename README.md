@@ -328,6 +328,7 @@ ASCIIR_LOG_VIEWER = ON
 ASCIIR_EXAMPLES = OFF
 ASCIIR_HIGH_PRECISSION_FLOAT = OFF
 ASCIIR_AUTO_INSTALL_DEPS = OFF
+ASCIIR_PARALLEL_BUILD = ON
 ```
 
 ### ASCIIR_LOG_VIEWER
@@ -346,9 +347,15 @@ Use double instead of float for the Real typedef.
 
 ### ASCIIR_AUTO_ISNTALL_DEPS
 
-automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
+Automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
 
-the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
+The alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
+
+### ASCIIR_PARALLEL_BUILD
+
+Builds the Asciir library using multiple threads.
+
+This should be enabled for a faster build time, at the cost of a higher CPU load.
 
 ## Performance
 

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.3.4)
+Project(Asciir VERSION 0.3.5)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -65,12 +65,12 @@ if(ipo_supported AND ${MSVC})
 add_compile_options("$<$<CONFIG:DEPLOYREL,RELEASE,RELWITHDEBINFO>:/Zi /GL>")
 endif()
 
-
 # options
 option(ASCIIR_LOG_VIEWER "builds an executable to view log files" ON)
 option(ASCIIR_EXAMPLES "build example projects" OFF)
 option(ASCIIR_HIGH_PRECISSION_FLOAT "uses double instead of float as floating point data type (uses more memory)" OFF)
 option(ASCIIR_AUTO_INSTALL_DEPS "Automaticly installs the required packages using conan (requires conan)" OFF)
+option(ASCIIR_PARALLEL_BUILD "Builds the Asciir project using multiple threads" ON)
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ARCH "x64")
@@ -335,6 +335,21 @@ if(MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /external:anglebrackets /external:W0 $<$<CONFIG:DEPLOYREL>:/WX> /permissive)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+endif()
+
+
+# parallel build setup
+if(${ASCIIR_PARALLEL_BUILD} AND MSVC)
+    # the CMAKE_BUILD_PARALLEL_LEVEL does not do anything for MSVC, so enable it manually here
+    add_compile_options(/MP)
+    target_compile_options(${PROJECT_NAME} PRIVATE /MP)
+elseif(${ASCIIR_PARALLEL_BUILD})
+    include(ProcessorCount)
+    ProcessorCount(p_count)
+
+    message(${p_count})
+
+    set(CMAKE_BUILD_PARALLEL_LEVEL ${p_count})
 endif()
 
 # organize the source files in the generated project
