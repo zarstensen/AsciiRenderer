@@ -1,6 +1,7 @@
 [requires]
 libpng/1.6.37
 libjpeg-turbo/2.1.2
+entt/3.10.1
 
 [generators]
 cmake_find_package

@@ -16,8 +16,9 @@
 namespace Asciir
 {
 	ARApp::ARApp(const std::string& title, TermVert term_size)
-		: m_render_thread(&ARApp::render, this), m_terminal_renderer(TerminalRenderer::TerminalProps(title, term_size))
+		: m_terminal_renderer(TerminalRenderer::TerminalProps(title, term_size))
 	{
+		m_scene.allocate();
 		m_terminal_evt.setEventCallback(AR_TO_EVENT_CALLBACK(onEvent));
 	}
 
@@ -27,6 +28,9 @@ namespace Asciir
 	{
 		AR_CORE_INFO("Started application");
 		
+		// make sure terminal properties are avaliable when onStart is called.
+		m_terminal_renderer.update();
+
 		// notify each layer that the application has started
 		for (Layer* layer : m_layerStack)
 			layer->onStart();
@@ -44,8 +48,6 @@ namespace Asciir
 		m_frame_count = 0;
 
 		m_last_frame_start = m_app_start;
-
-		m_render_thread.start();
 		
 		// start the main loop
 		run();
@@ -65,6 +67,18 @@ namespace Asciir
 			DeltaTime curr_frame_start = getTime();
 			DeltaTime d_time(curr_frame_start - m_last_frame_start);
 
+			if (m_tmp_scene)
+			{
+				m_scene = m_tmp_scene;
+				m_tmp_scene = nullptr;
+			}
+
+			{
+			CT_MEASURE_N("System Processing");
+			// scene systems are run *after* layer updates
+			m_scene->runSystems();
+			}
+
 			{
 			CT_MEASURE_N("Layer Updates");
 			// update all layers on the layer stack
@@ -72,19 +86,14 @@ namespace Asciir
 				layer->onUpdate(d_time);
 			}
 
-			for (Ref<System> system : m_systems)
-				system->run(&*m_scene);
-
-			// wait for rendering to finish
-			m_render_thread.joinLoop();
 			m_last_frame_start = curr_frame_start;
 			m_frame_count++;
 
 			// swap the render queues
 			Renderer::swapQueues();
 
-			// begin rendering next frame
-			m_render_thread.startLoop();
+			// render the next frame and print it to the terminal
+			render();
 
 			CT_MEASURE_N("WAIT");
 

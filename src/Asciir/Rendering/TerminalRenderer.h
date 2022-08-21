@@ -323,7 +323,19 @@ namespace Asciir
 			/// @brief gets called when the terminal should be resized.
 			/// the new size should be drawWidth() X drawHeight()
 			/// it is ipmlementation specific wether the terminal resize happens at the function call, or at the next update.
-			AR_INT_FUNC_R((void) resizeBuff(),())
+			AR_INT_FUNC_R((bool) resizeBuff(), (false))
+
+			/// @brief retrieves the number of monitors connected to the computer.
+			AR_INT_FUNC_R((size_t) monitorCount() const, (0))
+		
+			/// @brief retrieves the resolution of the n'th monitor to the computer (in pixels).
+			AR_INT_FUNC_R((TermVert) monitorSize(size_t) const, ({-1, -1}))
+
+			/// @brief retrieves the resolution of the monitor the terminal is currently on (in pixels).
+			AR_INT_FUNC_R((TermVert) monitorSize() const, ({ -1, -1 }))
+
+			/// @brief retrieves the resolution of the work area (monitor size excluding taskbare amongst other things) for the primary monitor.
+			AR_INT_FUNC_R((TermVert) workSize() const, ({-1, -1}))
 
 			/// @brief returns the size of the terminal.
 			/// @note this is the current actual size of the terminal, for the draw size, use drawSize().

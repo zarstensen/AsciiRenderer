@@ -51,7 +51,7 @@ namespace Asciir
 		/// @brief returns a new Ref object refrencing the same object as the current Ref, but with a different underlying type
 		/// @tparam TOther the new underlying type for the new Ref object
 		template<typename TOther>
-		std::enable_if_t<std::is_abstract_v<T> && std::is_base_of_v<T, TOther>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
+		std::enable_if_t<std::is_base_of_v<T, TOther> || std::is_base_of_v<TOther, T>, Ref<TOther>> cast() { return Ref<TOther>(std::dynamic_pointer_cast<TOther>(*this)); }
 
 		/// @brief allocates the specified type and stores it in the refrence.  
 		/// 
@@ -65,6 +65,11 @@ namespace Asciir
 			*this = new TOther(args...);
 		}
 
+		operator T* ()
+		{
+			return get();
+		}
+
 		/// @brief creates a new Ref<T> object pointing to a new instance of type T, copied from the original Ref<T>
 		Ref<T> copy()
 		{
@@ -74,7 +79,7 @@ namespace Asciir
 		using std::shared_ptr<T>::operator=;
 
 		/// @brief compare the value of two references
-		bool operator==(const Ref<T>& other) { return this->get() == other->get(); }
+		bool operator==(const Ref<T>& other) const { return this->get() == other.get(); }
 	};
 
 	/// @brief refrence type that should be passed, when passing a refrence, to any of the Renderer::submit functions

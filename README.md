@@ -10,12 +10,24 @@
 ![GitHub Actions CI](https://github.com/karstensensensen/AsciiRenderer/actions/workflows/windows_cmake.yml/badge.svg "GitHub Actions CI")
 
 - [Ascii Renderer](#ascii-renderer)
+  - [Branch Details](#branch-details)
   - [Examples (More coming soon)](#examples-more-coming-soon)
+    - [TriangleExample](#triangleexample)
+    - [AsciirBanner](#asciirbanner)
   - [Built With](#built-with)
   - [Getting Started](#getting-started)
+    - [Building](#building)
+    - [Link using cmake.](#link-using-cmake)
   - [Usage](#usage)
   - [CMake](#cmake)
+    - [ASCIIR_LOG_VIEWER](#asciir_log_viewer)
+    - [ASCIIR_EXAMPLES](#asciir_examples)
+    - [ASCIIR_HIGH_PRECISSION_FLOAT](#asciir_high_precission_float)
+    - [ASCIIR_AUTO_ISNTALL_DEPS](#asciir_auto_isntall_deps)
+  - [Performance](#performance)
   - [Roadmap](#roadmap)
+    - [near future](#near-future)
+    - [far future](#far-future)
   - [License](#license)
   - [Acknowledgments](#acknowledgments)
 
@@ -25,7 +37,12 @@ The Ascii Renderer project, Asciir for short, is a Renderer / Game engine that u
 
 Displaying graphics in a terminal can often be very tedious and inconvenient, as it was not really designed for it. This is what Asciir aims to eliminate, by providing a library that allows the user to render graphics in the terminal with ease. It allows one to easily display graphics in the terminal as well as control the terminal window size (depending on the terminal), title and other properties. As Asciir also is intended to be used as a game engine, it also aims to provide the highest frame rate possible, for the given task.
 
+## Branch Details
+
+This branch integrates the fully developed Entity Component System into the Asciir workflow.
+
 ## Examples (More coming soon)
+
 here are some demo projects build with Asciir, see the examples folder for more examples.
 
 ### TriangleExample
@@ -311,6 +328,7 @@ ASCIIR_LOG_VIEWER = ON
 ASCIIR_EXAMPLES = OFF
 ASCIIR_HIGH_PRECISSION_FLOAT = OFF
 ASCIIR_AUTO_INSTALL_DEPS = OFF
+ASCIIR_PARALLEL_BUILD = ON
 ```
 
 ### ASCIIR_LOG_VIEWER
@@ -329,9 +347,15 @@ Use double instead of float for the Real typedef.
 
 ### ASCIIR_AUTO_ISNTALL_DEPS
 
-automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
+Automatically installs all the dependencies using the Conan package manager. (conan is required for this to work)
 
-the alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
+The alias target `Asciir::Asciir` can be used if one wants to link to the Asciir library through CMake.
+
+### ASCIIR_PARALLEL_BUILD
+
+Builds the Asciir library using multiple threads.
+
+This should be enabled for a faster build time, at the cost of a higher CPU load.
 
 ## Performance
 

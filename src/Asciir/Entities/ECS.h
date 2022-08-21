@@ -1,45 +1,91 @@
 #pragma once
 
 #include "Asciir/Event/Event.h"
+#include <entt/entt.hpp>
 
 namespace Asciir
 {
-	/// @brief unique identifier datatype
-	using UID = size_t;
-
-	static constexpr UID INVALID_ENTITY_UID = std::numeric_limits<UID>::max();
-
 	class Scene;
 
-	// @brief a class that can be associated with an entity and represents some data about said entity
-	// should only hold data and should not be associated with any functionallity
-	// acts as a base class for user and predefined components
-	class Component
+	class Entity;
+	template<typename ... Args>
+	class EntityBlueprint;
+
+	class System;
+
+	using SystemPtr = void(*)(System*, Scene&);
+
+	class System
 	{
-		friend Scene;
 	public:
-		Component(UID uid = INVALID_ENTITY_UID)
-			: m_entity_id(uid) {}
+		System(SystemPtr main_func)
+			: m_system(main_func) {}
 
-		/// @brief retrieve the id of the entity this component is tied to
-		UID getEntUID() const { return m_entity_id; }
+		System() = default;
 
-		// cast operator to implicitly cast when adding a component to a component buffer
-		operator uint8_t*() { return (uint8_t*) this; }
-
-		/// @brief check if the components are of the same type, and are tied to the same entity
-		bool operator==(const Component & other) { return typeid(this) == typeid(other) && getEntUID() == other.getEntUID(); }
+		void run(Scene& scene)
+		{
+			m_system(this, scene);
+		}
 
 	protected:
-		UID m_entity_id;
+		SystemPtr m_system;
+
 	};
 
-	template<typename TComp>
-	using enable_if_component = enable_if_base_of<TComp, Component>;
+	/// @brief class representing a collection of entities and systems.
+	/// should not be inherited and should only be defined by its entities and systems attatched.
+	// TODO: use entt::registry underneath
+	class Scene
+	{
+	public:
+		Scene() = default;
 
-	
-	
-	 
+		/// @brief constructs and reserves an entity UID, and returns it.
+		Entity createEntity();
+		
+		/// @brief specialization for EntityBlueprints
+		/// creates entity and makes sure all components are added and initialized before returning the entity uid
+		template<typename TBlueprint, std::enable_if_t<enable_if_same_template<TBlueprint, EntityBlueprint>::value, bool> = false>
+		Entity createEntity(const TBlueprint& entity_blueprint);
+
+		/// @brief removes the passed entity_id from the scene
+		void destroyEntity(Entity entity);
+
+		/// @brief associates a System to the current Scene.
+		/// if a system is associated witha  scene, it will be run, on the current Scene, when the runSystem() method is called.
+		/// @note this does not modify the system itself in any way, meaning after this call, a call to system.run(),
+		/// will not include this scene, unless it was added with system.addScene.
+		void addSystem(Ref<System> system) { m_associated_systems.push_back(system); }
+
+		/// @brief checks if the passed system is associated with the current scene.
+		bool hasSystem(Ref<System> system) { return std::find(m_associated_systems.begin(), m_associated_systems.end(), system) != m_associated_systems.end(); }
+
+		/// @brief unassociates a System witht he current scene.
+		void removeSystem(Ref<System> system) { AR_ASSERT_MSG(hasSystem(system), "Scene must contain system before it can be removed!"); m_associated_systems.erase(std::find(m_associated_systems.begin(), m_associated_systems.end(), system)); }
+		
+		/// @brief runs all systems associated with the current scene.
+		void runSystems()
+		{
+			for (Ref<System> system : m_associated_systems)
+				system->run(*this);
+		}
+
+		entt::registry& getReg()
+		{
+			return m_registry;
+		}
+
+	protected:
+
+		template<size_t index, typename TTuple>
+		void readBlueprint(Entity entity_id, const TTuple& blueprint_components);
+
+		std::vector<Ref<System>> m_associated_systems;
+
+		entt::registry m_registry;
+	};
+
 	/// @brief class defining an entities components and default values.
 	/// is passed to a Scene to quickly generate an entity with the passed components and default values.
 	///
@@ -48,6 +94,7 @@ namespace Asciir
 	///	all arguments passed to the constructor must be of the same type and order, of the types passed.
 	///	there can be passed less arguments to the constructor than the number of types, if this happens, the default values of the missing values will be used.
 	///
+	// TODO: keep this
 	template<typename ... Args>
 	class EntityBlueprint
 	{
@@ -85,7 +132,6 @@ namespace Asciir
 		};
 
 		// checks for wether the class was passed the correct arguments
-		static_assert((... && std::is_base_of_v<Component, Args>), "All typename arguments must be components");
 		static_assert(are_unique<Args...>::value, "Cannot have more than one component on an entity");
 
 		template<size_t index, typename InitArg, typename ... Rest,
@@ -100,589 +146,61 @@ namespace Asciir
 		std::tuple<Args...> m_init_values;
 	};
 
-	/// @brief A class holding references to the components [TComps] all linked to a specific entity.
-	/// the individual components can be aqquired with the get function (both typename argument and std::type_index overloads exists)
-	class ComponentView
-	{
-	public:
-		ComponentView() = default;
-		ComponentView(const ComponentView& other) : m_components(other.m_components) {}
-		ComponentView(std::unordered_map<std::type_index, Component*> components) : m_components(components) {}
-
-		/// @brief returns the entity id of the first component, ideally all components should have the same entity id.
-		/// in debug mode, it will assert if all components do not have the same id if get or getEntUID is called
-		/// this also means you can call the set function with a different id, and still have it work, as long as all components have the same id when the view has been updated.
-		UID getEntUID() {
-		#ifdef AR_DEBUG
-			UID last = m_components.begin()->second->getEntUID();
-			for (auto& [_, comp] : m_components)
-				AR_ASSERT_MSG(last == comp->getEntUID(), "getEntUID was called with midex entity id's\nID1: ", last, "\nID2:", comp->getEntUID());
-		#endif
-
-			return m_components.begin()->second->getEntUID();
-		}
-
-		/// @brief same as get(typeid(TCmp))
-		template<typename TComp, enable_if_component<TComp> = false>
-		TComp& get() { return (TComp&) get(typeid(TComp)); }
-
-		/// @brief retrieves the specified component type from the entity the view holds a reference to.
-		/// @param component the component type id
-		/// @return a reference to the component, contained in the entity
-		Component& get(std::type_index component)
-		{
-		#ifdef AR_DEBUG
-			UID last = m_components.begin()->second->getEntUID();
-			for (auto& [_, comp] : m_components)
-				AR_ASSERT_MSG(last == comp->getEntUID(), "get was called with mixed entity id's\nID1: ", last, "\nID2:", comp->getEntUID());
-
-			AR_ASSERT_MSG(m_components.find(component) != m_components.end(), "ComponentView does not contain a component with the type: ", component.name());
-		#endif
-
-			return *m_components[component];
-		}
-
-		/// @brief same as set(typeid(TComp, component))
-		template<typename TComp, enable_if_component<TComp> = false>
-		void set(TComp& component) { set(typeid(TComp), component); }
-		
-		/// @brief sets / adds the passed component index to the passed component.
-		void set(std::type_index component_index, Component& component) { m_components[component_index] = &component; }
-
-		/// @brief same as remove(typeid(TComp))
-		template<typename TComp, enable_if_component<TComp> = false>
-		void remove() { m_components.erase(typeid(TComp)); }
-
-		/// @brief removes the passed component type from the entity.
-		void remove(std::type_index component_index) { m_components.erase(component_index); }
-
-	protected:
-		std::unordered_map<std::type_index, Component*> m_components;
-	};
-
-	class System;
-
-	// TODO: dont do this?
-	class SystemEvent
-	{
-	public:
-		friend System;
-		
-		SystemEvent() = delete;
-		SystemEvent(std::type_index event_id) : m_event_id(event_id) {}
-
-		UID getEntUID() { return m_components->getEntUID(); }
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		TComp& getComponent() { return getComponent(typeid(TComp)); }
-
-		Component& getComponent(std::type_index component) { return m_components->get(component); }
-
-		std::type_index getEventType() { return m_event_id; }
-
-		Scene& getScene() { return *m_scene; }
-
-	protected:
-
-		ComponentView* m_components = nullptr;
-		Scene* m_scene = nullptr;
-		std::type_index m_event_id;
-	};
-
-	template<typename TEvent>
-	using enable_if_event = enable_if_base_of<TEvent, SystemEvent>;
-
-	
-	/// @brief a class that reads and modifies one or more components.
-	/// acts as a base class for all user and library predefined systems.
-	///
-	/// use createEvent to alert other systems subscribed to a specific SystemEvent.
-	///
-	/// use Subscribe and Unsubscribe to define what SystemEvents will notify the system.
-	///
-	/// use requireComponent and unrequireComponent to define what components the system needs to function.
-	///
-	/// use addScene and removeScene to define what scenes the system should run on.
-	class System
-	{
-	public:
-
-		System() = default;
-		virtual ~System() {}
-
-		/// @brief user implemented function.
-		/// whenever a system finds an entity that contains the specified components, process is called with the entity uid and components related to the entity.
-		/// events should also be created inside process.
-		/// @importent components returned by getComponent or a SystemEvent should not be stored as a reference, as these get overwritten when a new process call is made.
-		virtual void process(Scene& scene) = 0;
-
-		/// @brief gets called when run is called and before any process call has been made
-		virtual void onStart() {}
-
-		/// @brief gets called if run was called and there are no entities left to process
-		virtual void onEnd() {}
-
-		/// @brief gets called every time the active scene is changed.
-		/// a scene is only changed when every possible componentview with the required components has been processed
-		virtual void onSceneChange() {}
-
-		// gets called when an event is dispatched to the system
-		virtual void onEventRecieve(SystemEvent&) {}
-
-		/// @brief runs the system on all the added scenes entities.
-		/// should be called by the user / system when the system needs to start processing entities.
-		/// this is not needed if the system only relies on events from other systems.
-		void run();
-
-		/// @brief runs the system on a specific scenes entities.
-		/// @note the scene does not need to have been added using addScene(), in order for this to work. 
-		/// @param scene the scene which entities should be processed
-		void run(Scene* scene);
-
-		/// @brief gets a component from the entity that is currently being processed, should only be used inside the process() function.
-		template<typename TComp, enable_if_component<TComp> = false>
-		TComp& getComponent() { return m_active_components->get<TComp>(); }
-
-		/// @brief returns the scene of which the entity currently being processed is tied to, should only be used inside the process() function.
-		Scene& getScene() { return *m_active_scene; }
-
-		/// @brief gets the id of the entity currently being processed, should only be used inside the process() function
-		UID getEntUID() { return m_active_components->getEntUID(); }
-
-		// automaticlly creates and populates an event of specified type and dispatches it to other systems in the associated scenes.
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void createEvent(TEvent s_event = TEvent());
-
-
-		/// @brief requires that an entity must contain the specified components, before it will be processed by this system.
-		/// if multiple components are required at once, the unordered_set will be resized once instead of every time a new component is inserted
-		template<typename First, typename ... Args, std::enable_if_t<(sizeof...(Args) > 0), bool> = false>
-		void requireComponents();
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		void requireComponents();
-
-		/// @brief removes components from the requirement list.
-		template<typename First, typename ... TComps>
-		void unrequireComponents();
-
-		template<typename TComp, enable_if_component<TComp>>
-		void unrequireComponents();
-
-		/// @brief asocciates a scene with the system, meaning only entities originating from this scene (or any previously added), will be processed.
-		void addScene(Scene& scene);
-		/// @brief unasocciates a scene with the system
-		void removeScene(Scene& scene);
-
-		// subscribe should be called whenever a scene has been added
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void subscribe();
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void unsubscribe();
-
-	protected:
-
-		template<typename First, typename ... Args, std::enable_if_t<(sizeof...(Args) > 0), bool> = false>
-		void requireComponentsHelper();
-
-		template<typename TComp>
-		void requireComponentsHelper() { requireComponents<TComp>(); }
-
-		// what components the system needs to function
-		std::unordered_set<std::type_index> m_system_components;
-		// what scenes the system is a part of
-		std::set<Scene*> m_system_scenes;
-
-		std::unordered_set<std::type_index> m_subscribed_events;
-
-		// stores a pointer for each component currently being processed.
-		ComponentView* m_active_components = nullptr;
-		// UID for entity currently being processed
-		UID m_active_entity = INVALID_ENTITY_UID;
-		// stores a pointer to the current scene being processed
-		Scene* m_active_scene = nullptr;
-	};
-
-	/// @brief class used by scene for storing components of same id in continous memory
-	class ComponentBuffer
-	{
-	public:
-		ComponentBuffer(size_t data_size = 0) : m_data_size(data_size) {}
-
-		/// @brief retrieves a component using the entity index in the scene.
-		/// this method maps the passed index to the corresponding component buffer index using a sparse map.
-		uint8_t* get(UID indx);
-		/// @brief retrieves a component from the component buffer at the passed index.
-		/// this should rarely be called by an external source file, instead use get(UID).
-		uint8_t* unmappedGet(size_t indx);
-
-		/// @brief erase the component data at the component buffer index.
-		/// if the destructor sohuld be called, use remove<TComp>(size_t).
-		void remove(size_t indx);
-
-		/// @brief erase the component data at the component buffer index, and call ~TComp() on the data.
-		template<typename TComp>
-		void remove(size_t indx)
-		{
-			AR_ASSERT_MSG(sizeof(TComp) == m_data_size, "Size of TComp must be equal to the datasize. (is TComp not the type actually stored in the component buffer?)");
-
-			// offset all indexes past the element to the left in the sparse map
-			for (size_t i = mapIncoming(indx) + 1; i < dataLength(); i++)
-				m_sparse_map[mapOutgoing(i)]--;
-
-			size_t offset = mapIncoming(indx) * (m_data_size + sizeof(size_t));
-
-			// remove the component from component data vector
-			auto begin = m_data.begin() + offset;
-			auto end = begin + (m_data_size + sizeof(size_t));
-
-			// destruct data as a TComp class.
-			(TComp*)(m_data.data() + offset)->~TComp();
-
-			m_data.erase(begin, end);
-		}
-		
-		/// @brief sets the component at indx to the value of data.
-		/// if a component already is stored at the current index, it is overwritten
-		/// 
-		/// @note data is copied as a raw byte array,
-		/// meaning if any special operation is requeredfor the copmonent type on a copy,
-		/// it will not perform it, as the copy constructor will not be called.
-		/// 
-		/// For an alternative see set<TComp>, which fixes this issue.
-		/// 
-		/// @see set<TComp>
-		void set(size_t indx, uint8_t* data);
-
-		/// @brief sets the component data at the passed index, and makes sure the data passed is copied using the copy constructor of TComp.
-		/// @see set
-		template<typename TComp>
-		void set(size_t indx, const TComp& data)
-		{
-			AR_ASSERT_MSG(sizeof(TComp) == m_data_size, "Size of TComp must be equal to the datasize. (is TComp not the type actually stored in the component buffer?)");
-
-			if (!hasIndex(indx))
-			{
-				m_data.reserve(m_data.size() + m_data_size + sizeof(size_t));
-
-				// TODO: is this needed?
-
-				m_data.insert(m_data.end(), m_data_size, 0);
-
-				// copy construct a new TComp object inside the raw component buffer, using placement new
-				new (m_data.data() + dataLength() * (m_data_size + sizeof(size_t))) TComp(data);
-
-				// finaly, update the sparse map and the entity ID of the data buffer.
-				m_data.insert(m_data.end(), (uint8_t*)&indx, (uint8_t*)&indx + sizeof(size_t));
-
-				m_sparse_map[indx] = dataLength() - 1;
-
-			}
-			else
-			{
-				// in the case the index exists, get the position of it in the buffer, and copy the data into to the desired position
-				auto begin = m_data.begin() + mapIncoming(indx) * (m_data_size + sizeof(size_t));
-
-				*(TComp*)(m_data.data() + mapIncoming(indx) * (m_data_size + sizeof(size_t))) = data;
-			}
-		}
-
-		/// @brief set the size of the sparse map without affecting the size of the data array
-		void setSize(size_t size);
-		/// @brief gets the size of the sparse map
-		size_t getSize() { return m_sparse_map.size(); }
-
-		/// @brief increases the size of the sparse map by amount
-		void grow(size_t amount = 1) { setSize(getSize() + amount); }
-		/// @brief decreases the size of the sparse map by amount
-		void shrink(size_t amount = 1) { AR_ASSERT(amount <= getSize()); resize(getSize() - amount); }
-
-		/// @brief sets the size of the sparse map and removes any elements not instide the new size
-		void resize(size_t size);
-
-		/// @brief gets the number of components currently stored in the component buffer
-		size_t dataLength() { return m_data.size() / (m_data_size + sizeof(size_t)); }
-
-
-		/// @brief check wether the index passed has an element associated with the ComponentBuffer
-		bool hasIndex(size_t indx);
-
-		/// @brief maps an incomming index using the sparse map
-		size_t mapIncoming(UID indx) { return m_sparse_map[indx]; }
-		
-		/// @brief maps an index relative to m_data to the sparse_map
-		UID mapOutgoing(size_t indx);
-
-		/// @brief same as get(indx);
-		uint8_t* operator[](size_t indx) { return get(indx); }
-
-	protected:
-
-		size_t m_data_size;
-		// organized as a single element being stored as [Component part (unknown bytes) + size part (4 / 8 bytes)]
-		std::vector<uint8_t> m_data;
-		
-		std::vector<size_t> m_sparse_map;
-	};
-	
-	class ComponentIterator;
-
-	/// @brief iterable class that lets you loop over all entities in a specific scene containing specific components [TComps]
-	/// begin() and end() returns an ComponentIterator class
-	/// the iterator will not be usable after the scenes components have been modified
-	class SceneView
-	{
-	public:
-		SceneView(Scene& target_scene);
-
-		/// @tparam TComps the components required for an entity to be iterated over.
-		template<typename ... TComps> // TComps can only be derived classes of Component
-		SceneView(Scene& target_scene);
-
-		/// @brief same as addComponent(typeid(TComp))
-		template<typename TComp, enable_if_component<TComp> = false>
-		void addComponent() { addComponent(typeid(TComp)); }
-		/// @brief adds a required component, before an entity will be iterated over.
-		void addComponent(std::type_index component_type) { m_required_components.insert(component_type); }
-
-		/// @brief same as removeComponent(typeid(TComp))
-		template<typename TComp, enable_if_component<TComp> = false>
-		void removeComponent() { removeComponent(typeid(TComp)); }
-		/// @brief removes a required component.
-		void removeComponent(std::type_index component_type) { m_required_components.erase(component_type); }
-
-		/// @brief prepares the SceneView iterator to be iterated over.
-		/// should be called after component requirements have been modified, or the scene has been modified.
-		/// not calling the function is undefined behaviour.
-		/// will automaticly be called if a SceneView constructor adds components
-		void prepare();
-
-		ComponentIterator begin();
-		ComponentIterator end();
-
-	protected:
-		std::variant<std::monostate, std::type_index> m_target_component_buffer;
-		std::set<std::type_index> m_required_components;
-		Scene& m_scene;
-
-		friend ComponentIterator;
-
-	};
-
-	/// @brief class for iterating over entities containing specific components
-	class ComponentIterator
-	{
-	public:
-		using iterator_category = std::forward_iterator_tag;
-		using value_type = ComponentView;
-		using difference_type = std::ptrdiff_t;
-		using pointer = value_type*;
-		using reference = value_type&;
-
-		ComponentIterator(SceneView* scene_view, size_t start_index = 0);
-
-		ComponentIterator& operator++();
-		ComponentIterator operator++(int);
-		bool operator==(const ComponentIterator& other) const;
-		bool operator!=(const ComponentIterator& other) const;
-		reference operator*();
-
-	protected:
-
-		bool findNextEntity();
-
-		size_t m_current_index = 0;
-		// what component buffer should be iterated over
-		SceneView* m_scene_view;
-		value_type m_component_view;
-	};
-
-	class Entity;
-
-	/// @brief class representing a collection of entities and systems.
-	/// should not be inherited and should only be defined by its entities and systems attatched.
-	class Scene
-	{
-		friend System;
-
-	public:
-		Scene() = default;
-
-		/// @brief constructs and reserves an entity UID, and returns it.
-		Entity createEntity();
-		
-		/// @brief specialization for EntityBlueprints
-		/// creates entity and makes sure all components are added and initialized before returning the entity uid
-		template<typename TBlueprint, std::enable_if_t<enable_if_same_template<TBlueprint, EntityBlueprint>::value, bool> = false>
-		Entity createEntity(const TBlueprint& entity_blueprint);
-
-		/// @brief removes the passed entity_id from the scene
-		void destroyEntity(UID entity);
-
-		/// @brief checks wether the passed entity_id exists in the scene
-		bool hasEntity(UID entity);
-
-		/// @brief get the amount of entities currently in the scene
-		size_t entityCount() { return m_entity_count - m_avaliable_entities.size(); }
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		void addComponents(UID entity_id, TComp component_data = TComp());
-
-		/// @brief adds the passed components to the passed entity.
-		template<typename TComp, typename ... Args, std::enable_if_t<(sizeof...(Args) > 0), bool> = false>
-		void addComponents(UID entity_id);
-
-		/// @brief adds the passed components to the passed entity, and initializes them to the passed values.
-		template<typename TComp, typename ... Args, std::enable_if_t<(sizeof...(Args) > 0), bool> = false>
-		void addComponents(UID entity_id, TComp component_data, Args ... args);
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		void removeComponents(UID entity_id);
-
-		/// @brief removes the specified components from the entity
-		template<typename TComp, typename ... Args, std::enable_if_t<(sizeof...(Args) > 0), bool> = false>
-		void removeComponents(UID entity_id);
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		TComp& getComponents(UID entity_id);
-
-		/// @brief retrieves a tuple of refrences to the requiresed components.
-		/// The ordering in the tuple, will be the same as the ordering in the template arguments.
-		template<typename ... Args, std::enable_if_t<(sizeof...(Args) > 1), bool> = false>
-		std::tuple<Args&...> getComponents(UID entity_id);
-
-		Component& getComponent(UID entity_id, std::type_index component);
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		bool hasComponent(UID entity_id) { return hasComponent(entity_id, typeid(TComp)); }
-
-		/// @brief checks if the passed entity has the passed component.
-		bool hasComponent(UID entity_id, std::type_index component);
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		TComp& getComponentIndexed(size_t index);
-
-		/// @brief retrieves the n'th element from the component buffer containing comnponents of type [component_type]
-		Component& getComponentIndexed(size_t index, std::type_index component_type);
-
-		template<typename ... TComps>
-		SceneView getView() { return getView({ typeid(TComps)... }); };
-
-		/// @brief return a scene view with the specified component requirements.
-		SceneView getView(const std::unordered_set<std::type_index>& components);
-
-		template<typename TComp, enable_if_component<TComp> = false>
-		size_t componentCount();
-
-		/// @brief returns the amount of components of the specified type currently in the scene.
-		/// If no componentbuffer exists for the passed type, a length of 0 is returned
-		size_t componentCount(std::type_index component);
-
-		/// @brief associates a System to the current Scene.
-		/// if a system is associated witha  scene, it will be run, on the current Scene, when the runSystem() method is called.
-		/// @note this does not modify the system itself in any way, meaning after this call, a call to system.run(),
-		/// will not include this scene, unless it was added with system.addScene.
-		void addSystem(System& system) { m_associated_systems.insert(&system); }
-
-		/// @brief checks if the passed system is associated with the current scene.
-		/// @param system 
-		bool hasSystem(System& system) { return m_associated_systems.find(&system) != m_associated_systems.end(); }
-
-		/// @brief unassociates a System witht he current scene.
-		void removeSystem(System& system) { AR_ASSERT_MSG(hasSystem(system), "Scene must contain system before it can be removed!"); m_associated_systems.erase(&system); }
-		
-		/// @brief runs all systems associated with the current scene.
-		void runSystems()
-		{
-			for (System* system : m_associated_systems)
-				system->run(this);
-		}
-
-		// TODO: should events be a thing?
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void subscribeSystem(System& system) { subscribeSystem(system, typeid(TEvent)); }
-		void subscribeSystem(System& system, std::type_index event_id);
-
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void unsubscribeSystem(System& system) { subscribeSystem(system, typeid(TEvent)); }
-		void unsubscribeSystem(System& system, std::type_index event_id);
-
-		template<typename TEvent, enable_if_event<TEvent> = false>
-		void dispatchEvent(TEvent& s_event);
-
-	protected:
-
-		template<size_t index, typename TTuple>
-		void readBlueprint(UID entity_id, const TTuple& blueprint_components);
-
-		// variable used to generate UID's for new entities
-		UID m_entity_count = 0;
-		// list containing recyclable uids
-		std::vector<UID> m_avaliable_entities;
-
-		std::unordered_set<System*> m_associated_systems;
-
-		std::map<std::type_index, ComponentBuffer> m_components;
-
-		// stores which systems are subscribed to which events
-		std::map<std::type_index, std::set<System*>> m_event_subscribtions;
-
-	};
-
 	/// @brief the Entity class responsible for managing a single entity and its copmonents.
 	/// the primary purpose of this class is to avoid constantly having to refrence the scene an entity is tied to, when adding, removing and retrieving components.
 	/// 
 	/// this means that functions like Scene::addComponents has an equivalent Entity::add, which does exactly the same as the former function.
 	/// However, the scene does not have to be specified, as the Entity class also stores which Scene the entity is tied to.
-	/// 
+	// TODO: use entt::Entity and Scene underneath
 	class Entity
 	{
 	public:
 
 		Entity() = default;
+		// creates a reference to the passed entity
+		Entity(const Entity& other)
+			: m_id(other.m_id), m_scene(other.m_scene) {}
 
 		/// @brief retrieve a component from the entity.
 		template<typename TComp>
 		TComp& get()
 		{
-			return m_scene->getComponents<TComp>(getID());
+			return m_scene->getReg().get<TComp>(m_id);
 		}
 
 		/// @brief checks if the entity has the specified component(s).
-		template<typename TComp, typename ... Rest>
+		template<typename ... TComps>
 		bool has()
 		{
-			if constexpr (sizeof...(Rest) == 0)
-			{
-				return m_scene->hasComponent<TComp>();
-			}
-			else
-			{
-				if (m_scene->hasComponent<TComp>())
-					return has<Rest...>();
-				else
-					return false;
-			}
+			return m_scene->getReg().all_off<TComps...>(m_id);
 		}
 
 		template<typename TComp, typename ... Rest>
 		void add()
 		{
-			m_scene->addComponents<TComp, Rest...>(getID());
+			m_scene->getReg().emplace<TComp>(m_id);
+			
+			if constexpr (sizeof...(Rest) > 0)
+				add<Rest...>();
 		}
 
 		/// @brief adds the specified component(s) to the entity. Optionally, initial values can be passed, with the same logic as Scene::addComponents.
-		template<typename ... TComps>
-		void add(const TComps& ... component_vals)
+		template<typename TComp, typename ... Rest>
+		void add(const TComp& val, const Rest& ... rest)
 		{
-			m_scene->addComponents<TComp, Rest...>(getID(), component_vals...);
+			m_scene->getReg().emplace<TComp>(m_id);
+			if (sizeof...(Rest) > 0)
+				add<Rest...>(rest...);
 		}
 
 		/// @brief removes the speciffied component(s) from the entity.
-		template<typename ... TComps>
+		template<typename TComp, typename ... Rest>
 		void remove()
 		{
-			m_scene->removeComponents<TComps...>(getID());
+			m_scene->getReg().remove<TComp>(m_id);
+
+			if (sizeof...(Rest) > 0)
+				remove<Rest...>();
 		}
 
 		/// @brief removes the entity from its associated scene.
@@ -690,26 +208,34 @@ namespace Asciir
 		/// As well as this, m_id will be set to INVALID_ENTITY_UID and m_scene will be set to a nullptr.
 		void destroy()
 		{
-			m_scene->destroyEntity(getID());
+			m_scene->destroyEntity(*this);
 
-			m_id = INVALID_ENTITY_UID;
-			m_scene = nullptr;
+			m_id = entt::null;
 		}
 
 		/// @return returns the id of the entity.
-		UID getID() { return m_id; }
+		entt::entity getID() const { return m_id; }
 
 		/// @return returns the scene that the entity is tied to.
-		Scene* getScene() { return m_scene; }
+		Scene* getScene() const { return m_scene; }
 
-		operator bool() { return m_id != INVALID_ENTITY_UID && m_scene != nullptr; }
+		operator bool() { return m_id != entt::null && &m_scene != nullptr; }
+
+		Entity& operator=(const Entity& other)
+		{
+			m_id = other.getID();
+			m_scene = other.getScene();
+
+			return *this;
+		}
 
 	protected:
-		Entity(UID id, Scene* scene)
+		Entity(entt::entity id, Scene* scene)
 			: m_id(id), m_scene(scene) {}
 
-		UID m_id = INVALID_ENTITY_UID;
-		Scene* m_scene = nullptr;
+		entt::entity m_id;
+		Scene* m_scene;
+
 		friend Scene;
 	};
 }
