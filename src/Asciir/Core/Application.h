@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Terminal.h"
+#include "Asciir/Event/TerminalEventHandler.h"
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"

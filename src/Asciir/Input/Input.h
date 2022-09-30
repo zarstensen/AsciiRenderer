@@ -2,8 +2,8 @@
 
 #include "Asciir/Core/Core.h"
 #include "Asciir/Maths/Vertices.h"
-#include "Asciir/Core/Terminal.h"
 
+#include "Asciir/Event/TerminalEventHandler.h"
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"

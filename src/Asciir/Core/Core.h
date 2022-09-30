@@ -124,7 +124,7 @@ namespace Asciir
 	/// @brief signal value for an CTRL + C interrupt
 	constexpr int SIG_CTRL_C = SIGINT;
 
-	/// @brief signal value for a command line close interrupt (the user has hit the X in the top right / left, in order to close the program)
+	/// @brief signal value for a command close interrupt (the user has hit the X in the top right / left, in order to close the program)
 #ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;
 #else

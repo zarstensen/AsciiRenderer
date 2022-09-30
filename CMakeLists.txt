@@ -108,7 +108,6 @@ set(SRC_DIR_CORE
     src/Asciir/Core/Layer.cpp 
     src/Asciir/Core/EntryPoint.cpp
     src/Asciir/Core/LayerStack.cpp 
-    src/Asciir/Core/Terminal.cpp 
     src/Asciir/Core/Timing.cpp  
     src/Asciir/Core/AsciirLiterals.cpp
 )
@@ -120,7 +119,6 @@ set(HEADER_DIR_CORE
     src/Asciir/Core/Layer.h 
     src/Asciir/Core/LayerStack.h 
     src/Asciir/Core/MacroArguments.h
-    src/Asciir/Core/Terminal.h 
     src/Asciir/Core/Timing.h
     src/Asciir/Core/AsciirLiterals.h
 )
@@ -138,12 +136,18 @@ set(SRC_DIR_ENTITIES
     src/Asciir/Entities/Components.cpp
 )
 
-set(DIR_EVENT
+set(SRC_DIR_EVENT
+    src/Asciir/Event/TerminalEventHandler.cpp
+)
+
+set(HEADER_DIR_EVENT
     src/Asciir/Event/Event.h
     src/Asciir/Event/KeyEvent.h
     src/Asciir/Event/MouseEvent.h
     src/Asciir/Event/TerminalEvent.h
+    src/Asciir/Event/TerminalEventHandler.h
 )
+
 
 
 set(SRC_DIR_INPUT
@@ -178,8 +182,6 @@ set(HEADER_DIR_LOGGING
 
 set(SRC_DIR_MATHS
     src/Asciir/Maths/Maths.cpp
-    src/Asciir/Maths/Lines.cpp
-    src/Asciir/Maths/Lines.ipp
     src/Asciir/Maths/Vertices.ipp
     src/Asciir/Maths/Vector.ipp
     src/Asciir/Maths/Matrix.ipp
@@ -188,7 +190,6 @@ set(SRC_DIR_MATHS
 
 set(HEADER_DIR_MATHS
     src/Asciir/Maths/Maths.h
-    src/Asciir/Maths/Lines.h
     src/Asciir/Maths/Vertices.h
     src/Asciir/Maths/Vector.h
     src/Asciir/Maths/Matrix.h
@@ -288,7 +289,8 @@ add_library(${PROJECT_NAME} STATIC
     ${HEADER_DIR_ENTITIES}
     ${SRC_DIR_ENTITIES}
 
-    ${DIR_EVENT}
+    ${HEADER_DIR_EVENT}
+    ${SRC_DIR_EVENT}
 
     ${HEADER_DIR_INPUT}
     ${SRC_DIR_INPUT}
@@ -359,7 +361,8 @@ source_group("core/src"             FILES ${SRC_DIR_CORE})
 source_group("entities/header"      FILES ${HEADER_DIR_ENTITIES})
 source_group("entities/src"         FILES ${SRC_DIR_ENTITIES})
 
-source_group("event"                FILES ${DIR_EVENT})
+source_group("event/header"         FILES ${HEADER_DIR_EVENT})
+source_group("event/src"            FILES ${SRC_DIR_EVENT})
 
 source_group("input/header"		    FILES ${HEADER_DIR_INPUT})
 source_group("input/src"            FILES ${SRC_DIR_INPUT})

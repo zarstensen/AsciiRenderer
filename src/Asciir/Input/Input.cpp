@@ -1,7 +1,7 @@
 #include "arpch.h"
 #include "Asciir/Input/Input.h"
 #include "Asciir/Core/Application.h"
-#include "Asciir/Core/Terminal.h"
+#include "Asciir/Event/TerminalEventHandler.h"
 #include "Asciir/Input/EventListener.h"
 #include "Asciir/Logging/Log.h"
 

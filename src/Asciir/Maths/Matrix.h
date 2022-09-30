@@ -13,7 +13,6 @@ namespace Asciir
 	template<typename T, int order = Eigen::ColMajor>
 	struct arMatrix : public EgMatrixX<T, order>
 	{
-
 		using EgMatrixX<T, order>::Matrix;
 
 		/// @brief Constructor taking a size parameter defining the size of the dynamic array

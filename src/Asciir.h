@@ -7,7 +7,6 @@
 // Core
 #include "Asciir/Core/Core.h"
 #include "Asciir/Core/Application.h"
-#include "Asciir/Core/Terminal.h"
 #include "Asciir/Core/Timing.h"
 #include "Asciir/Core/Layer.h"
 // Core
@@ -21,6 +20,7 @@
 
 #include "Asciir/Audio/Audio.h"
 
+#include "Asciir/Event/TerminalEventHandler.h"
 #include "Asciir/Event/KeyEvent.h"
 #include "Asciir/Event/MouseEvent.h"
 #include "Asciir/Event/TerminalEvent.h"

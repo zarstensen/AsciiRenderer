@@ -21,7 +21,7 @@
 			char err_msg[256]; \
 			FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err_msg, 255, NULL); \
 			AR_ERR(err_msg); \
-			/*AR_DEBUG_BREAK; \*/} \
+		} \
 		AR_JOIN_NAME(ret_val, __LINE__); }
 	#else
 
@@ -45,10 +45,9 @@
 	#ifdef AR_DEBUG
 	#define AR_WIN_ASSERT(x) { auto AR_JOIN_NAME(ret_val, __LINE__) = x; \
 		if(!AR_JOIN_NAME(ret_val, __LINE__)) {\
-			char err_msg[256];\
-			FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err_msg, 255, NULL);\
-			AR_ERR(err_msg);\
-			assert(false);\
+			char err_msg[256]; \
+			FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), err_msg, 255, NULL); \
+			AR_ERR(err_msg); \
 		}}
 	#else
 	#define AR_WIN_ASSERT(x)
@@ -108,7 +107,7 @@
 #define AR_ASSERT_MSG(x, ...) if(!(x)) { \
 	AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__); \
 	AR_DEBUG_BREAK; \
-	assert((false && "Error message can be found in a log file"));}
+	}
 #else
 #define AR_ASSERT_MSG(x, ...)
 #endif
@@ -117,4 +116,4 @@
 #define AR_ASSERT_VOLATILE(x, ...) if(!(x)) { \
 	AR_CORE_ERR(__VA_ARGS__, " line: ", __LINE__, " File: ", __FILE__); \
 	AR_DEBUG_BREAK; \
-	assert((false && "Error message can be found in a log file"));}
+	}
