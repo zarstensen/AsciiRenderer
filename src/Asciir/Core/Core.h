@@ -16,6 +16,9 @@ namespace Asciir
 	/// @brief alias for the underlying file path data type
 	typedef std::filesystem::path Path;
 
+
+	// ============ Ref ============
+
 	/// @brief class for holding a smart pointer to an object.
 	/// 
 	///	automaticly sets up an shared pointer depending on the passed arguments, so there is no need to worry about the construction of a shared pointer.
@@ -90,6 +93,93 @@ namespace Asciir
 	/// @brief alias for RenderRef<T>
 	template<typename T>
 	using RRef = RenderRef<T>;*/
+
+	// ============ U8String ============
+
+	/// @brief the string literal Asciir uses for representing utf-8 strings.
+	/// simply a typedef for a char32_t string.
+	using U8String = std::basic_string<char32_t>;
+	using U8Char = char32_t;
+
+	static constexpr size_t UTF_CODE_LEN = 4;
+
+	/// @brief converts the str data to a printable format, and pushes it to the passed destination buffer.
+	/// the U8String class is not directly printable, as it stores it string data as utf-32, this function converts the utf-32 chars to a utf-8 format.
+	/// @return number of bytes pushed to dst
+	size_t printable(const U8String& str, char* dst)
+	{
+		size_t bytes_pushed = 0;
+
+		for (U8Char code_point : str)
+		{
+			size_t offset = printable(code_point, dst);
+			
+			dst += offset;
+			bytes_pushed += offset;
+		}
+
+		return bytes_pushed;
+	}
+
+	/// @brief same as printable(), but for a U8Char.
+	/// as a single utf-8 character can be up to 4 bytes long, the destination buffer should be at least 4 bytes.
+	/// @return number of bytes pushed to dst, will always be in the interval 1 - 4.
+	size_t printable(U8Char code_point, char* dst)
+	{
+		//AR_ASSERT_MSG(c >> 21 == 0, "U8Char must not have a value greater than 2^21!");
+
+		// the two byte character is simply mapped onto the multi byte UTF-8 represeentation.
+		// eg. the binary value 00010100011 simply becomes 110 000010 10 1000011
+
+		size_t bytes_pushed = 1;
+
+		// start by checking if code point is ascii
+		if (code_point < 128)
+		{
+			dst[0] = (char)code_point;
+		}
+		else
+		{
+			for (size_t i = 1; i < 4; i++)
+			{
+				// find the length of the UTF-8 encoding
+				if (code_point >> (i * 6 + 6 - i) == 0)
+				{
+
+					// set the values of byte 2 3 and 4
+					// these bytes are all formatted as 10xxxxxx, where x is part of the code point
+
+					for (size_t j = 0; j < i; j++)
+						dst[i - j] = ((code_point >> (j * 6)) & 0x3F) + 0x80;
+
+					// set the value of byte 1
+					// the prefix is dependent on the number of bytes encoded.
+					// 
+					// 1 byte (ascii, handled earlier):
+					//		0xxxxxxx
+					// 2 bytes:
+					//		110xxxxx
+					// 3 bytes:
+					//		1110xxxx
+					// 4 bytes:
+					//		11110xxx
+
+					dst[0] = (char)(code_point >> (i * 6));
+
+					for (size_t j = 0; j < i + 1; j++)
+						dst[0] = dst[0] + (0x80 >> j);
+
+					break;
+				}
+
+				bytes_pushed++;
+			}
+		}
+
+		return bytes_pushed;
+	}
+
+	// ============ OTHER ============
 
 	/// @brief bit shift left function
 	/// @param x amount to be shifted
