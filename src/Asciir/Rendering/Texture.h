@@ -698,7 +698,6 @@ namespace Asciir
 		void setForeground(Colour colour) { m_foreground = colour; }
 		void setBackground(Colour colour) { m_background = colour; }
 
-		// Inherited via Shader2D
 		virtual TermVert size() const override
 		{
 			return { m_width, m_txt.size() };

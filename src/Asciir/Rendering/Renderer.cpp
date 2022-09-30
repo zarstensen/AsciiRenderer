@@ -33,81 +33,46 @@ namespace Asciir
 			thrd.start();
 	}
 
-	Tile Renderer::drawMeshData(Renderer::MeshData& data, TInt x, TInt y)
-	{
-		if (data.visible.isInsideGrid(Coord(x, y), 1) && data.mesh.isInsideGrid(Coord(x, y), 1))
-			return data.tile;
-		else
-			return Tile::emptyTile();
-	}
 
-	Tile Renderer::drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start)
+	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
 	{
-		// check if inside visible quad before doing anything else
-		if (data.shader->size() == TermVert(-1, -1) || data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
+		CT_MEASURE_N("Grab Screen");
+
+		// check for invalid arguments
+		AR_ASSERT_MSG(rect_offset.x > 0 || rect_offset.x == -1 && rect_offset.y > 0 || rect_offset.y == -1,
+			"Invalid grab screen region. rect_offset has invalid values: ", rect_offset);
+
+		// grab region is out of bounds, return empty texture
+		if (rect_start.x >= Renderer::size().x || rect_start.y >= Renderer::size().y)
+			return {};
+
+		// set -1 to the end of the terminal, or clamp the grab region to fit inside the terminal
+
+		if (rect_offset.x == -1 || rect_start.x + rect_offset.x > Renderer::size().x)
+			rect_offset.x = (TInt)Renderer::size().x - rect_start.x - 1;
+
+
+		if (rect_offset.y == -1 || rect_start.y + rect_offset.y > Renderer::size().y)
+			rect_offset.y = (TInt)Renderer::size().y - rect_start.y - 1;
+
+
+		// grab the screen onto an Texture2D
+
+		Texture2D result(rect_offset);
+
+		for (TInt x = rect_start.x; x < rect_offset.x; x++)
 		{
-			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), {x, y}, time_since_start, frames_since_start);
-		}
-		else
-		{
-			return Tile::emptyTile();
-		}
-	}
-
-	Tile Renderer::drawTileData(TileData& data, TInt x, TInt y)
-	{
-		if (data.pos.x == x && data.pos.y == y)
-			return data.tile;
-		else
-			return Tile::emptyTile();
-	}
-
-	void Renderer::drawClearData(ClearData& data)
-	{
-		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
-		s_renderer->clearTerminal(data);
-	}
-
-	void Renderer::drawTile(TInt x, TInt y, const DeltaTime& dt, size_t df)
-	{
-		Tile result_tile = Tile::emptyTile();
-
-		for (size_t i = 0; i < s_render_queue->size(); i++)
-		{
-			size_t ri = (s_render_queue->size() - 1 - i);
-			switch (s_render_queue->at(ri).index())
+			for (TInt y = rect_start.y; y < rect_offset.y; y++)
 			{
-				case 0: // mesh
-					result_tile = Tile::blend(drawMeshData(std::get<MeshData>(s_render_queue->at(ri)), x, y), result_tile);
-					break;
-				case 1: // shader
-					result_tile = Tile::blend(drawShaderData(std::get<ShaderData>(s_render_queue->at(ri)), x, y, dt, df), result_tile);
-					break;
-				case 2: // tile
-					result_tile = Tile::blend(drawTileData(std::get<TileData>(s_render_queue->at(ri)), x, y), result_tile);
-					break;
-				case 3: // clear
-					result_tile = Tile::blend(std::get<ClearData>(s_render_queue->at(ri)), result_tile);
-					break;
+				result.setTile(Size2D(x, y), Renderer::viewTile(TermVert(x, y)));
 			}
-
-			// if this is true, no matter what the next tile will be, it will have no effect on the final result, so just skip the rest of the render queue.
-			if (!result_tile.is_empty && result_tile.background_colour.alpha == 255 && result_tile.colour.alpha == 255 && result_tile.symbol != '\0')
-				break;
 		}
-		
-		s_renderer->drawTile(x, y, result_tile);
-	}
 
-	void Renderer::waitMinDT(DeltaTime curr_dt)
-	{
-		DeltaTime start_time = getTime();
-
-		while (start_time + s_min_dt - curr_dt > getTime());
+		return result;
 	}
 
 	// should this be a ref to mesh???
-	void Renderer::submit(const Mesh& mesh, Tile tile, Transform transform)
+	void Renderer::submit(const Mesh& mesh, Tile tile, Transform transform, int32_t z_order)
 	{
 		MeshData data = MeshData{ mesh, tile };
 
@@ -142,19 +107,19 @@ namespace Asciir
 
 		data.visible = Quad::fromCorners(top_left_coord, bottom_right_coord);
 
-		submitToQueue(data);
+		submitToQueue(QueueElem{ z_order, data });
 	}
 
-	void Renderer::submitRect(s_Coords<2> verts, Tile tile)
+	void Renderer::submitRect(s_Coords<2> verts, Tile tile, int32_t z_order)
 	{
 		Mesh rect = Mesh({ verts[0], {verts[1].x, verts[0].y }, verts[1], {verts[0].x, verts[1].y} });
 
-		submit(rect, tile);
+		submit(rect, tile, NoTransform, z_order);
 	}
 
-	void Renderer::submit(TermVert pos, Tile tile)
+	void Renderer::submit(TermVert pos, Tile tile, int32_t z_order)
 	{
-		submitToQueue(TileData{ tile, pos });
+		submitToQueue(QueueElem{ z_order, TileData{ tile, pos } });
 	}
 
 	void Renderer::submitToQueue(QueueElem new_elem)
@@ -238,56 +203,14 @@ namespace Asciir
 		return {terminal_size, font_size};
 	}
 
-	Texture2D Renderer::grabScreen(TermVert rect_start, TermVert rect_offset)
-	{
-		CT_MEASURE_N("Grab Screen");
-
-		// check for invalid arguments
-		AR_ASSERT_MSG(rect_offset.x > 0 || rect_offset.x == -1 && rect_offset.y > 0 || rect_offset.y == -1,
-			"Invalid grab screen region. rect_offset has invalid values: ", rect_offset);
-
-		// grab region is out of bounds, return empty texture
-		if (rect_start.x >= Renderer::size().x || rect_start.y >= Renderer::size().y)
-			return {};
-
-		// set -1 to the end of the terminal, or clamp the grab region to fit inside the terminal
-
-		if (rect_offset.x == -1 || rect_start.x + rect_offset.x > Renderer::size().x)
-			rect_offset.x = (TInt) Renderer::size().x - rect_start.x - 1;
-
-
-		if (rect_offset.y == -1 || rect_start.y + rect_offset.y > Renderer::size().y)
-			rect_offset.y = (TInt) Renderer::size().y - rect_start.y - 1;
-
-
-		// grab the screen onto an Texture2D
-
-		Texture2D result(rect_offset);
-
-		for (TInt x = rect_start.x; x < rect_offset.x; x++)
-		{
-			for (TInt y = rect_start.y; y < rect_offset.y; y++)
-			{
-				result.setTile(Size2D(x, y), Renderer::viewTile(TermVert(x, y)));
-			}
-		}
-
-		return result;
-	}
-
 	void Renderer::clear(Tile tile)
 	{
-		submitToQueue(tile);
+		submitToQueue(QueueElem{ 0, tile });
 	}
 
 	void Renderer::resize(Size2D size)
 	{
 		s_renderer->resize(size);
-	}
-
-	Size2D Renderer::size()
-	{
-		return s_renderer->drawSize();
 	}
 
 	// TODO: width and height should be the width and height, assuming the update function has been called.
@@ -330,6 +253,12 @@ namespace Asciir
 
 	void Renderer::flushRenderQueue(const DeltaTime& time_since_start, size_t frames_since_start)
 	{
+		// before flushing, sort the render queue depending on z-order.
+		{
+			CT_MEASURE_N("Queue sort");
+			std::stable_sort(s_render_queue->begin(), s_render_queue->end(), [](const QueueElem& a, const QueueElem& b) { return a.z_order < b.z_order; });
+		}
+
 		// if only one thread is needed, avoid creating a seperate thread
 		if ((uint32_t) s_renderer->drawWidth() * (uint32_t) s_renderer->drawHeight() <= thrd_tile_count || m_render_thread_pool.size() == 0)
 		{
@@ -393,4 +322,77 @@ namespace Asciir
 		}
 	}
 
+	Tile Renderer::drawMeshData(Renderer::MeshData& data, TInt x, TInt y)
+	{
+		if (data.visible.isInsideGrid(Coord(x, y), 1) && data.mesh.isInsideGrid(Coord(x, y), 1))
+			return data.tile;
+		else
+			return Tile::emptyTile();
+	}
+
+	Tile Renderer::drawShaderData(ShaderData& data, TInt x, TInt y, const DeltaTime& time_since_start, size_t frames_since_start)
+	{
+		// check if inside visible quad before doing anything else
+		if (data.shader->size() == TermVert(-1, -1) || data.visible.isInsideGrid(Coord(x, y)) && Quad(data.shader->size()).isInsideGrid(Coord(x, y), data.transform))
+		{
+			return data.shader->readTile(data.transform.reverseTransformGrid({ x, y }), { x, y }, time_since_start, frames_since_start);
+		}
+		else
+		{
+			return Tile::emptyTile();
+		}
+	}
+
+	Tile Renderer::drawTileData(TileData& data, TInt x, TInt y)
+	{
+		if (data.pos.x == x && data.pos.y == y)
+			return data.tile;
+		else
+			return Tile::emptyTile();
+	}
+
+	void Renderer::drawClearData(ClearData& data)
+	{
+		AR_ASSERT_MSG(data.background_colour.alpha == UCHAR_MAX, "Background colour must be 100% opaque (alpha = 255), got: ", data.background_colour.alpha, " as the alpha value");
+		s_renderer->clearTerminal(data);
+	}
+
+	void Renderer::drawTile(TInt x, TInt y, const DeltaTime& dt, size_t df)
+	{
+		Tile result_tile = Tile::emptyTile();
+
+		for (size_t i = 0; i < s_render_queue->size(); i++)
+		{
+			size_t ri = (s_render_queue->size() - 1 - i);
+			switch (s_render_queue->at(ri).elem.index())
+			{
+			case 0: // mesh
+				result_tile = Tile::blend(drawMeshData(std::get<MeshData>(s_render_queue->at(ri).elem), x, y), result_tile);
+				break;
+			case 1: // shader
+				result_tile = Tile::blend(drawShaderData(std::get<ShaderData>(s_render_queue->at(ri).elem), x, y, dt, df), result_tile);
+				break;
+			case 2: // tile
+				result_tile = Tile::blend(drawTileData(std::get<TileData>(s_render_queue->at(ri).elem), x, y), result_tile);
+				break;
+			case 3: // clear
+				result_tile = Tile::blend(std::get<ClearData>(s_render_queue->at(ri).elem), result_tile);
+				break;
+			}
+
+			// if this is true, no matter what the next tile will be, it will have no effect on the final result, so just skip the rest of the render queue.
+			if (!result_tile.is_empty && result_tile.background_colour.alpha == 255 && result_tile.colour.alpha == 255 && result_tile.symbol != '\0')
+				break;
+		}
+
+		s_renderer->drawTile(x, y, result_tile);
+	}
+
+
+	void Renderer::waitMinDT(DeltaTime curr_dt)
+	{
+		DeltaTime start_time = getTime();
+
+		while (start_time + s_min_dt - curr_dt > getTime());
+	}
 }

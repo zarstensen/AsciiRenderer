@@ -43,7 +43,7 @@ namespace Asciir
 		/// @brief constructs a UTF8Char instance from the given UTF-8 binary sequence
 		UTF8Char(const char* c)
 		{
-			AR_ASSERT_MSG(U8Len(c) < 2, "u8 string must only contain one or less characters, found ", U8Len(c));
+			AR_ASSERT_MSG(U8Len(c) < 2, "input string must only contain one or less utf-8 characters, found ", U8Len(c));
 
 		#ifdef AR_WIN
 			strcpy_s(m_data, c);
@@ -88,6 +88,8 @@ namespace Asciir
 		bool operator==(const char* c_str) const { return *this == UTF8Char(c_str); }
 		bool operator!=(const char* c_str) const { return !(*this == c_str); }
 	};
+
+	using U8String = std::basic_string<UTF8Char>;
 
 	// ============ Tile ============
 

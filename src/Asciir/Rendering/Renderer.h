@@ -85,8 +85,13 @@ namespace Asciir
 		typedef Tile ClearData;
 
 		/// @brief the datatype used in the render queue
-		/// mesh data, texture data, point data or clear data
-		typedef std::variant<MeshData, ShaderData, TileData, ClearData> QueueElem;
+		/// all queue elements will have a z_order, that is used for sorting the render_queue in the render function.
+		struct QueueElem
+		{
+			int32_t z_order = 0;
+			/// @brief mesh data, texture data, point data or clear data
+			std::variant<MeshData, ShaderData, TileData, ClearData> elem;
+		};
 
 		/// @brief initialize the renderer.
 		/// setsup all the static references that have been setup before the renderer.
@@ -109,17 +114,27 @@ namespace Asciir
 		static inline uint32_t thrd_tile_count = 256;
 
 		// submit functions
+		
 		/// @brief submits the given mesh data to the render queue
 		// TODO: should this be a reference? mesh might be modified whilst the renderer is rendering.
-		static void submit(const Mesh& mesh, Tile tile, Transform transform = NoTransform);
+		static void submit(const Mesh& mesh, Tile tile, Transform transform = NoTransform, int32_t z_order = 1);
 		/// @brief submits the given shader to the render queue 
 		template<typename TShader, std::enable_if_t<std::is_base_of_v<Shader2D, TShader>, bool> = false>
-		static void submit(Ref<TShader> shader, Transform transform = NoTransform);
+		static void submit(Ref<TShader> shader, Transform transform = NoTransform, int32_t z_order = 1);
 		/// @brief submits the given tile to the render queue
-		static void submit(TermVert pos, Tile tile);
+		static void submit(TermVert pos, Tile tile, int32_t z_order = 1);
+
 		static void submitToQueue(QueueElem new_elem);
-		static void submitRect(s_Coords<2> verts, Tile tile);
+		static void submitRect(s_Coords<2> verts, Tile tile, int32_t z_order = 1);
 		static Tile viewTile(TermVert pos);
+
+		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
+		/// @param rect_start the top right corner of the section to be captured
+		/// @param rect_offset the bottom right corner of the section to be captured.
+		/// {-1, -1} defaults to the lower right of the terminal
+		/// @return a Shader2D containing a **COPY** of the terminal screen,
+		/// meaning any changes done afterwards to the terminal, will not be reflected in the captured section
+		static Texture2D grabScreen(TermVert rect_start = { 0, 0 }, TermVert rect_offset = { -1 , -1 });
 
 		/// @brief sets the title of the terminal
 		static void setTitle(const std::string& title) { s_renderer->setTitle(title); }
@@ -148,6 +163,18 @@ namespace Asciir
 		/// @return a Size2D structure containing the width and height, of the font, in pixels.
 		// TODO: a string is allocated here when it is not needed.
 		static Size2D getFontSize() { return getFont().second; }
+
+
+
+		// environment functions
+
+		/// @brief set the minimum delta time between updates.
+		/// this should be used to limit the fps of the application
+		static void setMinDT(DeltaTime min_dt) { AR_ASSERT(min_dt.milliSeconds() >= 0); s_min_dt = min_dt; }
+
+		/// @brief recieve the current minimum delta time between updates.
+		/// @return 
+		static DeltaTime getMinDT() { return s_min_dt; }
 
 		/// @brief sets the current resolution of the terminal (in PIXELS not CELLS), by changing the font size.
 		/// the final resolution will always be the closest value to res, whilst being smaller than res
@@ -186,6 +213,7 @@ namespace Asciir
 		/// @return the final terminal and font size , after it has been fitted according to the above rules.
 		/// order: (term_size, font_size)
 		static std::pair<Size2D, Size2D> upscale(Size2D scale);
+
 		/// @brief increses the cell size by scale whilst (attempting) to maintain the current terminal resolution.
 		/// 
 		/// affects both cell size and font size.
@@ -199,23 +227,6 @@ namespace Asciir
 		/// order: (term_size, font_size)
 		static std::pair<Size2D, Size2D> downscale(Size2D scale);
 
-		/// @brief grabs a section of the screen inside the rectangle described by rect_start and rect_offset
-		/// @param rect_start the top right corner of the section to be captured
-		/// @param rect_offset the bottom right corner of the section to be captured.
-		/// {-1, -1} defaults to the lower right of the terminal
-		/// @return a Shader2D containing a **COPY** of the terminal screen,
-		/// meaning any changes done afterwards to the terminal, will not be reflected in the captured section
-		static Texture2D grabScreen(TermVert rect_start = { 0, 0 }, TermVert rect_offset = { -1 , -1 });
-
-		// environment functions
-
-		/// @brief set the minimum delta time between updates.
-		/// this should be used to limit the fps of the application
-		static void setMinDT(DeltaTime min_dt) { AR_ASSERT(min_dt.milliSeconds() >= 0); s_min_dt = min_dt; }
-
-		/// @brief recieve the current minimum delta time between updates.
-		/// @return 
-		static DeltaTime getMinDT() { return s_min_dt; }
 
 		// terminal functions
 		/// @brief clear the terminal.
@@ -224,7 +235,7 @@ namespace Asciir
 		/// @brief resizes the terminal to the given size.
 		static void resize(Size2D size);
 		/// @brief retrieves the current size of the terminal, for the previously rendered frame size, see lastSize()
-		static Size2D size();
+		static Size2D size() { return s_renderer->drawSize(); }
 		/// @brief retrieves the maximum possible size of the terminal, for the current font configuration.
 		static Size2D maxSize() { return s_renderer->maxSize(); }
 
@@ -240,10 +251,6 @@ namespace Asciir
 		}
 
 	protected:
-
-		// TODO: is this used?
-		template<typename T, std::enable_if_t<is_vertices_vtype_v<Coord, T>, bool>>
-		Coords projectCoordsToTerminal(const T& coords);
 
 		/// @brief swaps and reallocates queues if necesary
 		static void swapQueues();
@@ -300,7 +307,7 @@ namespace Asciir
 
 		static inline std::mutex m_mutex;
 		static inline std::vector<ETH::LThread> m_render_thread_pool;
-		/// @brief the start position of the next tile chunk that needs to be rendered.
+		// the start position of the next tile chunk that needs to be rendered.
 		static inline std::atomic<uint32_t> m_avaliable_tile;
 	};
 }
