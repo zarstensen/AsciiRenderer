@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Asciir/Maths/Vertices.h"
-#include "Asciir/Maths/Lines.h"
+// #include "Asciir/Maths/Lines.h"
 
 namespace Asciir
 {
@@ -222,10 +222,10 @@ namespace Asciir
 		/// index 1 will be B and C.
 		/// index 2: C - D.
 		/// index 4: D - A.
-		LineSegment getEdge(size_t face_index, size_t index) const;
+		// LineSegment getEdge(size_t face_index, size_t index) const;
 		/// @brief mods the index (not the face index) byt the number of corners in the face.
 		/// @see getEdge()
-		LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
+		// LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
 
 		/// @brief gets the number of corners in a face.
 		size_t faceCornerCount(size_t face_index) const;

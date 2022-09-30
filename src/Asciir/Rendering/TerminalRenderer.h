@@ -17,90 +17,16 @@ namespace Asciir
 		Filled
 	};
 
-	/// @brief checks the size of a single UTF-8 character
-	size_t U8CharSize(const char* u8_str);
-	/// @brief calculates the UTF-8 character count from the given string
-	size_t U8Len(const char* u8_str);
-
-	/// @brief stores a singular UTF 8 character.
-	class UTF8Char
-	{
-	protected:
-		/// @brief the maximum size of a UTF8 character, in bytes
-		static constexpr int UTF_CODE_LEN = 4;
-
-		char m_data[UTF_CODE_LEN + 1] = { '\0' };
-
-	public:
-
-		UTF8Char() = default;
-
-		/// @brief constructs a UTF8Char from the given character
-		UTF8Char(char c) { m_data[0] = c; };
-		/// @brief constructs a UTF8Char from the given wide character
-		UTF8Char(wchar_t wc) { *this = fromCode((uint32_t) wc); }
-
-		/// @brief constructs a UTF8Char instance from the given UTF-8 binary sequence
-		UTF8Char(const char* c)
-		{
-			AR_ASSERT_MSG(U8Len(c) < 2, "input string must only contain one or less utf-8 characters, found ", U8Len(c));
-
-		#ifdef AR_WIN
-			strcpy_s(m_data, c);
-		#else
-			strcpy(m_data, c);
-		#endif
-		};
-
-
-		/// @brief constructs a UTF8Char from the given UTF8 decimal code
-		/// @important ONLY use this for decimal codes and not the actual binary representation of the UTF-8 character, as this converts the decimal code to the binary representation.
-		/// instead use the constructor that takes a const char* UTF8Char(const char*).
-		static UTF8Char fromCode(uint32_t code_point);
-
-		/// @brief retrieves a null terminated c_str containing the UTF-8 character
-		operator const char* () const
-		{
-			return m_data;
-		}
-
-		/// @brief retrieves a std::string containing the UTF-8 charcter
-		operator std::string() const
-		{
-			return (const char*)m_data;
-		}
-
-		explicit operator char* ()
-		{
-			return m_data;
-		}
-
-		/// @brief retrieve the integer representing the UTF-8 character
-		explicit operator int() const
-		{
-			return *(int*)m_data;
-		}
-
-		bool operator==(const UTF8Char& other) const { return (int)*this == (int)other; }
-		bool operator!=(const UTF8Char& other) const { return !(*this == other); }
-		bool operator==(int c) const { return (int)*this == c; }
-		bool operator!=(int c) const { return !(*this == c); }
-		bool operator==(const char* c_str) const { return *this == UTF8Char(c_str); }
-		bool operator!=(const char* c_str) const { return !(*this == c_str); }
-	};
-
-	using U8String = std::basic_string<UTF8Char>;
-
 	// ============ Tile ============
 
 	struct Tile
 	{
-		UTF8Char symbol = ' ';
+		U8Char symbol = U' ';
 		Colour colour = WHITE8;
 		Colour background_colour = BLACK8;
 		bool is_empty = true;
 
-		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, UTF8Char symbol = ' ', bool is_empty = false)
+		Tile(Colour background_colour = BLACK8, Colour colour = WHITE8, U8Char symbol = U' ', bool is_empty = false)
 			: symbol(symbol), colour(colour), background_colour(background_colour), is_empty(is_empty) {}
 
 		static inline Tile emptyTile()

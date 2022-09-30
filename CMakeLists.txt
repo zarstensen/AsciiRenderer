@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.9.0)
-Project(Asciir VERSION 0.3.5)
+Project(Asciir VERSION 0.3.6)
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -182,6 +182,8 @@ set(HEADER_DIR_LOGGING
 
 set(SRC_DIR_MATHS
     src/Asciir/Maths/Maths.cpp
+    src/Asciir/Maths/Lines.cpp
+    src/Asciir/Maths/Lines.ipp
     src/Asciir/Maths/Vertices.ipp
     src/Asciir/Maths/Vector.ipp
     src/Asciir/Maths/Matrix.ipp
@@ -190,6 +192,7 @@ set(SRC_DIR_MATHS
 
 set(HEADER_DIR_MATHS
     src/Asciir/Maths/Maths.h
+    src/Asciir/Maths/Lines.h
     src/Asciir/Maths/Vertices.h
     src/Asciir/Maths/Vector.h
     src/Asciir/Maths/Matrix.h
