@@ -1,4 +1,4 @@
-#include "Texture.h"
+﻿#include "Texture.h"
 
 #include "arpch.h"
 
@@ -189,7 +189,7 @@ namespace Asciir
 		for(Tile& elem: m_texture.reshaped())
 		{
 			texture_in.read((char*)elem.symbol, 1);
-			texture_in.read((char*)elem.symbol + 1, U8CharSize(elem.symbol) - 1);
+			texture_in.read((char*)elem.symbol + 1, U8Char::length(elem.symbol) - 1);
 
 			texture_in.read((char*)&elem.colour, sizeof(elem.colour));
 
@@ -241,7 +241,7 @@ namespace Asciir
 			uint32_t symbol_seq;
 			gzread(xp_in, &symbol_seq, sizeof(uint32_t));
 
-			m_texture[i].symbol = UTF8Char::fromCode(font_map[symbol_seq]);
+			m_texture[i].symbol = font_map[symbol_seq];
 
 			// get foreground
 
@@ -334,7 +334,7 @@ namespace Asciir
 				continue;
 			}
 
-			setTile({ x, y }, Tile(BLACK8, WHITE8, UTF8Char(c)));
+			setTile({ x, y }, Tile(BLACK8, WHITE8, c));
 
 			x++;
 		}
@@ -385,7 +385,7 @@ namespace Asciir
 							AR_CORE_ERR("Unknown image file format: ", img_file, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
 						}
 						// 9604 = half block
-						setTile({ x, y }, Tile(foreground, background, UTF8Char::fromCode(9604)));
+						setTile({ x, y }, Tile(foreground, background, U'▄'));
 					}
 				}
 
@@ -411,7 +411,7 @@ namespace Asciir
 							AR_CORE_ERR("Unknown image file format: ", img_file, "\nImage file has ", image_data.spectrum(), " channels, which is not supported");
 						}
 
-						setTile({ x, size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), UTF8Char::fromCode(9604)));
+						setTile({ x, size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), U'▄'));
 					}
 				}
 
@@ -528,7 +528,7 @@ namespace Asciir
 							return {};
 						}
 ;
-						image_texture.setTile({ x, y }, Tile(foreground, background, UTF8Char::fromCode(9604)));
+						image_texture.setTile({ x, y }, Tile(foreground, background, U'▄'));
 					}
 				}
 
@@ -555,7 +555,7 @@ namespace Asciir
 							return {};
 						}
 
-						image_texture.setTile({ x, image_texture.size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), UTF8Char::fromCode(9604)));
+						image_texture.setTile({ x, image_texture.size().y - 1 }, Tile(background, Colour(0, 0, 0, 0), U'▄'));
 					}
 				}
 

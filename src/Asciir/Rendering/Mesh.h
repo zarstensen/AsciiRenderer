@@ -1,13 +1,10 @@
 #pragma once
 
 #include "Asciir/Maths/Vertices.h"
-// #include "Asciir/Maths/Lines.h"
+#include "Asciir/Maths/Lines.h"
 
 namespace Asciir
 {
-	// struct containing transform data for a mesh
-	// TODO: reimplement transformation to only have one transformation matrix, and instead calculate it only when neccessarry, and reuse when possible.
-
 	/// @brief structure representing transformation data.
 	/// 
 	/// use setOrigin(), setPos(), setScale() and setRotation(), then the Transform structure itself will automaticly calculate the appropiate transformation matrix for the given values.
@@ -222,10 +219,10 @@ namespace Asciir
 		/// index 1 will be B and C.
 		/// index 2: C - D.
 		/// index 4: D - A.
-		// LineSegment getEdge(size_t face_index, size_t index) const;
+		LineSegment getEdge(size_t face_index, size_t index) const;
 		/// @brief mods the index (not the face index) byt the number of corners in the face.
 		/// @see getEdge()
-		// LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
+		LineSegment cgetEdge(size_t face_index, size_t index) const { return getEdge(face_index, index % faceCornerCount(face_index)); };
 
 		/// @brief gets the number of corners in a face.
 		size_t faceCornerCount(size_t face_index) const;

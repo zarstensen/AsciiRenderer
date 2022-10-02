@@ -94,89 +94,241 @@ namespace Asciir
 	template<typename T>
 	using RRef = RenderRef<T>;*/
 
-	// ============ U8String ============
+	// ============ utf-8 classes ============
 
-	/// @brief the string literal Asciir uses for representing utf-8 strings.
-	/// simply a typedef for a char32_t string.
-	using U8String = std::basic_string<char32_t>;
-	using U8Char = char32_t;
+	/// @brief checks if T is a character type.
+	template<typename T>
+	struct is_char : public std::false_type {};
 
-	static constexpr size_t UTF_CODE_LEN = 4;
+	template<>
+	struct is_char<char> : public std::true_type {};
 
-	/// @brief converts the str data to a printable format, and pushes it to the passed destination buffer.
-	/// the U8String class is not directly printable, as it stores it string data as utf-32, this function converts the utf-32 chars to a utf-8 format.
-	/// @return number of bytes pushed to dst
-	size_t printable(const U8String& str, char* dst)
+#if 0
+	template<>
+	struct is_char<wchar_t> : public std::true_type {};
+
+	template<>
+	struct is_char<char16_t> : public std::true_type {};
+#endif // TODO: add support for utf-16 in the U8Char class.
+
+	template<>
+	struct is_char<char32_t> : public std::true_type {};
+
+
+	/// @brief clas representing a singular utf-8 encoded character.
+	class U8Char
 	{
-		size_t bytes_pushed = 0;
+	protected:
+		/// @brief the maximum size of a UTF8 character, in bytes
+		static constexpr int UTF_CODE_LEN = 4;
 
-		for (U8Char code_point : str)
+		/// @brief 4 byte character storing the U8Char's utf-8 data.
+		char32_t m_symbol;
+
+	public:
+
+		U8Char() = default;
+
+		/// @brief initializes the U8Char with the passed utf-32 encoded character, after encoding it to its corresponding utf-8 encoding.
+		constexpr U8Char(char32_t utf32_char)
+			: U8Char(fromCode(utf32_char)) {}
+
+		/// @brief constructs a U8Char instance from the given utf-8 binary sequence
+		/// if a utf-32 character should be converted to a utf-8 character, see U8Char(char32_t)
+		constexpr U8Char(char32_t* utf8_char)
+			: m_symbol(*utf8_char) {}
+
+		/// @brief constructs a U8Char from the given utf-32 code point
+		static constexpr U8Char fromCode(char32_t code_point)
 		{
-			size_t offset = printable(code_point, dst);
-			
-			dst += offset;
-			bytes_pushed += offset;
-		}
+			// the two byte character is simply mapped onto the multi byte UTF-8 represeentation.
+			// eg. the binary value 00010100011 simply becomes 110 000101 10 1000011
+			U8Char c;
+			c.m_symbol = 0;
 
-		return bytes_pushed;
-	}
+			// the char32_t should be seen as a 4 byte buffer, instead of a single char.
+			char* data = (char*)c;
 
-	/// @brief same as printable(), but for a U8Char.
-	/// as a single utf-8 character can be up to 4 bytes long, the destination buffer should be at least 4 bytes.
-	/// @return number of bytes pushed to dst, will always be in the interval 1 - 4.
-	size_t printable(U8Char code_point, char* dst)
-	{
-		//AR_ASSERT_MSG(c >> 21 == 0, "U8Char must not have a value greater than 2^21!");
-
-		// the two byte character is simply mapped onto the multi byte UTF-8 represeentation.
-		// eg. the binary value 00010100011 simply becomes 110 000010 10 1000011
-
-		size_t bytes_pushed = 1;
-
-		// start by checking if code point is ascii
-		if (code_point < 128)
-		{
-			dst[0] = (char)code_point;
-		}
-		else
-		{
-			for (size_t i = 1; i < 4; i++)
+			// start by checking if code point is ascii
+			if (code_point < 128)
 			{
-				// find the length of the UTF-8 encoding
-				if (code_point >> (i * 6 + 6 - i) == 0)
+				data[0] = (char)code_point;
+			}
+			else
+			{
+				for (size_t i = 1; i < 4; i++)
 				{
+					// find the length of the UTF-8 encoding
+					if (code_point >> (i * 6 + 6 - i) == 0)
+					{
+						for (size_t j = 0; j < i; j++)
+							data[i - j] = ((code_point >> (j * 6)) & 0x3F) + 0x80;
 
-					// set the values of byte 2 3 and 4
-					// these bytes are all formatted as 10xxxxxx, where x is part of the code point
 
-					for (size_t j = 0; j < i; j++)
-						dst[i - j] = ((code_point >> (j * 6)) & 0x3F) + 0x80;
+						data[0] = (char)(code_point >> (i * 6));
 
-					// set the value of byte 1
-					// the prefix is dependent on the number of bytes encoded.
-					// 
-					// 1 byte (ascii, handled earlier):
-					//		0xxxxxxx
-					// 2 bytes:
-					//		110xxxxx
-					// 3 bytes:
-					//		1110xxxx
-					// 4 bytes:
-					//		11110xxx
+						for (size_t j = 0; j < i + 1; j++)
+							data[0] = data[0] + (0x80 >> j);
 
-					dst[0] = (char)(code_point >> (i * 6));
+						break;
+					}
+				}
+			}
 
-					for (size_t j = 0; j < i + 1; j++)
-						dst[0] = dst[0] + (0x80 >> j);
+			return c;
+		}
 
-					break;
+		/// @brief returns the utf-32 encoded version of the passed U8Char's utf-8 character.
+		static constexpr char32_t toCode(U8Char utf8_char)
+		{
+			char* utf8_buffer = (char*)utf8_char;
+
+			uint8_t l = length(utf8_char);
+
+			if (l == 1)
+				return ((char*)utf8_char)[0];
+			else
+			{
+				char32_t code_point = 0;
+
+				// generate the masks for all the utf-8 bytes
+				// bytes 2, 3 and 4, all have identical masks, so there is no need to generate unique masks for them.
+				// the first bytes mask is dependent on the number of bytes in the utf-8 character.
+
+				// for more info, see https://en.wikipedia.org/wiki/UTF-8#:~:text=.%5B12%5D-,Encoding,-%5Bedit%5D
+
+				// first byte mask:
+				// 1 byte:
+				//		01111111 (ascii, handled earlier)
+				// 2 bytes:
+				//		00011111
+				// 3 bytes:
+				//		00001111
+				// 4 bytes:
+				//		00000111
+
+				uint8_t first_mask = 0b00111111;
+
+				first_mask >>= l - 1;
+
+				// the rest of the bytes have the following masks:
+				//		00111111
+
+				uint8_t rest_mask = 0b00111111;
+				uint8_t buff_pos = 0;
+
+				// fill up the cp_buffer whist keeping track of unfilled bits, that should be filled by the next bytes.
+				for (uint8_t i = l - 1; i > 0; i--)
+				{
+					char32_t tmp = utf8_buffer[i];
+					code_point |= (tmp & rest_mask) << buff_pos;
+					buff_pos += 6;
 				}
 
-				bytes_pushed++;
+				char32_t tmp = utf8_buffer[0];
+				code_point |= (tmp & first_mask) << buff_pos;
+
+				return code_point;
 			}
 		}
 
-		return bytes_pushed;
+		/// @brief returns the number of bytes required in order to store the current utf-8 character.
+		static constexpr uint8_t length(U8Char c)
+		{
+			char* u8_str = (char*)c;
+
+			// check if the first bit in the first byte is 0, if so the char size is 1
+			if (~(u8_str[0] >> 7) & 1U)
+				return 1;
+			// check if the first bits in the first bytes are 110 (size 2), 1110 (size 3) or 11110 (size 4)
+			else
+			{
+				uint8_t check = 0b110;
+				uint8_t mask = 0b111;
+
+				for (uint8_t i = 2; i <= 4; i++)
+				{
+					if (!(bool)(((u8_str[0] >> (7 - i)) & mask) ^ check))
+						return i;
+
+					check = (check << 1) + (uint8_t)0b10;
+					mask = (mask << 1) + (uint8_t)0b1;
+				}
+			}
+
+			// first bit was not formatted correctly
+			return 0;
+		}
+
+		/// @brief convert the utf-8 encoded character from a char32_t pointer to a TChar pointer
+		/// should be used for printing, as the char32_t value cannot be printed directly to the terminal, but instead needs to be converted to a c string.
+		template<typename TChar, std::enable_if_t<is_char<TChar>::value, bool> = false>
+		explicit constexpr operator TChar* ()
+		{
+			return (TChar*)&m_symbol;
+		}
+
+		/// @see operator::TChar*
+		template<typename TChar, std::enable_if_t<is_char<TChar>::value, bool> = false>
+		explicit constexpr operator const TChar* () const
+		{
+			return (TChar*)&m_symbol;
+		}
+
+		/// @brief retrieves the utf-8's corresponding utf-32 character.
+		explicit constexpr operator char32_t() const
+		{
+			return toCode(*this);
+		}
+
+		/// @see operator::char32_t()
+		explicit constexpr operator uint32_t() const
+		{
+			return (char32_t)*this;
+		}
+
+		/// @brief checks if two U8Chars contain the same utf-8 character
+		constexpr bool operator==(U8Char other) const { return m_symbol == other.m_symbol; }
+		constexpr bool operator!=(U8Char other) const { return !(*this == other); }
+		/// @brief convert the passed character to its utf-8 representation, and check if it matches the value stored in the current U8Char instance.
+		template<typename TChar, std::enable_if_t<is_char<TChar>::value, bool> = false>
+		constexpr bool operator==(TChar c) const { return *this == fromCode((char32_t)c); }
+		template<typename TChar, std::enable_if_t<is_char<TChar>::value, bool> = false>
+		constexpr bool operator!=(TChar c) const { return !(*this == c); }
+		/// @brief check if the passed utf-8 encoded byte array matches the currently stored utf-8 encoded character.
+		constexpr bool operator==(const char* u8_bytes) const { return m_symbol == *(char32_t*)u8_bytes; }
+		constexpr bool operator!=(const char* u8_bytes) const { return !(*this == u8_bytes); }
+	};
+
+	/// @brief class representing a string consisting of U8Char's
+	/// same as std::basic_string<U8Char>, with added constructors
+	class U8String : public std::basic_string<U8Char>
+	{
+	public:
+		using std::basic_string<U8Char>::basic_string;
+
+		/// @brief convert the given char string to its corresponding utf-8 encoded string.
+		template<typename TChar>
+		U8String(const TChar* str)
+			: std::basic_string<U8Char>(std::char_traits<TChar>::length(str), U'\0')
+		{
+			for (size_t i = 0; i < std::char_traits<TChar>::length(str); i++)
+				(*this)[i] = U8Char((char32_t)str[i]);
+		}
+	};
+
+	inline std::ostream& operator<<(std::ostream& stream, U8Char c)
+	{
+		stream << (char*)c;
+		return stream;
+	}
+
+	inline std::ostream& operator<<(std::ostream& stream, const U8String& str)
+	{
+		for (U8Char c : str)
+			stream << c;
+
+		return stream;
 	}
 
 	// ============ OTHER ============
@@ -214,7 +366,7 @@ namespace Asciir
 	/// @brief signal value for an CTRL + C interrupt
 	constexpr int SIG_CTRL_C = SIGINT;
 
-	/// @brief signal value for a command close interrupt (the user has hit the X in the top right / left, in order to close the program)
+	/// @brief signal value for a command line close interrupt (the user has hit the X in the top right / left, in order to close the program)
 #ifdef AR_WIN
 	constexpr int SIG_CMD_CLOSE = SIGBREAK;
 #else

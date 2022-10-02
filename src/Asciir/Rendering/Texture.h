@@ -621,7 +621,7 @@ namespace Asciir
 		/// any '\n' character will split the passed string into multiple lines.
 		/// @param txt the string to display
 		/// @see Text(const std::vector<const std::string&>&, Colour, Colour)
-		Text(const std::string& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
+		Text(const U8String& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
 			: m_foreground(foreground), m_background(background)
 		{
 			setText(txt);
@@ -644,13 +644,13 @@ namespace Asciir
 		/// Default: WHITE8
 		/// @param background the background colour of the displayed text
 		/// Default: Transparent 'Colour(0, 0)'
-		Text(const std::vector<std::string>& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
+		Text(const std::vector<U8String>& txt, Colour foreground = WHITE8, Colour background = Colour(0, 0))
 			: m_foreground(foreground), m_background(background)
 		{
 			setText(txt);
 		}
 
-		void setText(const std::string& txt)
+		void setText(const U8String& txt)
 		{
 			m_txt.clear();
 
@@ -666,7 +666,7 @@ namespace Asciir
 				{
 					m_char_count += std::distance(begin, line_change);
 					m_width = std::max((size_t)std::distance(begin, line_change), m_width);
-					m_txt.push_back(std::string(begin, line_change));
+					m_txt.push_back(U8String(begin, line_change));
 					// skip newline char
 					line_change++;
 					begin = line_change;
@@ -679,16 +679,16 @@ namespace Asciir
 			{
 				m_char_count += std::distance(begin, line_change);
 				m_width = std::max((size_t)std::distance(begin, line_change), m_width);
-				m_txt.push_back(std::string(begin, line_change));
+				m_txt.push_back(U8String(begin, line_change));
 			}
 		}
 
-		void setText(const std::vector<std::string>& txt)
+		void setText(const std::vector<U8String>& txt)
 		{
 			m_txt = txt;
 
 			// find the width
-			for (const std::string& str : m_txt)
+			for (const U8String& str : m_txt)
 			{
 				m_char_count += str.length();
 				m_width = std::max(str.length(), m_width);
@@ -741,7 +741,7 @@ namespace Asciir
 
 	protected:
 		
-		std::vector<std::string> m_txt;
+		std::vector<U8String> m_txt;
 		
 		// store the width in a seperate variable in stead of calculating it on each shader render
 		size_t m_width = 0;

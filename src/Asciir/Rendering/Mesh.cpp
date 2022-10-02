@@ -1,5 +1,6 @@
 #include "pch/arpch.h"
 #include "Mesh.h"
+#include "Asciir/Maths/Lines.h"
 #include "Asciir/Maths/Maths.h"
 #include "Asciir/Maths/Matrix.h"
 

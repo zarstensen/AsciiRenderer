@@ -8,8 +8,6 @@
 
 namespace Asciir
 {
-	// ============ UTF8Char ============
-	
 	/// @brief the draw mode for the TerminalRenderer
 	enum class DrawMode
 	{

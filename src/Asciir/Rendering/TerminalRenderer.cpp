@@ -480,7 +480,7 @@ namespace TRInterface
 
 	std::ostream& operator<<(std::ostream& stream, const Tile& tile)
 	{
-		stream << (int)tile.symbol << " (" << tile.background_colour << ") (" << tile.colour << ") ";
+		stream << (uint32_t)tile.symbol << " (" << tile.background_colour << ") (" << tile.colour << ") ";
 		return stream;
 	}
 }
