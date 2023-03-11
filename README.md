@@ -370,7 +370,7 @@ This should be enabled for a faster build time, at the cost of a higher CPU load
 
 The slowest process during the rendering is by far actually printing the new graphics to the terminal. As the terminal does not erase its contents everyframe, only modified tiles, compared to the previous frame, are actually printed to the terminal. If a high fps is required, this optimization should be kept in mind, as one can still have a relatively complex scene rendered and still have a high frame rate, as long as the modified tiles are kept to a minnimum.  
   
-An example of an optimization could be the rendering of an expanding gradient. Event though each tile might only have its colour values changed by relatively small values, they still have to be redrawn. In order to optimize this example, we instead need to reduce the number of tiles changed pr. frame. This can be done by intentianolly introducing banding in the gradient's colours, as this will reduce the number of times a tile will change colour, and thus reduce the number of writes to the terminal.
+An example of an optimization could be the rendering of an expanding gradient. Event though each tile might only have its colour values changed by relatively small values, they still have to be redrawn. In order to optimize this example, we instead need to reduce the number of tiles changed pr. frame. This can be done by intentionally introducing banding in the gradient's colours, as this will reduce the number of times a tile will change colour, and thus reduce the number of writes to the terminal.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
