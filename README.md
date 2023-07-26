@@ -11,7 +11,7 @@
 
 - [Ascii Renderer](#ascii-renderer)
   - [Branch Details](#branch-details)
-  - [Examples (More coming soon)](#examples-more-coming-soon)
+  - [Examples](#examples)
     - [TriangleExample](#triangleexample)
     - [AsciirBanner](#asciirbanner)
   - [Built With](#built-with)
@@ -50,7 +50,7 @@ Contains all small features / fixes that has not yet been merged into the master
 Each feature branch contains code for a larger feature that is currently being developed.
 These branches should be merged into dev when they are fully developed.
 
-## Examples (More coming soon)
+## Examples
 
 here are some demo projects build with Asciir, see the examples folder for more examples.
 
