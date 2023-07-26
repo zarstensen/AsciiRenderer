@@ -3,7 +3,7 @@ function(ConanInstall install_dir)
 	message(STATUS "Creating conan package directory")
 	file(MAKE_DIRECTORY "${install_dir}")
 	message(STATUS "Installing conan packages")
-	execute_process(COMMAND conan install "${CMAKE_CURRENT_SOURCE_DIR}" --build missing WORKING_DIRECTORY "${install_dir}" RESULT_VARIABLE INSTALL_RESULT)
+	execute_process(COMMAND conan install "${CMAKE_CURRENT_SOURCE_DIR}" --profile=${CMAKE_CURRENT_SOURCE_DIR}/profiles/windows_profile --build missing --output-folder=${install_dir} WORKING_DIRECTORY "${install_dir}" RESULT_VARIABLE INSTALL_RESULT)
 
 	if(NOT ${INSTALL_RESULT} EQUAL 0)
 		if(${INSTALL_RESULT} EQUAL "The system cannot find the file specified")
