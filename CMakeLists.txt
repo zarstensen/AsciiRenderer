@@ -406,7 +406,7 @@ if(${ASCIIR_AUTO_INSTALL_DEPS})
     ConanInstall("${CMAKE_CURRENT_BINARY_DIR}/conan")
 endif()
 
-include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake" OPTIONAL)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/conan")
 
 if(${UNIX})
     find_package(X11 REQUIRED)
