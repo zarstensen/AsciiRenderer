@@ -21,7 +21,7 @@ jobs:
      
     - name: Configure profile
       run: |
-        conan config install -t https://github.com/zarstensen/AsciiRenderer
+        conan config install -t git https://github.com/zarstensen/AsciiRenderer
       
     - name: Install dependencies
       run: conan install . -s build_type=${{matrix.build_type}} --profile windows_profile --install-folder=${{github.workspace}}/build/conan --build missing
