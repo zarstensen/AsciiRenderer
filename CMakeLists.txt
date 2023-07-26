@@ -406,7 +406,8 @@ if(${ASCIIR_AUTO_INSTALL_DEPS})
     ConanInstall("${CMAKE_CURRENT_BINARY_DIR}/conan")
 endif()
 
-include("${CMAKE_CURRENT_BINARY_DIR}/conan/conan_paths.cmake" OPTIONAL)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/conan")
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_BINARY_DIR}/conan")
 
 if(${UNIX})
     find_package(X11 REQUIRED)
@@ -469,9 +470,9 @@ find_package(PNG REQUIRED)
 target_include_directories(${PROJECT_NAME} PUBLIC  ${PNG_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
 
-find_package(ZLIB REQUIRED)
-target_include_directories(${PROJECT_NAME} PUBLIC ${ZLIB_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES})
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/modules/zlib" "${CMAKE_CURRENT_BINARY_DIR}/zlib")
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/modules/zlib" "${CMAKE_CURRENT_BINARY_DIR}/zlib")
+target_link_libraries(${PROJECT_NAME} zlibstatic)
 
 # Entt
 
