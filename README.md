@@ -409,4 +409,4 @@ This game engine was built with the help of [The Cherno's game engine series](ht
 
 <!-- References -->
 [TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
-[AsciirBanner]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif "This banner was rendered in a terminal using the Asciir engine!"
+[AsciirBanner]: https://github.com/zarstensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif "This banner was rendered in a terminal using the Asciir engine!"
