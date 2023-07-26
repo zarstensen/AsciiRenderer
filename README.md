@@ -408,5 +408,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 This game engine was built with the help of [The Cherno's game engine series](https://www.youtube.com/watch?v=JxIZbV_XjAs&list=PLlrATfBNZ98dC-V-N3m0Go4deliWHPFwT). I highly recommend it as a good starting point for creating your very own game engine!
 
 <!-- References -->
-[TriangleExampleGif]: https://github.com/karstensensensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
+[TriangleExampleGif]: https://github.com/zarstensen/AsciiRenderer/blob/master/Resources/TextureExampleGif.gif ""
 [AsciirBanner]: https://github.com/zarstensen/AsciiRenderer/blob/master/Resources/AsciirBanner.gif "This banner was rendered in a terminal using the Asciir engine!"
