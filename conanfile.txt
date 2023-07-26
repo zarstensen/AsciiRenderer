@@ -4,5 +4,5 @@ libjpeg-turbo/2.1.2
 entt/3.10.1
 
 [generators]
-cmake_find_package
-cmake_paths
+CMakeDeps
+CMakeToolchain
