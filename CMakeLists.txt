@@ -471,7 +471,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC  ${PNG_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/modules/zlib")
-target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/modules/zlib" ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/modules/zlib" "${CMAKE_CURRENT_BINARY_DIR}/zlib")
 target_link_libraries(${PROJECT_NAME} zlibstatic)
 
 # Entt
